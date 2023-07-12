@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
 
-const date = new Date();
 const JwtSchema = new mongoose.Schema(
 	{
 		secretKey: { type: String, required: true },
-		expiresIn: {
+		status: { type: String, required: true },
+		expiresAt: {
 			type: Date,
-			default: date.setTime(date.getTime() + 60000),
 		},
 	},
 
@@ -15,6 +14,6 @@ const JwtSchema = new mongoose.Schema(
 	}
 );
 
-JwtSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 });
+// JwtSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 });
 
 module.exports = mongoose.model("Jwt", JwtSchema);
