@@ -2,7 +2,7 @@ const UserModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const JwtKeyModel = require("../models/JwtKey.model");
+const UserToken = require("../models/UserToken.model");
 
 // Generate a random jwt secret key
 // const jwtSecretKey = crypto.randomBytes(32).toString("hex");
@@ -30,6 +30,27 @@ exports.signUp = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
+const generateAccessToken = (user) => {
+	return jwt.sign(
+		{
+			userId: user._id,
+			isAdmin: user.admin,
+		},
+		`${process.env.ACCESS_TOKEN}`,
+		{ expiresIn: "30s" }
+	);
+};
+const generateRefreshToken = (user) => {
+	return jwt.sign(
+		{
+			userId: user._id,
+			isAdmin: user.admin,
+		},
+		`${process.env.REFRESH_TOKEN}`,
+		{ expiresIn: "30d" }
+	);
+};
+
 exports.signIn = (req, res, next) => {
 	UserModel.findOne({ email: req.body.email })
 		.then((user) => {
@@ -44,44 +65,54 @@ exports.signIn = (req, res, next) => {
 								.status(401)
 								.send({ message: "Mot de passe incorrect !" });
 						} else {
-							let jwtSecretKey;
-							JwtKeyModel.findOne()
-								.then((jwtKey) => {
-									if (!jwtKey) {
-										jwtSecretKey = crypto.randomBytes(32).toString("hex");
-										const jwtModel = new JwtKeyModel({
-											secretKey: jwtSecretKey,
-										});
-										jwtModel
-											.save()
-											.then((jwtKey) => {
-												jwtSecretKey = jwtKey.secretKey;
-											})
-											.catch((err) => res.status(500).send(err));
-									} else {
-										jwtSecretKey = jwtKey.secretKey;
+							const accessToken = generateAccessToken(user);
+							const refreshToken = generateRefreshToken(user);
+
+							UserToken.findOne({ userId: user._id })
+								.then((token) => {
+									if (!token) {
+										new UserToken({
+											userId: user._id,
+											token: refreshToken,
+										}).save();
 									}
-
-									const maxAge = 24 * 60 * 60 * 1000;
-
-									const token = jwt.sign(
-										{ userId: user.id },
-										`${jwtSecretKey}`,
-										{
-											expiresIn: maxAge,
-										}
-									);
-									res.cookie("jwt", token, {
-										httpOnly: true,
-										maxAge: maxAge,
-									});
-									res.status(200).send({ userId: user._id });
 								})
-								.catch((err) => res.status(500).send(err));
+								.catch((err) => console.log(err));
+
+							res.status(200).send({
+								userId: user._id,
+								isAdmin: user.admin,
+								accessToken: accessToken,
+								refreshToken: refreshToken,
+							});
 						}
 					})
-					.catch((err) => res.status(500).send(err));
+					.catch((err) => res.status(506).send(err));
 			}
 		})
 		.catch((err) => res.status(500).send(err));
 };
+
+exports.refreshToken = (req, res, next) => {
+	// Take the refresh token from the user
+	const refreshToken = req.body.token;
+	// send error if there is no token or it's invalid
+	if (!refreshToken) {
+		return res.sendStatus(401);
+	}
+
+	jwt.verify(refreshToken, `${process.env.REFRESH_TOKEN}`, (err, user) => {
+		if (err) {
+			return res.sendStatus(403);
+		}
+		const newAccessToken = generateAccessToken(user);
+		const newRefreshToken = generateRefreshToken(user);
+
+		return res
+			.status(200)
+			.send({ accessToken: newAccessToken, newRefreshToken: newRefreshToken });
+	});
+	// if everything is ok, create new access token and send to user
+};
+
+exports.logout = (req, res, next) => {};

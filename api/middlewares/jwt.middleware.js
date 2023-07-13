@@ -26,40 +26,27 @@ const jwtSecretKey = require("../controllers/auth.controllers");
 
 exports.authorization = (req, res, next) => {
 	const token = req.cookies.jwt;
-	JwtKeyModel.findOne()
-		.then((jwtKey) => {
-			if (!jwtKey) {
-				res.status(401).send({
-					message: "Votre session à expiré identifier vous à nouveau",
-				});
+	if (!token) {
+		return res
+			.status(403)
+			.send({ error: true, message: "Accès refusé: aucun token reçu" });
+	} else {
+		jwt.verify(token, `${process.env.ACCESS_TOKEN}`, async (err, decoded) => {
+			if (err) {
+				res.locals.user = null;
+				res.sendStatus(403);
 			} else {
-				if (token) {
-					jwt.verify(token, `${jwtKey.secretKey}`, async (err, decoded) => {
-						let user;
-						if (err) {
-							user = null;
-							res.sendStatus(401);
-						} else {
-							if (decoded) {
-								user = await UserModel.findById({ _id: decoded.userId });
-								res.locals.user = user;
-								console.log(
-									"---------------- " +
-										user.email +
-										" is connected" +
-										" ----------------"
-								);
-
-								next();
-							}
-						}
-					});
-				} else {
-					res.sendStatus(401);
+				if (decoded) {
+					let user = await UserModel.findById(decoded.userId);
+					res.locals.user = user;
+					console.log(
+						"---------- " + user.email + " est connecté" + "----------"
+					);
+					next();
 				}
 			}
-		})
-		.catch((err) => res.status(500).send(err));
+		});
+	}
 };
 
 exports.isAdmin = (req, res, next) => {

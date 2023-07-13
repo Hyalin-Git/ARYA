@@ -51,6 +51,9 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			required: "Veuillez sélectionner votre activité",
 		},
+		subscription: {
+			type: String,
+		},
 		admin: { type: Boolean, default: false },
 	},
 	{
