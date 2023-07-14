@@ -1,31 +1,8 @@
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
 const UserModel = require("../models/user.model");
-const JwtKeyModel = require("../models/JwtKey.model");
-const jwtSecretKey = require("../controllers/auth.controllers");
-
-// JwtKeyModel.findOne()
-// 	.then((jwt) => {
-// 		if (!jwt) {
-// 			jwtSecretKey = crypto.randomBytes(32).toString("hex");
-// 			const jwt = new JwtKeyModel({
-// 				secretKey: jwtSecretKey,
-// 			});
-// 			jwt
-// 				.save()
-// 				.then((jwt) => {
-// 					jwtSecretKey = jwt.secretKey;
-// 					next();
-// 				})
-// 				.catch((err) => res.status(500).send(err));
-// 		} else {
-// 			jwtSecretKey = jwt.secretKey;
-// 		}
-// 	})
-// 	.catch((err) => res.status(500).send(err));
 
 exports.authorization = (req, res, next) => {
-	const token = req.cookies.jwt;
+	const token = req.headers?.authorization?.split(" ")[1];
 	if (!token) {
 		return res
 			.status(403)
@@ -34,11 +11,16 @@ exports.authorization = (req, res, next) => {
 		jwt.verify(token, `${process.env.ACCESS_TOKEN}`, async (err, decoded) => {
 			if (err) {
 				res.locals.user = null;
-				res.sendStatus(403);
+				res.status(403).send({
+					error: true,
+					message: "Accès refusé: ce token n'est plus valide",
+				});
 			} else {
 				if (decoded) {
 					let user = await UserModel.findById(decoded.userId);
 					res.locals.user = user;
+					console.log(user);
+					console.log(decoded);
 					console.log(
 						"---------- " + user.email + " est connecté" + "----------"
 					);

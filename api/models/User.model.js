@@ -33,6 +33,10 @@ const UserSchema = new mongoose.Schema(
 			trim: true,
 			required: "Un mot de passe est requis",
 		},
+		description: {
+			type: String,
+			maxLength: 350,
+		},
 		phone: {
 			type: String,
 			unique: true,

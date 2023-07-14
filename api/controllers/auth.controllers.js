@@ -7,8 +7,6 @@ const UserToken = require("../models/UserToken.model");
 // Generate a random jwt secret key
 // const jwtSecretKey = crypto.randomBytes(32).toString("hex");
 
-// console.log(jwtSecretKey);
-
 exports.signUp = (req, res, next) => {
 	bcrypt
 		.hash(req.body.password, 10)
@@ -40,7 +38,8 @@ const generateAccessToken = (user) => {
 		{ expiresIn: "30s" }
 	);
 };
-const generateRefreshToken = (user) => {
+const generateRefreshToken = (user, saveRefreshToken) => {
+	console.log(saveRefreshToken);
 	return jwt.sign(
 		{
 			userId: user._id,
@@ -65,26 +64,53 @@ exports.signIn = (req, res, next) => {
 								.status(401)
 								.send({ message: "Mot de passe incorrect !" });
 						} else {
+							const saveRefreshToken = req.body.save;
+							// generate tokens
 							const accessToken = generateAccessToken(user);
-							const refreshToken = generateRefreshToken(user);
+							const refreshToken = generateRefreshToken(user, saveRefreshToken);
 
+							// check if the user already have a token
 							UserToken.findOne({ userId: user._id })
 								.then((token) => {
+									// if not then create a new one
 									if (!token) {
 										new UserToken({
 											userId: user._id,
 											token: refreshToken,
-										}).save();
+										})
+											.save()
+											.then(() => {
+												res.status(201).send({
+													userId: user._id,
+													isAdmin: user.admin,
+													accessToken: accessToken,
+													refreshToken: refreshToken,
+												});
+											})
+											.catch((err) => res.status(500).send(err));
+									} else {
+										// else find it and then update it
+										UserToken.findOneAndUpdate(
+											{ userId: user._id },
+											{
+												$set: {
+													token: refreshToken,
+												},
+											},
+											{ setDefaultsOnInsert: true }
+										)
+											.then(() => {
+												res.status(200).send({
+													userId: user._id,
+													isAdmin: user.admin,
+													accessToken: accessToken,
+													refreshToken: refreshToken,
+												});
+											})
+											.catch((err) => res.status(500).send(err));
 									}
 								})
-								.catch((err) => console.log(err));
-
-							res.status(200).send({
-								userId: user._id,
-								isAdmin: user.admin,
-								accessToken: accessToken,
-								refreshToken: refreshToken,
-							});
+								.catch((err) => res.status(500).send(err));
 						}
 					})
 					.catch((err) => res.status(506).send(err));
@@ -93,26 +119,93 @@ exports.signIn = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
+exports.logout = (req, res, next) => {
+	const refreshToken = req.body.token;
+
+	if (!refreshToken) {
+		return res
+			.status(404)
+			.send({ error: true, message: "Refresh token introuvable" });
+	}
+
+	UserToken.findOne({ token: refreshToken })
+		.then((user) => {
+			if (user.token !== refreshToken) {
+				return res
+					.status(403)
+					.send({ error: true, message: "Refresh token invalide" });
+			} else {
+				UserToken.findOneAndDelete({ token: refreshToken })
+					.then((deletedToken) => {
+						res.status(200).send(deletedToken);
+					})
+					.catch((err) => console.log(err));
+			}
+		})
+		.catch((err) => res.status(500).send(err));
+};
+
 exports.refreshToken = (req, res, next) => {
 	// Take the refresh token from the user
 	const refreshToken = req.body.token;
-	// send error if there is no token or it's invalid
+	// send error if there is no token
 	if (!refreshToken) {
-		return res.sendStatus(401);
+		return res
+			.status(404)
+			.send({ error: true, message: "Refresh token introuvable" });
 	}
 
-	jwt.verify(refreshToken, `${process.env.REFRESH_TOKEN}`, (err, user) => {
-		if (err) {
-			return res.sendStatus(403);
-		}
-		const newAccessToken = generateAccessToken(user);
-		const newRefreshToken = generateRefreshToken(user);
-
-		return res
-			.status(200)
-			.send({ accessToken: newAccessToken, newRefreshToken: newRefreshToken });
-	});
-	// if everything is ok, create new access token and send to user
+	UserToken.findOne({ userId: req.body.userId })
+		.then((user) => {
+			if (!user) {
+				return res.sendStatus(404);
+			} else {
+				jwt.verify(
+					refreshToken,
+					`${process.env.REFRESH_TOKEN}`,
+					(err, decodedToken) => {
+						if (err) {
+							return res
+								.status(403)
+								.send({ error: true, message: "Refresh token invalide" });
+						}
+						// send error if refresh token is invalid
+						if (user.token !== refreshToken) {
+							return res
+								.status(403)
+								.send({ error: true, message: "Refresh token invalide" });
+						} else {
+							if (decodedToken) {
+								// else, find the user
+								UserModel.findById({ _id: decodedToken.userId })
+									.then((user) => {
+										// if an user has been found then generate the tokens
+										const newAccessToken = generateAccessToken(user);
+										const newRefreshToken = generateRefreshToken(user);
+										// Then, find the token of the corresponding user
+										UserToken.findOneAndUpdate(
+											{ userId: user._id },
+											{
+												$set: {
+													token: newRefreshToken, // Update the token
+												},
+											},
+											{ setDefaultsOnInsert: true }
+										)
+											.then(() =>
+												res.status(200).send({
+													accessToken: newAccessToken,
+													newRefreshToken: newRefreshToken,
+												})
+											)
+											.catch((err) => console.log(err));
+									})
+									.catch((err) => res.status(500).send(err));
+							}
+						}
+					}
+				);
+			}
+		})
+		.catch((err) => res.status(500).send(err));
 };
-
-exports.logout = (req, res, next) => {};
