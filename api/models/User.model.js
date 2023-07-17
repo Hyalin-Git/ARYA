@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema(
 			trim: true,
 			required: "Un mot de passe est requis",
 		},
-		description: {
+		biographie: {
 			type: String,
 			maxLength: 350,
 		},
@@ -41,15 +41,15 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			unique: true,
 			minLength: 4,
-			maxLength: 16,
+			maxLength: 20,
 			required: "Un numéro de téléphone est requis",
 		},
-		// picture: {
-		// 	type: String,
-		// },
+		picture: {
+			type: String,
+		},
 		dateOfBirth: {
 			type: String,
-			required: "Date de naissance requise sdzqdd",
+			required: "Date de naissance requise",
 		},
 		activity: {
 			type: String,
@@ -58,12 +58,22 @@ const UserSchema = new mongoose.Schema(
 		subscription: {
 			type: String,
 		},
+		// messages: {
+		// 	type: [
+
+		// 	]
+		// },
+		verified: {
+			type: Boolean,
+			default: false,
+		},
 		admin: { type: Boolean, default: false },
 	},
 	{
 		timestamps: true,
 	}
 );
+
 // Capitalize the first letter in case the user doesn't
 function capitalizeFirstLetter(next) {
 	function getString(string) {

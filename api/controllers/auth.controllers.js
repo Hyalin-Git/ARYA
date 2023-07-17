@@ -1,13 +1,57 @@
 const UserModel = require("../models/user.model");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
 const UserToken = require("../models/UserToken.model");
+const UserVerification = require("../models/UserVerification.model");
+const { regex } = require("../utils/regex");
+const { sendEmail } = require("../middlewares/nodeMailer.middleware");
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 
 // Generate a random jwt secret key
 // const jwtSecretKey = crypto.randomBytes(32).toString("hex");
 
+// SignUp logic
 exports.signUp = (req, res, next) => {
+	// form validation
+	let isValid = true;
+	let message = "";
+
+	switch (false) {
+		case regex.names.test(req.body.lastName || req.body.firstName):
+			isValid = false;
+			// Names are invalid
+			message = "Votre nom ou prénom est invalide";
+			break;
+		case regex.email.test(req.body.email):
+			isValid = false;
+			// Email is invalid
+			message = "Votre adresse mail est invalide";
+			break;
+		case regex.password.test(req.body.password):
+			isValid = false;
+			// Password should contain at least 8 character, 1 number, 1 uppercase, 1 lowercase
+			message =
+				"Votre mot de passe doit contenir 8 caractères, 1 chiffre, une majuscule, une minuscule";
+			break;
+		case regex.phone.test(req.body.phone):
+			isValid = false;
+			// Phone is invalid
+			message = "Votre numéro de téléphone est invalide";
+			break;
+		case regex.dateOfBirth.test(req.body.dateOfBirth):
+			isValid = false;
+			// Date of birth is invalid
+			message = "Votre date de naissance n'est pas valide";
+			break;
+		default:
+			// Please fill in the form fields
+			message = "Veuillez remplir les champs du formulaire";
+	}
+
+	if (isValid === false) {
+		return res.status(400).send({ message: message });
+	}
+
 	bcrypt
 		.hash(req.body.password, 10)
 		.then((hash) => {
@@ -22,7 +66,21 @@ exports.signUp = (req, res, next) => {
 			});
 			user
 				.save()
-				.then((user) => res.status(201).send(user))
+				.then((user) => {
+					const token = new UserVerification({
+						userId: user._id,
+						uniqueToken: crypto.randomBytes(32).toString("hex"),
+					});
+					token
+						.save()
+						.then((token) => {
+							const url = `${process.env.CLIENT_URL}/users/${user._id}/verify/${token.uniqueToken}`;
+
+							sendEmail(user.email, "Verify Email", url);
+							res.status(201).send({ Utilisateur: user, Token: token });
+						})
+						.catch((err) => res.status(500).send(err));
+				})
 				.catch((err) => res.status(500).send(err));
 		})
 		.catch((err) => res.status(500).send(err));
@@ -54,7 +112,7 @@ exports.signIn = (req, res, next) => {
 	UserModel.findOne({ email: req.body.email })
 		.then((user) => {
 			if (!user) {
-				return res.status(404).send({ message: "Adresse mail introuvable" });
+				return res.status(404).send({ message: "Adresse mail introuvable" }); // Cloudn't find a corresponding email
 			} else {
 				bcrypt
 					.compare(req.body.password, user.password)
@@ -62,7 +120,7 @@ exports.signIn = (req, res, next) => {
 						if (!match) {
 							return res
 								.status(401)
-								.send({ message: "Mot de passe incorrect !" });
+								.send({ message: "Mot de passe incorrect !" }); // Password does not match
 						} else {
 							const saveRefreshToken = req.body.save;
 							// generate tokens
@@ -125,7 +183,7 @@ exports.logout = (req, res, next) => {
 	if (!refreshToken) {
 		return res
 			.status(404)
-			.send({ error: true, message: "Refresh token introuvable" });
+			.send({ error: true, message: "Refresh token introuvable" }); // Couldn't find a corresponding refresh token
 	}
 
 	UserToken.findOne({ token: refreshToken })
@@ -133,7 +191,7 @@ exports.logout = (req, res, next) => {
 			if (user.token !== refreshToken) {
 				return res
 					.status(403)
-					.send({ error: true, message: "Refresh token invalide" });
+					.send({ error: true, message: "Refresh token invalide" }); // Refresh token does not match
 			} else {
 				UserToken.findOneAndDelete({ token: refreshToken })
 					.then((deletedToken) => {
@@ -152,7 +210,7 @@ exports.refreshToken = (req, res, next) => {
 	if (!refreshToken) {
 		return res
 			.status(404)
-			.send({ error: true, message: "Refresh token introuvable" });
+			.send({ error: true, message: "Refresh token introuvable" }); // Couldn't find a corresponding refresh token
 	}
 
 	UserToken.findOne({ userId: req.body.userId })
@@ -167,7 +225,7 @@ exports.refreshToken = (req, res, next) => {
 						if (err) {
 							return res
 								.status(403)
-								.send({ error: true, message: "Refresh token invalide" });
+								.send({ error: true, message: "Refresh token invalide" }); // Refresh token does not match
 						}
 						// send error if refresh token is invalid
 						if (user.token !== refreshToken) {
@@ -198,7 +256,7 @@ exports.refreshToken = (req, res, next) => {
 													newRefreshToken: newRefreshToken,
 												})
 											)
-											.catch((err) => console.log(err));
+											.catch((err) => res.status(500).send(err));
 									})
 									.catch((err) => res.status(500).send(err));
 							}
