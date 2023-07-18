@@ -1,10 +1,13 @@
 const mongoose = require("mongoose");
 
-const UserTokenSchema = new mongoose.Schema(
+const RefreshTokenSchema = new mongoose.Schema(
 	{
-		userId: { type: mongoose.Schema.Types.ObjectId, required: true },
+		userId: {
+			type: mongoose.Schema.Types.ObjectId,
+			required: true,
+			unique: true,
+		},
 		token: { type: String, required: true },
-
 		createdAt: {
 			type: Date,
 			default: Date.now(),
@@ -19,4 +22,4 @@ const UserTokenSchema = new mongoose.Schema(
 
 // JwtSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 });
 
-module.exports = mongoose.model("UserToken", UserTokenSchema);
+module.exports = mongoose.model("RefreshToken", RefreshTokenSchema);

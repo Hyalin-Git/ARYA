@@ -10,9 +10,6 @@ exports.authorization = (req, res, next) => {
 	} else {
 		jwt.verify(token, `${process.env.ACCESS_TOKEN}`, async (err, decoded) => {
 			if (err) {
-				console.log(err.name === "TokenExpiredError");
-				if (err.name === "TokenExpiredError") {
-				}
 				res.locals.user = null;
 				res.status(403).send({
 					error: true,

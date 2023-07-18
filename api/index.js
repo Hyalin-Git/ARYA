@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const crypto = require("crypto");
 const moment = require("moment");
 require("./config/db");
+require("node:http");
 
 // routes
 const authRouter = require("./routes/auth.routes");
