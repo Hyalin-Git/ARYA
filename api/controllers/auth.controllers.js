@@ -1,6 +1,5 @@
 const UserModel = require("../models/user.model");
-const RefreshToken = require("../models/RefreshToken.model");
-const UserVerification = require("../models/UserVerification.model");
+const UserVerificationModel = require("../models/UserVerification.model");
 const { regex } = require("../utils/regex");
 const { sendEmail } = require("../middlewares/nodeMailer.middleware");
 const { generateAccessToken } = require("../utils/generateAccessToken");
@@ -8,9 +7,9 @@ const { generateRefreshToken } = require("../utils/generateRefreshToken");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const RefreshTokenModel = require("../models/RefreshToken.model");
 
-// Basic auth controller
-
+// SignUp controller
 exports.signUp = (req, res, next) => {
 	// form validation
 	let isValid = true;
@@ -60,6 +59,7 @@ exports.signUp = (req, res, next) => {
 			const user = new UserModel({
 				lastName: req.body.lastName,
 				firstName: req.body.firstName,
+				userName: req.body.userName,
 				email: req.body.email,
 				password: hash,
 				phone: req.body.phone,
@@ -69,7 +69,7 @@ exports.signUp = (req, res, next) => {
 			user
 				.save()
 				.then((user) => {
-					const token = new UserVerification({
+					const token = new UserVerificationModel({
 						userId: user._id,
 						uniqueToken: crypto.randomBytes(32).toString("hex"),
 					});
@@ -91,6 +91,7 @@ exports.signUp = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
+// SignIn controller
 exports.signIn = (req, res, next) => {
 	UserModel.findOne({ email: req.body.email })
 		.then((user) => {
@@ -115,7 +116,7 @@ exports.signIn = (req, res, next) => {
 								.hash(refreshToken, 10)
 								.then((hashedToken) => {
 									// Saving a new RefreshToken in the DB
-									new RefreshToken({
+									new RefreshTokenModel({
 										userId: user._id,
 										token: hashedToken,
 									})
@@ -132,14 +133,14 @@ exports.signIn = (req, res, next) => {
 											// If the user already has a registered token then update it
 											// err.code 11000 = duplicate entry
 											if (err.code === 11000) {
-												RefreshToken.findOneAndUpdate(
+												RefreshTokenModel.findOneAndUpdate(
 													{ userId: user._id },
 													{
 														$set: {
 															token: hashedToken,
 														},
 													},
-													{ setDefaultsOnInsert: true }
+													{ setDefaultsOnInsert: true, new: true }
 												)
 													.then(() => {
 														res.status(200).send({
@@ -164,6 +165,7 @@ exports.signIn = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
+// Logout controller
 exports.logout = (req, res, next) => {
 	const refreshToken = req.body.token;
 
@@ -173,14 +175,14 @@ exports.logout = (req, res, next) => {
 			.send({ error: true, message: "Refresh token introuvable" }); // Couldn't find a corresponding Refresh token
 	}
 
-	RefreshToken.findOne({ token: refreshToken })
+	RefreshTokenModel.findOne({ token: refreshToken })
 		.then((user) => {
 			if (user.token !== refreshToken) {
 				return res
 					.status(403)
 					.send({ error: true, message: "Refresh token invalide" }); // Refresh token does not match
 			} else {
-				RefreshToken.findOneAndDelete({ token: refreshToken })
+				RefreshTokenModel.findOneAndDelete({ token: refreshToken })
 					.then((deletedToken) => {
 						res.set("Authorization", "");
 						res.status(200).send(deletedToken);
@@ -191,60 +193,7 @@ exports.logout = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-// Side auth controllers
-
-// Checks user's email
-exports.verifyLink = (req, res, next) => {
-	UserModel.findById({ _id: req.params.id })
-		.then((user) => {
-			if (!user) {
-				return res
-					.status(404)
-					.send({ error: true, message: "Aucun utilisateur trouvé" }); // No users found
-			}
-
-			UserVerification.findOne({
-				userId: user._id,
-				uniqueToken: req.params.token,
-			})
-				.then((token) => {
-					if (!token) {
-						return res
-							.status(404)
-							.send({ error: true, message: "Lien invalide" }); // Invalid link
-					}
-					// If a model has been found with the given token and userId then update the verified property of the user
-					UserModel.findByIdAndUpdate(
-						{ _id: user._id },
-						{
-							$set: {
-								verified: true,
-							},
-						},
-						{
-							new: true,
-							setDefaultsOnInsert: true,
-						}
-					)
-						.then(() => {
-							// verified has been updated then delete corresponding UserVerification model in the DB
-							UserVerification.findOneAndDelete()
-								.then(() =>
-									res.status(200).send({
-										error: false,
-										message: "Email vérifié avec succès", // Email successfully verified
-									})
-								)
-								.catch((err) => res.status(500).send(err));
-						})
-						.catch((err) => res.status(500).send(err));
-				})
-				.catch((err) => res.status(500).send(err));
-		})
-		.catch((err) => res.status(500).send(err));
-};
-
-// Refresh the access token
+// Refresh token controller
 exports.refreshToken = (req, res, next) => {
 	const refreshToken = req.body.token;
 	const userId = req.body.userId;
@@ -261,70 +210,69 @@ exports.refreshToken = (req, res, next) => {
 			.send({ error: true, message: "Utilisateur doit être fournit" }); // An userId is needed
 	}
 
-	RefreshToken.findOne({ userId: userId })
+	RefreshTokenModel.findOne({ userId: userId })
 		.then((userToken) => {
 			if (!userToken) {
 				return res.status(404).send({
 					error: true,
 					message: "Aucun token lié à cet utilisateur n'a été trouvé", // No token linked to this user was found
 				});
-			} else {
-				bcrypt
-					.compare(refreshToken, userToken.token)
-					.then((match) => {
-						if (!match) {
-							return res.status(506).send({
-								error: true,
-								message:
-									"Le refresh token fournit ne correspond pas à celui qui est enregistré",
-							});
-						}
+			}
 
-						jwt.verify(
-							refreshToken,
-							`${process.env.REFRESH_TOKEN}`,
-							(err, decodedToken) => {
-								if (err) {
-									// Checks if the refresh token expired
-									if (err.name === "TokenExpiredError") {
-										// If yes then delete it from the DB
-										RefreshToken.findOneAndDelete({ userId: userId })
-											.then(() => {
-												res.status(403).send({
-													error: true,
-													message: "Refresh token expiré", // Refresh token expired
-												});
-											})
-											.catch((err) => res.status(500).send(err));
-									} else {
-										return res
-											.status(403)
-											.send({ error: true, message: "Refresh token invalide" }); // Refresh token does not match
-									}
+			console.log(refreshToken, userToken.token);
+
+			bcrypt
+				.compare(refreshToken, userToken.token)
+				.then((match) => {
+					console.log(match);
+					if (!match) {
+						return res.status(506).send({
+							error: true,
+							message:
+								"Le refresh token fournit ne correspond pas à celui qui est enregistré",
+						});
+					}
+					jwt.verify(
+						refreshToken,
+						`${process.env.REFRESH_TOKEN}`,
+						(err, decodedToken) => {
+							if (err) {
+								// Checks if the refresh token expired
+								if (err.name === "TokenExpiredError") {
+									// If yes then delete it from the DB
+									RefreshTokenModel.findOneAndDelete({ userId: userId })
+										.then(() => {
+											res.status(403).send({
+												error: true,
+												message: "Refresh token expiré", // Refresh token expired
+											});
+										})
+										.catch((err) => res.status(500).send(err));
 								} else {
-									// Else if there no err, we are checking if the user existing in the DB
-									if (decodedToken) {
-										UserModel.findById({ _id: decodedToken.userId })
-											.then((user) => {
-												// If an user has been found then generate the access token
-												const newAccessToken = generateAccessToken(user);
-												// Then, find the token of the corresponding user
-												RefreshToken.findOne({ userId: user._id })
-													.then(() =>
-														res.status(200).send({
-															newAccessToken: newAccessToken,
-														})
-													)
-													.catch((err) => res.status(500).send(err));
-											})
-											.catch((err) => res.status(500).send(err));
-									}
+									return res.status(403).send({
+										error: true,
+										message: "Refresh token invalide",
+									}); // Refresh token does not match
+								}
+							} else {
+								// Else if there no err, we are checking if the user existing in the DB
+								if (decodedToken) {
+									UserModel.findById({ _id: decodedToken.userId })
+										.then((user) => {
+											// If an user has been found then generate the access token
+											const newAccessToken = generateAccessToken(user);
+
+											res.status(200).send({
+												newAccessToken: newAccessToken,
+											});
+										})
+										.catch((err) => res.status(500).send(err));
 								}
 							}
-						);
-					})
-					.catch((err) => res.status(500).send(err));
-			}
+						}
+					);
+				})
+				.catch((err) => res.status(500).send(err));
 		})
 		.catch((err) => res.status(500).send(err));
 };

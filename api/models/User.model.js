@@ -20,6 +20,12 @@ const UserSchema = new mongoose.Schema(
 			maxLength: 35,
 			required: "Un prénom est requis",
 		},
+		userName: {
+			type: String,
+			minLength: 1,
+			maxLength: 35,
+			required: "Un prénom est requis",
+		},
 		email: {
 			type: String,
 			unique: true,

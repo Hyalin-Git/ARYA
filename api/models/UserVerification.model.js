@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
-const UserVerification = new mongoose.Schema(
+const UserVerificationSchema = new mongoose.Schema(
 	{
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
+			unique: true,
 			required: true,
 			ref: "User",
-			unique: true,
 		},
 		uniqueToken: { type: String, required: true },
 		createdAt: {
@@ -21,6 +21,4 @@ const UserVerification = new mongoose.Schema(
 	}
 );
 
-// JwtSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 });
-
-module.exports = mongoose.model("UserVerification", UserVerification);
+module.exports = mongoose.model("UserVerification", UserVerificationSchema);

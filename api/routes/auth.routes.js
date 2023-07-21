@@ -8,10 +8,6 @@ router.post("/signIn", authController.signIn);
 router.delete("/logout", authorization, authController.logout);
 
 // side auth routes
-
-// Takes userId and token as parameters
-router.get("/:id/verify/:token", authController.verifyLink);
-
 router.post("/refresh-token", authController.refreshToken);
 
 router.post("/forgot-password");

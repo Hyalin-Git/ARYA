@@ -10,6 +10,7 @@ require("node:http");
 // routes
 const authRouter = require("./routes/auth.routes");
 const userRouter = require("./routes/user.routes");
+const verificationRouter = require("./routes/verification.routes");
 const { authorization } = require("./middlewares/jwt.middleware");
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(helmet());
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
+app.use("/api/verification", verificationRouter);
 // app.use("api/messages");
 
 app.get("/login/success", authorization, (req, res, next) => {

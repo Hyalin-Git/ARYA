@@ -4,8 +4,8 @@ const RefreshTokenSchema = new mongoose.Schema(
 	{
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
-			required: true,
 			unique: true,
+			required: true,
 		},
 		token: { type: String, required: true },
 		createdAt: {

@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 exports.generateRefreshToken = (user, rememberMe) => {
-	console.log(rememberMe);
 	return jwt.sign(
 		{
 			userId: user._id,

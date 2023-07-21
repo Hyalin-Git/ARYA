@@ -15,19 +15,21 @@ exports.sendEmail = async (email, subject, text) => {
 		from: `${process.env.USER}`,
 		to: email,
 		subject: subject,
-		text: text,
+		html: text,
 	};
 	try {
 		const transporter = nodemailer.createTransport(transport);
 
-		await transporter.sendMail(message, (err, data) => {
-			if (err) {
-				return console.log(err);
-			}
-			console.log(data);
+		const sent = await new Promise((resolve, reject) => {
+			transporter.sendMail(message, (err, data) => {
+				if (err) {
+					console.log(err);
+					reject(err);
+				}
+				resolve(data);
+			});
 		});
-
-		console.log("Email envoyé");
+		return sent;
 	} catch (err) {
 		console.log(err);
 	}
