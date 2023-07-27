@@ -59,7 +59,7 @@ exports.signUp = (req, res, next) => {
 			const user = new UserModel({
 				lastName: req.body.lastName,
 				firstName: req.body.firstName,
-				userName: req.body.userName,
+				userName: "@" + req.body.userName,
 				email: req.body.email,
 				password: hash,
 				phone: req.body.phone,
@@ -76,7 +76,7 @@ exports.signUp = (req, res, next) => {
 					token
 						.save()
 						.then((token) => {
-							const url = `${process.env.CLIENT_URL}/users/${user._id}/verify/${token.uniqueToken}`;
+							const url = `${process.env.CLIENT_URL}/verify/${user._id}/${token.uniqueToken}`;
 
 							sendEmail(user.email, "Verify Email", url);
 							res.status(201).send({
@@ -111,52 +111,46 @@ exports.signIn = (req, res, next) => {
 							const accessToken = generateAccessToken(user);
 							const refreshToken = generateRefreshToken(user, rememberMe);
 
-							// Salt the refreshToken 10 times
-							bcrypt
-								.hash(refreshToken, 10)
-								.then((hashedToken) => {
-									// Saving a new RefreshToken in the DB
-									new RefreshTokenModel({
+							// Saving a new RefreshToken in the DB
+							new RefreshTokenModel({
+								userId: user._id,
+								token: refreshToken,
+							})
+								.save()
+								.then(() => {
+									res.status(201).send({
 										userId: user._id,
-										token: hashedToken,
-									})
-										.save()
-										.then(() => {
-											res.status(201).send({
-												userId: user._id,
-												isAdmin: user.admin,
-												accessToken: accessToken,
-												refreshToken: refreshToken,
-											});
-										})
-										.catch((err) => {
-											// If the user already has a registered token then update it
-											// err.code 11000 = duplicate entry
-											if (err.code === 11000) {
-												RefreshTokenModel.findOneAndUpdate(
-													{ userId: user._id },
-													{
-														$set: {
-															token: hashedToken,
-														},
-													},
-													{ setDefaultsOnInsert: true, new: true }
-												)
-													.then(() => {
-														res.status(200).send({
-															userId: user._id,
-															isAdmin: user.admin,
-															accessToken: accessToken,
-															refreshToken: refreshToken,
-														});
-													})
-													.catch((err) => res.status(500).send(err));
-											} else {
-												res.status(500).send(err);
-											}
-										});
+										isAdmin: user.admin,
+										accessToken: accessToken,
+										refreshToken: refreshToken,
+									});
 								})
-								.catch((err) => res.status(500).send(err));
+								.catch((err) => {
+									// If the user already has a registered token then update it
+									// err.code 11000 = duplicate entry
+									if (err.code === 11000) {
+										RefreshTokenModel.findOneAndUpdate(
+											{ userId: user._id },
+											{
+												$set: {
+													token: refreshToken,
+												},
+											},
+											{ setDefaultsOnInsert: true, new: true }
+										)
+											.then(() => {
+												res.status(200).send({
+													userId: user._id,
+													isAdmin: user.admin,
+													accessToken: accessToken,
+													refreshToken: refreshToken,
+												});
+											})
+											.catch((err) => res.status(500).send(err));
+									} else {
+										res.status(500).send(err);
+									}
+								});
 						}
 					})
 					.catch((err) => res.status(506).send(err));
@@ -219,60 +213,53 @@ exports.refreshToken = (req, res, next) => {
 				});
 			}
 
-			console.log(refreshToken, userToken.token);
+			if (refreshToken !== userToken.token) {
+				return res.status(506).send({
+					error: true,
+					message:
+						"Le refresh token fournit ne correspond pas à celui qui est enregistré",
+				});
+			}
 
-			bcrypt
-				.compare(refreshToken, userToken.token)
-				.then((match) => {
-					console.log(match);
-					if (!match) {
-						return res.status(506).send({
-							error: true,
-							message:
-								"Le refresh token fournit ne correspond pas à celui qui est enregistré",
-						});
-					}
-					jwt.verify(
-						refreshToken,
-						`${process.env.REFRESH_TOKEN}`,
-						(err, decodedToken) => {
-							if (err) {
-								// Checks if the refresh token expired
-								if (err.name === "TokenExpiredError") {
-									// If yes then delete it from the DB
-									RefreshTokenModel.findOneAndDelete({ userId: userId })
-										.then(() => {
-											res.status(403).send({
-												error: true,
-												message: "Refresh token expiré", // Refresh token expired
-											});
-										})
-										.catch((err) => res.status(500).send(err));
-								} else {
-									return res.status(403).send({
+			jwt.verify(
+				refreshToken,
+				`${process.env.REFRESH_TOKEN}`,
+				(err, decodedToken) => {
+					if (err) {
+						// Checks if the refresh token expired
+						if (err.name === "TokenExpiredError") {
+							// If yes then delete it from the DB
+							RefreshTokenModel.findOneAndDelete({ userId: userId })
+								.then(() => {
+									res.status(403).send({
 										error: true,
-										message: "Refresh token invalide",
-									}); // Refresh token does not match
-								}
-							} else {
-								// Else if there no err, we are checking if the user existing in the DB
-								if (decodedToken) {
-									UserModel.findById({ _id: decodedToken.userId })
-										.then((user) => {
-											// If an user has been found then generate the access token
-											const newAccessToken = generateAccessToken(user);
-
-											res.status(200).send({
-												newAccessToken: newAccessToken,
-											});
-										})
-										.catch((err) => res.status(500).send(err));
-								}
-							}
+										message: "Refresh token expiré", // Refresh token expired
+									});
+								})
+								.catch((err) => res.status(500).send(err));
+						} else {
+							return res.status(403).send({
+								error: true,
+								message: "Refresh token invalide",
+							}); // Refresh token does not match
 						}
-					);
-				})
-				.catch((err) => res.status(500).send(err));
+					} else {
+						// Else if there no err, we are checking if the user existing in the DB
+						if (decodedToken) {
+							UserModel.findById({ _id: decodedToken.userId })
+								.then((user) => {
+									// If an user has been found then generate the access token
+									const newAccessToken = generateAccessToken(user);
+
+									res.status(200).send({
+										newAccessToken: newAccessToken,
+									});
+								})
+								.catch((err) => res.status(500).send(err));
+						}
+					}
+				}
+			);
 		})
 		.catch((err) => res.status(500).send(err));
 };

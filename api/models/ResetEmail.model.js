@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ResetPasswordSchema = new mongoose.Schema(
+const ResetEmailSchema = new mongoose.Schema(
 	{
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -13,7 +13,7 @@ const ResetPasswordSchema = new mongoose.Schema(
 			unique: true,
 			required: true,
 		},
-		resetCode: { type: String, required: true },
+		uniqueToken: { type: String, required: true },
 		verified: { type: Boolean, default: false },
 		createdAt: {
 			type: Date,
@@ -27,4 +27,4 @@ const ResetPasswordSchema = new mongoose.Schema(
 	}
 );
 
-module.exports = mongoose.model("ResetPassword", ResetPasswordSchema);
+module.exports = mongoose.model("ResetEmail", ResetEmailSchema);

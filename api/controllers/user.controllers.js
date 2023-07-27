@@ -5,6 +5,7 @@ const UserVerification = require("../models/UserVerification.model");
 const { sendEmail } = require("../middlewares/nodeMailer.middleware");
 const { regex } = require("../utils/regex");
 const ResetPasswordModel = require("../models/ResetPassword.model");
+const ResetEmailModel = require("../models/ResetEmail.model");
 
 // Get all users
 exports.getUsers = (req, res, next) => {
@@ -46,7 +47,8 @@ exports.deleteOneUser = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.updateOneUser = (req, res, next) => {
+// Update user bio
+exports.updateUserBio = (req, res, next) => {
 	UserModel.findByIdAndUpdate(
 		{ _id: req.params.id },
 		{
@@ -68,6 +70,87 @@ exports.updateOneUser = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
+// Update Email
+exports.sendEmailResetLink = async (req, res, next) => {
+	const user = await UserModel.findById({ _id: req.params.id });
+	const newEmail = req.body.newEmail;
+
+	if (!user) {
+		return res
+			.status(404)
+			.send({ error: true, message: "Aucun utilisateur trouvé" }); // No user has been found
+	}
+
+	if (user.email === newEmail) {
+		return res.status(400).send({
+			error: true,
+			message: "L'adresse mail doit être différente de celle enregistré",
+		});
+	}
+
+	ResetEmailModel.findOne({ userEmail: newEmail })
+		.then((data) => {
+			if (data) {
+				return res.status(400).send({
+					error: true,
+					message: "Un email a déjà été envoyé", // An email has already been sent
+				});
+			}
+
+			const generateUniqueToken = crypto.randomBytes(32).toString("hex");
+			const uniqueToken = generateUniqueToken;
+			const url = `${process.env.CLIENT_URL}/verify/${user._id}/${uniqueToken}`;
+			const mailText = `
+					<div>
+						<h2>Cher/Chère ${user.lastName}</h2>
+						<p>Vous avez récemment demandé à changer votre adresse e-mail associée à votre compte ${user.userName}.</p>
+						<p>Veuillez confirmer ce changement en cliquant sur le lien de confirmation ci-dessous :</p>
+
+						<span>${url}</span>
+						
+						<p>Ce lien de confirmation est unique pour votre compte et ne sera valide que pour une durée limitée, veuillez le cliquer dès que possible pour compléter le processus de changement d'adresse e-mail.</p>
+						<p>Si vous n'avez pas initié ce changement ou si vous pensez qu'il s'agit d'une erreur, veuillez ignorer cet e-mail et votre adresse e-mail actuelle restera inchangée.</p>
+
+						<br />
+						Cordialement, L'équipe de Arya
+					</div>
+					`;
+
+			sendEmail(
+				newEmail,
+				"Confirmation de changement d'adresse e-mail",
+				mailText
+			)
+				.then((sent) => {
+					if (!sent) {
+						return res.status(400).send({
+							error: false,
+							message: "L'envoie de l'email a échoué", // Couldn't send the email
+						});
+					}
+					new ResetEmailModel({
+						userId: user._id,
+						userEmail: newEmail,
+						uniqueToken: uniqueToken,
+					})
+						.save()
+						.then((emailModel) => {
+							res.status(201).send({
+								error: false,
+								message:
+									"Le code de réinitialisation a été envoyé à l'email correspondante", // A verification email has been sent
+								emailModel: emailModel,
+							});
+						})
+						.catch((err) => {
+							res.status(500).send(err);
+						});
+				})
+				.catch((err) => res.status(500).send(err));
+		})
+		.catch((err) => res.status(500).send(err));
+};
+
 // Update Password
 exports.updateUserPassword = async (req, res, next) => {
 	const user = await UserModel.findById({ _id: req.params.id });
@@ -80,70 +163,62 @@ exports.updateUserPassword = async (req, res, next) => {
 	}
 
 	// If the user wants to reset his password, he needs to enter his actual password
-	const password = req.body.password;
-	const confirmPassword = req.body.confirmPassword;
-
 	const newPassword = req.body.newPassword;
 	const confirmNewPassword = req.body.confirmNewPassword;
 
-	// Confirm password verification
-	if (password !== confirmPassword) {
-		return res.status(506).send({
-			error: true,
-			message: "Les mots de passe ne correspondent pas",
-		});
-	}
-
 	bcrypt
-		.compare(password, user.password) // If the given password his the same as the one saved in the DB
+		.compare(newPassword, user.password)
 		.then((match) => {
 			if (match) {
-				if (!regex.password.test(newPassword)) {
-					return res.status(400).send({
-						error: true,
-						message:
-							"Votre mot de passe doit contenir 8 caractères, 1 chiffre, une majuscule, une minuscule",
-					});
-				}
-				if (newPassword !== confirmNewPassword) {
-					return res.status(506).send({
-						error: true,
-						message: "Les mots de passe ne correspondent pas",
-					});
-				}
-
-				bcrypt
-					.hash(newPassword, 10) // Then hash the new one and update it
-					.then((hash) => {
-						UserModel.findByIdAndUpdate(
-							{ _id: req.params.id },
-							{
-								$set: {
-									password: hash,
-								},
-							}
-						)
-							.then((user) => res.status(200).send(user))
-							.catch((err) => res.status(500).send(err));
-					})
-					.catch((err) => res.status(500).send(err));
-			} else {
-				res.status(506).send({
+				return res.status(400).send({
 					error: true,
-					message: "Le mot de passe saisi n'est pas votre mot de passe actuel",
+					// newPassword cannot be the same as the old one
+					message:
+						"Le nouveau mot de passe ne peut pas être l'ancien mot de passe",
 				});
 			}
+
+			if (!regex.password.test(newPassword)) {
+				return res.status(400).send({
+					error: true,
+					message:
+						"Votre mot de passe doit contenir 8 caractères, 1 chiffre, une majuscule, une minuscule",
+				});
+			}
+			if (newPassword !== confirmNewPassword) {
+				return res.status(506).send({
+					error: true,
+					message: "Les mots de passe ne correspondent pas",
+				});
+			}
+			bcrypt
+				.hash(newPassword, 10) // Then hash the new one and update it
+				.then((hash) => {
+					UserModel.findByIdAndUpdate(
+						{ _id: req.params.id },
+						{
+							$set: {
+								password: hash,
+							},
+						}
+					)
+						.then((user) => res.status(200).send(user))
+						.catch((err) => res.status(500).send(err));
+				});
 		})
 		.catch((err) => res.status(500).send(err));
 };
 
 // If the user forgot his password, then sending a reset code to his email
-exports.sendResetCode = async (req, res, next) => {
+exports.sendPasswordResetCode = async (req, res, next) => {
 	const userEmail = req.body.userEmail;
 	const generateResetCode = crypto.randomBytes(3).toString("hex");
 	const resetCode = generateResetCode;
 
-	const user = await UserModel.findOne({ email: userEmail });
+	const user = await UserModel.findOne({
+		_id: req.params.id,
+		email: userEmail,
+	});
 
 	if (!user) {
 		return res
@@ -152,7 +227,7 @@ exports.sendResetCode = async (req, res, next) => {
 	}
 
 	if (userEmail === user.email) {
-		ResetPasswordModel.findOne({ userEmail: user.email })
+		ResetPasswordModel.findOne({ userId: user._id, userEmail: user.email })
 			.then((data) => {
 				// If the reset code has been sent already
 				if (data) {
@@ -184,7 +259,9 @@ exports.sendResetCode = async (req, res, next) => {
 								message: "L'envoie de l'email a échoué", // Couldn't send the email
 							});
 						}
+						// If sent then create a reset password model
 						new ResetPasswordModel({
+							userId: user._id,
 							userEmail: user.email,
 							resetCode: resetCode,
 						})
@@ -212,16 +289,20 @@ exports.sendResetCode = async (req, res, next) => {
 		});
 	}
 };
+
 // Checks if the code has been verified, then authorize the user to update his
 exports.updateForgotPassword = async (req, res, next) => {
 	// Getting the reset password ticket
-	ResetPasswordModel.findOne({ userEmail: req.body.userEmail })
+	ResetPasswordModel.findOne({
+		userId: req.params.id,
+		userEmail: req.body.userEmail,
+	})
 		.then((data) => {
 			const newPassword = req.body.newPassword;
 			const confirmNewPassword = req.body.confirmNewPassword;
 
 			if (!data) {
-				return res.status(200).send({ message: "Votre code est expiré" }); // Reset code expired
+				return res.status(404).send({ message: "Votre code est expiré" }); // Reset code expired
 			}
 
 			if (!data.verified) {
@@ -248,7 +329,7 @@ exports.updateForgotPassword = async (req, res, next) => {
 				.hash(newPassword, 10) // Hash newPassword
 				.then((hash) => {
 					// Find the specified user by his email
-					UserModel.findOne({ email: data.userEmail })
+					UserModel.findOne({ _id: req.params.id, email: data.userEmail })
 						.then((user) => {
 							if (!user) {
 								return res
@@ -302,6 +383,25 @@ exports.updateForgotPassword = async (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-// Update Email
-
 // Update Phone
+exports.updateUserPhone = (req, res, next) => {
+	UserModel.findByIdAndUpdate(
+		{ _id: req.params.id },
+		{
+			$set: {
+				phone: req.body.phone,
+			},
+		},
+		{
+			setDefaultsOnInsert: true,
+			new: true,
+		}
+	)
+		.then((user) => {
+			if (!user) {
+				return res.status(404).send("Cet utilisateur n'existe pas");
+			}
+			res.status(200).send(user);
+		})
+		.catch((err) => res.status(500).send(err));
+};
