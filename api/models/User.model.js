@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema(
 		},
 		userName: {
 			type: String,
+			unique: true,
 			minLength: 1,
 			maxLength: 35,
 			required: "Un prénom est requis",

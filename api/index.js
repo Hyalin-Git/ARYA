@@ -4,6 +4,8 @@ const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const crypto = require("crypto");
 const moment = require("moment");
+const multer = require("multer");
+const upload = require("./middlewares/multer.middleware");
 require("./config/db");
 require("node:http");
 
@@ -14,9 +16,11 @@ const verificationRouter = require("./routes/verification.routes");
 const { authorization } = require("./middlewares/jwt.middleware");
 
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
+
 // secure Express apps by setting HTTP response headers
 app.use(helmet());
 

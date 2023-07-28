@@ -1,11 +1,15 @@
 const UserModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const UserVerification = require("../models/UserVerification.model");
 const { sendEmail } = require("../middlewares/nodeMailer.middleware");
 const { regex } = require("../utils/regex");
 const ResetPasswordModel = require("../models/ResetPassword.model");
 const ResetEmailModel = require("../models/ResetEmail.model");
+const { resetPasswordText, resetEmailText } = require("../utils/mailText");
+const cloudinary = require("../config/cloudinary.config");
+const multer = require("multer");
+const upload = require("../middlewares/multer.middleware");
+const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
 
 // Get all users
 exports.getUsers = (req, res, next) => {
@@ -26,8 +30,6 @@ exports.getUser = (req, res, next) => {
 			if (!user) {
 				return res.status(404).send("Cet utilisateur n'existe pas");
 			}
-			if (!user.verified) {
-			}
 			res.status(200).send(user);
 		})
 		.catch((err) => res.status(500).send(err));
@@ -45,6 +47,63 @@ exports.deleteOneUser = (req, res, next) => {
 			res.status(200).send(user);
 		})
 		.catch((err) => res.status(500).send(err));
+};
+
+// Update user profil picture
+exports.updateUserPicture = async (req, res, next) => {
+	try {
+		let picture = req.file;
+
+		const resizedAndCovertedImg = await resizeImageAndWebpConvert(
+			picture.buffer,
+			200,
+			200
+		);
+
+		await cloudinary.uploader
+			.upload_stream(
+				{
+					resource_type: "image",
+					upload_preset: "arya_preset",
+				},
+				async (err, result) => {
+					if (err) {
+						res.status(500).send({
+							error: true,
+							message:
+								"Une erreur est survenue lors du téléchargement de l'image sur Cloudinary.",
+							cloudinaryError: err,
+						});
+					}
+					// Updating the picture of the user
+					UserModel.findByIdAndUpdate(
+						{ _id: req.params.id },
+						{ $set: { picture: result.secure_url } },
+						{ new: true }
+					)
+						.then((user) => {
+							if (!user) {
+								return res.status(404).send({
+									error: true,
+									message: "Cet utilisateur n'existe pas.",
+								});
+							}
+
+							res.status(200).send({
+								error: false,
+								message: "Photo de profil modifiée avec succès.",
+								user: user,
+							});
+						})
+						.catch((err) => res.status(500).send(err));
+				}
+			)
+			.end(resizedAndCovertedImg);
+	} catch (err) {
+		return res
+			.status(500)
+			.send({ error: true, message: "Une erreur est survenue" });
+	}
 };
 
 // Update user bio
@@ -84,7 +143,7 @@ exports.sendEmailResetLink = async (req, res, next) => {
 	if (user.email === newEmail) {
 		return res.status(400).send({
 			error: true,
-			message: "L'adresse mail doit être différente de celle enregistré",
+			message: "L'adresse mail doit être différente de celle enregistré", // New Email need to be different from the previous one
 		});
 	}
 
@@ -100,26 +159,11 @@ exports.sendEmailResetLink = async (req, res, next) => {
 			const generateUniqueToken = crypto.randomBytes(32).toString("hex");
 			const uniqueToken = generateUniqueToken;
 			const url = `${process.env.CLIENT_URL}/verify/${user._id}/${uniqueToken}`;
-			const mailText = `
-					<div>
-						<h2>Cher/Chère ${user.lastName}</h2>
-						<p>Vous avez récemment demandé à changer votre adresse e-mail associée à votre compte ${user.userName}.</p>
-						<p>Veuillez confirmer ce changement en cliquant sur le lien de confirmation ci-dessous :</p>
-
-						<span>${url}</span>
-						
-						<p>Ce lien de confirmation est unique pour votre compte et ne sera valide que pour une durée limitée, veuillez le cliquer dès que possible pour compléter le processus de changement d'adresse e-mail.</p>
-						<p>Si vous n'avez pas initié ce changement ou si vous pensez qu'il s'agit d'une erreur, veuillez ignorer cet e-mail et votre adresse e-mail actuelle restera inchangée.</p>
-
-						<br />
-						Cordialement, L'équipe de Arya
-					</div>
-					`;
 
 			sendEmail(
 				newEmail,
 				"Confirmation de changement d'adresse e-mail",
-				mailText
+				resetEmailText(user, url)
 			)
 				.then((sent) => {
 					if (!sent) {
@@ -138,7 +182,7 @@ exports.sendEmailResetLink = async (req, res, next) => {
 							res.status(201).send({
 								error: false,
 								message:
-									"Le code de réinitialisation a été envoyé à l'email correspondante", // A verification email has been sent
+									"Un lien de confirmation à été envoyé à votre nouvelle adresse mail", // A verification email has been sent
 								emailModel: emailModel,
 							});
 						})
@@ -182,7 +226,7 @@ exports.updateUserPassword = async (req, res, next) => {
 				return res.status(400).send({
 					error: true,
 					message:
-						"Votre mot de passe doit contenir 8 caractères, 1 chiffre, une majuscule, une minuscule",
+						"Votre mot de passe doit contenir 8 caractères, 1 chiffre, une majuscule, une minuscule et un symbol (!#@)",
 				});
 			}
 			if (newPassword !== confirmNewPassword) {
@@ -237,21 +281,11 @@ exports.sendPasswordResetCode = async (req, res, next) => {
 					});
 				}
 
-				const mailText = `
-					<div>
-						<h2>Cher/Chère ${user.lastName}</h2>
-						<p>Nous avons reçu une demande de réinitialisation de votre mot de passe pour votre compte ${user.userName} associé à cette adresse e-mail.</p>
-						<p>Si vous avez effectué cette demande, veuillez copier le code ci-dessous pour réinitialiser votre mot de passe : </p>
-
-						<span style="font-size: 25px; font-weight: bold;">${resetCode}</span>
-						
-						<p>Si vous n'avez pas demandé cette réinitialisation, veuillez ignorer cet e-mail. Votre compte reste sécurisé, et aucun changement n'a été apporté à votre mot de passe.</p>
-						<br />
-						Cordialement,
-						L'équipe de Arya
-					</div>
-					`;
-				sendEmail(user.email, "Rénitialisation du mot de passe", mailText)
+				sendEmail(
+					user.email,
+					"Rénitialisation du mot de passe",
+					resetPasswordText(user, resetCode)
+				)
 					.then((sent) => {
 						if (!sent) {
 							return res.status(400).send({

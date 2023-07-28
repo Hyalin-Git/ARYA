@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const RefreshTokenModel = require("../models/RefreshToken.model");
+const { mailText, verifyAccountText } = require("../utils/mailText");
 
 // SignUp controller
 exports.signUp = (req, res, next) => {
@@ -21,6 +22,12 @@ exports.signUp = (req, res, next) => {
 			// Names are invalid
 			message = "Votre nom ou prénom est invalide";
 			break;
+		case regex.userName.test(req.body.userName):
+			isValid = false;
+			// Email is invalid
+			message =
+				"Votre nom d'utilisateur ne peut pas contenir d'espaces, de symboles ou de caractères spéciaux autres que le tiret bas (_).";
+			break;
 		case regex.email.test(req.body.email):
 			isValid = false;
 			// Email is invalid
@@ -30,7 +37,7 @@ exports.signUp = (req, res, next) => {
 			isValid = false;
 			// Password should contain at least 8 character, 1 number, 1 uppercase, 1 lowercase
 			message =
-				"Votre mot de passe doit contenir 8 caractères, 1 chiffre, une majuscule, une minuscule";
+				"Votre mot de passe doit contenir 8 caractères, 1 chiffre, une majuscule, une minuscule et un symbol (!#@)";
 			break;
 		case regex.phone.test(req.body.phone):
 			isValid = false;
@@ -48,7 +55,7 @@ exports.signUp = (req, res, next) => {
 	}
 
 	// If one of those case set false to isValid, then return this err
-	if (isValid === false) {
+	if (!isValid) {
 		return res.status(400).send({ message: message });
 	}
 	// Else salt the password 10 times
@@ -69,20 +76,34 @@ exports.signUp = (req, res, next) => {
 			user
 				.save()
 				.then((user) => {
-					const token = new UserVerificationModel({
-						userId: user._id,
-						uniqueToken: crypto.randomBytes(32).toString("hex"),
-					});
-					token
-						.save()
-						.then((token) => {
-							const url = `${process.env.CLIENT_URL}/verify/${user._id}/${token.uniqueToken}`;
-
-							sendEmail(user.email, "Verify Email", url);
-							res.status(201).send({
-								error: false,
-								message: "Un email de vérification a été envoyé !",
-							});
+					const generateUniqueToken = crypto.randomBytes(32).toString("hex");
+					const uniqueToken = generateUniqueToken;
+					const url = `${process.env.CLIENT_URL}/verify/${user._id}/${uniqueToken}`;
+					sendEmail(
+						user.email,
+						"Vérification de votre adresse e-mail",
+						verifyAccountText(user, url)
+					)
+						.then((sent) => {
+							if (!sent) {
+								return res.status(500).send({
+									error: true,
+									message:
+										"Une erreur est survenue lors de l'envoie de l'email",
+								});
+							}
+							new UserVerificationModel({
+								userId: user._id,
+								uniqueToken: uniqueToken,
+							})
+								.save()
+								.then(() => {
+									res.status(201).send({
+										error: false,
+										message: "Un email de vérification a été envoyé !",
+									});
+								})
+								.catch((err) => res.status(500).send(err));
 						})
 						.catch((err) => res.status(500).send(err));
 				})

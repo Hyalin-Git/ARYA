@@ -53,6 +53,7 @@ exports.checkIfUserVerified = (req, res, next) => {
 					message: "Accès refusé: Ce compte n'est pas vérifié",
 				});
 			}
+			next();
 		})
 		.catch((err) => res.status(500).send(err));
 };
