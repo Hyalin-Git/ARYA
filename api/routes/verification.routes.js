@@ -10,7 +10,7 @@ router.post(
 	"/send-verification-mail/:id",
 	verificationController.checkUserVerification
 );
-
+// Verify the reset code
 router.put("/reset-code-verify", verificationController.verifyResetCode);
 
 module.exports = router;

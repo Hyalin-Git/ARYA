@@ -65,11 +65,20 @@ const UserSchema = new mongoose.Schema(
 		subscription: {
 			type: String,
 		},
-		// messages: {
-		// 	type: [
-
-		// 	]
-		// },
+		messages: {
+			type: [
+				{
+					twitter: {
+						type: [
+							{
+								message: { type: String },
+								scheduledSendTime: { type: Date },
+							},
+						],
+					},
+				},
+			],
+		},
 		verified: {
 			type: Boolean,
 			default: false,

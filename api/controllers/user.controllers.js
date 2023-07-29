@@ -232,7 +232,7 @@ exports.updateUserPassword = async (req, res, next) => {
 			if (newPassword !== confirmNewPassword) {
 				return res.status(506).send({
 					error: true,
-					message: "Les mots de passe ne correspondent pas",
+					message: "Les mots de passe ne correspondent pas", // Passwords does not match
 				});
 			}
 			bcrypt
