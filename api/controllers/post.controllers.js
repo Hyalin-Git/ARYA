@@ -7,7 +7,11 @@ exports.sendPost = (req, res, next) => {
 		method: "POST",
 		url: "https://api.twitter.com/2/tweets",
 		withCredentials: true,
-		body: {
+		headers: {
+			Authorization:
+				"Bearer eFNvdlBmby1wOWVESDJpdWxiemg0WjZOaG1JZ2RNMWNsSWlLX0JiXzdkVjI0OjE2OTEwOTQwNzU2MjA6MToxOmF0OjE",
+		},
+		data: {
 			text: req.body.text,
 		},
 	})

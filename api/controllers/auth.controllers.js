@@ -1,14 +1,14 @@
 const UserModel = require("../models/user.model");
 const UserVerificationModel = require("../models/UserVerification.model");
-const { regex } = require("../utils/regex");
-const { sendEmail } = require("../middlewares/nodeMailer.middleware");
-const { generateAccessToken } = require("../utils/generateAccessToken");
-const { generateRefreshToken } = require("../utils/generateRefreshToken");
+const { regex } = require("../utils/RegexPatterns/regex");
+const { sendEmail } = require("../utils/mail/nodeMailer");
+const { generateAccessToken } = require("../utils/jwt/generateAccessToken");
+const { generateRefreshToken } = require("../utils/jwt/generateRefreshToken");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const RefreshTokenModel = require("../models/RefreshToken.model");
-const { mailText, verifyAccountText } = require("../utils/mailText");
+const { verifyAccountText } = require("../utils/mail/mailText");
 
 // SignUp controller
 exports.signUp = (req, res, next) => {

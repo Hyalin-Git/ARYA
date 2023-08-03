@@ -1,11 +1,11 @@
 const UserModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const { sendEmail } = require("../middlewares/nodeMailer.middleware");
-const { regex } = require("../utils/regex");
+const { sendEmail } = require("../utils/mail/nodeMailer");
+const { regex } = require("../utils/RegexPatterns/regex");
 const ResetPasswordModel = require("../models/ResetPassword.model");
 const ResetEmailModel = require("../models/ResetEmail.model");
-const { resetPasswordText, resetEmailText } = require("../utils/mailText");
+const { resetPasswordText, resetEmailText } = require("../utils/mail/mailText");
 const cloudinary = require("../config/cloudinary.config");
 const multer = require("multer");
 const upload = require("../middlewares/multer.middleware");

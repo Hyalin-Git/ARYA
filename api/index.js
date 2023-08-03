@@ -2,17 +2,13 @@ require("dotenv").config({ path: "./config/.env" });
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
-const crypto = require("crypto");
-const moment = require("moment");
-const multer = require("multer");
-const upload = require("./middlewares/multer.middleware");
 const cors = require("cors");
 require("./config/db");
-require("node:http");
 require("./utils/cronJob");
 
 // routes
 const authRouter = require("./routes/auth.routes");
+const socialMediaAuthRouter = require("./routes/socialMediaAuth.routes");
 const userRouter = require("./routes/user.routes");
 const postRouter = require("./routes/post.routes");
 const verificationRouter = require("./routes/verification.routes");
@@ -21,7 +17,7 @@ const { authorization } = require("./middlewares/jwt.middleware");
 const app = express();
 
 const corsOptions = {
-	origin: `${process.env.CLIENT_URL}`,
+	origin: `*`,
 	credentials: true,
 	allowedHeaders: ["sessionId", "Content-Type"],
 	exposedHeaders: ["sessionId"],
@@ -39,6 +35,7 @@ app.use(cookieParser());
 app.use(helmet());
 
 app.use("/api/auth", authRouter);
+app.use("/api/social-media/auth", socialMediaAuthRouter);
 app.use("/api/users", userRouter);
 app.use("/api/post", postRouter);
 app.use("/api/verification", verificationRouter);
