@@ -34,7 +34,7 @@ exports.authorizeTwitter = (req, res, next) => {
 
 	res.redirect(url);
 };
-//${encodeURIComponent(codeChallenge)}//
+
 exports.getTwitterTokens = (req, res, next) => {
 	const code = req.query.code;
 	const state = req.query.state;
