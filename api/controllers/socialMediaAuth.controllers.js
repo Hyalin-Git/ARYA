@@ -76,7 +76,7 @@ exports.getTwitterTokens = (req, res, next) => {
 								accessToken: data.data.access_token,
 								expireTime: date.add(
 									data.data.expires_in === 7200 ? "1" : "",
-									"minutes"
+									"h"
 								),
 								refreshToken: data.data.refresh_token,
 							},
