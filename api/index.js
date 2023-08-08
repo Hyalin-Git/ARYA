@@ -3,7 +3,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const cors = require("cors");
-require("./config/db");
+require("./config/db.config");
 require("./utils/cronJob");
 
 // routes

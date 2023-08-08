@@ -9,9 +9,14 @@ const SocialMediaTokenSchema = new mongoose.Schema(
 			ref: "User",
 		},
 		twitter: {
-			accessToken: { type: String },
+			accessToken: { type: String, required: true },
+			expireTime: {
+				type: Date,
+				required: true,
+			},
 			refreshToken: {
 				type: String,
+				required: true,
 			},
 		},
 		tiktok: {

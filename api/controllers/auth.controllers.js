@@ -139,6 +139,8 @@ exports.signIn = (req, res, next) => {
 							})
 								.save()
 								.then(() => {
+									req.headers["Authorization"] = `Bearer ${accessToken}`;
+									console.log(req.headers);
 									res.status(201).send({
 										userId: user._id,
 										isAdmin: user.admin,
@@ -160,6 +162,8 @@ exports.signIn = (req, res, next) => {
 											{ setDefaultsOnInsert: true, new: true }
 										)
 											.then(() => {
+												req.headers["Authorization"] = `Bearer ${accessToken}`;
+												console.log(req.headers);
 												res.status(200).send({
 													userId: user._id,
 													isAdmin: user.admin,

@@ -31,6 +31,7 @@ exports.sendPost = (req, res, next) => {
 						socialMedia: "Twitter",
 						text: req.body.text,
 						media: req.body.media,
+						status: "sent",
 					});
 					post
 						.save()
@@ -52,15 +53,10 @@ exports.sendPost = (req, res, next) => {
 exports.sendScheduledPost = (req, res, next) => {
 	let date = moment();
 
-	// date.set({
-	// 	year: req.body.year,
-	// 	month: req.body.month,
-	// 	date: req.body.day,
-	// 	hour: req.body.hour,
-	// 	minute: req.body.minute,
-	// });
-
-	date.add(2, "minute");
+	date
+		.add(req.body.days ? req.body.day : "", "d")
+		.add(req.body.hours ? req.body.hours : "", "h")
+		.add(req.body.minutes ? req.body.minutes : "", "m");
 
 	const post = new PostModel({
 		posterId: req.body.posterId,
@@ -72,7 +68,11 @@ exports.sendScheduledPost = (req, res, next) => {
 	post
 		.save()
 		.then((post) => {
-			res.status(201).send(post);
+			res.status(201).send({
+				error: false,
+				message: "Poste programmé enregistré",
+				data: post,
+			});
 		})
 		.catch((err) => res.status(500).send(err));
 };
