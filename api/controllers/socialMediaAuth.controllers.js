@@ -11,6 +11,23 @@ const moment = require("moment");
 
 let codeVerifier;
 
+async function getUserInfo(accessToken) {
+	try {
+		const { data } = await axios({
+			method: "GET",
+			url: `${process.env.TWITTER_AUTH_INFO_URL}?user.fields=profile_image_url`,
+			withCredentials: true,
+			headers: {
+				// Pass the access_token in the header
+				Authorization: `Bearer ${accessToken}`,
+			},
+		});
+		return data;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 exports.authorizeTwitter = (req, res, next) => {
 	function generateState() {
 		const state = crypto.randomBytes(16).toString("hex");
@@ -28,9 +45,9 @@ exports.authorizeTwitter = (req, res, next) => {
 		`response_type=code` +
 		`&client_id=${encodeURIComponent(process.env.TWITTER_CLIENT_ID)}` +
 		`&redirect_uri=${encodeURIComponent(process.env.TWITTER_CALLBACK_URL)}` +
-		`&scope=${encodeURIComponent(process.env.TWITTER_SCOPES)}` +
 		`&state=${encodeURIComponent(stateWithUserId)}` +
 		`&code_challenge=${encodeURIComponent(codeChallenge)}` +
+		`&scope=${encodeURIComponent(process.env.TWITTER_SCOPES)}` +
 		`&code_challenge_method=${process.env.TWITTER_CHALLENGE_CODE_METHOD}`;
 
 	res.redirect(url);
@@ -38,9 +55,15 @@ exports.authorizeTwitter = (req, res, next) => {
 
 exports.getTwitterTokens = (req, res, next) => {
 	let date = moment();
-	const state = req.query.state;
+	const { code, state } = req.query;
 	const userId = state.split(":")[1]; // Getting the userId
 	const codeVerifierr = codeVerifier;
+
+	if (!code || !state) {
+		return res
+			.status(403)
+			.send({ error: true, message: "Access denied or session expired" });
+	}
 
 	return axios({
 		method: "POST",
@@ -49,17 +72,21 @@ exports.getTwitterTokens = (req, res, next) => {
 		headers: {
 			"Content-Type": "application/x-www-form-urlencoded",
 		},
-
 		data: {
-			code: req.query.code,
+			code: code,
 			grant_type: "authorization_code",
 			client_id: `${process.env.TWITTER_CLIENT_ID}`,
 			redirect_uri: `${process.env.TWITTER_CALLBACK_URL}`,
 			code_verifier: `${codeVerifierr}`,
 		},
 	})
-		.then((data) => {
+		.then(async (data) => {
 			codeVerifier = null;
+
+			const {
+				data: { access_token, refresh_token, expires_in },
+			} = await data;
+
 			if (!data) {
 				res.status(400).send({
 					error: true,
@@ -67,18 +94,26 @@ exports.getTwitterTokens = (req, res, next) => {
 				});
 			}
 
+			const {
+				data: { id, profile_image_url, name, username },
+			} = await getUserInfo(access_token);
+
 			SocialMediaTokenModel.findOne({ userId: userId })
 				.then((match) => {
 					if (!match) {
 						new SocialMediaTokenModel({
 							userId: userId,
 							twitter: {
-								accessToken: data.data.access_token,
-								expireTime: date.add(
-									data.data.expires_in === 7200 ? "1" : "",
+								accessToken: access_token,
+								twitterId: id,
+								twitterProfilPic: profile_image_url,
+								twitterName: name,
+								twitterUsername: "@" + username,
+								accessTokenExpireAt: date.add(
+									expires_in === 7200 ? "2" : "",
 									"h"
 								),
-								refreshToken: data.data.refresh_token,
+								refreshToken: refresh_token,
 							},
 						})
 							.save()
@@ -96,12 +131,16 @@ exports.getTwitterTokens = (req, res, next) => {
 							{
 								$set: {
 									twitter: {
-										accessToken: data.data.access_token,
-										expireTime: date.add(
-											data.data.expires_in === 7200 ? "2" : "",
+										accessToken: access_token,
+										twitterId: id,
+										twitterProfilPic: profile_image_url,
+										twitterName: name,
+										twitterUsername: "@" + username,
+										accessTokenExpireAt: date.add(
+											expires_in === 7200 ? "2" : "",
 											"h"
 										),
-										refreshToken: data.data.refresh_token,
+										refreshToken: refresh_token,
 									},
 								},
 							},

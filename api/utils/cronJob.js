@@ -87,7 +87,7 @@ new CronJob(
 		SocialMediaTokenModel.find()
 			.then((tokens) => {
 				tokens.map((token) => {
-					const twitterExpireTime = token.twitter.expireTime;
+					const twitterExpireTime = token.twitter.accessTokenExpireAt;
 					// Twitter
 					if (date.isSameOrAfter(moment(twitterExpireTime))) {
 						axios({
@@ -112,7 +112,7 @@ new CronJob(
 										$set: {
 											twitter: {
 												accessToken: data.data.access_token,
-												expireTime: date.add(
+												accessTokenExpireAt: date.add(
 													data.data.expires_in === 7200 ? "2" : "",
 													"h"
 												),

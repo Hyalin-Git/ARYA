@@ -10,7 +10,11 @@ const SocialMediaTokenSchema = new mongoose.Schema(
 		},
 		twitter: {
 			accessToken: { type: String, required: true },
-			expireTime: {
+			twitterId: { type: String, required: true },
+			twitterProfilPic: { type: String },
+			twitterName: { type: String, required: true },
+			twitterUsername: { type: String, required: true },
+			accessTokenExpireAt: {
 				type: Date,
 				required: true,
 			},

@@ -15,7 +15,7 @@ exports.OAuthTokensHandler = (req, res, next) => {
 				});
 			}
 
-			const expireTime = tokens.twitter.expireTime;
+			const expireTime = tokens.twitter.accessTokenExpireAt;
 
 			if (date.isSameOrAfter(moment(expireTime))) {
 				return axios({
@@ -38,7 +38,7 @@ exports.OAuthTokensHandler = (req, res, next) => {
 								$set: {
 									twitter: {
 										accessToken: data.data.access_token,
-										expireTime: date.add(
+										accessTokenExpireAt: date.add(
 											data.data.expires_in === 7200 ? "2" : "",
 											"h"
 										),
