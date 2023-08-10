@@ -1,38 +1,28 @@
-const axios = require("axios");
 const moment = require("moment");
 const PostModel = require("../models/Post.model");
 const SocialMediaTokenModel = require("../models/SocialMediaToken.model");
+const { sendTweets } = require("../utils/helpers/twitter_api/twitterApi");
 
 exports.sendPost = (req, res, next) => {
-	const media = req.file;
-	console.log(media);
-
 	SocialMediaTokenModel.findOne({ userId: req.body.userId })
-		.then((tokens) => {
+		.then(async (tokens) => {
 			if (!tokens) {
 				return res.status(404).send({
 					error: true,
 					message: "Aucun compte Twitter n'est lié à ce compte", // Twitter account not linked to this account
 				});
 			}
+			try {
+				const sendTweetsData = await sendTweets(
+					tokens.twitter.accessToken,
+					req.body.text
+				);
 
-			axios({
-				method: "POST",
-				url: `${process.env.TWITTER_MANAGE_TWEETS_URL}`,
-				withCredentials: true,
-				headers: {
-					// Pass the access_token in the header
-					Authorization: `Bearer ${tokens.twitter.accessToken}`,
-				},
-				data: {
-					text: req.body.text,
-				},
-			})
-				.then((data) => {
+				if (sendTweetsData) {
 					// Creates a new post if the tweet has been sent
 					new PostModel({
 						posterId: req.body.userId,
-						socialMedia: "Twitter",
+						socialMedia: "twitter",
 						text: req.body.text,
 						media: req.body.media,
 						status: "sent",
@@ -42,13 +32,15 @@ exports.sendPost = (req, res, next) => {
 							res.status(201).send({
 								error: false,
 								message: "Tweet envoyé",
-								data: data.data,
+								data: sendTweetsData,
 								post: post,
 							});
 						})
 						.catch((err) => res.status(500).send(err));
-				})
-				.catch((err) => res.status(500).send(err));
+				}
+			} catch (err) {
+				res.status(403).send({ error: true, message: err });
+			}
 		})
 		.catch((err) => res.status(500).send(err));
 };

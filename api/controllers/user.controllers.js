@@ -7,8 +7,6 @@ const ResetPasswordModel = require("../models/ResetPassword.model");
 const ResetEmailModel = require("../models/ResetEmail.model");
 const { resetPasswordText, resetEmailText } = require("../utils/mail/mailText");
 const cloudinary = require("../config/cloudinary.config");
-const multer = require("multer");
-const upload = require("../middlewares/multer.middleware");
 const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
 
 // Get all users

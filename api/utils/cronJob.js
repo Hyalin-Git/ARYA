@@ -3,7 +3,11 @@ const PostModel = require("../models/Post.model");
 const axios = require("axios");
 const moment = require("moment");
 const SocialMediaTokenModel = require("../models/SocialMediaToken.model");
-const { OAuthTokensHandler } = require("../middlewares/OAuth.middleware");
+const {
+	refreshTokens,
+	getUserInfo,
+} = require("./helpers/twitter_api/twitterApi");
+const { errorsHandler } = require("./errors/errors");
 
 async function sendScheduledPost(tokens, post) {
 	try {
@@ -80,55 +84,56 @@ const job = new CronJob(
 );
 
 new CronJob(
-	"30 */1 * * *", // runs every 1h30
+	"0 */90 * * * *", // runs every 1h30
 	// Generating new access tokens for social media
 	function () {
 		const date = moment();
 		SocialMediaTokenModel.find()
 			.then((tokens) => {
-				tokens.map((token) => {
+				tokens.map(async (token) => {
 					const twitterExpireTime = token.twitter.accessTokenExpireAt;
 					// Twitter
 					if (date.isSameOrAfter(moment(twitterExpireTime))) {
-						axios({
-							method: "POST",
-							url: `${process.env.TWITTER_URL}/token`,
-							withCredentials: true,
-							headers: {
-								"Content-Type": "application/x-www-form-urlencoded",
-							},
-							data: {
-								refresh_token: `${token.twitter.refreshToken}`,
-								grant_type: "refresh_token",
-								client_id: `${process.env.TWITTER_CLIENT_ID}`,
-							},
-						})
-							.then((data) => {
-								SocialMediaTokenModel.findOneAndUpdate(
-									{
-										userId: token.userId,
-									},
-									{
-										$set: {
-											twitter: {
-												accessToken: data.data.access_token,
-												accessTokenExpireAt: date.add(
-													data.data.expires_in === 7200 ? "2" : "",
-													"h"
-												),
-												refreshToken: data.data.refresh_token,
-											},
+						try {
+							const refreshTokensData = await refreshTokens(
+								token.twitter.refreshToken
+							);
+
+							const userData = await getUserInfo(
+								refreshTokensData.access_token
+							);
+
+							SocialMediaTokenModel.findOneAndUpdate(
+								{
+									userId: token.userId,
+								},
+								{
+									$set: {
+										twitter: {
+											twitterId: userData.id,
+											twitterProfilPic: userData.profile_image_url,
+											twitterName: userData.name,
+											twitterUsername: "@" + userData.username,
+											accessToken: refreshTokensData.access_token,
+											accessTokenExpireAt: date.add(
+												refreshTokensData.expires_in === 7200 ? "2" : "",
+												"h"
+											),
+											refreshToken: refreshTokensData.refresh_token,
 										},
 									},
-									{
-										new: true,
-										setDefaultsOnInsert: true,
-									}
-								)
-									.then((update) => console.log(update))
-									.catch((err) => console.log(err));
-							})
-							.catch((err) => console.log(err));
+								},
+								{
+									new: true,
+									setDefaultsOnInsert: true,
+								}
+							)
+								.then((update) => console.log(update))
+								.catch((err) => console.log(err));
+						} catch (err) {
+							const errorMsg = errorsHandler(err);
+							console.log(errorMsg);
+						}
 					}
 				});
 			})

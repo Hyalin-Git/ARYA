@@ -3,30 +3,17 @@ const {
 	generateCodeVerifier,
 	generateCodeChallenge,
 } = require("../utils/OAuth2ChallengeGenerator/challengeGenerator");
-const axios = require("axios");
 const SocialMediaTokenModel = require("../models/SocialMediaToken.model");
 const moment = require("moment");
+const {
+	getTokens,
+	getUserInfo,
+	revokeToken,
+} = require("../utils/helpers/twitter_api/twitterApi");
+const { errorsHandler, statusCodeHandler } = require("../utils/errors/errors");
 
 // Twitter controllers
-
 let codeVerifier;
-
-async function getUserInfo(accessToken) {
-	try {
-		const { data } = await axios({
-			method: "GET",
-			url: `${process.env.TWITTER_AUTH_INFO_URL}?user.fields=profile_image_url`,
-			withCredentials: true,
-			headers: {
-				// Pass the access_token in the header
-				Authorization: `Bearer ${accessToken}`,
-			},
-		});
-		return data;
-	} catch (err) {
-		console.log(err);
-	}
-}
 
 exports.authorizeTwitter = (req, res, next) => {
 	function generateState() {
@@ -53,7 +40,7 @@ exports.authorizeTwitter = (req, res, next) => {
 	res.redirect(url);
 };
 
-exports.getTwitterTokens = (req, res, next) => {
+exports.getTwitterTokens = async (req, res, next) => {
 	let date = moment();
 	const { code, state } = req.query;
 	const userId = state.split(":")[1]; // Getting the userId
@@ -65,200 +52,138 @@ exports.getTwitterTokens = (req, res, next) => {
 			.send({ error: true, message: "Access denied or session expired" });
 	}
 
-	return axios({
-		method: "POST",
-		url: `${process.env.TWITTER_URL}/token`,
-		withCredentials: true,
-		headers: {
-			"Content-Type": "application/x-www-form-urlencoded",
-		},
-		data: {
-			code: code,
-			grant_type: "authorization_code",
-			client_id: `${process.env.TWITTER_CLIENT_ID}`,
-			redirect_uri: `${process.env.TWITTER_CALLBACK_URL}`,
-			code_verifier: `${codeVerifierr}`,
-		},
-	})
-		.then(async (data) => {
-			codeVerifier = null;
+	try {
+		const tokensData = await getTokens(code, codeVerifierr);
 
-			const {
-				data: { access_token, refresh_token, expires_in },
-			} = await data;
+		if (!tokensData) {
+			res.status(500).send({
+				error: true,
+				message: "Une erreur s'est produite lors de l'association du compte.",
+			});
+		}
 
-			if (!data) {
-				res.status(400).send({
-					error: true,
-					message: "Une erreur s'est produite lors de l'association du compte.",
-				});
-			}
+		const userData = await getUserInfo(tokensData.access_token);
 
-			const {
-				data: { id, profile_image_url, name, username },
-			} = await getUserInfo(access_token);
+		if (!userData) {
+			res.status(404).send({
+				error: true,
+				message: "Aucun compte n'a été trouvé",
+			});
+		}
 
-			SocialMediaTokenModel.findOne({ userId: userId })
-				.then((match) => {
-					if (!match) {
-						new SocialMediaTokenModel({
-							userId: userId,
-							twitter: {
-								accessToken: access_token,
-								twitterId: id,
-								twitterProfilPic: profile_image_url,
-								twitterName: name,
-								twitterUsername: "@" + username,
-								accessTokenExpireAt: date.add(
-									expires_in === 7200 ? "2" : "",
-									"h"
-								),
-								refreshToken: refresh_token,
-							},
+		codeVerifier = null;
+
+		SocialMediaTokenModel.findOne({ userId: userId })
+			.then((match) => {
+				if (!match) {
+					new SocialMediaTokenModel({
+						userId: userId,
+						twitter: {
+							twitterId: userData.id,
+							twitterProfilPic: userData.profile_image_url,
+							twitterName: userData.name,
+							twitterUsername: "@" + userData.username,
+							accessToken: tokensData.access_token,
+							accessTokenExpireAt: date.add(
+								tokensData.expires_in === 7200 ? "1" : "",
+								"m"
+							),
+							refreshToken: tokensData.refresh_token,
+						},
+					})
+						.save()
+						.then((LinkedMedia) => {
+							return res.status(201).send({
+								error: false,
+								message: "Ce compte Twitter a été lié à Arya avec succès",
+								data: LinkedMedia,
+							});
 						})
-							.save()
-							.then((LinkedMedia) => {
-								return res.status(201).send({
-									error: false,
-									message: "Ce compte Twitter a été lié à Arya avec succès",
-									data: LinkedMedia,
-								});
-							})
-							.catch((err) => res.status(500).send(err));
-					} else if (match.twitter.accessToken === undefined) {
-						SocialMediaTokenModel.findOneAndUpdate(
-							{ userId: userId },
-							{
-								$set: {
-									twitter: {
-										accessToken: access_token,
-										twitterId: id,
-										twitterProfilPic: profile_image_url,
-										twitterName: name,
-										twitterUsername: "@" + username,
-										accessTokenExpireAt: date.add(
-											expires_in === 7200 ? "2" : "",
-											"h"
-										),
-										refreshToken: refresh_token,
-									},
+						.catch((err) => res.status(500).send(err));
+				} else if (match.twitter.accessToken === undefined) {
+					SocialMediaTokenModel.findOneAndUpdate(
+						{ userId: userId },
+						{
+							$set: {
+								twitter: {
+									accessToken: tokensData.access_token,
+									twitterId: userData.id,
+									twitterProfilPic: userData.profile_image_url,
+									twitterName: userData.name,
+									twitterUsername: "@" + userData.username,
+									accessTokenExpireAt: date.add(
+										tokensData.expires_in === 7200 ? "2" : "",
+										"h"
+									),
+									refreshToken: tokensData.refresh_token,
 								},
 							},
-							{ upsert: true, new: true, setDefaultsOnInsert: true }
-						)
-							.then((updated) => {
-								return res.status(201).send({
-									error: false,
-									message: "Ce compte Twitter a été lié à Arya avec succès",
-									data: updated,
-								});
-							})
-							.catch((err) => res.status(500).send(err));
-					} else {
-						return res.status(400).send({
-							error: true,
-							message: "Ce compte Twitter est déjà lié à Arya",
-						});
-					}
-				})
-				.catch((err) => res.status(500).send(err));
-		})
-		.catch((err) => res.status(500).send(err));
+						},
+						{ upsert: true, new: true, setDefaultsOnInsert: true }
+					)
+						.then((updated) => {
+							return res.status(201).send({
+								error: false,
+								message: "Ce compte Twitter a été lié à Arya avec succès",
+								data: updated,
+							});
+						})
+						.catch((err) => res.status(500).send(err));
+				} else {
+					return res.status(400).send({
+						error: true,
+						message: "Ce compte Twitter est déjà lié à Arya",
+					});
+				}
+			})
+			.catch((err) => res.status(500).send(err));
+	} catch (err) {
+		const errorMsg = errorsHandler(err);
+		const statusCode = statusCodeHandler(err);
+		return res.status(statusCode).send({ error: true, message: errorMsg });
+	}
 };
 
-// exports.refreshTwitterToken = (req, res, next) => {
-// 	SocialMediaTokenModel.findOne({ userId: req.body.userId })
-// 		.then((tokens) => {
-// 			if (!tokens) {
-// 				return res.status(404).send({
-// 					error: true,
-// 					message: "Aucun compte Twitter n'est lié à ce compte",
-// 				});
-// 			}
-// 			return axios({
-// 				method: "POST",
-// 				url: `${process.env.TWITTER_URL}/token`,
-// 				withCredentials: true,
-// 				headers: {
-// 					"Content-Type": "application/x-www-form-urlencoded",
-// 				},
-// 				data: {
-// 					refresh_token: `${tokens.twitter.refreshToken}`,
-// 					grant_type: "refresh_token",
-// 					client_id: `${process.env.TWITTER_CLIENT_ID}`,
-// 				},
-// 			})
-// 				.then((data) => {
-// 					SocialMediaTokenModel.findOneAndUpdate(
-// 						{ userId: req.body.userId },
-// 						{
-// 							$set: {
-// 								twitter: {
-// 									accessToken: data.data.access_token,
-// 									refreshToken: data.data.refresh_token,
-// 								},
-// 							},
-// 						},
-// 						{
-// 							upsert: true,
-// 							setDefaultsOnInsert: true,
-// 						}
-// 					)
-// 						.then((updated) => res.status(200).send(updated))
-// 						.catch((err) => console.log(err));
-// 				})
-// 				.catch((err) => console.log(err));
-// 		})
-// 		.catch((err) => res.status(500).send(err));
-// };
-
-exports.revokeTokens = (req, res, next) => {
+exports.revokeTwitterTokens = (req, res, next) => {
 	SocialMediaTokenModel.findOne({ userId: req.params.id })
-		.then((tokens) => {
+		.then(async (tokens) => {
 			if (!tokens) {
 				return res.status(404).send({
 					error: true,
 					message: "Aucun compte Twitter n'est lié à ce compte",
 				});
 			}
+
 			if (tokens.twitter.accessToken === undefined) {
 				return res.status(404).send({
 					error: true,
 					message: "Aucun compte Twitter n'est lié à ce compte",
 				});
 			}
-			return axios({
-				method: "POST",
-				url: `${process.env.TWITTER_URL}/revoke`,
-				withCredentials: true,
-				headers: {
-					"Content-Type": "application/x-www-form-urlencoded",
-				},
-				data: {
-					token_type_hint: "access_token",
-					token: `${tokens.twitter.accessToken}`,
-					client_id: `${process.env.TWITTER_CLIENT_ID}`,
-				},
-			})
-				.then((data) => {
-					if (data.data.revoked === true) {
-						SocialMediaTokenModel.findOneAndUpdate(
-							{ userId: req.params.id },
-							{
-								$unset: {
-									twitter: "",
-								},
+			try {
+				const revokeTokenData = await revokeToken(tokens.twitter.accessToken);
+
+				if (revokeTokenData.revoked === true) {
+					SocialMediaTokenModel.findOneAndUpdate(
+						{ userId: req.params.id },
+						{
+							$unset: {
+								twitter: "",
 							},
-							{
-								new: true,
-								setDefaultsOnInsert: true,
-							}
-						)
-							.then((updated) => res.status(200).send(updated))
-							.catch((err) => res.status(500).send(err));
-					}
-				})
-				.catch((err) => res.status(500).send(err));
+						},
+						{
+							new: true,
+							setDefaultsOnInsert: true,
+						}
+					)
+						.then((updated) => res.status(200).send(updated))
+						.catch((err) => res.status(500).send(err));
+				}
+			} catch (err) {
+				const errorMsg = errorsHandler(err);
+				const statusCode = statusCodeHandler(err);
+				return res.status(statusCode).send({ error: true, message: errorMsg });
+			}
 		})
 		.catch((err) => res.status(500).send(err));
 };

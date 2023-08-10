@@ -6,6 +6,6 @@ const { authorization } = require("../middlewares/jwt.middleware");
 router.get("/twitter", socialMediaAuth.authorizeTwitter);
 router.get("/twitter/callback", socialMediaAuth.getTwitterTokens);
 
-router.post("/twitter/revoke/:id", socialMediaAuth.revokeTokens);
+router.post("/twitter/revoke/:id", socialMediaAuth.revokeTwitterTokens);
 
 module.exports = router;

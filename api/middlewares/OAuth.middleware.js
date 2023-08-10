@@ -1,13 +1,17 @@
 const SocialMediaTokenModel = require("../models/SocialMediaToken.model");
-const axios = require("axios");
 const moment = require("moment");
+const {
+	refreshTokens,
+	getUserInfo,
+} = require("../utils/helpers/twitter_api/twitterApi");
+const { errorsHandler, statusCodeHandler } = require("../utils/errors/errors");
 
 exports.OAuthTokensHandler = (req, res, next) => {
 	let date = moment();
 	const userId = req.body.userId || req.body.posterId;
 
 	SocialMediaTokenModel.findOne({ userId: userId })
-		.then((tokens) => {
+		.then(async (tokens) => {
 			if (!tokens) {
 				return res.status(404).send({
 					error: true,
@@ -18,47 +22,43 @@ exports.OAuthTokensHandler = (req, res, next) => {
 			const expireTime = tokens.twitter.accessTokenExpireAt;
 
 			if (date.isSameOrAfter(moment(expireTime))) {
-				return axios({
-					method: "POST",
-					url: `${process.env.TWITTER_URL}/token`,
-					withCredentials: true,
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded",
-					},
-					data: {
-						refresh_token: `${tokens.twitter.refreshToken}`,
-						grant_type: "refresh_token",
-						client_id: `${process.env.TWITTER_CLIENT_ID}`,
-					},
-				})
-					.then((data) => {
-						SocialMediaTokenModel.findOneAndUpdate(
-							{ userId: userId },
-							{
-								$set: {
-									twitter: {
-										accessToken: data.data.access_token,
-										accessTokenExpireAt: date.add(
-											data.data.expires_in === 7200 ? "2" : "",
-											"h"
-										),
-										refreshToken: data.data.refresh_token,
-									},
+				try {
+					const refreshTokensData = await refreshTokens(
+						tokens.twitter.refreshToken
+					);
+
+					const userData = await getUserInfo(refreshTokensData.access_token);
+
+					SocialMediaTokenModel.findOneAndUpdate(
+						{ userId: userId },
+						{
+							$set: {
+								twitter: {
+									twitterId: userData.id,
+									twitterProfilPic: userData.profile_image_url,
+									twitterName: userData.name,
+									twitterUsername: "@" + userData.username,
+									accessToken: refreshTokensData.access_token,
+									accessTokenExpireAt: date.add(
+										refreshTokensData.expires_in === 7200 ? "2" : "",
+										"h"
+									),
+									refreshToken: refreshTokensData.refresh_token,
 								},
 							},
-							{
-								upsert: true,
-								setDefaultsOnInsert: true,
-							}
-						)
-							.then((updated) => {
-								if (updated) {
-									next();
-								}
-							})
-							.catch((err) => console.log(err));
-					})
-					.catch((err) => console.log(err));
+						}
+					)
+						.then(() => next())
+						.catch((err) =>
+							res.status(500).send({ error: true, message: err })
+						);
+				} catch (err) {
+					const errorMsg = errorsHandler(err);
+					const statusCode = statusCodeHandler(err);
+					return res
+						.status(statusCode)
+						.send({ error: true, message: errorMsg });
+				}
 			} else {
 				next();
 			}
