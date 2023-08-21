@@ -96,7 +96,7 @@ const sendTweets = async (accessToken, text) => {
 				text: text,
 			},
 		});
-		return response.data.data;
+		return response.data;
 	} catch (err) {
 		throw err;
 	}

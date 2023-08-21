@@ -23,12 +23,13 @@ exports.sendEmail = async (email, subject, text) => {
 		const sent = await new Promise((resolve, reject) => {
 			transporter.sendMail(message, (err, data) => {
 				if (err) {
-					console.log(err);
 					reject(err);
+					throw err;
 				}
 				resolve(data);
 			});
 		});
+
 		return sent;
 	} catch (err) {
 		console.log(err);

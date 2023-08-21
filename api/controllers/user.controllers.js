@@ -78,7 +78,6 @@ exports.updateUserPicture = async (req, res, next) => {
 							error: true,
 							message:
 								"Une erreur est survenue lors du téléchargement de l'image sur Cloudinary.",
-							cloudinaryError: err,
 						});
 					}
 					// Updating the picture of the user
@@ -152,7 +151,7 @@ exports.sendEmailResetLink = async (req, res, next) => {
 	}
 
 	ResetEmailModel.findOne({ userEmail: newEmail })
-		.then((data) => {
+		.then(async (data) => {
 			if (data) {
 				return res.status(400).send({
 					error: true,
@@ -164,37 +163,35 @@ exports.sendEmailResetLink = async (req, res, next) => {
 			const uniqueToken = generateUniqueToken;
 			const url = `${process.env.CLIENT_URL}/verify/${user._id}/${uniqueToken}`;
 
-			sendEmail(
+			const sent = await sendEmail(
 				newEmail,
 				"Confirmation de changement d'adresse e-mail",
 				resetEmailText(user, url)
-			)
-				.then((sent) => {
-					if (!sent) {
-						return res.status(400).send({
-							error: false,
-							message: "L'envoie de l'email a échoué", // Couldn't send the email
-						});
-					}
-					new ResetEmailModel({
-						userId: user._id,
-						userEmail: newEmail,
-						uniqueToken: uniqueToken,
-					})
-						.save()
-						.then((emailModel) => {
-							res.status(201).send({
-								error: false,
-								message:
-									"Un lien de confirmation à été envoyé à votre nouvelle adresse mail", // A verification email has been sent
-								emailModel: emailModel,
-							});
-						})
-						.catch((err) => {
-							res.status(500).send(err);
-						});
+			);
+
+			if (!sent) {
+				return res.status(400).send({
+					error: false,
+					message: "L'envoie de l'email a échoué", // Couldn't send the email
+				});
+			}
+			new ResetEmailModel({
+				userId: user._id,
+				userEmail: newEmail,
+				uniqueToken: uniqueToken,
+			})
+				.save()
+				.then((emailModel) => {
+					res.status(201).send({
+						error: false,
+						message:
+							"Un lien de confirmation à été envoyé à votre nouvelle adresse mail", // A verification email has been sent
+						emailModel: emailModel,
+					});
 				})
-				.catch((err) => res.status(500).send(err));
+				.catch((err) => {
+					res.status(500).send(err);
+				});
 		})
 		.catch((err) => res.status(500).send(err));
 };
@@ -260,8 +257,6 @@ exports.updateUserPassword = async (req, res, next) => {
 // If the user forgot his password, then sending a reset code to his email
 exports.sendPasswordResetCode = async (req, res, next) => {
 	const userEmail = req.body.userEmail;
-	const generateResetCode = crypto.randomBytes(3).toString("hex");
-	const resetCode = generateResetCode;
 
 	const user = await UserModel.findOne({
 		_id: req.params.id,
@@ -274,61 +269,61 @@ exports.sendPasswordResetCode = async (req, res, next) => {
 			.send({ error: true, message: "Aucun utilisateur trouvé" }); // No user has been found
 	}
 
-	if (userEmail === user.email) {
-		ResetPasswordModel.findOne({ userId: user._id, userEmail: user.email })
-			.then((data) => {
-				// If the reset code has been sent already
-				if (data) {
-					return res.status(400).send({
-						error: true,
-						message: "Un email a déjà été envoyé", // An email has already been sent
-					});
-				}
-
-				sendEmail(
-					user.email,
-					"Rénitialisation du mot de passe",
-					resetPasswordText(user, resetCode)
-				)
-					.then((sent) => {
-						if (!sent) {
-							return res.status(400).send({
-								error: false,
-								message: "L'envoie de l'email a échoué", // Couldn't send the email
-							});
-						}
-						// If sent then create a reset password model
-						new ResetPasswordModel({
-							userId: user._id,
-							userEmail: user.email,
-							resetCode: resetCode,
-						})
-							.save()
-							.then((passwordModel) => {
-								res.status(201).send({
-									error: false,
-									message:
-										"Le code de réinitialisation a été envoyé à l'email correspondante", // A verification email has been sent
-									passwordModel: passwordModel,
-								});
-							})
-							.catch((err) => {
-								res.status(500).send(err);
-							});
-					})
-					.catch((err) => res.status(500).send(err));
-			})
-			.catch((err) => res.status(500).send(err));
-	} else {
-		res.status(404).send({
+	if (userEmail !== user.email) {
+		return res.status(404).send({
 			error: true,
 			message:
-				"L'adresse mail renseigné ne correspond à aucune adresse mail enregistré",
+				"L'adresse mail renseigné ne correspond pas à l'adresse mail enregistré",
 		});
 	}
+
+	ResetPasswordModel.findOne({ userId: user._id, userEmail: user.email })
+		.then(async (data) => {
+			// If the reset code has been sent already
+			if (data) {
+				return res.status(400).send({
+					error: true,
+					message: "Un email a déjà été envoyé", // An email has already been sent
+				});
+			}
+			const generateResetCode = crypto.randomBytes(3).toString("hex");
+			const resetCode = generateResetCode;
+
+			const sent = await sendEmail(
+				user.email,
+				"Rénitialisation du mot de passe",
+				resetPasswordText(user, resetCode)
+			);
+
+			if (!sent) {
+				return res.status(400).send({
+					error: false,
+					message: "L'envoie de l'email a échoué", // Couldn't send the email
+				});
+			}
+			// If sent then create a reset password model
+			new ResetPasswordModel({
+				userId: user._id,
+				userEmail: user.email,
+				resetCode: resetCode,
+			})
+				.save()
+				.then((passwordModel) => {
+					res.status(201).send({
+						error: false,
+						message:
+							"Le code de réinitialisation a été envoyé à l'email correspondante", // A verification email has been sent
+						passwordModel: passwordModel,
+					});
+				})
+				.catch((err) => {
+					res.status(500).send(err);
+				});
+		})
+		.catch((err) => res.status(500).send(err));
 };
 
-// Checks if the code has been verified, then authorize the user to update his
+// Checks if the code has been verified, then authorize the user to update his password
 exports.updateForgotPassword = async (req, res, next) => {
 	// Getting the reset password ticket
 	ResetPasswordModel.findOne({
@@ -401,12 +396,15 @@ exports.updateForgotPassword = async (req, res, next) => {
 												ResetPasswordModel.findOneAndDelete({
 													userEmail: user.email,
 												})
-													.then(() => {
-														res.status(200).send({
-															error: false,
-															message: "Mot de passe modifié avec succès", // Password successfully modified
-														});
-													})
+													// Password successfully modified
+													.then(() =>
+														res
+															.status(200)
+															.send({
+																error: false,
+																message: "Mot de passe modifié avec succès",
+															})
+													)
 													.catch((err) => res.status(500).send(err))
 											)
 											.catch((err) => res.status(500).send(err));

@@ -10,7 +10,6 @@ const {
 	getUserInfo,
 	revokeToken,
 } = require("../utils/helpers/twitter_api/twitterApi");
-const { errorsHandler, statusCodeHandler } = require("../utils/errors/errors");
 
 // Twitter controllers
 let codeVerifier;
@@ -54,22 +53,7 @@ exports.getTwitterTokens = async (req, res, next) => {
 
 	try {
 		const tokensData = await getTokens(code, codeVerifierr);
-
-		if (!tokensData) {
-			res.status(500).send({
-				error: true,
-				message: "Une erreur s'est produite lors de l'association du compte.",
-			});
-		}
-
 		const userData = await getUserInfo(tokensData.access_token);
-
-		if (!userData) {
-			res.status(404).send({
-				error: true,
-				message: "Aucun compte n'a été trouvé",
-			});
-		}
 
 		codeVerifier = null;
 
@@ -138,9 +122,7 @@ exports.getTwitterTokens = async (req, res, next) => {
 			})
 			.catch((err) => res.status(500).send(err));
 	} catch (err) {
-		const errorMsg = errorsHandler(err);
-		const statusCode = statusCodeHandler(err);
-		return res.status(statusCode).send({ error: true, message: errorMsg });
+		return res.status(parseInt(err.message.split(" ")[5]) || 500).send(err);
 	}
 };
 
@@ -160,30 +142,27 @@ exports.revokeTwitterTokens = (req, res, next) => {
 					message: "Aucun compte Twitter n'est lié à ce compte",
 				});
 			}
-			try {
-				const revokeTokenData = await revokeToken(tokens.twitter.accessToken);
 
-				if (revokeTokenData.revoked === true) {
-					SocialMediaTokenModel.findOneAndUpdate(
-						{ userId: req.params.id },
-						{
-							$unset: {
-								twitter: "",
-							},
+			const revokeTokenData = await revokeToken(tokens.twitter.accessToken);
+
+			if (revokeTokenData.revoked === true) {
+				SocialMediaTokenModel.findOneAndUpdate(
+					{ userId: req.params.id },
+					{
+						$unset: {
+							twitter: "",
 						},
-						{
-							new: true,
-							setDefaultsOnInsert: true,
-						}
-					)
-						.then((updated) => res.status(200).send(updated))
-						.catch((err) => res.status(500).send(err));
-				}
-			} catch (err) {
-				const errorMsg = errorsHandler(err);
-				const statusCode = statusCodeHandler(err);
-				return res.status(statusCode).send({ error: true, message: errorMsg });
+					},
+					{
+						new: true,
+						setDefaultsOnInsert: true,
+					}
+				)
+					.then((updated) => res.status(200).send(updated))
+					.catch((err) => res.status(500).send(err));
 			}
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) =>
+			res.status(parseInt(err.message.split(" ")[5]) || 500).send(err)
+		);
 };

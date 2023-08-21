@@ -12,37 +12,28 @@ exports.sendPost = (req, res, next) => {
 					message: "Aucun compte Twitter n'est lié à ce compte", // Twitter account not linked to this account
 				});
 			}
-			try {
-				const sendTweetsData = await sendTweets(
-					tokens.twitter.accessToken,
-					req.body.text
-				);
 
-				if (sendTweetsData) {
-					// Creates a new post if the tweet has been sent
-					new PostModel({
-						posterId: req.body.userId,
-						socialMedia: "twitter",
-						text: req.body.text,
-						media: req.body.media,
-						status: "sent",
-					})
-						.save()
-						.then((post) => {
-							res.status(201).send({
-								error: false,
-								message: "Tweet envoyé",
-								data: sendTweetsData,
-								post: post,
-							});
-						})
-						.catch((err) => res.status(500).send(err));
-				}
-			} catch (err) {
-				res.status(403).send({ error: true, message: err });
-			}
+			await sendTweets(tokens.twitter.accessToken, req.body.text);
+
+			// Creates a new post if the tweet has been sent
+			new PostModel({
+				posterId: req.body.userId,
+				socialMedia: "twitter",
+				text: req.body.text,
+				media: req.body.media,
+				status: "sent",
+			})
+				.save()
+				.then((post) =>
+					res
+						.status(201)
+						.send({ error: false, message: "Tweet envoyé", post: post })
+				)
+				.catch((err) => res.status(500).send(err));
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) =>
+			res.status(parseInt(err.message.split(" ")[5]) || 500).send(err)
+		);
 };
 
 exports.sendScheduledPost = (req, res, next) => {

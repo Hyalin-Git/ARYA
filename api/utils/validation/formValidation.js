@@ -1,9 +1,9 @@
-const { regex } = require("./RegexPatterns/regex");
+const { regex } = require("../RegexPatterns/regex");
 
-exports.formValidation = (req) => {
-	let isValid = true;
-	let message = "";
+let isValid = true;
+let message = "";
 
+exports.signUpValidation = (req) => {
 	switch (false) {
 		case regex.names.test(req.body.lastName || req.body.firstName):
 			isValid = false;
@@ -36,6 +36,27 @@ exports.formValidation = (req) => {
 			isValid = false;
 			// Date of birth is invalid
 			message = "Votre date de naissance n'est pas valide";
+			break;
+		default:
+			// Please fill in the form fields
+			message = "Veuillez remplir les champs du formulaire";
+	}
+
+	return { isValid, message };
+};
+
+exports.signInValidation = (req) => {
+	switch (false) {
+		case regex.email.test(req.body.email):
+			isValid = false;
+			// Email is invalid
+			message = "Adresse mail est invalide";
+			break;
+		case regex.password.test(req.body.password):
+			isValid = false;
+			// Password should contain at least 8 character, 1 number, 1 uppercase, 1 lowercase
+			message =
+				"Le mot de passe doit contenir 8 caractères, 1 chiffre, une majuscule, une minuscule et un symbol (!#@)";
 			break;
 		default:
 			// Please fill in the form fields

@@ -6,41 +6,11 @@ const SocialMediaTokenModel = require("../models/SocialMediaToken.model");
 const {
 	refreshTokens,
 	getUserInfo,
+	sendTweets,
 } = require("./helpers/twitter_api/twitterApi");
 const { errorsHandler } = require("./errors/errors");
 
-async function sendScheduledPost(tokens, post) {
-	try {
-		await axios({
-			method: "POST",
-			url: `${process.env.TWITTER_MANAGE_TWEETS_URL}`,
-			withCredentials: true,
-			headers: {
-				Authorization: `Bearer ${tokens.twitter.accessToken}`,
-			},
-			data: {
-				text: post.text,
-			},
-		});
-		// Once the tweet has been sent, update the corresponding PostModel
-		await PostModel.findOneAndUpdate(
-			{ text: post.text, posterId: post.posterId },
-			{
-				$set: {
-					status: "sent",
-				},
-			},
-			{
-				new: true,
-				setDefaultsOnInsert: true,
-			}
-		);
-	} catch (err) {
-		console.log(err);
-	}
-}
-
-const job = new CronJob(
+new CronJob(
 	"* * * * *",
 	// Every minute cron will call this function
 	async function () {
@@ -60,8 +30,23 @@ const job = new CronJob(
 							case "twitter":
 								SocialMediaTokenModel.findOne({ userId: post.posterId })
 									// Retrieves the tokens of the given user
-									.then((tokens) => {
-										sendScheduledPost(tokens, post);
+									.then(async (tokens) => {
+										await sendTweets(tokens, post);
+
+										PostModel.findOneAndUpdate(
+											{ text: post.text, posterId: post.posterId },
+											{
+												$set: {
+													status: "sent",
+												},
+											},
+											{
+												new: true,
+												setDefaultsOnInsert: true,
+											}
+										)
+											.then(() => console.log("Message envoyé"))
+											.catch((err) => console.log(err));
 									})
 									.catch((err) => console.log(err));
 								break;
@@ -131,8 +116,7 @@ new CronJob(
 								.then((update) => console.log(update))
 								.catch((err) => console.log(err));
 						} catch (err) {
-							const errorMsg = errorsHandler(err);
-							console.log(errorMsg);
+							console.log(err.message);
 						}
 					}
 				});

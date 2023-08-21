@@ -1,26 +1,31 @@
+// Model
 const UserModel = require("../models/user.model");
 const UserVerificationModel = require("../models/UserVerification.model");
-const { regex } = require("../utils/RegexPatterns/regex");
-const { sendEmail } = require("../utils/mail/nodeMailer");
-const { generateAccessToken } = require("../utils/jwt/generateAccessToken");
-const { generateRefreshToken } = require("../utils/jwt/generateRefreshToken");
+const RefreshTokenModel = require("../models/RefreshToken.model");
+// Libraries
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const RefreshTokenModel = require("../models/RefreshToken.model");
+// Utils
+const { sendEmail } = require("../utils/mail/nodeMailer");
+const { generateAccessToken } = require("../utils/jwt/generateAccessToken");
+const { generateRefreshToken } = require("../utils/jwt/generateRefreshToken");
 const { verifyAccountText } = require("../utils/mail/mailText");
-const { formValidation } = require("../utils/formValidation");
+const {
+	signUpValidation,
+	signInValidation,
+} = require("../utils/validation/formValidation");
 
 // SignUp controller
 exports.signUp = (req, res, next) => {
 	// form validation
-	const response = formValidation(req);
-
-	// If one of those case set false to isValid, then return this err
-	if (!response.isValid) {
-		return res.status(400).send({ message: response.message });
+	const data = signUpValidation(req);
+	// If not valid then return an err with the corresponding field
+	if (!data.isValid) {
+		return res.status(400).send({ message: data.message });
 	}
-	// Else salt the password 10 times
+
+	// Else hash the password 10 times
 	bcrypt
 		.hash(req.body.password, 10)
 		.then((hash) => {
@@ -37,35 +42,34 @@ exports.signUp = (req, res, next) => {
 			});
 			user
 				.save()
-				.then((user) => {
+				.then(async (user) => {
 					const generateUniqueToken = crypto.randomBytes(32).toString("hex");
 					const uniqueToken = generateUniqueToken;
 					const url = `${process.env.CLIENT_URL}/verify/${user._id}/${uniqueToken}`;
-					sendEmail(
+
+					const sent = await sendEmail(
 						user.email,
 						"Vérification de votre adresse e-mail",
 						verifyAccountText(user, url)
-					)
-						.then((sent) => {
-							if (!sent) {
-								return res.status(500).send({
-									error: true,
-									message:
-										"Une erreur est survenue lors de l'envoie de l'email",
-								});
-							}
-							new UserVerificationModel({
-								userId: user._id,
-								uniqueToken: uniqueToken,
-							})
-								.save()
-								.then(() => {
-									res.status(201).send({
-										error: false,
-										message: "Un email de vérification a été envoyé !",
-									});
-								})
-								.catch((err) => res.status(500).send(err));
+					);
+
+					if (!sent) {
+						return res.status(500).send({
+							error: true,
+							message: "Une erreur est survenue lors de l'envoie de l'email",
+						});
+					}
+
+					new UserVerificationModel({
+						userId: user._id,
+						uniqueToken: uniqueToken,
+					})
+						.save()
+						.then(() => {
+							res.status(201).send({
+								error: false,
+								message: "Un email de vérification a été envoyé !",
+							});
 						})
 						.catch((err) => res.status(500).send(err));
 				})
@@ -81,6 +85,13 @@ exports.signIn = (req, res, next) => {
 			if (!user) {
 				return res.status(404).send({ message: "Adresse mail introuvable" }); // Cloudn't find a corresponding email
 			} else {
+				// Form validation
+				const data = signInValidation(req);
+				// If not valid then return an err with the corresponding field
+				if (!data.isValid) {
+					return res.status(400).send({ message: data.message });
+				}
+
 				bcrypt
 					.compare(req.body.password, user.password)
 					.then((match) => {
@@ -101,8 +112,6 @@ exports.signIn = (req, res, next) => {
 							})
 								.save()
 								.then(() => {
-									req.headers["Authorization"] = `Bearer ${accessToken}`;
-									console.log(req.headers);
 									res.status(201).send({
 										userId: user._id,
 										isAdmin: user.admin,
@@ -124,8 +133,6 @@ exports.signIn = (req, res, next) => {
 											{ setDefaultsOnInsert: true, new: true }
 										)
 											.then(() => {
-												req.headers["Authorization"] = `Bearer ${accessToken}`;
-												console.log(req.headers);
 												res.status(200).send({
 													userId: user._id,
 													isAdmin: user.admin,
@@ -231,7 +238,7 @@ exports.refreshToken = (req, res, next) => {
 							}); // Refresh token does not match
 						}
 					} else {
-						// Else if there no err, we are checking if the user existing in the DB
+						// If there is no err, we are checking if the user existing in the DB
 						if (decodedToken) {
 							UserModel.findById({ _id: decodedToken.userId })
 								.then((user) => {
