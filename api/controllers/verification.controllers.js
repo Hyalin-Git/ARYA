@@ -156,41 +156,43 @@ exports.checkUserVerification = (req, res, next) => {
 
 			// If the corresponding user isn't verified send an email
 			if (!user.verified) {
-				UserVerificationModel.findOne({ userId: user._id }).then((data) => {
-					if (data) {
-						return res.status(400).send({
-							error: true,
-							message: "Un email a déjà été envoyé", // An email has already been sent
-						});
-					}
-					const generateToken = crypto.randomBytes(32).toString("hex");
-					const uniqueToken = generateToken;
-					const url = `${process.env.CLIENT_URL}/users/${user._id}/verify/${uniqueToken}`;
-					sendEmail(user.email, "Verify Email", url)
-						.then((sent) => {
-							if (!sent) {
-								return res.status(400).send({
-									error: false,
-									message: "L'envoie de l'email a échoué", // Couldn't send the email
-								});
-							}
-							const token = new UserVerificationModel({
-								userId: user._id,
-								uniqueToken: uniqueToken,
+				UserVerificationModel.findOne({ userId: user._id })
+					.then((data) => {
+						if (data) {
+							return res.status(400).send({
+								error: true,
+								message: "Un email a déjà été envoyé", // An email has already been sent
 							});
-							token
-								.save()
-								.then((token) =>
-									res.status(201).send({
+						}
+						const generateToken = crypto.randomBytes(32).toString("hex");
+						const uniqueToken = generateToken;
+						const url = `${process.env.CLIENT_URL}/users/${user._id}/verify/${uniqueToken}`;
+						sendEmail(user.email, "Verify Email", url)
+							.then((sent) => {
+								if (!sent) {
+									return res.status(400).send({
 										error: false,
-										message: "Un email de vérification a été envoyé !", // A verification email has been sent
-										token: token,
-									})
-								)
-								.catch((err) => res.status(500).send(err));
-						})
-						.catch((err) => res.status(500).send(err));
-				});
+										message: "L'envoie de l'email a échoué", // Couldn't send the email
+									});
+								}
+								const token = new UserVerificationModel({
+									userId: user._id,
+									uniqueToken: uniqueToken,
+								});
+								token
+									.save()
+									.then((token) =>
+										res.status(201).send({
+											error: false,
+											message: "Un email de vérification a été envoyé !", // A verification email has been sent
+											token: token,
+										})
+									)
+									.catch((err) => res.status(500).send(err));
+							})
+							.catch((err) => res.status(500).send(err));
+					})
+					.catch((err) => res.status(500).send(err));
 			} else {
 				res.status(200).send({
 					error: false,

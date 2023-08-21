@@ -9,11 +9,11 @@ const SocialMediaTokenSchema = new mongoose.Schema(
 			ref: "User",
 		},
 		twitter: {
-			accessToken: { type: String, required: true },
 			twitterId: { type: String, required: true },
 			twitterProfilPic: { type: String },
 			twitterName: { type: String, required: true },
 			twitterUsername: { type: String, required: true },
+			accessToken: { type: String, required: true },
 			accessTokenExpireAt: {
 				type: Date,
 				required: true,
@@ -23,12 +23,15 @@ const SocialMediaTokenSchema = new mongoose.Schema(
 				required: true,
 			},
 		},
-		tiktok: {
-			accessToken: { type: String },
-			refreshToken: {
-				type: String,
-			},
-		},
+		// tiktok: {
+		// 	tiktokId: { type: String, required: true },
+		// 	tiktokName: { type: String, required: true },
+		// 	tiktokAvatar: { type: String, required: true },
+		// 	accessToken: { type: String },
+		// 	refreshToken: {
+		// 		type: String,
+		// 	},
+		// },
 	},
 
 	{

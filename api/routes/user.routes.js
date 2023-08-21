@@ -9,8 +9,8 @@ const { multerErrorsHandler } = require("../utils/multerErrors");
 
 const userController = require("../controllers/user.controllers");
 
-router.get("/", authorization, userController.getUsers);
-router.get("/:id", authorization, userController.getUser);
+router.get("/", userController.getUsers);
+router.get("/:id", userController.getUser);
 router.delete("/:id", authorization, userController.deleteOneUser);
 
 // Update user picture

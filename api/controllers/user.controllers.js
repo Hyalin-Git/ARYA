@@ -12,9 +12,12 @@ const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
 // Get all users
 exports.getUsers = (req, res, next) => {
 	UserModel.find()
+		.select("-password")
 		.then((users) => {
 			if (!users) {
-				return res.status(404).send("Aucun utilisateur n'a été trouvé");
+				return res
+					.status(404)
+					.send({ error: true, message: "Aucun utilisateur n'a été trouvé" }); // No users found
 			}
 			res.status(200).send(users);
 		})
@@ -24,9 +27,12 @@ exports.getUsers = (req, res, next) => {
 // Get one user
 exports.getUser = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id })
+		.select("-password")
 		.then((user) => {
 			if (!user) {
-				return res.status(404).send("Cet utilisateur n'existe pas");
+				return res
+					.status(404)
+					.send({ error: true, message: "Cet utilisateur n'existe pas" }); // This user does not exist
 			}
 			res.status(200).send(user);
 		})
@@ -38,9 +44,10 @@ exports.deleteOneUser = (req, res, next) => {
 	UserModel.findByIdAndDelete({ _id: req.params.id })
 		.then((user) => {
 			if (!user) {
-				return res
-					.status(404)
-					.send("Impossible de supprimer un utilisateur qui n'existe pas");
+				return res.status(404).send({
+					error: true,
+					message: "Impossible de supprimer un utilisateur qui n'existe pas",
+				}); // Impossible to delete a non-existent user
 			}
 			res.status(200).send(user);
 		})
@@ -66,6 +73,7 @@ exports.updateUserPicture = async (req, res, next) => {
 				},
 				async (err, result) => {
 					if (err) {
+						// An error occurred while uploading the image to Cloudinary.
 						res.status(500).send({
 							error: true,
 							message:
@@ -83,13 +91,13 @@ exports.updateUserPicture = async (req, res, next) => {
 							if (!user) {
 								return res.status(404).send({
 									error: true,
-									message: "Cet utilisateur n'existe pas.",
+									message: "Cet utilisateur n'existe pas.", // This user does not exist
 								});
 							}
 
 							res.status(200).send({
 								error: false,
-								message: "Photo de profil modifiée avec succès.",
+								message: "Photo de profil modifiée avec succès.", // Profil picture modified
 								user: user,
 							});
 						})
@@ -98,9 +106,7 @@ exports.updateUserPicture = async (req, res, next) => {
 			)
 			.end(resizedAndCovertedImg);
 	} catch (err) {
-		return res
-			.status(500)
-			.send({ error: true, message: "Une erreur est survenue" });
+		return res.status(500).send({ error: true, message: err.message });
 	}
 };
 
@@ -120,7 +126,7 @@ exports.updateUserBio = (req, res, next) => {
 	)
 		.then((user) => {
 			if (!user) {
-				return res.status(404).send("Cet utilisateur n'existe pas");
+				return res.status(404).send("Cet utilisateur n'existe pas"); // This user does not exist
 			}
 			res.status(200).send(user);
 		})

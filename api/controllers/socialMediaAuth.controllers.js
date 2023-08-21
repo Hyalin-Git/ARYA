@@ -85,8 +85,8 @@ exports.getTwitterTokens = async (req, res, next) => {
 							twitterUsername: "@" + userData.username,
 							accessToken: tokensData.access_token,
 							accessTokenExpireAt: date.add(
-								tokensData.expires_in === 7200 ? "1" : "",
-								"m"
+								tokensData.expires_in === 7200 ? "2" : "",
+								"h"
 							),
 							refreshToken: tokensData.refresh_token,
 						},
