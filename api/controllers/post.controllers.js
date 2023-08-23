@@ -1,7 +1,7 @@
-const moment = require("moment");
 const PostModel = require("../models/Post.model");
 const SocialMediaTokenModel = require("../models/SocialMediaToken.model");
-const { sendTweets } = require("../utils/helpers/twitter_api/twitterApi");
+const moment = require("moment");
+const { sendTwitterPost } = require("../services/twitter.services");
 
 exports.sendPost = (req, res, next) => {
 	SocialMediaTokenModel.findOne({ userId: req.body.userId })
@@ -13,14 +13,13 @@ exports.sendPost = (req, res, next) => {
 				});
 			}
 
-			await sendTweets(tokens.twitter.accessToken, req.body.text);
+			await sendTwitterPost(tokens.twitter.accessToken, req.body.text);
 
 			// Creates a new post if the tweet has been sent
 			new PostModel({
 				posterId: req.body.userId,
 				socialMedia: "twitter",
 				text: req.body.text,
-				media: req.body.media,
 				status: "sent",
 			})
 				.save()

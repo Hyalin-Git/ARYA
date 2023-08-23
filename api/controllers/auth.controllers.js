@@ -14,7 +14,7 @@ const { verifyAccountText } = require("../utils/mail/mailText");
 const {
 	signUpValidation,
 	signInValidation,
-} = require("../utils/validation/formValidation");
+} = require("../helpers/formValidation");
 
 // SignUp controller
 exports.signUp = (req, res, next) => {

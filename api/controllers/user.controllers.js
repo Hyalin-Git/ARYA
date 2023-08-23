@@ -1,12 +1,12 @@
 const UserModel = require("../models/user.model");
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
-const { sendEmail } = require("../utils/mail/nodeMailer");
-const { regex } = require("../utils/RegexPatterns/regex");
 const ResetPasswordModel = require("../models/ResetPassword.model");
 const ResetEmailModel = require("../models/ResetEmail.model");
-const { resetPasswordText, resetEmailText } = require("../utils/mail/mailText");
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const cloudinary = require("../config/cloudinary.config");
+const { sendEmail } = require("../utils/mail/nodeMailer");
+const { regex } = require("../utils/RegexPatterns/regex");
+const { resetPasswordText, resetEmailText } = require("../utils/mail/mailText");
 const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
 
 // Get all users
@@ -398,12 +398,10 @@ exports.updateForgotPassword = async (req, res, next) => {
 												})
 													// Password successfully modified
 													.then(() =>
-														res
-															.status(200)
-															.send({
-																error: false,
-																message: "Mot de passe modifié avec succès",
-															})
+														res.status(200).send({
+															error: false,
+															message: "Mot de passe modifié avec succès",
+														})
 													)
 													.catch((err) => res.status(500).send(err))
 											)

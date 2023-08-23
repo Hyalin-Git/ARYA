@@ -1,4 +1,4 @@
-const { regex } = require("../RegexPatterns/regex");
+const { regex } = require("../utils/RegexPatterns/regex");
 
 let isValid = true;
 let message = "";

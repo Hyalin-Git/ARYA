@@ -1,20 +1,30 @@
 require("dotenv").config({ path: "./config/.env" });
+const https = require("https");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
+const fs = require("fs");
 const cors = require("cors");
 require("./config/db.config");
 require("./utils/cronJob");
 
 // routes
 const authRouter = require("./routes/auth.routes");
-const socialMediaAuthRouter = require("./routes/socialMediaAuth.routes");
+const twitterRouter = require("./routes/twitter.routes");
+const facebookRouter = require("./routes/facebook.routes");
 const userRouter = require("./routes/user.routes");
 const postRouter = require("./routes/post.routes");
 const verificationRouter = require("./routes/verification.routes");
 const { authorization } = require("./middlewares/jwt.middleware");
 
 const app = express();
+
+const privateKey = fs.readFileSync("./config/localhost-key.pem", "utf8");
+const certificate = fs.readFileSync("./config/localhost.pem", "utf8");
+
+const credentials = { key: privateKey, cert: certificate };
+
+const httpsServer = https.createServer(credentials, app);
 
 const corsOptions = {
 	origin: `*`,
@@ -35,7 +45,8 @@ app.use(cookieParser());
 app.use(helmet());
 
 app.use("/api/auth", authRouter);
-app.use("/api/social-media/auth", socialMediaAuthRouter);
+app.use("/api/twitter/auth", twitterRouter);
+app.use("/api/facebook/auth", facebookRouter);
 app.use("/api/users", userRouter);
 app.use("/api/post", postRouter);
 app.use("/api/verification", verificationRouter);
@@ -50,7 +61,7 @@ app.get("/login/success", authorization, (req, res, next) => {
 	}
 });
 
-app.listen(process.env.PORT, (err) => {
+httpsServer.listen(process.env.PORT, (err) => {
 	if (err) {
 		console.log(err);
 	} else {

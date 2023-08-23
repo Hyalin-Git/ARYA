@@ -1,25 +1,19 @@
-const crypto = require("crypto");
-const {
-	generateCodeVerifier,
-	generateCodeChallenge,
-} = require("../utils/OAuth2ChallengeGenerator/challengeGenerator");
-const SocialMediaTokenModel = require("../models/SocialMediaToken.model");
+const SocialMediaTokenModel = require("../../models/SocialMediaToken.model");
+const generateCodeChallenge = require("../../helpers/generateCodeChallenge");
+const generateCodeVerifier = require("../../helpers/generateCodeVerifier");
+const generateState = require("../../helpers/generateState");
+
 const moment = require("moment");
 const {
-	getTokens,
-	getUserInfo,
-	revokeToken,
-} = require("../utils/helpers/twitter_api/twitterApi");
+	getTwitterTokens,
+	getTwitterUserInfo,
+	revokeTwitterToken,
+} = require("../../services/twitter.services");
 
-// Twitter controllers
 let codeVerifier;
 
-exports.authorizeTwitter = (req, res, next) => {
-	function generateState() {
-		const state = crypto.randomBytes(16).toString("hex");
-		return state;
-	}
-
+// Twitter controllers
+exports.authorizeTwitterLink = (req, res, next) => {
 	codeVerifier = generateCodeVerifier();
 	const codeChallenge = generateCodeChallenge(codeVerifier);
 
@@ -40,7 +34,7 @@ exports.authorizeTwitter = (req, res, next) => {
 };
 
 exports.getTwitterTokens = async (req, res, next) => {
-	let date = moment();
+	const date = moment();
 	const { code, state } = req.query;
 	const userId = state.split(":")[1]; // Getting the userId
 	const codeVerifierr = codeVerifier;
@@ -52,8 +46,8 @@ exports.getTwitterTokens = async (req, res, next) => {
 	}
 
 	try {
-		const tokensData = await getTokens(code, codeVerifierr);
-		const userData = await getUserInfo(tokensData.access_token);
+		const tokensData = await getTwitterTokens(code, codeVerifierr);
+		const userData = await getTwitterUserInfo(tokensData.access_token);
 
 		codeVerifier = null;
 
@@ -76,11 +70,11 @@ exports.getTwitterTokens = async (req, res, next) => {
 						},
 					})
 						.save()
-						.then((LinkedMedia) => {
+						.then(() => {
+							// In the future will redirect to the frontend
 							return res.status(201).send({
 								error: false,
 								message: "Ce compte Twitter a été lié à Arya avec succès",
-								data: LinkedMedia,
 							});
 						})
 						.catch((err) => res.status(500).send(err));
@@ -105,11 +99,11 @@ exports.getTwitterTokens = async (req, res, next) => {
 						},
 						{ upsert: true, new: true, setDefaultsOnInsert: true }
 					)
-						.then((updated) => {
+						.then(() => {
+							// In the future will redirect to the frontend
 							return res.status(201).send({
 								error: false,
 								message: "Ce compte Twitter a été lié à Arya avec succès",
-								data: updated,
 							});
 						})
 						.catch((err) => res.status(500).send(err));
@@ -143,7 +137,9 @@ exports.revokeTwitterTokens = (req, res, next) => {
 				});
 			}
 
-			const revokeTokenData = await revokeToken(tokens.twitter.accessToken);
+			const revokeTokenData = await revokeTwitterToken(
+				tokens.twitter.accessToken
+			);
 
 			if (revokeTokenData.revoked === true) {
 				SocialMediaTokenModel.findOneAndUpdate(

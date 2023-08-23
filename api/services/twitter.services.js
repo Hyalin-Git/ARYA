@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const getTokens = async (code, codeVerifier) => {
+const getTwitterTokens = async (code, codeVerifier) => {
 	try {
 		const response = await axios({
 			method: "POST",
@@ -23,7 +23,7 @@ const getTokens = async (code, codeVerifier) => {
 	}
 };
 
-const getUserInfo = async (accessToken) => {
+const getTwitterUserInfo = async (accessToken) => {
 	try {
 		const response = await axios({
 			method: "GET",
@@ -40,7 +40,7 @@ const getUserInfo = async (accessToken) => {
 	}
 };
 
-const refreshTokens = async (refreshToken) => {
+const refreshTwitterTokens = async (refreshToken) => {
 	try {
 		const response = await axios({
 			method: "POST",
@@ -61,7 +61,7 @@ const refreshTokens = async (refreshToken) => {
 	}
 };
 
-const revokeToken = async (accessToken) => {
+const revokeTwitterToken = async (accessToken) => {
 	try {
 		const response = await axios({
 			method: "POST",
@@ -82,7 +82,7 @@ const revokeToken = async (accessToken) => {
 	}
 };
 
-const sendTweets = async (accessToken, text) => {
+const sendTwitterPost = async (accessToken, text) => {
 	try {
 		const response = await axios({
 			method: "POST",
@@ -103,9 +103,9 @@ const sendTweets = async (accessToken, text) => {
 };
 
 module.exports = {
-	getTokens,
-	getUserInfo,
-	refreshTokens,
-	revokeToken,
-	sendTweets,
+	getTwitterTokens,
+	getTwitterUserInfo,
+	refreshTwitterTokens,
+	revokeTwitterToken,
+	sendTwitterPost,
 };

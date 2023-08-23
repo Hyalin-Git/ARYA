@@ -1,10 +1,6 @@
 const crypto = require("crypto");
-exports.generateCodeVerifier = () => {
-	const codeVerifier = crypto.randomBytes(32).toString("hex");
-	return codeVerifier;
-};
 
-exports.generateCodeChallenge = (codeVerifier) => {
+function generateCodeChallenge(codeVerifier) {
 	const codeChallenge = crypto
 		.createHash("sha256")
 		.update(codeVerifier)
@@ -14,4 +10,6 @@ exports.generateCodeChallenge = (codeVerifier) => {
 		.replace(/\//g, "_");
 
 	return codeChallenge;
-};
+}
+
+module.exports = generateCodeChallenge;
