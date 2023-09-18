@@ -1,5 +1,9 @@
 const router = require("express").Router();
-const { authorization } = require("../middlewares/jwt.middleware");
+const {
+	authenticate,
+	authorize,
+	isAdmin,
+} = require("../middlewares/jwt.middleware");
 const {
 	checkUserPassword,
 	checkIfUserVerified,
@@ -9,9 +13,9 @@ const { multerErrorsHandler } = require("../utils/multerErrors");
 
 const userController = require("../controllers/user.controllers");
 
-router.get("/", userController.getUsers);
-router.get("/:id", userController.getUser);
-router.delete("/:id", authorization, userController.deleteOneUser);
+router.get("/", authenticate, userController.getUsers);
+router.get("/:id", authenticate, userController.getUser);
+router.delete("/:id", authenticate, userController.deleteOneUser);
 
 // Update user picture
 router.put(
@@ -23,9 +27,10 @@ router.put(
 
 // Update user bio
 router.put(
-	"/:id/update-bio",
-	checkIfUserVerified,
-	userController.updateUserBio
+	"/:id/update-user",
+	authenticate,
+	authorize,
+	userController.updateUser
 );
 // Update user phone
 router.put(

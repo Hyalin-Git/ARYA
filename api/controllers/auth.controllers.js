@@ -21,9 +21,9 @@ exports.signUp = (req, res, next) => {
 	// form validation
 	const data = signUpValidation(req);
 	// If not valid then return an err with the corresponding field
-	if (!data.isValid) {
-		return res.status(400).send({ message: data.message });
-	}
+	// if (!data.isValid) {
+	// 	return res.status(400).send({ message: data.message });
+	// }
 
 	// Else hash the password 10 times
 	bcrypt
@@ -88,9 +88,9 @@ exports.signIn = (req, res, next) => {
 				// Form validation
 				const data = signInValidation(req);
 				// If not valid then return an err with the corresponding field
-				if (!data.isValid) {
-					return res.status(400).send({ message: data.message });
-				}
+				// if (!data.isValid) {
+				// 	return res.status(400).send({ message: data.message });
+				// }
 
 				bcrypt
 					.compare(req.body.password, user.password)

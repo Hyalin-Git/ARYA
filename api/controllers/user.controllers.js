@@ -109,12 +109,13 @@ exports.updateUserPicture = async (req, res, next) => {
 	}
 };
 
-// Update user bio
-exports.updateUserBio = (req, res, next) => {
+// Update user
+exports.updateUser = (req, res, next) => {
 	UserModel.findByIdAndUpdate(
 		{ _id: req.params.id },
 		{
 			$set: {
+				userName: "@" + req.body.userName,
 				biographie: req.body.biographie,
 			},
 		},

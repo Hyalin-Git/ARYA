@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const UserModel = require("../models/user.model");
 
-exports.authorization = (req, res, next) => {
+exports.authenticate = (req, res, next) => {
 	const token = req.headers?.authorization?.split(" ")[1];
 	if (!token) {
 		return res
@@ -19,6 +19,7 @@ exports.authorization = (req, res, next) => {
 				if (decoded) {
 					let user = await UserModel.findById(decoded.userId);
 					res.locals.user = user;
+
 					console.log(user);
 					console.log(decoded);
 					console.log(
@@ -31,9 +32,23 @@ exports.authorization = (req, res, next) => {
 	}
 };
 
+exports.authorize = (req, res, next) => {
+	let user = res.locals.user;
+	const targetUser = req.params.id;
+
+	if (targetUser === user._id.toString()) {
+		next();
+	} else {
+		return res.status(403).send({
+			error: true,
+			message: "Access denied",
+		});
+	}
+};
+
 exports.isAdmin = (req, res, next) => {
 	let user = res.locals.user;
-	if (user.isAdmin === true) {
+	if (user.admin === true) {
 		next();
 	} else {
 		res.sendStatus(401);

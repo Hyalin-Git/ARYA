@@ -3,12 +3,14 @@ const nodemailer = require("nodemailer");
 exports.sendEmail = async (email, subject, text) => {
 	const transport = {
 		host: `${process.env.HOST}`,
-		service: `${process.env.SERVICE}`,
-		port: Number(process.env.PORT),
-		secure: Boolean(process.env.SECURE),
+		port: 587,
+		secure: false,
 		auth: {
 			user: `${process.env.USER}`,
 			pass: `${process.env.PASS}`,
+		},
+		tls: {
+			rejectUnauthorized: false,
 		},
 	};
 	const message = {

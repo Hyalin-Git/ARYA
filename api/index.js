@@ -9,13 +9,14 @@ require("./config/db.config");
 require("./utils/cronJob");
 
 // routes
+const adminRouter = require("./routes/admin.routes");
 const authRouter = require("./routes/auth.routes");
 const twitterRouter = require("./routes/twitter.routes");
 const facebookRouter = require("./routes/facebook.routes");
 const userRouter = require("./routes/user.routes");
 const postRouter = require("./routes/post.routes");
 const verificationRouter = require("./routes/verification.routes");
-const { authorization } = require("./middlewares/jwt.middleware");
+const { authenticate } = require("./middlewares/jwt.middleware");
 
 const app = express();
 
@@ -44,6 +45,8 @@ app.use(cookieParser());
 // secure Express apps by setting HTTP response headers
 app.use(helmet());
 
+app.use("/api/admin", adminRouter);
+
 app.use("/api/auth", authRouter);
 app.use("/api/twitter/auth", twitterRouter);
 app.use("/api/facebook/auth", facebookRouter);
@@ -51,7 +54,7 @@ app.use("/api/users", userRouter);
 app.use("/api/post", postRouter);
 app.use("/api/verification", verificationRouter);
 
-app.get("/login/success", authorization, (req, res, next) => {
+app.get("/login/success", authenticate, (req, res, next) => {
 	if (req.headers?.authorization?.split(" ")[1]) {
 		res.status(200).send({
 			error: false,

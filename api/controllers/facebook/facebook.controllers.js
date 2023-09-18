@@ -43,7 +43,6 @@ exports.getFacebookTokens = async (req, res, next) => {
 	try {
 		const tokensData = await getTokensFacebook(code);
 		const userData = await getFacebookUserInfo(tokensData.access_token);
-		console.log(tokensData);
 
 		SocialMediaTokenModel.findOne({ userId: userId })
 			.then((match) => {
