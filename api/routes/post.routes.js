@@ -1,8 +1,15 @@
 const router = require("express").Router();
-const { OAuthTwitter } = require("../middlewares/OAuth.middleware");
 const postController = require("../controllers/post.controllers");
 
-router.post("/", OAuthTwitter, postController.sendPost);
-router.post("/scheduled", OAuthTwitter, postController.sendScheduledPost);
+router.get("/:id", postController.getPost);
+router.get("/", postController.getPosts);
+
+router.post("/", postController.sendPost);
+
+router.put("/:id", postController.updatePost);
+router.patch("/add-react/:id", postController.addReaction);
+router.patch("/remove-react/:id", postController.removeReaction);
+
+router.delete("/:id", postController.deletePost);
 
 module.exports = router;

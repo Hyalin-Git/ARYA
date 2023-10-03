@@ -162,3 +162,33 @@ exports.revokeTwitterTokens = (req, res, next) => {
 			res.status(parseInt(err.message.split(" ")[5]) || 500).send(err)
 		);
 };
+
+// SocialMediaTokenModel.findOne({ userId: req.body.userId })
+// .then(async (tokens) => {
+// 	if (!tokens) {
+// 		return res.status(404).send({
+// 			error: true,
+// 			message: "Aucun compte Twitter n'est lié à ce compte", // Twitter account not linked to this account
+// 		});
+// 	}
+
+// 	await sendTwitterPost(tokens.twitter.accessToken, req.body.text);
+
+// 	// Creates a new post if the tweet has been sent
+// 	new PostSocialMediaModel({
+// 		posterId: req.body.userId,
+// 		socialMedia: "twitter",
+// 		text: req.body.text,
+// 		status: "sent",
+// 	})
+// 		.save()
+// 		.then((post) =>
+// 			res
+// 				.status(201)
+// 				.send({ error: false, message: "Tweet envoyé", post: post })
+// 		)
+// 		.catch((err) => res.status(500).send(err));
+// })
+// .catch((err) =>
+// 	res.status(parseInt(err.message.split(" ")[5]) || 500).send(err)
+// );

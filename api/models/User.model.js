@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema(
 			unique: true,
 			minLength: 1,
 			maxLength: 35,
-			required: "Un prénom est requis",
+			required: "Un nom d'utilisateur est requis",
 		},
 		email: {
 			type: String,
@@ -58,28 +58,25 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			required: "Date de naissance requise",
 		},
-		activity: {
-			type: String,
-			required: "Veuillez sélectionner votre activité",
+		likes: {
+			type: [String],
+		},
+		company: {
+			type: Boolean,
+			default: false,
+		},
+		worker: {
+			type: Boolean,
+			default: false,
 		},
 		subscription: {
 			type: String,
 		},
-		messages: {
-			type: [
-				{
-					twitter: {
-						type: [
-							{
-								message: { type: String },
-								scheduledSendTime: { type: Date },
-							},
-						],
-					},
-				},
-			],
-		},
 		verified: {
+			type: Boolean,
+			default: false,
+		},
+		TwoFactorAuth: {
 			type: Boolean,
 			default: false,
 		},

@@ -1,14 +1,15 @@
 const CronJob = require("cron").CronJob;
-const PostModel = require("../models/Post.model");
+const PostSocialMedia = require("../models/PostSocialMedia.model");
 const moment = require("moment");
 const SocialMediaTokenModel = require("../models/SocialMediaToken.model");
 const { sendTwitterPost } = require("../services/twitter.services");
+const PostModel = require("../models/Post.model");
 
 new CronJob(
 	"* * * * *",
 	// Every minute cron will call this function
 	async function () {
-		PostModel.find()
+		PostSocialMedia.find()
 			.then((posts) => {
 				// Map through all posts
 				posts.map((post) => {
@@ -27,7 +28,7 @@ new CronJob(
 									.then(async (tokens) => {
 										await sendTwitterPost(tokens, post);
 
-										PostModel.findOneAndUpdate(
+										PostSocialMedia.findOneAndUpdate(
 											{ text: post.text, posterId: post.posterId },
 											{
 												$set: {
@@ -53,6 +54,36 @@ new CronJob(
 						}
 					}
 					return;
+				});
+			})
+			.catch((err) => console.log(err));
+
+		// Arya post
+		PostModel.find()
+			.then((posts) => {
+				posts.map((post) => {
+					const scheduledSendTime = moment(post.scheduledSendTime); // Getting the scheduledSendTime
+					const currentMoment = moment(); // Getting the current time
+
+					if (
+						currentMoment.isSameOrAfter(scheduledSendTime) &&
+						post.status === "scheduled"
+					) {
+						PostModel.findOneAndUpdate(
+							{ posterId: post.posterId },
+							{
+								$set: {
+									status: "sent",
+								},
+							},
+							{
+								new: true,
+								setDefaultsOnInsert: true,
+							}
+						)
+							.then(() => console.log("Message envoyé"))
+							.catch((err) => console.log(err));
+					}
 				});
 			})
 			.catch((err) => console.log(err));

@@ -1,9 +1,5 @@
 const router = require("express").Router();
-const {
-	authenticate,
-	authorize,
-	isAdmin,
-} = require("../middlewares/jwt.middleware");
+const { authenticate, authorize } = require("../middlewares/jwt.middleware");
 const {
 	checkUserPassword,
 	checkIfUserVerified,
