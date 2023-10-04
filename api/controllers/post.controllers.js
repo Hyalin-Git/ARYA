@@ -76,6 +76,7 @@ exports.deletePost = (req, res, next) => {
 };
 
 // Reactions controllers
+const reactionsArray = ["like", "awesome", "funny", "love"];
 
 exports.addReaction = (req, res, next) => {
 	const { reaction, userId } = req.body;
@@ -83,7 +84,7 @@ exports.addReaction = (req, res, next) => {
 	PostModel.findById({ _id: req.params.id })
 		.then((post) => {
 			if (
-				["like", "awesome", "funny", "love"].some((reaction) =>
+				reactionsArray.some((reaction) =>
 					post.reactions[reaction].includes(userId)
 				)
 			) {
@@ -193,35 +194,66 @@ exports.addReaction = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.removeReaction = (req, res, next) => {
+exports.removeReaction = async (req, res, next) => {
 	const { userId } = req.body;
-	const reactionTypes = ["like", "awesome", "funny", "love"];
+
+	function deleteReaction(reaction) {
+		PostModel.findByIdAndUpdate(
+			{ _id: req.params.id },
+			{
+				$pull: {
+					[`reactions.${reaction}`]: userId,
+				},
+			},
+			{ new: true, setDefaultsOnInsert: true }
+		)
+			.then((post) => {
+				if (!post) {
+					return res.status(404).send("Post does not exist"); // This user does not exist
+				}
+				return res.status(200).send(post);
+			})
+			.catch((err) => res.status(500).send(err));
+	}
+
 	PostModel.findById({ _id: req.params.id })
 		.then((post) => {
-			if (
-				reactionTypes.some((reaction) =>
-					post.reactions[reaction].includes(userId)
-				)
-			) {
-				PostModel.findByIdAndUpdate(
-					{ _id: req.params.id },
-					{
-						$pull: {
-							reactions: userId,
-						},
+			UserModel.findByIdAndUpdate(
+				{ _id: userId },
+				{
+					$pull: {
+						likes: post._id,
 					},
-					{ new: true }
-				)
-					.then((post) => {
-						if (!post) {
-							return res.status(404).send("Post does not exist"); // This user does not exist
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			)
+				.then((user) => {
+					if (!user) {
+						return res.status(404).send("User does not exist"); // This user does not exist
+					} else {
+						if (post.reactions.like.includes(userId)) {
+							return deleteReaction("like");
 						}
-						return res.status(200).send(post);
-					})
-					.catch((err) => res.status(500).send(err));
-			} else {
-				console.log("nop");
-			}
+						if (post.reactions.awesome.includes(userId)) {
+							return deleteReaction("awesome");
+						}
+						if (post.reactions.funny.includes(userId)) {
+							return deleteReaction("funny");
+						}
+						if (post.reactions.love.includes(userId)) {
+							return deleteReaction("love");
+						} else {
+							return res.status(404).send({
+								error: true,
+								message: "User didn't react to any of these posts",
+							});
+						}
+					}
+				})
+				.catch((err) => res.status(500).send(err));
 		})
 		.catch((err) => res.status(500).send(err));
 };
