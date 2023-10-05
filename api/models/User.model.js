@@ -61,14 +61,16 @@ const UserSchema = new mongoose.Schema(
 		likes: {
 			type: [String],
 		},
+
 		company: {
-			type: Boolean,
-			default: false,
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Company",
 		},
 		worker: {
-			type: Boolean,
-			default: false,
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Worker",
 		},
+
 		subscription: {
 			type: String,
 		},

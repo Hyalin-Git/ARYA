@@ -14,6 +14,7 @@ const authRouter = require("./routes/auth.routes");
 const twitterRouter = require("./routes/twitter.routes");
 const facebookRouter = require("./routes/facebook.routes");
 const userRouter = require("./routes/user.routes");
+const workerRouter = require("./routes/worker.routes");
 const postRouter = require("./routes/post.routes");
 const verificationRouter = require("./routes/verification.routes");
 const { authenticate } = require("./middlewares/jwt.middleware");
@@ -51,6 +52,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/twitter/auth", twitterRouter);
 app.use("/api/facebook/auth", facebookRouter);
 app.use("/api/users", userRouter);
+app.use("/api/worker", workerRouter);
 app.use("/api/post", postRouter);
 app.use("/api/verification", verificationRouter);
 

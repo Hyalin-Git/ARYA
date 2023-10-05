@@ -69,7 +69,7 @@ exports.updateUserPicture = async (req, res, next) => {
 			.upload_stream(
 				{
 					resource_type: "image",
-					upload_preset: "arya_preset",
+					folder: "Arya/profile",
 				},
 				async (err, result) => {
 					if (err) {
