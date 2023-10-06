@@ -61,7 +61,6 @@ const UserSchema = new mongoose.Schema(
 		likes: {
 			type: [String],
 		},
-
 		company: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Company",
@@ -70,7 +69,6 @@ const UserSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Worker",
 		},
-
 		subscription: {
 			type: String,
 		},
