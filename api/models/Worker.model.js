@@ -6,6 +6,7 @@ const WorkerSchema = mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 			unique: true,
+			required: true,
 		},
 		cv: { type: Buffer },
 		portfolio: { type: String },

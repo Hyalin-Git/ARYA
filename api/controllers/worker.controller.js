@@ -4,7 +4,6 @@ const WorkerModel = require("../models/Worker.model");
 exports.saveWorker = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id })
 		.then((user) => {
-			console.log(user.company);
 			if (user.company !== undefined) {
 				return res.status(400).send({
 					error: true,
