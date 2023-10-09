@@ -53,6 +53,9 @@ exports.getWorker = (req, res, next) => {
 		.populate("worker")
 		.exec()
 		.then((user) => {
+			if (user.worker === undefined) {
+				return res.status(404).send("User does not exist");
+			}
 			if (!user) {
 				return res.status(404).send("User does not exist");
 			}
