@@ -313,7 +313,7 @@ exports.generateOTP = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.verifyOTP = (req, res, next) => {
+exports.activateOTP = (req, res, next) => {
 	const { userId, otpToken } = req.body;
 
 	UserModel.findById({ _id: userId })
@@ -368,6 +368,98 @@ exports.verifyOTP = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.validateOTP = (req, res, next) => {};
+exports.validateOTP = (req, res, next) => {
+	const { userId, otpToken } = req.body;
 
-exports.disableOTP = (req, res, next) => {};
+	UserModel.findById({ _id: userId })
+		.then((user) => {
+			if (!user) {
+				return res.status(404).send({
+					error: true,
+					message: "Couldn't find any corresponding user",
+				});
+			}
+
+			let totp = new otp.TOTP({
+				issuer: "http://localhost:3000",
+				label: "Arya",
+				algorithm: "SHA1",
+				digits: 6,
+				secret: user.twoFactor.otp_hex,
+			});
+
+			let isValid = totp.validate({ token: otpToken });
+
+			if (isValid !== 0) {
+				return res.status(401).send({
+					error: true,
+					message: "2FA Validation failed",
+				});
+			}
+
+			return res.status(200).send({ error: false, OTPAuth: true });
+		})
+		.catch((err) => res.status(500).send(err));
+};
+
+exports.disableOTP = (req, res, next) => {
+	const { userId } = req.body;
+
+	UserModel.findById({ _id: userId })
+		.then((user) => {
+			if (!user) {
+				return res.status(404).send({
+					error: true,
+					message: "Couldn't find any corresponding user",
+				});
+			}
+			UserModel.findByIdAndUpdate(
+				{ _id: userId },
+				{
+					$set: {
+						twoFactor: {
+							otp_hex: user.twoFactor.otp_hex,
+							otp_enabled: false,
+							otp_verified: true,
+						},
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			)
+				.then((updated) => res.status(200).send(updated))
+				.catch((err) => res.status(500).send(err));
+		})
+		.catch((err) => res.status(500).send(err));
+};
+
+exports.deleteOTP = (req, res, next) => {
+	const { userId } = req.body;
+
+	UserModel.findById({ _id: userId })
+		.then((user) => {
+			if (!user) {
+				return res.status(404).send({
+					error: true,
+					message: "Couldn't find any corresponding user",
+				});
+			}
+			UserModel.findByIdAndUpdate(
+				{ _id: userId },
+				{
+					$unset: {
+						twoFactor: {},
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			)
+				.then((updated) => res.status(200).send(updated))
+				.catch((err) => res.status(500).send(err));
+		})
+		.catch((err) => res.status(500).send(err));
+};

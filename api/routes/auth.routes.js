@@ -9,9 +9,10 @@ router.delete("/logout", authenticate, authController.logout);
 
 // 2FA
 router.post("/otp/generate", authController.generateOTP);
-router.post("/otp/verify", authController.verifyOTP);
-router.post("/otp/validate");
-router.post("/otp/disable");
+router.post("/otp/verify", authController.activateOTP);
+router.post("/otp/validate", authController.validateOTP);
+router.post("/otp/disable", authController.disableOTP);
+router.post("/otp/delete", authController.deleteOTP);
 
 router.post("/refresh-token", authController.refreshToken);
 
