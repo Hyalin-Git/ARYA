@@ -287,8 +287,6 @@ exports.generateOTP = (req, res, next) => {
 
 			let otpauthUrl = totp.toString();
 
-			console.log(otpauthUrl.split("secret=")[1].split("&")[0]);
-
 			await UserModel.findByIdAndUpdate(
 				{ _id: userId },
 				{
@@ -333,11 +331,7 @@ exports.activateOTP = (req, res, next) => {
 				secret: user.twoFactor.otp_hex,
 			});
 
-			console.log(user.twoFactor.otp_hex);
-
 			let isValid = totp.validate({ token: otpToken });
-
-			console.log(isValid);
 
 			if (isValid !== 0) {
 				return res.status(401).send({
@@ -377,6 +371,13 @@ exports.validateOTP = (req, res, next) => {
 				return res.status(404).send({
 					error: true,
 					message: "Couldn't find any corresponding user",
+				});
+			}
+
+			if (user.twoFactor.otp_verified === false) {
+				return res.status(401).send({
+					error: true,
+					message: "2FA is not Verified",
 				});
 			}
 

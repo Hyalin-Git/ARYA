@@ -64,12 +64,16 @@ exports.sendPost = async (req, res, next) => {
 
 exports.getPost = (req, res, next) => {
 	PostModel.findById({ _id: req.params.id })
+		.populate("comments.commenterId", "userName lastName firstName")
+		.exec()
 		.then((post) => res.status(200).send(post))
 		.catch((err) => res.status(500).send(err));
 };
 
 exports.getPosts = (req, res, next) => {
 	PostModel.find()
+		.populate("comments.commenterId", "userName lastName firstName")
+		.exec()
 		.then((post) => res.status(200).send(post))
 		.catch((err) => res.status(500).send(err));
 };
@@ -243,5 +247,70 @@ exports.removeReaction = async (req, res, next) => {
 				})
 				.catch((err) => res.status(500).send(err));
 		})
+		.catch((err) => res.status(500).send(err));
+};
+
+// Comments controllers
+
+exports.addComment = (req, res, next) => {
+	PostModel.findByIdAndUpdate(
+		{ _id: req.params.id },
+		{
+			$push: {
+				comments: {
+					commenterId: req.body.commenterId,
+					text: req.body.text,
+					timestamp: new Date().getTime(),
+				},
+			},
+		},
+		{
+			new: true,
+			setDefaultsOnInsert: true,
+		}
+	)
+		.then((data) => res.status(201).send(data))
+		.catch((err) => res.status(500).send(err));
+};
+
+exports.editComment = (req, res, next) => {
+	PostModel.findById({ _id: req.params.id })
+		.then((post) => {
+			const theComment = post.comments.find((comment) =>
+				comment._id.equals(req.body.commentId)
+			);
+
+			if (!theComment) {
+				return res.status(404).send({
+					error: true,
+					message: "Couldn't find any corresponding comments",
+				});
+			}
+
+			theComment.text = req.body.text;
+
+			return post
+				.save()
+				.then((data) => res.status(200).send(data))
+				.catch((err) => res.status(500).send(err));
+		})
+		.catch((err) => res.status(500).send(err));
+};
+exports.deleteComment = (req, res, next) => {
+	PostModel.findByIdAndUpdate(
+		{ _id: req.params.id },
+		{
+			$pull: {
+				comments: {
+					_id: req.body.commentId,
+				},
+			},
+		},
+		{
+			new: true,
+			setDefaultsOnInsert: true,
+		}
+	)
+		.then((data) => res.status(200).send(data))
 		.catch((err) => res.status(500).send(err));
 };

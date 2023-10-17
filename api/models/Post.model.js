@@ -20,6 +20,19 @@ const PostSchema = mongoose.Schema(
 			love: { type: [String] },
 			funny: { type: [String] },
 		},
+		comments: {
+			type: [
+				{
+					commenterId: {
+						type: mongoose.Schema.Types.ObjectId,
+						ref: "User",
+						required: true,
+					},
+					text: { type: String },
+					timestamp: { type: Number },
+				},
+			],
+		},
 		scheduledSendTime: {
 			type: Date,
 		},
