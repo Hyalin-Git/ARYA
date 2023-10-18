@@ -1,8 +1,13 @@
 const mongoose = require("mongoose");
 
-const PostSchema = mongoose.Schema(
+const CommentSchema = mongoose.Schema(
 	{
-		posterId: {
+		postId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Post",
+			required: true,
+		},
+		commenterId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 			required: true,
@@ -20,14 +25,10 @@ const PostSchema = mongoose.Schema(
 			love: { type: [String] },
 			funny: { type: [String] },
 		},
-		scheduledSendTime: {
-			type: Date,
-		},
-		status: { type: String, default: "scheduled", required: true },
 	},
 	{
 		timestamps: true,
 	}
 );
 
-module.exports = mongoose.model("Post", PostSchema);
+module.exports = mongoose.model("Comment", CommentSchema);

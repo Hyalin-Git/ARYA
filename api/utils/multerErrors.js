@@ -18,6 +18,12 @@ exports.multerErrorsHandler = (err, req, res, next) => {
 						"Le type du fichier est invalide, seulement les images sont acceptées",
 				});
 				break;
+			case "LIMIT_UNEXPECTED_FILE":
+				res.status(400).json({
+					error: true,
+					message: "Seulement un maximum de 4 fichiers est accepté",
+				});
+				break;
 			default:
 				res.status(500).json({ error: true, message: "Server Error" });
 				break;

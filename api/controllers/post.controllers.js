@@ -15,7 +15,9 @@ exports.sendPost = async (req, res, next) => {
 
 	async function handleFiles() {
 		let files = req.files["media"];
-
+		if (!files) {
+			return undefined;
+		}
 		let uploadFiles = files.map((medias) => {
 			return new Promise((resolve, reject) => {
 				cloudinary.uploader
@@ -42,7 +44,9 @@ exports.sendPost = async (req, res, next) => {
 
 		let cloudinaryResponse = await Promise.all(uploadFiles);
 
-		return cloudinaryResponse;
+		console.log(cloudinaryResponse);
+
+		return cloudinaryResponse.map((res) => res.secure_url);
 	}
 
 	let uploadResponse = await handleFiles();
@@ -50,9 +54,7 @@ exports.sendPost = async (req, res, next) => {
 	const post = new PostModel({
 		posterId: req.body.posterId,
 		text: req.body.text,
-		media: req.files["media"]
-			? uploadResponse.map((res) => res.secure_url)
-			: undefined,
+		media: uploadResponse,
 		scheduledSendTime: date.format(),
 		status: isScheduled ? "scheduled" : "sent",
 	});
@@ -119,6 +121,7 @@ const reactionsArray = ["like", "awesome", "funny", "love"];
 exports.addReaction = (req, res, next) => {
 	const { reaction, userId } = req.body;
 
+	// this function adds user reaction to the specified post
 	function setReaction(reaction) {
 		PostModel.findByIdAndUpdate(
 			{ _id: req.params.id },
@@ -140,6 +143,7 @@ exports.addReaction = (req, res, next) => {
 
 	PostModel.findById({ _id: req.params.id })
 		.then((post) => {
+			// This condition is checking in every reaction array if it includes the userId
 			if (
 				reactionsArray.some((reaction) =>
 					post.reactions[reaction].includes(userId)
@@ -148,45 +152,51 @@ exports.addReaction = (req, res, next) => {
 				return res
 					.status(401)
 					.send({ error: true, message: "User already reacted" });
-			} else {
-				UserModel.findByIdAndUpdate(
-					{ _id: req.body.userId },
-					{
-						$addToSet: {
-							likes: req.params.id,
-						},
-					},
-					{
-						new: true,
-						setDefaultsOnInsert: true,
-					}
-				)
-					.then((user) => {
-						if (!user) {
-							return res.status(404).send("User does not exist"); // This user does not exist
-						}
-						switch (reaction) {
-							case "like":
-								setReaction("like");
-								break;
-							case "awesome":
-								setReaction("awesome");
-								break;
-							case "funny":
-								setReaction("funny");
-								break;
-							case "love":
-								setReaction("love");
-								break;
-						}
-					})
-					.catch((err) => res.status(500).send(err));
 			}
+
+			UserModel.findByIdAndUpdate(
+				{ _id: req.body.userId },
+				{
+					$addToSet: {
+						likes: req.params.id,
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			)
+				.then((user) => {
+					if (!user) {
+						return res.status(404).send("User does not exist"); // This user does not exist
+					}
+					switch (reaction) {
+						case "like":
+							setReaction("like");
+							break;
+						case "awesome":
+							setReaction("awesome");
+							break;
+						case "funny":
+							setReaction("funny");
+							break;
+						case "love":
+							setReaction("love");
+							break;
+						default:
+							res.status(400).send({
+								error: true,
+								message: "Aucune réaction n'a été sélectionné",
+							});
+							break;
+					}
+				})
+				.catch((err) => res.status(500).send(err));
 		})
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.removeReaction = async (req, res, next) => {
+exports.deleteReaction = async (req, res, next) => {
 	const { userId } = req.body;
 
 	function delReaction(reaction) {
@@ -247,70 +257,5 @@ exports.removeReaction = async (req, res, next) => {
 				})
 				.catch((err) => res.status(500).send(err));
 		})
-		.catch((err) => res.status(500).send(err));
-};
-
-// Comments controllers
-
-exports.addComment = (req, res, next) => {
-	PostModel.findByIdAndUpdate(
-		{ _id: req.params.id },
-		{
-			$push: {
-				comments: {
-					commenterId: req.body.commenterId,
-					text: req.body.text,
-					timestamp: new Date().getTime(),
-				},
-			},
-		},
-		{
-			new: true,
-			setDefaultsOnInsert: true,
-		}
-	)
-		.then((data) => res.status(201).send(data))
-		.catch((err) => res.status(500).send(err));
-};
-
-exports.editComment = (req, res, next) => {
-	PostModel.findById({ _id: req.params.id })
-		.then((post) => {
-			const theComment = post.comments.find((comment) =>
-				comment._id.equals(req.body.commentId)
-			);
-
-			if (!theComment) {
-				return res.status(404).send({
-					error: true,
-					message: "Couldn't find any corresponding comments",
-				});
-			}
-
-			theComment.text = req.body.text;
-
-			return post
-				.save()
-				.then((data) => res.status(200).send(data))
-				.catch((err) => res.status(500).send(err));
-		})
-		.catch((err) => res.status(500).send(err));
-};
-exports.deleteComment = (req, res, next) => {
-	PostModel.findByIdAndUpdate(
-		{ _id: req.params.id },
-		{
-			$pull: {
-				comments: {
-					_id: req.body.commentId,
-				},
-			},
-		},
-		{
-			new: true,
-			setDefaultsOnInsert: true,
-		}
-	)
-		.then((data) => res.status(200).send(data))
 		.catch((err) => res.status(500).send(err));
 };

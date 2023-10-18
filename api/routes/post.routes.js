@@ -4,6 +4,7 @@ const upload = require("../middlewares/multer.middleware");
 
 const { multerErrorsHandler } = require("../utils/multerErrors");
 
+// CRUD
 router.get("/:id", postController.getPost);
 router.get("/", postController.getPosts);
 
@@ -16,13 +17,10 @@ router.post(
 
 router.put("/:id", postController.updatePost);
 
-router.patch("/add-react/:id", postController.addReaction);
-router.patch("/remove-react/:id", postController.removeReaction);
-
-router.patch("/add-comment/:id", postController.addComment);
-router.patch("/edit-comment/:id", postController.editComment);
-router.patch("/delete-comment/:id", postController.deleteComment);
-
 router.delete("/:id", postController.deletePost);
+
+// React to a post
+router.patch("/add-react/:id", postController.addReaction);
+router.patch("/remove-react/:id", postController.deleteReaction);
 
 module.exports = router;

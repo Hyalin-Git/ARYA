@@ -17,6 +17,7 @@ const userRouter = require("./routes/user.routes");
 const companyRouter = require("./routes/company.routes");
 const workerRouter = require("./routes/worker.routes");
 const postRouter = require("./routes/post.routes");
+const commentRouter = require("./routes/comment.routes");
 const verificationRouter = require("./routes/verification.routes");
 const { authenticate } = require("./middlewares/jwt.middleware");
 
@@ -56,6 +57,7 @@ app.use("/api/users", userRouter);
 app.use("/api/company", companyRouter);
 app.use("/api/worker", workerRouter);
 app.use("/api/post", postRouter);
+app.use("/api/comment", commentRouter);
 app.use("/api/verification", verificationRouter);
 
 app.get("/login/success", authenticate, (req, res, next) => {
