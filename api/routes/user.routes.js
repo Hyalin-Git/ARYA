@@ -55,7 +55,12 @@ router.put(
 router.post(
 	"/:id/forgot-password/reset-code",
 	userController.sendPasswordResetCode
-); // Send the reset code to the user email
+);
+// Send the reset code to the user email
 router.put("/:id/forgot-password", userController.updateForgotPassword); // If the reset code is verified, then update the password
+router.get("/follow/:id", userController.getFollow);
+router.get("/followers/:id", userController.getFollowers);
+router.patch("/follow/:id", userController.follow);
+router.patch("/unfollow/:id", userController.unfollow);
 
 module.exports = router;

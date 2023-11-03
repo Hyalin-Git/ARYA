@@ -39,21 +39,6 @@ exports.getUser = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-// Delete one user
-exports.deleteOneUser = (req, res, next) => {
-	UserModel.findByIdAndDelete({ _id: req.params.id })
-		.then((user) => {
-			if (!user) {
-				return res.status(404).send({
-					error: true,
-					message: "Impossible de supprimer un utilisateur qui n'existe pas",
-				}); // Impossible to delete a non-existent user
-			}
-			res.status(200).send(user);
-		})
-		.catch((err) => res.status(500).send(err));
-};
-
 // Update user profil picture
 exports.updateUserPicture = async (req, res, next) => {
 	try {
@@ -438,5 +423,88 @@ exports.updateUserPhone = (req, res, next) => {
 			}
 			res.status(200).send(user);
 		})
+		.catch((err) => res.status(500).send(err));
+};
+
+// Delete one user
+exports.deleteOneUser = (req, res, next) => {
+	UserModel.findByIdAndDelete({ _id: req.params.id })
+		.then((user) => {
+			if (!user) {
+				return res.status(404).send({
+					error: true,
+					message: "Impossible de supprimer un utilisateur qui n'existe pas",
+				}); // Impossible to delete a non-existent user
+			}
+			res.status(200).send(user);
+		})
+		.catch((err) => res.status(500).send(err));
+};
+
+exports.getFollow = (req, res, next) => {
+	UserModel.findById({ _id: req.params.id }, { following: 1 })
+		.populate("following", "lastName firstName userName")
+		.exec()
+		.then((following) => res.status(200).send(following));
+};
+
+exports.getFollowers = (req, res, next) => {
+	UserModel.findById({ _id: req.params.id }, { followers: 1 })
+		.populate("followers", "lastName firstName userName")
+		.exec()
+		.then((followers) => res.status(200).send(followers));
+};
+
+exports.follow = (req, res, next) => {
+	const idToFollow = req.body.idToFollow;
+	UserModel.findByIdAndUpdate(
+		{ _id: req.params.id },
+		{
+			$addToSet: {
+				following: idToFollow,
+			},
+		},
+		{ setDefaultsOnInsert: true, new: true }
+	)
+		// .then(() => res.status(200).send())
+		.catch((err) => res.status(500).send(err));
+
+	UserModel.findByIdAndUpdate(
+		{ _id: idToFollow },
+		{
+			$addToSet: {
+				followers: req.params.id,
+			},
+		},
+		{ setDefaultsOnInsert: true, new: true }
+	)
+		.then((followUpdate) => res.status(200).send(followUpdate))
+		.catch((err) => res.status(500).send(err));
+};
+
+exports.unfollow = (req, res, next) => {
+	const idToUnfollow = req.body.idToUnfollow;
+	UserModel.findByIdAndUpdate(
+		{ _id: req.params.id },
+		{
+			$pull: {
+				follow: idToUnfollow,
+			},
+		},
+		{ setDefaultsOnInsert: true, new: true }
+	)
+		// .then(() => res.status(200).send())
+		.catch((err) => res.status(500).send(err));
+
+	UserModel.findByIdAndUpdate(
+		{ _id: idToUnfollow },
+		{
+			$pull: {
+				followers: req.params.id,
+			},
+		},
+		{ setDefaultsOnInsert: true, new: true }
+	)
+		.then((unfollowUpdate) => res.status(200).send(unfollowUpdate))
 		.catch((err) => res.status(500).send(err));
 };

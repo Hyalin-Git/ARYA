@@ -61,6 +61,14 @@ const UserSchema = new mongoose.Schema(
 		likes: {
 			type: [String],
 		},
+		following: {
+			type: [mongoose.Schema.Types.ObjectId],
+			ref: "User",
+		},
+		followers: {
+			type: [mongoose.Schema.Types.ObjectId],
+			ref: "User",
+		},
 		company: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Company",
