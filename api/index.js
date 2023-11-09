@@ -14,8 +14,8 @@ const authRouter = require("./routes/auth.routes");
 const twitterRouter = require("./routes/twitter.routes");
 const facebookRouter = require("./routes/facebook.routes");
 const userRouter = require("./routes/user.routes");
-const conversationRouter = require("./routes/conversation.routes");
-const messageRouter = require("./routes/message.routes");
+const conversationRouter = require("./routes/chats/conversation.routes");
+const messageRouter = require("./routes/chats/message.routes");
 const companyRouter = require("./routes/company.routes");
 const workerRouter = require("./routes/worker.routes");
 const postRouter = require("./routes/post.routes");
@@ -74,10 +74,21 @@ app.get("/login/success", authenticate, (req, res, next) => {
 	}
 });
 
-httpsServer.listen(process.env.PORT, (err) => {
+const server = httpsServer.listen(process.env.PORT, (err) => {
 	if (err) {
 		console.log(err);
 	} else {
 		console.log(`server is listening on port ${process.env.PORT}`);
 	}
+});
+
+const io = require("socket.io")(server, {
+	pingTimeout: 60000,
+	cors: {
+		origin: "http://localhost:3000",
+	},
+});
+
+io.on("connection", () => {
+	console.log("connected to socket");
 });

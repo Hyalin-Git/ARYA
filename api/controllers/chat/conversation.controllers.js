@@ -1,9 +1,10 @@
-const ConversationModel = require("../../models/Conversation.model");
+const ConversationModel = require("../../models/chats/Conversation.model");
+const MessageModel = require("../../models/chats/Message.model");
 
 exports.accessOrCreateConversation = (req, res, next) => {
-	const { userId, loggedUserId } = req.body;
+	const { userId, otherUserId } = req.body;
 
-	if (!userId || !loggedUserId) {
+	if (!userId || !otherUserId) {
 		return res
 			.status(404)
 			.send({ error: true, message: "Aucun utilisateur fournit" });
@@ -13,7 +14,7 @@ exports.accessOrCreateConversation = (req, res, next) => {
 	//who is matching both of the usersId
 	ConversationModel.find({
 		isGroup: false,
-		$and: [{ users: userId }, { users: loggedUserId }],
+		$and: [{ users: userId }, { users: otherUserId }],
 	})
 		.populate("users", "lastName firstName userName")
 		.exec()
@@ -22,7 +23,7 @@ exports.accessOrCreateConversation = (req, res, next) => {
 			if (!conversation[0]) {
 				const conversationData = new ConversationModel({
 					name: "default",
-					users: [userId, loggedUserId],
+					users: [userId, otherUserId],
 				});
 				conversationData
 					.save()
@@ -32,7 +33,7 @@ exports.accessOrCreateConversation = (req, res, next) => {
 					.catch((err) => res.status(500).send(err));
 				return;
 			}
-			return res.status(200).send(conversation[0]);
+			res.status(200).send(conversation[0]);
 		})
 		.catch((err) => res.status(500).send(err));
 };
@@ -42,8 +43,79 @@ exports.getConversations = (req, res, next) => {
 	ConversationModel.find({ users: userId })
 		.sort({ updatedAt: "desc" })
 		.populate("users", "lastName firstName userName")
-		.populate("latestMessage")
+		.populate({
+			path: "latestMessage",
+			populate: {
+				path: "senderId",
+				select: "lastName firstName userName",
+			},
+		})
 		.exec()
 		.then((conversations) => res.status(200).send(conversations))
+		.catch((err) => res.status(500).send(err));
+};
+
+exports.getConversation = (req, res, next) => {
+	const { userId, otherUserId } = req.body;
+	ConversationModel.findOne({
+		_id: req.params.id,
+		$and: [{ users: userId }, { users: otherUserId }],
+	})
+		.populate("users", "lastName firstName userName")
+		.populate("messages")
+		.exec()
+		.then((conversations) => {
+			if (!conversations) {
+				return res
+					.status(404)
+					.send({ error: true, message: "Cette conversation n'existe pas" });
+			}
+			res.status(200).send(conversations);
+		})
+		.catch((err) => res.status(500).send(err));
+};
+
+exports.editConversation = (req, res, next) => {
+	ConversationModel.findByIdAndUpdate(
+		{ _id: req.params.id },
+		{
+			$set: {
+				name: req.body.name,
+			},
+		},
+		{
+			new: true,
+			setDefaultsOnInsert: true,
+		}
+	)
+		.then((conversations) => {
+			if (!conversations) {
+				return res.status(404).send({
+					error: true,
+					message: "Impossible de supprimer une conversation qui n'existe pas.",
+				});
+			}
+			res.status(200).send(conversations);
+		})
+		.catch((err) => res.status(500).send(err));
+};
+
+exports.deleteConversation = (req, res, next) => {
+	const { userId, otherUserId } = req.body;
+	ConversationModel.findOneAndDelete({
+		_id: req.params.id,
+		$and: [{ users: userId }, { users: otherUserId }],
+	})
+		.then((conversations) => {
+			if (!conversations) {
+				return res.status(404).send({
+					error: true,
+					message: "Impossible de supprimer une conversation qui n'existe pas.",
+				});
+			}
+			MessageModel.deleteMany({ conversationId: conversations._id })
+				.then((del) => res.status(200).send(del))
+				.catch((err) => res.status(500).send(err));
+		})
 		.catch((err) => res.status(500).send(err));
 };
