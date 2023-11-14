@@ -1,11 +1,5 @@
-import Auth from "./components/Auth/Auth";
-
 function App() {
-	return (
-		<div className="App">
-			<Auth />
-		</div>
-	);
+	return <div className="App"></div>;
 }
 
 export default App;

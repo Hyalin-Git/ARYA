@@ -1,12 +1,55 @@
 const CommentModel = require("../models/Comment.model");
 const UserModel = require("../models/user.model");
+const cloudinary = require("../config/cloudinary.config");
+const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
 
-exports.addComment = (req, res, next) => {
+exports.addComment = async (req, res, next) => {
+	async function handleFiles() {
+		let files = req.files["media"];
+		if (!files) {
+			return undefined;
+		}
+
+		let uploadFiles = files.map(async (medias) => {
+			const resizedAndCovertedImg = await resizeImageAndWebpConvert(
+				medias.buffer
+			);
+
+			return new Promise((resolve, reject) => {
+				cloudinary.uploader
+					.upload_stream(
+						{
+							resource_type: "image",
+							folder: "Arya/comment",
+							use_filename: true,
+						},
+						(error, result) => {
+							if (error) {
+								reject(
+									res.status(500).send({
+										error: true,
+										message:
+											"Une erreur est survenue lors du téléchargement de l'image sur Cloudinary.",
+									})
+								);
+							} else resolve(result);
+						}
+					)
+					.end(resizedAndCovertedImg);
+			});
+		});
+
+		let cloudinaryResponse = await Promise.all(uploadFiles);
+
+		return cloudinaryResponse.map((res) => res.secure_url);
+	}
+
+	let uploadResponse = await handleFiles();
 	const comment = new CommentModel({
 		postId: req.body.postId,
 		commenterId: req.body.commenterId,
 		text: req.body.text,
-		media: req.body.media,
+		media: uploadResponse,
 	});
 
 	comment
@@ -65,6 +108,10 @@ exports.deleteComment = (req, res, next) => {
 					message: "Could not find a matching comment",
 				});
 			}
+			comment.media.map(async (file) => {
+				const getFileName = file.split("/")[9].split(".")[0];
+				await cloudinary.uploader.destroy(`Arya/comment/${getFileName}`);
+			});
 			res.status(200).send(comment);
 		})
 		.catch((err) => res.status(500).send(err));

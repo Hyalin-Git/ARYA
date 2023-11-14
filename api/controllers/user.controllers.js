@@ -55,6 +55,7 @@ exports.updateUserPicture = async (req, res, next) => {
 				{
 					resource_type: "image",
 					folder: "Arya/profile",
+					use_filename: true,
 				},
 				async (err, result) => {
 					if (err) {

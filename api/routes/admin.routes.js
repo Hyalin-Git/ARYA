@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { authenticate, isAdmin } = require("../middlewares/jwt.middleware");
 const userController = require("../controllers/user.controllers");
-const upload = require("../middlewares/multer.middleware");
+const { userPictureUpload } = require("../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../utils/multerErrors");
 
 router.get("/", authenticate, isAdmin, userController.getUsers);
@@ -9,7 +9,7 @@ router.get("/:id", authenticate, isAdmin, userController.getUser);
 
 router.put(
 	"/:id/update-picture",
-	upload.single("picture"),
+	userPictureUpload.single("picture"),
 	authenticate,
 	isAdmin,
 	multerErrorsHandler,

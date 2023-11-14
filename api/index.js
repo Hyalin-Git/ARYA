@@ -33,7 +33,7 @@ const credentials = { key: privateKey, cert: certificate };
 const httpsServer = https.createServer(credentials, app);
 
 const corsOptions = {
-	origin: `*`,
+	origin: `http://192.168.0.32:3000`,
 	credentials: true,
 	allowedHeaders: ["sessionId", "Content-Type"],
 	exposedHeaders: ["sessionId"],

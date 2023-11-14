@@ -1,0 +1,7 @@
+exports.uploadSingleFile = () => {
+
+}
+
+exports.uploadMultiplesFiles = () => {
+    
+}

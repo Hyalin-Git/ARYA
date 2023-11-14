@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const commentController = require("../controllers/comment.controller");
-const upload = require("../middlewares/multer.middleware");
+const { postUpload } = require("../middlewares/multer.middleware");
 
 const { multerErrorsHandler } = require("../utils/multerErrors");
 
@@ -8,7 +8,12 @@ const { multerErrorsHandler } = require("../utils/multerErrors");
 router.get("/", commentController.getComments);
 router.get("/:id", commentController.getComment);
 
-router.post("/", commentController.addComment);
+router.post(
+	"/",
+	postUpload.fields([{ name: "media", maxCount: 4 }]),
+	multerErrorsHandler,
+	commentController.addComment
+);
 
 router.put("/:id", commentController.editComment);
 

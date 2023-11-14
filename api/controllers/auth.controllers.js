@@ -17,6 +17,7 @@ const {
 } = require("../helpers/formValidation");
 const otp = require("otpauth");
 const qrcode = require("qrcode");
+
 // SignUp controller
 exports.signUp = (req, res, next) => {
 	// form validation

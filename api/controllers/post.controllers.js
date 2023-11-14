@@ -2,6 +2,7 @@ const PostModel = require("../models/Post.model");
 const UserModel = require("../models/user.model");
 const moment = require("moment");
 const cloudinary = require("../config/cloudinary.config");
+const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
 
 exports.sendPost = async (req, res, next) => {
 	let date = moment();
@@ -18,13 +19,19 @@ exports.sendPost = async (req, res, next) => {
 		if (!files) {
 			return undefined;
 		}
-		let uploadFiles = files.map((medias) => {
+
+		let uploadFiles = files.map(async (medias) => {
+			const resizedAndCovertedImg = await resizeImageAndWebpConvert(
+				medias.buffer
+			);
+
 			return new Promise((resolve, reject) => {
 				cloudinary.uploader
 					.upload_stream(
 						{
 							resource_type: "image",
 							folder: "Arya/post",
+							use_filename: true,
 						},
 						(error, result) => {
 							if (error) {
@@ -38,13 +45,11 @@ exports.sendPost = async (req, res, next) => {
 							} else resolve(result);
 						}
 					)
-					.end(medias.buffer);
+					.end(resizedAndCovertedImg);
 			});
 		});
 
 		let cloudinaryResponse = await Promise.all(uploadFiles);
-
-		console.log(cloudinaryResponse);
 
 		return cloudinaryResponse.map((res) => res.secure_url);
 	}
@@ -108,6 +113,11 @@ exports.deletePost = (req, res, next) => {
 			if (!post) {
 				return res.status(404).send("Post does not exist"); // This user does not exist
 			}
+			post.media.map(async (file) => {
+				const getFileName = file.split("/")[9].split(".")[0];
+				await cloudinary.uploader.destroy(`Arya/post/${getFileName}`);
+			});
+
 			res
 				.status(200)
 				.send({ error: false, message: "This post has been deleted" });

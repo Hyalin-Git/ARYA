@@ -4,7 +4,7 @@ const {
 	checkUserPassword,
 	checkIfUserVerified,
 } = require("../middlewares/userVerifications.middleware");
-const upload = require("../middlewares/multer.middleware");
+const { userPictureUpload } = require("../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../utils/multerErrors");
 
 const userController = require("../controllers/user.controllers");
@@ -16,7 +16,7 @@ router.delete("/:id", authenticate, userController.deleteOneUser);
 // Update user picture
 router.put(
 	"/:id/update-picture",
-	upload.single("picture"),
+	userPictureUpload.single("picture"),
 	multerErrorsHandler,
 	userController.updateUserPicture
 );

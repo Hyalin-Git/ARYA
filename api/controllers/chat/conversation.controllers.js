@@ -39,7 +39,10 @@ exports.accessOrCreateConversation = (req, res, next) => {
 };
 
 exports.getConversations = (req, res, next) => {
-	const { userId } = req.body;
+	const { userId } = req.query;
+	if (!userId) {
+		return res.status(400).send({ error: true, message: "Paramètre manquant" });
+	}
 	ConversationModel.find({ users: userId })
 		.sort({ updatedAt: "desc" })
 		.populate("users", "lastName firstName userName")
@@ -56,7 +59,7 @@ exports.getConversations = (req, res, next) => {
 };
 
 exports.getConversation = (req, res, next) => {
-	const { userId, otherUserId } = req.body;
+	const { userId, otherUserId } = req.query;
 	ConversationModel.findOne({
 		_id: req.params.id,
 		$and: [{ users: userId }, { users: otherUserId }],

@@ -6,13 +6,11 @@ const storage = multer.memoryStorage({
 	},
 });
 
+const allowedMimetypes = ["image/jpg", "image/png", "image/jpeg", "image/gif"];
+
 const fileFilter = (req, file, cb) => {
 	// Accepted mimetype
-	if (
-		file.mimetype === "image/jpg" ||
-		file.mimetype === "image/png" ||
-		file.mimetype === "image/jpeg"
-	) {
+	if (allowedMimetypes.includes(file.mimetype)) {
 		cb(null, true);
 	} else {
 		// Reject the file
@@ -20,12 +18,25 @@ const fileFilter = (req, file, cb) => {
 	}
 };
 
-const upload = multer({
+// Users profil pictures & Company logo
+const userPictureUpload = multer({
 	storage: storage,
 	fileFilter: fileFilter,
-	limits: {
-		fileSize: 4 * 1024 * 1024, // 2Mo maximum
-	},
+	limits: { fileSize: 2 * 1024 * 1024 }, // Limite de 2 Mo
 });
 
-module.exports = upload;
+// Posts & comments
+const postUpload = multer({
+	storage: storage,
+	fileFilter: fileFilter,
+	limits: { fileSize: 5 * 1024 * 1024 }, // Limite de 5 Mo
+});
+
+// Messages only
+const messageUpload = multer({
+	storage: storage,
+	fileFilter: fileFilter,
+	limits: { fileSize: 8 * 1024 * 1024 }, // Limite de 8 Mo
+});
+
+module.exports = { postUpload, userPictureUpload, messageUpload };
