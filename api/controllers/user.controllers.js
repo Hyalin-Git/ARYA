@@ -8,6 +8,7 @@ const { sendEmail } = require("../utils/mail/nodeMailer");
 const { regex } = require("../utils/RegexPatterns/regex");
 const { resetPasswordText, resetEmailText } = require("../utils/mail/mailText");
 const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
+const { uploadFile, destroyFile } = require("../helpers/cloudinaryManager");
 
 // Get all users
 exports.getUsers = (req, res, next) => {
@@ -42,56 +43,33 @@ exports.getUser = (req, res, next) => {
 // Update user profil picture
 exports.updateUserPicture = async (req, res, next) => {
 	try {
-		let picture = req.file;
+		const picture = req.file;
+		// await destroyFile(user, "profile");
+		const uploadResponse = await uploadFile(picture, "profile");
 
-		const resizedAndCovertedImg = await resizeImageAndWebpConvert(
-			picture.buffer,
-			200,
-			200
-		);
-
-		await cloudinary.uploader
-			.upload_stream(
-				{
-					resource_type: "image",
-					folder: "Arya/profile",
-					use_filename: true,
-				},
-				async (err, result) => {
-					if (err) {
-						// An error occurred while uploading the image to Cloudinary.
-						res.status(500).send({
-							error: true,
-							message:
-								"Une erreur est survenue lors du téléchargement de l'image sur Cloudinary.",
-						});
-					}
-					// Updating the picture of the user
-					UserModel.findByIdAndUpdate(
-						{ _id: req.params.id },
-						{ $set: { picture: result.secure_url } },
-						{ new: true }
-					)
-						.then((user) => {
-							if (!user) {
-								return res.status(404).send({
-									error: true,
-									message: "Cet utilisateur n'existe pas.", // This user does not exist
-								});
-							}
-
-							res.status(200).send({
-								error: false,
-								message: "Photo de profil modifiée avec succès.", // Profil picture modified
-								user: user,
-							});
-						})
-						.catch((err) => res.status(500).send(err));
+		// Updating the picture of the user
+		UserModel.findByIdAndUpdate(
+			{ _id: req.params.id },
+			{ $set: { picture: uploadResponse } },
+			{ new: true }
+		)
+			.then(async (user) => {
+				if (!user) {
+					return res.status(404).send({
+						error: true,
+						message: "Cet utilisateur n'existe pas.", // This user does not exist
+					});
 				}
-			)
-			.end(resizedAndCovertedImg);
+
+				res.status(200).send({
+					error: false,
+					message: "Photo de profil modifiée avec succès.", // Profil picture modified
+					user: user,
+				});
+			})
+			.catch((err) => res.status(500).send(err));
 	} catch (err) {
-		return res.status(500).send({ error: true, message: err.message });
+		return res.status(500).send(err.message);
 	}
 };
 
@@ -429,31 +407,36 @@ exports.updateUserPhone = (req, res, next) => {
 
 // Delete one user
 exports.deleteOneUser = (req, res, next) => {
-	UserModel.findByIdAndDelete({ _id: req.params.id })
-		.then((user) => {
+	UserModel.findById({ _id: req.params.id })
+		.then(async (user) => {
 			if (!user) {
 				return res.status(404).send({
 					error: true,
 					message: "Impossible de supprimer un utilisateur qui n'existe pas",
 				}); // Impossible to delete a non-existent user
 			}
-			res.status(200).send(user);
+			await destroyFile(user, "profile"); // Delete all files from Cloudinary
+			await UserModel.findByIdAndDelete({ _id: req.params.id }); // Then delete the comment
+
+			return res.status(200).send(user);
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) => res.status(500).send(err.message ? err.message : err));
 };
 
 exports.getFollow = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id }, { following: 1 })
 		.populate("following", "lastName firstName userName")
 		.exec()
-		.then((following) => res.status(200).send(following));
+		.then((following) => res.status(200).send(following))
+		.catch((err) => res.status(500).send(err));
 };
 
 exports.getFollowers = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id }, { followers: 1 })
 		.populate("followers", "lastName firstName userName")
 		.exec()
-		.then((followers) => res.status(200).send(followers));
+		.then((followers) => res.status(200).send(followers))
+		.catch((err) => res.status(500).send(err));
 };
 
 exports.follow = (req, res, next) => {

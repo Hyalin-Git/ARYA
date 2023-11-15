@@ -3,6 +3,7 @@ const UserModel = require("../models/user.model");
 const moment = require("moment");
 const cloudinary = require("../config/cloudinary.config");
 const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
+const { destroyFiles } = require("../helpers/cloudinaryManager");
 
 exports.sendPost = async (req, res, next) => {
 	let date = moment();
@@ -108,21 +109,17 @@ exports.updatePost = (req, res, next) => {
 };
 
 exports.deletePost = (req, res, next) => {
-	PostModel.findByIdAndDelete({ _id: req.params.id })
-		.then((post) => {
+	PostModel.findById({ _id: req.params.id })
+		.then(async (post) => {
 			if (!post) {
 				return res.status(404).send("Post does not exist"); // This user does not exist
 			}
-			post.media.map(async (file) => {
-				const getFileName = file.split("/")[9].split(".")[0];
-				await cloudinary.uploader.destroy(`Arya/post/${getFileName}`);
-			});
+			await destroyFiles(post, "post"); // Delete all files from Cloudinary
+			await PostModel.findByIdAndDelete({ _id: req.params.id }); // Then delete the post
 
-			res
-				.status(200)
-				.send({ error: false, message: "This post has been deleted" });
+			return res.status(200).send(post);
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) => res.status(500).send(err.message ? err.message : err));
 };
 
 // Reactions controllers

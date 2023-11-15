@@ -2,6 +2,7 @@ const CommentModel = require("../models/Comment.model");
 const UserModel = require("../models/user.model");
 const cloudinary = require("../config/cloudinary.config");
 const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
+const { destroyFiles } = require("../helpers/cloudinaryManager");
 
 exports.addComment = async (req, res, next) => {
 	async function handleFiles() {
@@ -100,19 +101,21 @@ exports.editComment = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
-	CommentModel.findByIdAndDelete({ _id: req.params.id })
-		.then((comment) => {
+	CommentModel.findById({ _id: req.params.id })
+		.then(async (comment) => {
 			if (!comment) {
 				return res.status(404).send({
 					error: true,
 					message: "Could not find a matching comment",
 				});
 			}
-			comment.media.map(async (file) => {
-				const getFileName = file.split("/")[9].split(".")[0];
-				await cloudinary.uploader.destroy(`Arya/comment/${getFileName}`);
-			});
-			res.status(200).send(comment);
+			try {
+				await destroyFiles(comment, "comment"); // Delete all files from Cloudinary
+				await CommentModel.findByIdAndDelete({ _id: req.params.id }); // Then delete the comment
+				res.status(200).send(comment);
+			} catch (err) {
+				return res.status(500).json({ error: true, message: err.message });
+			}
 		})
 		.catch((err) => res.status(500).send(err));
 };

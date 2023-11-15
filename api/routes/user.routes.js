@@ -11,11 +11,11 @@ const userController = require("../controllers/user.controllers");
 
 router.get("/", authenticate, userController.getUsers);
 router.get("/:id", authenticate, userController.getUser);
-router.delete("/:id", authenticate, userController.deleteOneUser);
+router.delete("/:id", userController.deleteOneUser);
 
 // Update user picture
 router.put(
-	"/:id/update-picture",
+	"/update-picture/:id",
 	userPictureUpload.single("picture"),
 	multerErrorsHandler,
 	userController.updateUserPicture
