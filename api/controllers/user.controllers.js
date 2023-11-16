@@ -3,11 +3,9 @@ const ResetPasswordModel = require("../models/ResetPassword.model");
 const ResetEmailModel = require("../models/ResetEmail.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const cloudinary = require("../config/cloudinary.config");
 const { sendEmail } = require("../utils/mail/nodeMailer");
 const { regex } = require("../utils/RegexPatterns/regex");
 const { resetPasswordText, resetEmailText } = require("../utils/mail/mailText");
-const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
 const { uploadFile, destroyFile } = require("../helpers/cloudinaryManager");
 
 // Get all users
@@ -42,35 +40,38 @@ exports.getUser = (req, res, next) => {
 
 // Update user profil picture
 exports.updateUserPicture = async (req, res, next) => {
-	try {
-		const picture = req.file;
-		// await destroyFile(user, "profile");
-		const uploadResponse = await uploadFile(picture, "profile");
+	const picture = req.file;
 
-		// Updating the picture of the user
-		UserModel.findByIdAndUpdate(
-			{ _id: req.params.id },
-			{ $set: { picture: uploadResponse } },
-			{ new: true }
-		)
-			.then(async (user) => {
-				if (!user) {
-					return res.status(404).send({
-						error: true,
-						message: "Cet utilisateur n'existe pas.", // This user does not exist
-					});
-				}
-
-				res.status(200).send({
-					error: false,
-					message: "Photo de profil modifiée avec succès.", // Profil picture modified
-					user: user,
+	UserModel.findById({ _id: req.params.id })
+		.then(async (user) => {
+			if (!user) {
+				return res.status(404).send({
+					error: true,
+					message: "Cet utilisateur n'existe pas.", // This user does not exist
 				});
-			})
-			.catch((err) => res.status(500).send(err));
-	} catch (err) {
-		return res.status(500).send(err.message);
-	}
+			}
+			if (user.picture) {
+				await destroyFile(user, "profile");
+			}
+			const uploadResponse = await uploadFile(picture, "profile");
+			const updatePicture = await UserModel.findByIdAndUpdate(
+				{ _id: req.params.id },
+				{
+					$set: { picture: uploadResponse },
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
+
+			return res.status(200).send({
+				error: false,
+				message: "Photo de profil modifiée avec succès.", // Profil picture modified
+				user: updatePicture.picture,
+			});
+		})
+		.catch((err) => res.status(500).send(err.message ? err.message : err));
 };
 
 // Update user

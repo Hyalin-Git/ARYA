@@ -30,7 +30,40 @@ exports.uploadFile = async (picture, folder) => {
 	}
 };
 
-exports.uploadFiles = () => {};
+exports.uploadFiles = async (medias, folder) => {
+	try {
+		if (!medias) {
+			return undefined;
+		}
+
+		const uploadOptions = {
+			resource_type: "image",
+			folder: `Arya/${folder}`,
+			use_filename: true,
+		};
+
+		const uploadMedias = medias.map(async (media) => {
+			const resizedAndCovertedImg = await resizeImageAndWebpConvert(
+				media.buffer
+			);
+
+			return await new Promise((resolve, reject) => {
+				cloudinary.uploader
+					.upload_stream(uploadOptions, async (err, result) => {
+						if (err) reject(err);
+						resolve(result);
+					})
+					.end(resizedAndCovertedImg);
+			});
+		});
+
+		const cloudinaryResponse = await Promise.all(uploadMedias);
+
+		return cloudinaryResponse.map((res) => res.secure_url);
+	} catch (err) {
+		throw err;
+	}
+};
 
 exports.destroyFile = async (model, folder) => {
 	try {

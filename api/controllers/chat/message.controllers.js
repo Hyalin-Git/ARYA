@@ -1,8 +1,13 @@
 const ConversationModel = require("../../models/chats/Conversation.model");
 const MessageModel = require("../../models/chats/Message.model");
 const UserModel = require("../../models/user.model");
+const {
+	uploadFiles,
+	destroyFiles,
+} = require("../../helpers/cloudinaryManager");
 
-exports.saveMessage = (req, res, next) => {
+exports.saveMessage = async (req, res, next) => {
+	let medias = req.files["media"];
 	const { senderId, content, conversationId } = req.body;
 
 	if (!senderId || !content || !conversationId) {
@@ -11,10 +16,13 @@ exports.saveMessage = (req, res, next) => {
 			.send({ error: true, message: "Les données fournit sont invalides" });
 	}
 
+	const uploadResponse = await uploadFiles(medias, "message");
+
 	const newMessage = new MessageModel({
 		conversationId: conversationId,
 		senderId: senderId,
 		content: content,
+		media: uploadResponse,
 	});
 	newMessage
 		.save()
@@ -82,17 +90,19 @@ exports.editMessage = (req, res, next) => {
 };
 
 exports.deleteMessage = (req, res, next) => {
-	MessageModel.findByIdAndDelete({ _id: req.params.id })
-		.then((message) => {
+	MessageModel.findById({ _id: req.params.id })
+		.then(async (message) => {
 			if (!message) {
 				return res.status(404).send({
 					error: true,
 					message: "Impossible de supprimer un message qui n'existe pas.",
 				});
 			}
-			res.status(200).send(message);
+			await destroyFiles(message, "message");
+			await MessageModel.findByIdAndDelete({ _id: req.params.id });
+			return res.status(200).send(message);
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) => res.status(500).send(err.message ? err.message : err));
 };
 
 const reactionsArray = ["like", "awesome", "funny", "love"];

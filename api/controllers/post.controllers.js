@@ -1,12 +1,11 @@
 const PostModel = require("../models/Post.model");
 const UserModel = require("../models/user.model");
 const moment = require("moment");
-const cloudinary = require("../config/cloudinary.config");
-const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
-const { destroyFiles } = require("../helpers/cloudinaryManager");
+const { uploadFiles, destroyFiles } = require("../helpers/cloudinaryManager");
 
 exports.sendPost = async (req, res, next) => {
 	let date = moment();
+	let medias = req.files["media"];
 
 	date
 		.add(req.body.days ? req.body.days : "", "d")
@@ -15,47 +14,7 @@ exports.sendPost = async (req, res, next) => {
 
 	const isScheduled = req.body.days || req.body.hours || req.body.minutes;
 
-	async function handleFiles() {
-		let files = req.files["media"];
-		if (!files) {
-			return undefined;
-		}
-
-		let uploadFiles = files.map(async (medias) => {
-			const resizedAndCovertedImg = await resizeImageAndWebpConvert(
-				medias.buffer
-			);
-
-			return new Promise((resolve, reject) => {
-				cloudinary.uploader
-					.upload_stream(
-						{
-							resource_type: "image",
-							folder: "Arya/post",
-							use_filename: true,
-						},
-						(error, result) => {
-							if (error) {
-								reject(
-									res.status(500).send({
-										error: true,
-										message:
-											"Une erreur est survenue lors du téléchargement de l'image sur Cloudinary.",
-									})
-								);
-							} else resolve(result);
-						}
-					)
-					.end(resizedAndCovertedImg);
-			});
-		});
-
-		let cloudinaryResponse = await Promise.all(uploadFiles);
-
-		return cloudinaryResponse.map((res) => res.secure_url);
-	}
-
-	let uploadResponse = await handleFiles();
+	let uploadResponse = await uploadFiles(medias, "post");
 
 	const post = new PostModel({
 		posterId: req.body.posterId,

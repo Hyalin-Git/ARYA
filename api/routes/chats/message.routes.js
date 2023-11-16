@@ -1,7 +1,14 @@
 const router = require("express").Router();
 const messageController = require("../../controllers/chat/message.controllers");
+const { messageUpload } = require("../../middlewares/multer.middleware");
+const { multerErrorsHandler } = require("../../utils/multerErrors");
 
-router.post("/", messageController.saveMessage);
+router.post(
+	"/",
+	messageUpload.fields([{ name: "media", maxCount: 4 }]),
+	multerErrorsHandler,
+	messageController.saveMessage
+);
 // Usefull to fetch all data of the message data such as the send time
 router.get("/:id", messageController.getMessage);
 
