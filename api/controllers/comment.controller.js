@@ -36,26 +36,35 @@ exports.getComment = (req, res, next) => {
 };
 
 exports.editComment = (req, res, next) => {
-	CommentModel.findByIdAndUpdate(
-		{ _id: req.params.id },
-		{
-			$set: {
-				text: req.body.text,
-			},
-		},
-		{
-			setDefaultsOnInsert: true,
-			new: true,
-		}
-	)
-		.then((comment) => {
+	let medias = req.files["media"];
+	CommentModel.findById({ _id: req.params.id })
+		.then(async (comment) => {
 			if (!comment) {
 				return res.status(404).send({
 					error: true,
 					message: "Could not find a matching comment",
 				});
 			}
-			res.status(200).send(comment);
+
+			if (comment.media.length > 0) {
+				await destroyFiles(comment, "comment");
+			}
+
+			const uploadResponse = await uploadFiles(medias, "comment");
+			const updateComment = await CommentModel.findByIdAndUpdate(
+				{ _id: req.params.id },
+				{
+					$set: {
+						text: req.body.text,
+						media: medias ? uploadResponse : [],
+					},
+				},
+				{
+					setDefaultsOnInsert: true,
+					new: true,
+				}
+			);
+			return res.status(200).send(updateComment);
 		})
 		.catch((err) => res.status(500).send(err));
 };

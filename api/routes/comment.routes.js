@@ -15,7 +15,12 @@ router.post(
 	commentController.addComment
 );
 
-router.put("/:id", commentController.editComment);
+router.put(
+	"/:id",
+	postUpload.fields([{ name: "media", maxCount: 4 }]),
+	multerErrorsHandler,
+	commentController.editComment
+);
 
 router.delete("/:id", commentController.deleteComment);
 

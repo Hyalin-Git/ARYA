@@ -19,7 +19,7 @@ exports.sendPost = async (req, res, next) => {
 	const post = new PostModel({
 		posterId: req.body.posterId,
 		text: req.body.text,
-		media: uploadResponse,
+		media: medias ? uploadResponse : [],
 		scheduledSendTime: date.format(),
 		status: isScheduled ? "scheduled" : "sent",
 	});
@@ -72,7 +72,7 @@ exports.updatePost = async (req, res, next) => {
 					new: true,
 				}
 			);
-			res.status(200).send(updatePost);
+			return res.status(200).send(updatePost);
 		})
 		.catch((err) => res.status(500).send(err.message ? err.message : err));
 };

@@ -22,7 +22,7 @@ exports.saveMessage = async (req, res, next) => {
 		conversationId: conversationId,
 		senderId: senderId,
 		content: content,
-		media: uploadResponse,
+		media: medias ? uploadResponse : [],
 	});
 	newMessage
 		.save()
@@ -42,7 +42,11 @@ exports.saveMessage = async (req, res, next) => {
 					new: true,
 				}
 			)
-				.then((message) => res.status(201).send(message))
+				.then((conversation) =>
+					res
+						.status(201)
+						.send({ message: newMessage, conversation: conversation })
+				)
 				.catch((err) => res.status(500).send(err));
 		})
 		.catch((err) => res.status(500).send(err));
@@ -63,28 +67,37 @@ exports.getMessage = (req, res, next) => {
 };
 
 exports.editMessage = (req, res, next) => {
+	let medias = req.files["media"];
 	const { content } = req.body;
-	MessageModel.findByIdAndUpdate(
-		{ _id: req.params.id },
-		{
-			$set: {
-				content: content,
-				isEdited: true,
-			},
-		},
-		{
-			new: true,
-			setDefaultsOnInsert: true,
-		}
-	)
-		.then((message) => {
+
+	MessageModel.findById({ _id: req.params.id })
+		.then(async (message) => {
 			if (!message) {
 				return res.status(404).send({
 					error: true,
 					message: "Impossible de modifier un message qui n'existe pas.",
 				});
 			}
-			res.status(200).send(message);
+			if (message.media.length > 0) {
+				await destroyFiles(message, "message"); // Destroy files only if there is medias
+			}
+
+			const uploadResponse = await uploadFiles(medias, "message");
+			const updatedMessage = await MessageModel.findByIdAndUpdate(
+				{ _id: req.params.id },
+				{
+					$set: {
+						content: content,
+						media: medias ? uploadResponse : [],
+						isEdited: true,
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
+			return res.status(200).send(updatedMessage);
 		})
 		.catch((err) => res.status(500).send(err));
 };
@@ -98,9 +111,27 @@ exports.deleteMessage = (req, res, next) => {
 					message: "Impossible de supprimer un message qui n'existe pas.",
 				});
 			}
-			await destroyFiles(message, "message");
+			if (message.media.length > 0) {
+				await destroyFiles(message, "message");
+			}
+
 			await MessageModel.findByIdAndDelete({ _id: req.params.id });
-			return res.status(200).send(message);
+			const conversationUpdated = await ConversationModel.findByIdAndUpdate(
+				{ _id: message.conversationId },
+				{
+					$pull: {
+						messages: message._id,
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
+
+			return res
+				.status(200)
+				.send({ message: message, conversation: conversationUpdated });
 		})
 		.catch((err) => res.status(500).send(err.message ? err.message : err));
 };

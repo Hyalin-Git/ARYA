@@ -12,7 +12,12 @@ router.post(
 // Usefull to fetch all data of the message data such as the send time
 router.get("/:id", messageController.getMessage);
 
-router.put("/:id", messageController.editMessage);
+router.put(
+	"/:id",
+	messageUpload.fields([{ name: "media", maxCount: 4 }]),
+	multerErrorsHandler,
+	messageController.editMessage
+);
 
 router.delete("/:id", messageController.deleteMessage);
 

@@ -171,7 +171,7 @@ exports.deleteCompany = (req, res, next) => {
 
 			if (deletedLogo.result !== "ok") {
 				return res
-					.status(404)
+					.status(400)
 					.send({ error: true, message: "Couldn't delete the specified Logo" });
 			}
 
