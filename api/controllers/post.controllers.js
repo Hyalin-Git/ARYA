@@ -45,26 +45,36 @@ exports.getPosts = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.updatePost = (req, res, next) => {
-	PostModel.findByIdAndUpdate(
-		{ _id: req.params.id },
-		{
-			$set: {
-				text: req.body.text,
-			},
-		},
-		{
-			setDefaultsOnInsert: true,
-			new: true,
-		}
-	)
-		.then((post) => {
+exports.updatePost = async (req, res, next) => {
+	let medias = req.files["media"];
+
+	PostModel.findById({ _id: req.params.id })
+		.then(async (post) => {
 			if (!post) {
 				return res.status(404).send("Post does not exist"); // This user does not exist
 			}
-			res.status(200).send(post);
+
+			if (post.media.length > 0) {
+				await destroyFiles(post, "post"); // Destroy files only if there is medias
+			}
+
+			const uploadResponse = await uploadFiles(medias, "post");
+			const updatePost = await PostModel.findByIdAndUpdate(
+				{ _id: req.params.id },
+				{
+					$set: {
+						text: req.body.text,
+						media: medias ? uploadResponse : [],
+					},
+				},
+				{
+					setDefaultsOnInsert: true,
+					new: true,
+				}
+			);
+			res.status(200).send(updatePost);
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) => res.status(500).send(err.message ? err.message : err));
 };
 
 exports.deletePost = (req, res, next) => {

@@ -33,7 +33,7 @@ exports.uploadFile = async (picture, folder) => {
 exports.uploadFiles = async (medias, folder) => {
 	try {
 		if (!medias) {
-			return undefined;
+			return;
 		}
 
 		const uploadOptions = {

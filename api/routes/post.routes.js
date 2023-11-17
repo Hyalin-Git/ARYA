@@ -14,7 +14,12 @@ router.post(
 	postController.sendPost
 );
 
-router.put("/:id", postController.updatePost);
+router.put(
+	"/:id",
+	postUpload.fields([{ name: "media", maxCount: 4 }]),
+	multerErrorsHandler,
+	postController.updatePost
+);
 
 router.delete("/:id", postController.deletePost);
 
