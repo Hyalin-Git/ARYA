@@ -2,6 +2,7 @@ const UserModel = require("../models/user.model");
 const CompanyModel = require("../models/Company.model");
 const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
 const cloudinary = require("../config/cloudinary.config");
+const { uploadFile, destroyFile } = require("../helpers/cloudinaryManager");
 
 exports.saveCompany = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id })
@@ -16,65 +17,43 @@ exports.saveCompany = (req, res, next) => {
 				return res.status(404).send("User does not exist");
 			}
 
-			const logo = req.file;
-			const resizedAndCovertedImg = await resizeImageAndWebpConvert(
-				logo.buffer,
-				200,
-				200
-			);
+			const picture = req.file;
 
-			cloudinary.uploader
-				.upload_stream(
-					{
-						resource_type: "image",
-						folder: "Arya/logo",
-						public_id: `${user._id}`,
-					},
-					async (err, result) => {
-						if (err) {
-							// An error occurred while uploading the image to Cloudinary.
-							return res.status(500).send({
-								error: true,
-								message:
-									"Une erreur est survenue lors du téléchargement de l'image sur Cloudinary.",
-							});
+			const uploadResponse = await uploadFile(picture, "logo");
+
+			new CompanyModel({
+				userId: user._id,
+				name: req.body.name,
+				picture: picture ? uploadResponse : "",
+				activity: req.body.activity,
+				lookingForEmployes: req.body.lookingForEmployes,
+				bio: req.body.bio,
+				websiteLink: req.body.websiteLink,
+			})
+				.save()
+				.then((company) => {
+					UserModel.findByIdAndUpdate(
+						{ _id: req.params.id },
+						{
+							$set: {
+								company: company._id,
+							},
+						},
+						{
+							new: true,
+							setDefaultsOnInsert: true,
 						}
-						new CompanyModel({
-							userId: user._id,
-							name: req.body.name,
-							logo: result.secure_url,
-							activity: req.body.activity,
-							lookingForEmployes: req.body.lookingForEmployes,
-							bio: req.body.bio,
-							websiteLink: req.body.websiteLink,
-						})
-							.save()
-							.then((company) => {
-								UserModel.findByIdAndUpdate(
-									{ _id: req.params.id },
-									{
-										$set: {
-											company: company._id,
-										},
-									},
-									{
-										new: true,
-										setDefaultsOnInsert: true,
-									}
-								)
-									.then((updated) => res.status(200).send(updated))
-									.catch((err) => res.status(500).send(err));
-							})
-							.catch((err) => {
-								if (err.code === 11000)
-									return res
-										.status(409)
-										.send({ error: true, message: "Duplicate record" });
-								res.status(500).send(err);
-							});
-					}
-				)
-				.end(resizedAndCovertedImg);
+					)
+						.then((updated) => res.status(200).send(updated))
+						.catch((err) => res.status(500).send(err));
+				})
+				.catch((err) => {
+					if (err.code === 11000)
+						return res
+							.status(409)
+							.send({ error: true, message: "Duplicate record" });
+					res.status(500).send(err);
+				});
 		})
 		.catch((err) => res.status(500).send(err));
 };
@@ -93,67 +72,42 @@ exports.getCompany = (req, res, next) => {
 };
 
 exports.updateCompany = (req, res, next) => {
+	const picture = req.file;
 	UserModel.findById({ _id: req.params.id })
-		.then(async (user) => {
+		.then((user) => {
 			if (!user) {
 				return res.status(404).send("User does not exist");
 			}
-
-			const logo = req.file;
-
-			const resizedAndCovertedImg = await resizeImageAndWebpConvert(
-				logo.buffer,
-				200,
-				200
-			);
-
-			const deleteOldLogo = await cloudinary.uploader.destroy(
-				`Arya/logo/${user._id}`
-			);
-
-			if (deleteOldLogo.result !== "ok") {
-				return res
-					.status(404)
-					.send({ error: true, message: "Couldn't delete the specified Logo" });
-			}
-
-			cloudinary.uploader
-				.upload_stream(
-					{
-						resource_type: "image",
-						folder: "Arya/logo",
-						public_id: `${user._id}`,
-					},
-					async (err, result) => {
-						if (err) {
-							// An error occurred while uploading the image to Cloudinary.
-							return res.status(500).send({
-								error: true,
-								message:
-									"Une erreur est survenue lors du téléchargement de l'image sur Cloudinary.",
-							});
-						}
-						CompanyModel.findOneAndUpdate(
-							{ userId: user._id },
-							{
-								$set: {
-									name: req.body.name,
-									logo: result.secure_url,
-									activity: req.body.activity,
-									lookingForEmployes: req.body.lookingForEmployes,
-									bio: req.body.bio,
-									websiteLink: req.body.websiteLink,
-								},
-							},
-							{
-								new: true,
-							}
-						)
-							.then(async (company) => res.status(200).send(company))
-							.catch((err) => res.status(500).send(err));
+			CompanyModel.findById({ _id: user.company })
+				.then(async (company) => {
+					if (!company) {
+						return res.status(404).send("Company does not exist");
 					}
-				)
-				.end(resizedAndCovertedImg);
+
+					if (company.picture) {
+						await destroyFile(company, "logo");
+					}
+					const uploadResponse = await uploadFile(picture, "logo");
+					const updatedCompany = await CompanyModel.findOneAndUpdate(
+						{ userId: user._id },
+						{
+							$set: {
+								name: req.body.name,
+								picture: picture ? uploadResponse : "",
+								activity: req.body.activity,
+								lookingForEmployes: req.body.lookingForEmployes,
+								bio: req.body.bio,
+								websiteLink: req.body.websiteLink,
+							},
+						},
+						{
+							new: true,
+						}
+					);
+
+					return res.status(200).send(updatedCompany);
+				})
+				.catch((err) => res.status(500).send(err));
 		})
 		.catch((err) => res.status(500).send(err));
 };
@@ -165,19 +119,11 @@ exports.deleteCompany = (req, res, next) => {
 				return res.status(404).send("User does not exist");
 			}
 
-			const deletedLogo = await cloudinary.uploader.destroy(
-				`Arya/logo/${user._id}`
-			);
-
-			if (deletedLogo.result !== "ok") {
-				return res
-					.status(400)
-					.send({ error: true, message: "Couldn't delete the specified Logo" });
-			}
-
-			CompanyModel.findOneAndDelete({ userId: user._id })
-				.then(() => {
-					UserModel.findByIdAndUpdate(
+			CompanyModel.findOne({ userId: user._id })
+				.then(async (company) => {
+					await destroyFile(company, "logo");
+					await CompanyModel.findByIdAndDelete({ _id: company._id });
+					const updatedUser = await UserModel.findByIdAndUpdate(
 						{ _id: req.params.id },
 						{
 							$unset: {
@@ -188,11 +134,11 @@ exports.deleteCompany = (req, res, next) => {
 							new: true,
 							setDefaultsOnInsert: true,
 						}
-					)
-						.then((dqz) => res.status(200).send(dqz))
-						.catch((err) => res.status(500).send(err));
+					);
+
+					return res.status(200).send(updatedUser);
 				})
-				.catch((err) => res.status(404).send(err));
+				.catch((err) => res.status(500).send(err.message ? err.message : err));
 		})
 		.catch((err) => res.status(500).send(err));
 };
