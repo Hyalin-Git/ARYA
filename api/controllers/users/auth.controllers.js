@@ -1,20 +1,22 @@
 // Model
-const UserModel = require("../models/user.model");
-const UserVerificationModel = require("../models/UserVerification.model");
-const RefreshTokenModel = require("../models/RefreshToken.model");
+const UserModel = require("../../models/users/User.model");
+const UserVerificationModel = require("../../models/users/UserVerification.model");
+const RefreshTokenModel = require("../../models/RefreshToken.model");
 // Libraries
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 // Utils
-const { sendEmail } = require("../utils/mail/nodeMailer");
-const { generateAccessToken } = require("../utils/jwt/generateAccessToken");
-const { generateRefreshToken } = require("../utils/jwt/generateRefreshToken");
-const { verifyAccountText } = require("../utils/mail/mailText");
+const { sendEmail } = require("../../utils/mail/nodeMailer");
+const { generateAccessToken } = require("../../utils/jwt/generateAccessToken");
+const {
+	generateRefreshToken,
+} = require("../../utils/jwt/generateRefreshToken");
+const { verifyAccountText } = require("../../utils/mail/mailText");
 const {
 	signUpValidation,
 	signInValidation,
-} = require("../helpers/formValidation");
+} = require("../../helpers/formValidation");
 const otp = require("otpauth");
 const qrcode = require("qrcode");
 

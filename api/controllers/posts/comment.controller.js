@@ -1,6 +1,9 @@
-const CommentModel = require("../models/Comment.model");
-const UserModel = require("../models/user.model");
-const { uploadFiles, destroyFiles } = require("../helpers/cloudinaryManager");
+const CommentModel = require("../../models/posts/Comment.model");
+const UserModel = require("../../models/users/User.model");
+const {
+	uploadFiles,
+	destroyFiles,
+} = require("../../helpers/cloudinaryManager");
 
 exports.addComment = async (req, res, next) => {
 	let medias = req.files["media"];

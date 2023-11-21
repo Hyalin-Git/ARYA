@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const { authenticate } = require("../middlewares/jwt.middleware");
-const verificationController = require("../controllers/verification.controllers");
+const { authenticate } = require("../../middlewares/jwt.middleware");
+const verificationController = require("../../controllers/verifications/verification.controllers");
 
 // Takes userId and token as parameters
 router.put("/:id/verify/:token", verificationController.verifyEmailLink);

@@ -1,8 +1,8 @@
 const router = require("express").Router();
-const commentController = require("../controllers/comment.controller");
-const { postUpload } = require("../middlewares/multer.middleware");
+const commentController = require("../../controllers/posts/comment.controller");
+const { postUpload } = require("../../middlewares/multer.middleware");
 
-const { multerErrorsHandler } = require("../utils/multerErrors");
+const { multerErrorsHandler } = require("../../utils/multerErrors");
 
 // CRUD
 router.get("/", commentController.getComments);

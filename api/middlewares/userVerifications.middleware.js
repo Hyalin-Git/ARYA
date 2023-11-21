@@ -1,4 +1,4 @@
-const UserModel = require("../models/user.model");
+const UserModel = require("../models/users/User.model");
 const bcrypt = require("bcrypt");
 
 // Checks the validity of the given password with the one saved in the DB

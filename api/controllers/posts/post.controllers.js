@@ -1,7 +1,10 @@
-const PostModel = require("../models/Post.model");
-const UserModel = require("../models/user.model");
+const PostModel = require("../../models/posts/Post.model");
+const UserModel = require("../../models/users/User.model");
 const moment = require("moment");
-const { uploadFiles, destroyFiles } = require("../helpers/cloudinaryManager");
+const {
+	uploadFiles,
+	destroyFiles,
+} = require("../../helpers/cloudinaryManager");
 
 exports.sendPost = async (req, res, next) => {
 	let date = moment();

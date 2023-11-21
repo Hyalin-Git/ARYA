@@ -3,7 +3,7 @@ const PostSocialMedia = require("../models/PostSocialMedia.model");
 const moment = require("moment");
 const SocialMediaTokenModel = require("../models/SocialMediaToken.model");
 const { sendTwitterPost } = require("../services/twitter.services");
-const PostModel = require("../models/Post.model");
+const PostModel = require("../models/posts/Post.model");
 
 new CronJob(
 	"* * * * *",

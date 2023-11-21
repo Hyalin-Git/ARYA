@@ -1,8 +1,8 @@
 const router = require("express").Router();
-const { authenticate, isAdmin } = require("../middlewares/jwt.middleware");
-const userController = require("../controllers/user.controllers");
-const { userPictureUpload } = require("../middlewares/multer.middleware");
-const { multerErrorsHandler } = require("../utils/multerErrors");
+const { authenticate, isAdmin } = require("../../middlewares/jwt.middleware");
+const userController = require("../../controllers/users/user.controllers");
+const { userPictureUpload } = require("../../middlewares/multer.middleware");
+const { multerErrorsHandler } = require("../../utils/multerErrors");
 
 router.get("/", authenticate, isAdmin, userController.getUsers);
 router.get("/:id", authenticate, isAdmin, userController.getUser);

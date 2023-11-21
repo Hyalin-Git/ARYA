@@ -1,6 +1,6 @@
 const ConversationModel = require("../../models/chats/Conversation.model");
 const MessageModel = require("../../models/chats/Message.model");
-const UserModel = require("../../models/user.model");
+const UserModel = require("../../models/users/User.model");
 const {
 	uploadFiles,
 	destroyFiles,

@@ -1,12 +1,15 @@
-const UserModel = require("../models/user.model");
-const ResetPasswordModel = require("../models/ResetPassword.model");
-const ResetEmailModel = require("../models/ResetEmail.model");
+const UserModel = require("../../models/users/User.model");
+const ResetPasswordModel = require("../../models/ResetPassword.model");
+const ResetEmailModel = require("../../models/ResetEmail.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const { sendEmail } = require("../utils/mail/nodeMailer");
-const { regex } = require("../utils/RegexPatterns/regex");
-const { resetPasswordText, resetEmailText } = require("../utils/mail/mailText");
-const { uploadFile, destroyFile } = require("../helpers/cloudinaryManager");
+const { sendEmail } = require("../../utils/mail/nodeMailer");
+const { regex } = require("../../utils/RegexPatterns/regex");
+const {
+	resetPasswordText,
+	resetEmailText,
+} = require("../../utils/mail/mailText");
+const { uploadFile, destroyFile } = require("../../helpers/cloudinaryManager");
 
 // Get all users
 exports.getUsers = (req, res, next) => {

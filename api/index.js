@@ -9,19 +9,21 @@ require("./config/db.config");
 require("./utils/cronJob");
 
 // routes
-const adminRouter = require("./routes/admin.routes");
-const authRouter = require("./routes/auth.routes");
-const twitterRouter = require("./routes/twitter.routes");
-const facebookRouter = require("./routes/facebook.routes");
-const userRouter = require("./routes/user.routes");
+const adminRouter = require("./routes/users/admin.routes");
+const authRouter = require("./routes/users/auth.routes");
+
+const userRouter = require("./routes/users/user.routes");
+const companyRouter = require("./routes/users/company.routes");
+const workerRouter = require("./routes/users/worker.routes");
+const postRouter = require("./routes/posts/post.routes");
+const commentRouter = require("./routes/posts/comment.routes");
 const conversationRouter = require("./routes/chats/conversation.routes");
 const messageRouter = require("./routes/chats/message.routes");
-const companyRouter = require("./routes/company.routes");
-const workerRouter = require("./routes/worker.routes");
-const postRouter = require("./routes/post.routes");
-const commentRouter = require("./routes/comment.routes");
-const verificationRouter = require("./routes/verification.routes");
+const verificationRouter = require("./routes/verifications/verification.routes");
 const { authenticate } = require("./middlewares/jwt.middleware");
+
+const twitterRouter = require("./routes/twitter.routes");
+const facebookRouter = require("./routes/facebook.routes");
 
 const app = express();
 

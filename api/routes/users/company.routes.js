@@ -1,7 +1,7 @@
 const router = require("express").Router();
-const companyController = require("../controllers/company.controller");
-const { userPictureUpload } = require("../middlewares/multer.middleware");
-const { multerErrorsHandler } = require("../utils/multerErrors");
+const companyController = require("../../controllers/users/company.controller");
+const { userPictureUpload } = require("../../middlewares/multer.middleware");
+const { multerErrorsHandler } = require("../../utils/multerErrors");
 
 router.post(
 	"/:id",
