@@ -1,7 +1,7 @@
 // Model
 const UserModel = require("../../models/users/User.model");
-const UserVerificationModel = require("../../models/users/UserVerification.model");
-const RefreshTokenModel = require("../../models/RefreshToken.model");
+const UserVerificationModel = require("../../models/verifications/UserVerification.model");
+const RefreshTokenModel = require("../../models/users/RefreshToken.model");
 // Libraries
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");

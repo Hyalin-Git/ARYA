@@ -1,7 +1,7 @@
-const ResetPasswordModel = require("../../models/ResetPassword.model");
+const ResetPasswordModel = require("../../models/verifications/ResetPassword.model");
 const UserModel = require("../../models/users/User.model");
-const UserVerificationModel = require("../../models/users/UserVerification.model");
-const ResetEmailModel = require("../../models/ResetEmail.model");
+const UserVerificationModel = require("../../models/verifications/UserVerification.model");
+const ResetEmailModel = require("../../models/verifications/ResetEmail.model");
 const crypto = require("crypto");
 const { sendEmail } = require("../../utils/mail/nodeMailer");
 

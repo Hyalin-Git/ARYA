@@ -15,6 +15,7 @@ const authRouter = require("./routes/users/auth.routes");
 const userRouter = require("./routes/users/user.routes");
 const companyRouter = require("./routes/users/company.routes");
 const workerRouter = require("./routes/users/worker.routes");
+const taskRouter = require("./routes/users/task.routes");
 const postRouter = require("./routes/posts/post.routes");
 const commentRouter = require("./routes/posts/comment.routes");
 const conversationRouter = require("./routes/chats/conversation.routes");
@@ -57,13 +58,15 @@ app.use("/api/admin", adminRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/twitter/auth", twitterRouter);
 app.use("/api/facebook/auth", facebookRouter);
+
 app.use("/api/users", userRouter);
-app.use("/api/conversations", conversationRouter);
-app.use("/api/messages", messageRouter);
 app.use("/api/company", companyRouter);
 app.use("/api/worker", workerRouter);
+app.use("/api/task", taskRouter);
 app.use("/api/post", postRouter);
 app.use("/api/comment", commentRouter);
+app.use("/api/conversations", conversationRouter);
+app.use("/api/messages", messageRouter);
 app.use("/api/verification", verificationRouter);
 
 app.get("/login/success", authenticate, (req, res, next) => {
