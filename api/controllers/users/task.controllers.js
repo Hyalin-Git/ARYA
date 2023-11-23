@@ -1,23 +1,34 @@
+const { getFormattedDates } = require("../../helpers/formattingDates");
 const TaskModel = require("../../models/users/Task.model");
 const moment = require("moment");
 
 exports.addTask = (req, res, next) => {
-	let date = moment();
+	let startingDate = moment();
+	let endingDate = moment();
 
-	if (
-		req.body.status !== "En attente" &&
-		req.body.status !== "En cours" &&
-		req.body.status !== "Terminé"
-	) {
+	// Getting filled dates informations
+	const { startingMonth, startingDay, startingYear } = req.body;
+	const { endingMonth, endingDay, endingYear } = req.body;
+
+	const startingDateFormat = getFormattedDates(
+		startingDate,
+		startingYear,
+		startingMonth,
+		startingDay
+	);
+	const endingDateFormat = getFormattedDates(
+		endingDate,
+		endingYear,
+		endingMonth,
+		endingDay
+	);
+
+	const allowedStatus = ["En attente", "En cours", "Terminé"];
+	// If the given status isn't in the allowedStatus array then return an error
+	if (!allowedStatus.includes(req.body.status)) {
 		return res
 			.status(400)
 			.send({ error: true, message: "Les paramètres fournit sont invalides" });
-	}
-
-	if (req.body.days || req.body.months) {
-		date
-			.add(req.body.days ? req.body.days : "", "d")
-			.add(req.body.months ? req.body.months : "", "M");
 	}
 
 	const task = new TaskModel({
@@ -27,10 +38,12 @@ exports.addTask = (req, res, next) => {
 		price: req.body.price,
 		software: req.body.software,
 		customers: req.body.customers,
-		startingDate: Date.now(),
-		endingDate: date.format(),
+		startingDate: startingDateFormat,
+		endingDate: endingDateFormat,
 		status: req.body.status,
 		priority: req.body.priority,
+		devisLink: req.body.devisLink,
+		factureLink: req.body.factureLink,
 	});
 
 	task
@@ -54,6 +67,8 @@ exports.getTask = (req, res, next) => {
 
 exports.getTasks = (req, res, next) => {
 	TaskModel.find({ userId: req.body.userId })
+		.populate("customers", "userName picture")
+		.exec()
 		.then((task) => {
 			if (task <= 0) {
 				return res
@@ -65,7 +80,35 @@ exports.getTasks = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.updateTask = (req, res, next) => {
+exports.updateTask = async (req, res, next) => {
+	let startingDate = moment();
+	let endingDate = moment();
+
+	// Getting filled dates informations
+	const { startingMonth, startingDay, startingYear } = req.body;
+	const { endingMonth, endingDay, endingYear } = req.body;
+
+	const startingDateFormat = getFormattedDates(
+		startingDate,
+		startingYear,
+		startingMonth,
+		startingDay
+	);
+	const endingDateFormat = getFormattedDates(
+		endingDate,
+		endingYear,
+		endingMonth,
+		endingDay
+	);
+
+	const allowedStatus = ["En attente", "En cours", "Terminé"];
+	// If the given status isn't in the allowedStatus array then return an error
+	if (!allowedStatus.includes(req.body.status)) {
+		return res
+			.status(400)
+			.send({ error: true, message: "Les paramètres fournit sont invalides" });
+	}
+
 	TaskModel.findByIdAndUpdate(
 		{ _id: req.params.id },
 		{
@@ -75,6 +118,12 @@ exports.updateTask = (req, res, next) => {
 				price: req.body.price,
 				software: req.body.software,
 				customers: req.body.customers,
+				startingDate: startingDateFormat,
+				endingDate: endingDateFormat,
+				status: req.body.status,
+				priority: req.body.priority,
+				devisLink: req.body.devisLink,
+				factureLink: req.body.factureLink,
 			},
 		},
 		{
