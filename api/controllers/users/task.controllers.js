@@ -1,5 +1,6 @@
 const { getFormattedDates } = require("../../helpers/formattingDates");
 const TaskModel = require("../../models/users/Task.model");
+const UserModel = require("../../models/users/User.model");
 const moment = require("moment");
 
 exports.addTask = (req, res, next) => {
@@ -67,8 +68,6 @@ exports.getTask = (req, res, next) => {
 
 exports.getTasks = (req, res, next) => {
 	TaskModel.find({ userId: req.body.userId })
-		.populate("customers", "userName picture")
-		.exec()
 		.then((task) => {
 			if (task <= 0) {
 				return res

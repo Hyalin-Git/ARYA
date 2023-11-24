@@ -90,6 +90,10 @@ const UserSchema = new mongoose.Schema(
 			otp_hex: { type: String },
 			otp_auth_url: { type: String },
 		},
+		blockedUsers: {
+			type: [String],
+		},
+		reported: { type: Number },
 		admin: { type: Boolean, default: false },
 	},
 	{

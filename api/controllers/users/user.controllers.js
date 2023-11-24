@@ -427,6 +427,40 @@ exports.deleteOneUser = (req, res, next) => {
 		.catch((err) => res.status(500).send(err.message ? err.message : err));
 };
 
+exports.blockAnUser = (req, res, next) => {
+	UserModel.findByIdAndUpdate(
+		{ _id: req.params.id },
+		{
+			$addToSet: {
+				blockedUsers: req.body.idToBlock,
+			},
+		},
+		{
+			new: true,
+			setDefaultsOnInsert: true,
+		}
+	)
+		.then((blockedUser) => res.status(200).send(blockedUser))
+		.catch((err) => res.status(500).send(err));
+};
+
+exports.unblockAnUser = (req, res, next) => {
+	UserModel.findByIdAndUpdate(
+		{ _id: req.params.id },
+		{
+			$pull: {
+				blockedUsers: req.body.idToBlock,
+			},
+		},
+		{
+			new: true,
+			setDefaultsOnInsert: true,
+		}
+	)
+		.then((blockedUser) => res.status(200).send(blockedUser))
+		.catch((err) => res.status(500).send(err));
+};
+
 exports.getFollow = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id }, { following: 1 })
 		.populate("following", "lastName firstName userName")

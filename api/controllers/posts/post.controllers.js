@@ -41,10 +41,14 @@ exports.getPost = (req, res, next) => {
 };
 
 exports.getPosts = (req, res, next) => {
+	const filteredPosts = res.locals.filteredPosts;
+
+	if (filteredPosts.length > 0) {
+		return res.status(200).send(filteredPosts);
+	}
+
 	PostModel.find()
-		.populate("comments.commenterId", "userName lastName firstName")
-		.exec()
-		.then((post) => res.status(200).send(post))
+		.then((post) => res.status(202).send(post))
 		.catch((err) => res.status(500).send(err));
 };
 

@@ -1,5 +1,9 @@
 const router = require("express").Router();
-const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
+const {
+	authenticate,
+	authorize,
+	isBlocked,
+} = require("../../middlewares/jwt.middleware");
 const {
 	checkUserPassword,
 	checkIfUserVerified,
@@ -10,7 +14,7 @@ const { multerErrorsHandler } = require("../../utils/multerErrors");
 const userController = require("../../controllers/users/user.controllers");
 
 router.get("/", authenticate, userController.getUsers);
-router.get("/:id", authenticate, userController.getUser);
+router.get("/:id", authenticate, isBlocked, userController.getUser);
 router.delete("/:id", userController.deleteOneUser);
 
 // Update user picture
@@ -23,21 +27,21 @@ router.put(
 
 // Update user bio
 router.put(
-	"/:id/update-user",
+	"/update-user/:id",
 	authenticate,
 	authorize,
 	userController.updateUser
 );
 // Update user phone
 router.put(
-	"/:id/update-phone",
+	"/update-phone/:id",
 	checkIfUserVerified,
 	userController.updateUserPhone
 );
 
 // Update email routes
 router.post(
-	"/:id/email-reset",
+	"/email-reset/:id",
 	checkUserPassword,
 	checkIfUserVerified,
 	userController.sendEmailResetLink
@@ -45,7 +49,7 @@ router.post(
 
 // Update user password route
 router.put(
-	"/:id/password-reset",
+	"/password-reset/:id",
 	checkUserPassword,
 	checkIfUserVerified,
 	userController.updateUserPassword // If the user want to update his password
@@ -53,11 +57,14 @@ router.put(
 
 // forgot passsword routes
 router.post(
-	"/:id/forgot-password/reset-code",
+	"/forgot-password/reset-code/:id",
 	userController.sendPasswordResetCode
 );
-// Send the reset code to the user email
-router.put("/:id/forgot-password", userController.updateForgotPassword); // If the reset code is verified, then update the password
+router.put("/forgot-password/:id", userController.updateForgotPassword); // If the reset code is verified, then update the password
+
+router.patch("/block/:id", userController.blockAnUser);
+router.patch("/unblock/:id", userController.unblockAnUser);
+
 router.get("/follow/:id", userController.getFollow);
 router.get("/followers/:id", userController.getFollowers);
 router.patch("/follow/:id", userController.follow);
