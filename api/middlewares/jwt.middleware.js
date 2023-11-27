@@ -50,18 +50,26 @@ exports.authorize = (req, res, next) => {
 exports.isBlocked = async (req, res, next) => {
 	let authUser = res.locals.user;
 
-	// The authentified user is trying to fetch an user informations
+	const AuthUserModel = await UserModel.findById({ _id: authUser._id });
+	// The authentified user is trying to fetch user informations
 	const requestedUser = await UserModel.findById({ _id: req.params.id });
-	const authUserRequestedUser = await UserModel.findById({ _id: authUser._id });
 
-	// Before giving informations checking if the auth is blocked or not
-	if (
-		requestedUser.blockedUsers.includes(authUser._id) ||
-		authUserRequestedUser.blockedUsers.includes(requestedUser._id)
-	) {
+	const isAuthUserBlocked = requestedUser.blockedUsers.includes(
+		AuthUserModel._id
+	);
+	const isRequestedUserBlocked = AuthUserModel.blockedUsers.includes(
+		requestedUser._id
+	);
+
+	// Checking if auth user is blocked || if auth user has blocked the user
+	if (isAuthUserBlocked || isRequestedUserBlocked) {
 		return res.status(403).send({
 			error: true,
-			message: "Vous avez été bloqué par cette utilisateur",
+			message: `${
+				isAuthUserBlocked
+					? "Vous avez été bloqué par cette utilisateur"
+					: "Vous avez bloqué cette utilisateur"
+			}`,
 			UserInfo: {
 				lastName: requestedUser.lastName,
 				firstName: requestedUser.firstName,
