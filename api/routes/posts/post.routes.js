@@ -10,8 +10,8 @@ const { postUpload } = require("../../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../../utils/multerErrors");
 
 // CRUD
-router.get("/:id", postController.getPost);
-router.get("/", authenticate, checkPostAccess, postController.getPosts);
+router.get("/:id", authenticate, postController.getPost);
+router.get("/", authenticate, postController.getPosts);
 
 router.post(
 	"/",

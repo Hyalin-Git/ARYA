@@ -33,23 +33,81 @@ exports.sendPost = async (req, res, next) => {
 };
 
 exports.getPost = (req, res, next) => {
+	const authUser = res.locals.user;
 	PostModel.findById({ _id: req.params.id })
-		.populate("comments.commenterId", "userName lastName firstName")
-		.exec()
-		.then((post) => res.status(200).send(post))
-		.catch((err) => res.status(500).send(err));
+		.then(async (post) => {
+			if (!post) {
+				return res.status(404).send({
+					error: true,
+					message: "Cette publication n'existe pas",
+				});
+			}
+			const user = await UserModel.findById({ _id: post.posterId });
+
+			if (user.blockedUsers.includes(authUser._id)) {
+				return res.status(403).send({
+					error: true,
+					message:
+						"Impossible de récupérer la publication d'un utilisateur qui vous a bloqué",
+				});
+			}
+			if (authUser.blockedUsers.includes(post.posterId)) {
+				return res.status(403).send({
+					error: true,
+					message:
+						"Impossible de récupérer la publication d'un utilisateur que vous avez bloqué",
+				});
+			}
+
+			return res.status(200).send(post);
+		})
+		.catch((err) => res.status(500).send(err.message));
+
+	// .populate("comments.commenterId", "userName lastName firstName")
+	// .exec()
 };
 
-exports.getPosts = (req, res, next) => {
-	const filteredPosts = res.locals.filteredPosts;
+exports.getPosts = async (req, res, next) => {
+	try {
+		const authUser = res.locals.user;
 
-	if (filteredPosts.length > 0) {
-		return res.status(200).send(filteredPosts);
+		const users = await UserModel.find();
+		// Loop through every users
+		for (const user of users) {
+			// Checks if an user includes the authUserId in the blocked array.
+			if (user.blockedUsers.includes(authUser._id)) {
+				// Get every post where posterId !== user._id.
+				// And where posterId is not in authUser blocked array (can be empty).
+				const posts = await PostModel.find({
+					$and: [
+						{ posterId: { $ne: user._id } },
+						{ posterId: { $nin: authUser.blockedUsers } },
+					],
+				});
+
+				if (posts.length <= 0) {
+					return res
+						.status(404)
+						.send({ message: "Aucune publication trouvée" });
+				}
+
+				return res.status(200).send(posts);
+			}
+		}
+		// If the authUserId does not appear in any user blocked Array
+		// Then just get posts where posterId is not in authUser blocked array (can be empty).
+		const posts = await PostModel.find({
+			posterId: { $nin: authUser.blockedUsers },
+		});
+
+		if (posts.length <= 0) {
+			return res.status(404).send({ message: "Aucune publication trouvée" });
+		}
+
+		return res.status(200).send(posts);
+	} catch (err) {
+		return res.status(500).send(err);
 	}
-
-	PostModel.find()
-		.then((post) => res.status(202).send(post))
-		.catch((err) => res.status(500).send(err));
 };
 
 exports.updatePost = async (req, res, next) => {
@@ -113,6 +171,7 @@ exports.addReaction = (req, res, next) => {
 					[`reactions.${reaction}`]: userId,
 				},
 			},
+
 			{ new: true, setDefaultsOnInsert: true }
 		)
 			.then((post) => {

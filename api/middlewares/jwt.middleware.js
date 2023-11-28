@@ -67,8 +67,8 @@ exports.isBlocked = async (req, res, next) => {
 			error: true,
 			message: `${
 				isAuthUserBlocked
-					? "Vous avez été bloqué par cette utilisateur"
-					: "Vous avez bloqué cette utilisateur"
+					? "Vous avez été bloqué par cet utilisateur"
+					: "Vous avez bloqué cet utilisateur"
 			}`,
 			UserInfo: {
 				lastName: requestedUser.lastName,
@@ -79,21 +79,6 @@ exports.isBlocked = async (req, res, next) => {
 		});
 	} else {
 		next();
-	}
-};
-
-exports.checkPostAccess = async (req, res, next) => {
-	let authUser = res.locals.user;
-	try {
-		const posts = await PostModel.find({
-			posterId: { $nin: authUser.blockedUsers },
-		});
-
-		res.locals.filteredPosts = posts;
-		next();
-		return;
-	} catch (err) {
-		return res.status(500).send(err);
 	}
 };
 
