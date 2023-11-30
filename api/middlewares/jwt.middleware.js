@@ -35,7 +35,7 @@ exports.authenticate = (req, res, next) => {
 
 exports.authorize = (req, res, next) => {
 	let user = res.locals.user;
-	const targetUser = req.params.id || req.body.userId;
+	const targetUser = req.query.userId || req.params.id;
 
 	if (targetUser === user._id.toString()) {
 		next();

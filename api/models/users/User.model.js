@@ -91,10 +91,13 @@ const UserSchema = new mongoose.Schema(
 			otp_auth_url: { type: String },
 		},
 		blockedUsers: {
-			type: [String],
+			type: [mongoose.Schema.Types.ObjectId],
+			ref: "User",
 		},
-		reported: { type: Number },
-		admin: { type: Boolean, default: false },
+		admin: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	{
 		timestamps: true,
