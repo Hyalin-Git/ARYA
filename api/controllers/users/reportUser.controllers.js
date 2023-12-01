@@ -1,37 +1,66 @@
 const ReportUserModel = require("../../models/users/ReportUser.model");
+const UserModel = require("../../models/users/User.model");
 
 exports.saveReport = (req, res, next) => {
 	const { reporterId, reportedUserId, reason, note } = req.body;
 
-	const report = new ReportUserModel({
-		reporterId: reporterId,
-		reportedUserId: reportedUserId,
-		reason: reason,
-		note: note,
-	});
+	UserModel.findById({ _id: reportedUserId })
+		.then((user) => {
+			if (!user) {
+				return res
+					.status(404)
+					.send({ error: true, message: "Cet utilisateur n'existe pas" });
+			}
 
-	report
-		.save()
-		.then((report) => res.status(201).send(report))
+			const report = new ReportUserModel({
+				reporterId: reporterId,
+				reportedUserId: reportedUserId,
+				reason: reason,
+				note: note,
+			});
+
+			report
+				.save()
+				.then(async (report) => {
+					const updatedUser = await UserModel.findByIdAndUpdate(
+						{ _id: reportedUserId },
+						{
+							$inc: {
+								reported: 1,
+							},
+						},
+						{
+							new: true,
+							setDefaultsOnInsert: true,
+						}
+					);
+
+					res
+						.status(201)
+						.send({ signalement: report, updatedUser: updatedUser });
+				})
+				.catch((err) => res.status(500).send(err));
+		})
 		.catch((err) => res.status(500).send(err));
 };
 
 exports.getReports = (req, res, next) => {
-	const { reportedUserId, status } = req.query;
+	const { reportedUserId, reason, status, sortBy } = req.query;
 
 	function searchReport() {
+		const search = {};
+
 		if (reportedUserId) {
-			console.log("both");
-			return {
-				reportedUserId: reportedUserId,
-				status: status,
-			};
+			search.reportedUserId = reportedUserId;
 		}
 		if (status) {
-			return {
-				status: status,
-			};
+			search.status = status;
 		}
+		if (reason) {
+			search.reason = reason;
+		}
+
+		return search;
 	}
 
 	ReportUserModel.find(searchReport())
@@ -39,7 +68,7 @@ exports.getReports = (req, res, next) => {
 			"reporterId reportedUserId",
 			"firstName lastName picture userName"
 		)
-		.sort({ createdAt: "desc" })
+		.sort({ createdAt: sortBy })
 		.exec()
 		.then((reports) => {
 			if (reports <= 0) {
@@ -103,9 +132,8 @@ exports.updateReport = (req, res, next) => {
 };
 
 exports.deleteReport = (req, res, next) => {
-	ReportUserModel.findOneAndDelete({
+	ReportUserModel.findByIdAndDelete({
 		_id: req.params.id,
-		reporterId: req.query.userId,
 	})
 		.then((deletedReport) => {
 			if (!deletedReport) {

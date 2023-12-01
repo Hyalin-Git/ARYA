@@ -5,7 +5,7 @@ const {
 	isBlocked,
 	isAdmin,
 } = require("../../middlewares/jwt.middleware");
-const reportController = require("../../controllers/users/reportUser.controllers");
+const reportController = require("../../controllers/posts/reportPost.controller");
 
 router.post("/", reportController.saveReport);
 

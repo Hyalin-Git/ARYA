@@ -94,6 +94,10 @@ const UserSchema = new mongoose.Schema(
 			type: [mongoose.Schema.Types.ObjectId],
 			ref: "User",
 		},
+		reported: {
+			type: Number,
+			default: 0,
+		},
 		admin: {
 			type: Boolean,
 			default: false,
