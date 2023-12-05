@@ -4,6 +4,7 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
+const { canAccessComments } = require("../../helpers/checkIfUserIsBlocked");
 
 exports.addComment = async (req, res, next) => {
 	let medias = req.files["media"];
@@ -22,19 +23,74 @@ exports.addComment = async (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.getComments = (req, res, next) => {
-	CommentModel.find()
-		.populate("commenterId", "userName lastName firstName")
-		.exec()
-		.then((post) => res.status(200).send(post))
-		.catch((err) => res.status(500).send(err));
+exports.getComments = async (req, res, next) => {
+	try {
+		const authUser = res.locals.user;
+
+		const users = await UserModel.find();
+
+		const filteredComments = await canAccessComments(authUser, users, req);
+
+		if (filteredComments) {
+			if (filteredComments.length <= 0) {
+				return res
+					.status(404)
+					.send({ error: true, message: "Aucun commentaire trouvée" });
+			}
+			return res.status(200).send(filteredComments);
+		}
+
+		CommentModel.find({
+			commenterId: { $nin: authUser.blockedUsers },
+			postId: req.query.postId,
+		})
+			.populate("commenterId", "userName lastName firstName")
+			.exec()
+			.then((comment) => {
+				if (comment.length <= 0) {
+					return res
+						.status(404)
+						.send({ error: true, message: "Aucun commentaire trouvé" });
+				}
+				res.status(200).send(comment);
+			})
+			.catch((err) => res.status(500).send(err));
+	} catch (err) {
+		return res.status(500).send(err.message || "Une erreur s'est produite");
+	}
 };
 
 exports.getComment = (req, res, next) => {
+	const authUser = res.locals.user;
 	CommentModel.findById({ _id: req.params.id })
 		.populate("commenterId", "userName lastName firstName")
 		.exec()
-		.then((post) => res.status(200).send(post))
+		.then(async (comment) => {
+			if (!comment) {
+				return res
+					.status(404)
+					.send({ error: true, message: "Aucun commentaire trouvé" });
+			}
+			const user = await UserModel.findById({ _id: comment.commenterId });
+
+			if (user.blockedUsers.includes(authUser._id)) {
+				return res.status(403).send({
+					error: true,
+					message:
+						"Impossible de récupérer la publication d'un utilisateur qui vous a bloqué",
+				});
+			}
+
+			if (authUser.blockedUsers.includes(comment.commenterId)) {
+				return res.status(403).send({
+					error: true,
+					message:
+						"Impossible de récupérer la publication d'un utilisateur que vous avez bloqué",
+				});
+			}
+
+			return res.status(200).send(comment);
+		})
 		.catch((err) => res.status(500).send(err));
 };
 
