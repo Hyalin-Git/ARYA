@@ -20,10 +20,22 @@ const PostSchema = mongoose.Schema(
 			love: { type: [String] },
 			funny: { type: [String] },
 		},
+		commentsLength: {
+			type: Number,
+			default: 0,
+		},
 		scheduledSendTime: {
 			type: Date,
 		},
-		status: { type: String, default: "scheduled", required: true },
+		status: {
+			type: String,
+			default: "scheduled",
+			required: true,
+		},
+		reported: {
+			type: Number,
+			default: 0,
+		},
 	},
 	{
 		timestamps: true,

@@ -1,4 +1,7 @@
 const UserModel = require("../../models/users/User.model");
+const PostModel = require("../../models/posts/Post.model");
+const CommentModel = require("../../models/posts/Comment.model");
+const TaskModel = require("../../models/users/Task.model");
 const ResetPasswordModel = require("../../models/verifications/ResetPassword.model");
 const ResetEmailModel = require("../../models/verifications/ResetEmail.model");
 const bcrypt = require("bcrypt");
@@ -421,6 +424,12 @@ exports.deleteOneUser = (req, res, next) => {
 			}
 			await destroyFile(user, "profile"); // Delete all files from Cloudinary
 			await UserModel.findByIdAndDelete({ _id: req.params.id }); // Then delete the comment
+			// Delete every document of the deleted user
+			await PostModel.deleteMany({ posterId: req.params.id });
+			await TaskModel.deleteMany({ userId: req.params.id });
+			await CommentModel.deleteMany({ commenterId: req.params.id });
+			await CompanyModel.deleteMany({ userId: req.params.id });
+			await WorkerModel.deleteMany({ userId: req.params.id });
 
 			return res.status(200).send(user);
 		})
@@ -440,7 +449,37 @@ exports.blockAnUser = (req, res, next) => {
 			setDefaultsOnInsert: true,
 		}
 	)
-		.then((blockedUser) => res.status(200).send(blockedUser))
+		.then(async (user) => {
+			// Removes the blocked user from the followers/ing of the user who blocked
+			await UserModel.findByIdAndUpdate(
+				{ _id: user._id },
+				{
+					$pull: {
+						followers: req.body.idToBlock,
+						following: req.body.idToBlock,
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
+			// Removes the user from the followers/ing from the blocked user
+			await UserModel.findByIdAndUpdate(
+				{ _id: req.body.idToBlock },
+				{
+					$pull: {
+						followers: user._id,
+						following: user._id,
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
+			return res.status(200).send(user);
+		})
 		.catch((err) => res.status(500).send(err));
 };
 

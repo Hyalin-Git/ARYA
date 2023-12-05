@@ -21,8 +21,23 @@ exports.saveReport = (req, res, next) => {
 
 			report
 				.save()
-				.then((report) => {
-					res.status(201).send({ signalement: report });
+				.then(async (report) => {
+					const updatedPost = await PostModel.findByIdAndUpdate(
+						{ _id: reportedPostId },
+						{
+							$inc: {
+								reported: 1,
+							},
+						},
+						{
+							new: true,
+							setDefaultsOnInsert: true,
+						}
+					);
+
+					res
+						.status(201)
+						.send({ signalement: report, updatedPost: updatedPost });
 				})
 				.catch((err) => res.status(500).send(err));
 		})
