@@ -7,8 +7,8 @@ const {
 } = require("../../helpers/cloudinaryManager");
 
 exports.saveMessage = async (req, res, next) => {
-	let medias = req.files["media"];
 	const { senderId, content, conversationId } = req.body;
+	let medias = req.files["media"];
 
 	if (!senderId || !content || !conversationId) {
 		return res
@@ -27,27 +27,7 @@ exports.saveMessage = async (req, res, next) => {
 	newMessage
 		.save()
 		.then((newMessage) => {
-			ConversationModel.findByIdAndUpdate(
-				{ _id: newMessage.conversationId },
-				{
-					$addToSet: {
-						messages: newMessage._id,
-					},
-					$set: {
-						latestMessage: newMessage._id,
-					},
-				},
-				{
-					setDefaultsOnInsert: true,
-					new: true,
-				}
-			)
-				.then((conversation) =>
-					res
-						.status(201)
-						.send({ message: newMessage, conversation: conversation })
-				)
-				.catch((err) => res.status(500).send(err));
+			res.status(201).send({ message: newMessage });
 		})
 		.catch((err) => res.status(500).send(err));
 };

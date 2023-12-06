@@ -436,51 +436,71 @@ exports.deleteOneUser = (req, res, next) => {
 		.catch((err) => res.status(500).send(err.message ? err.message : err));
 };
 
-exports.blockAnUser = (req, res, next) => {
-	UserModel.findByIdAndUpdate(
-		{ _id: req.params.id },
-		{
-			$addToSet: {
-				blockedUsers: req.body.idToBlock,
-			},
-		},
-		{
-			new: true,
-			setDefaultsOnInsert: true,
+exports.blockAnUser = async (req, res, next) => {
+	try {
+		const targetUser = await UserModel.findById({ _id: req.body.idToBlock });
+
+		if (targetUser.admin === true) {
+			return res.status(403).send({
+				error: true,
+				message: "Vous ne pouvez pas bloquer cet utilisateur",
+			});
 		}
-	)
-		.then(async (user) => {
-			// Removes the blocked user from the followers/ing of the user who blocked
-			await UserModel.findByIdAndUpdate(
-				{ _id: user._id },
-				{
-					$pull: {
-						followers: req.body.idToBlock,
-						following: req.body.idToBlock,
-					},
+
+		const user = await UserModel.findByIdAndUpdate(
+			{ _id: req.params.id },
+			{
+				$addToSet: {
+					blockedUsers: targetUser._id,
 				},
-				{
-					new: true,
-					setDefaultsOnInsert: true,
-				}
-			);
-			// Removes the user from the followers/ing from the blocked user
-			await UserModel.findByIdAndUpdate(
-				{ _id: req.body.idToBlock },
-				{
-					$pull: {
-						followers: user._id,
-						following: user._id,
-					},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		if (!user) {
+			return res
+				.status(404)
+				.send({ error: true, message: "Utilisateur non trouvé" });
+		}
+
+		// Removes the blocked user from the followers/ing of the user who blocked
+		await UserModel.findByIdAndUpdate(
+			{ _id: user._id },
+			{
+				$pull: {
+					followers: targetUser._id,
+					following: targetUser._id,
 				},
-				{
-					new: true,
-					setDefaultsOnInsert: true,
-				}
-			);
-			return res.status(200).send(user);
-		})
-		.catch((err) => res.status(500).send(err));
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+		// Removes the user from the followers/ing from the blocked user
+		await UserModel.findByIdAndUpdate(
+			{ _id: req.body.idToBlock },
+			{
+				$pull: {
+					followers: user._id,
+					following: user._id,
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		return res.status(200).send(user);
+	} catch (err) {
+		return res
+			.status(500)
+			.send({ error: true, message: err.message || "Erreur du serveur" });
+	}
 };
 
 exports.unblockAnUser = (req, res, next) => {

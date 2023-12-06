@@ -5,7 +5,6 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
-const { canAccessPosts } = require("../../helpers/checkIfUserIsBlocked");
 
 exports.sendPost = async (req, res, next) => {
 	let date = moment();
@@ -33,37 +32,24 @@ exports.sendPost = async (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.getPosts = async (req, res, next) => {
-	try {
-		const authUser = res.locals.user;
-
-		const users = await UserModel.find();
-
-		const filteredPosts = await canAccessPosts(authUser, users);
-
-		if (filteredPosts) {
-			if (filteredPosts.length <= 0) {
-				return res.status(404).send({ message: "Aucune publication trouvée" });
+exports.getPosts = (req, res, next) => {
+	const authUser = res.locals.user;
+	// If the authUserId does not appear in any user blocked Array
+	// Then just get posts where posterId is not in authUser blocked array (can be empty).
+	PostModel.find({
+		posterId: { $nin: authUser.blockedUsers },
+	})
+		.populate("posterId", "userName lastName firstName")
+		.exec()
+		.then((posts) => {
+			if (posts.length <= 0) {
+				return res
+					.status(404)
+					.send({ error: true, message: "Aucune publication trouvée" });
 			}
-			return res.status(200).send(filteredPosts);
-		}
-
-		// If the authUserId does not appear in any user blocked Array
-		// Then just get posts where posterId is not in authUser blocked array (can be empty).
-		const posts = await PostModel.find({
-			posterId: { $nin: authUser.blockedUsers },
+			return res.status(200).send(posts);
 		})
-			.populate("posterId", "userName lastName firstName")
-			.exec();
-
-		if (posts.length <= 0) {
-			return res.status(404).send({ message: "Aucune publication trouvée" });
-		}
-
-		return res.status(200).send(posts);
-	} catch (err) {
-		return res.status(500).send(err.message);
-	}
+		.catch((err) => res.status(500).send(err));
 };
 
 exports.getPost = (req, res, next) => {

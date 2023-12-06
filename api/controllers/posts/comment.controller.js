@@ -4,7 +4,6 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
-const { canAccessComments } = require("../../helpers/checkIfUserIsBlocked");
 
 exports.addComment = async (req, res, next) => {
 	let medias = req.files["media"];
@@ -24,40 +23,23 @@ exports.addComment = async (req, res, next) => {
 };
 
 exports.getComments = async (req, res, next) => {
-	try {
-		const authUser = res.locals.user;
+	const authUser = res.locals.user;
 
-		const users = await UserModel.find();
-
-		const filteredComments = await canAccessComments(authUser, users, req);
-
-		if (filteredComments) {
-			if (filteredComments.length <= 0) {
+	CommentModel.find({
+		commenterId: { $nin: authUser.blockedUsers },
+		postId: req.query.postId,
+	})
+		.populate("commenterId", "userName lastName firstName")
+		.exec()
+		.then((comment) => {
+			if (comment.length <= 0) {
 				return res
 					.status(404)
-					.send({ error: true, message: "Aucun commentaire trouvée" });
+					.send({ error: true, message: "Aucun commentaire trouvé" });
 			}
-			return res.status(200).send(filteredComments);
-		}
-
-		CommentModel.find({
-			commenterId: { $nin: authUser.blockedUsers },
-			postId: req.query.postId,
+			res.status(200).send(comment);
 		})
-			.populate("commenterId", "userName lastName firstName")
-			.exec()
-			.then((comment) => {
-				if (comment.length <= 0) {
-					return res
-						.status(404)
-						.send({ error: true, message: "Aucun commentaire trouvé" });
-				}
-				res.status(200).send(comment);
-			})
-			.catch((err) => res.status(500).send(err));
-	} catch (err) {
-		return res.status(500).send(err.message || "Une erreur s'est produite");
-	}
+		.catch((err) => res.status(500).send(err));
 };
 
 exports.getComment = (req, res, next) => {

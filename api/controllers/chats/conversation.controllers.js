@@ -65,7 +65,6 @@ exports.getConversation = (req, res, next) => {
 		$and: [{ users: userId }, { users: otherUserId }],
 	})
 		.populate("users", "lastName firstName userName")
-		.populate("messages")
 		.exec()
 		.then((conversations) => {
 			if (!conversations) {

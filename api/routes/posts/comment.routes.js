@@ -4,14 +4,16 @@ const {
 	authenticate,
 	authorize,
 	isBlocked,
-	checkPostAccess,
 } = require("../../middlewares/jwt.middleware");
+const {
+	canAccessComments,
+} = require("../../middlewares/checkIfBlocked.middleware");
 const { postUpload } = require("../../middlewares/multer.middleware");
 
 const { multerErrorsHandler } = require("../../utils/multerErrors");
 
 // CRUD
-router.get("/", authenticate, commentController.getComments);
+router.get("/", authenticate, canAccessComments, commentController.getComments);
 router.get("/:id", commentController.getComment);
 
 router.post(

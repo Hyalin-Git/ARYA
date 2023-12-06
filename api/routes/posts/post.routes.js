@@ -1,17 +1,15 @@
 const router = require("express").Router();
 const postController = require("../../controllers/posts/post.controllers");
+const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
 const {
-	authenticate,
-	authorize,
-	isBlocked,
-	checkPostAccess,
-} = require("../../middlewares/jwt.middleware");
+	canAccessPosts,
+} = require("../../middlewares/checkIfBlocked.middleware");
 const { postUpload } = require("../../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../../utils/multerErrors");
 
 // CRUD
+router.get("/", authenticate, canAccessPosts, postController.getPosts);
 router.get("/:id", authenticate, postController.getPost);
-router.get("/", authenticate, postController.getPosts);
 
 router.post(
 	"/",

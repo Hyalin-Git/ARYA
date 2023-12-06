@@ -14,10 +14,7 @@ const conversationSchema = new mongoose.Schema(
 			type: [mongoose.Schema.Types.ObjectId],
 			ref: "User",
 		},
-		messages: {
-			type: [mongoose.Schema.Types.ObjectId],
-			ref: "Message",
-		},
+
 		latestMessage: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Message",
@@ -25,6 +22,5 @@ const conversationSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
-
 
 module.exports = mongoose.model("Conversation", conversationSchema);
