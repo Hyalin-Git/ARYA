@@ -64,7 +64,7 @@ exports.getPost = (req, res, next) => {
 					message: "Cette publication n'existe pas",
 				});
 			}
-			const user = await UserModel.findById({ _id: post.posterId });
+			const user = await UserModel.findById({ _id: post.posterId._id });
 
 			if (user.blockedUsers.includes(authUser._id)) {
 				return res.status(403).send({
@@ -73,7 +73,7 @@ exports.getPost = (req, res, next) => {
 						"Impossible de récupérer la publication d'un utilisateur qui vous a bloqué",
 				});
 			}
-			if (authUser.blockedUsers.includes(post.posterId)) {
+			if (authUser.blockedUsers.includes(post.posterId._id)) {
 				return res.status(403).send({
 					error: true,
 					message:
@@ -89,7 +89,7 @@ exports.getPost = (req, res, next) => {
 exports.updatePost = async (req, res, next) => {
 	let medias = req.files["media"];
 
-	PostModel.findById({ _id: req.params.id })
+	PostModel.findById({ _id: req.params.id, posterId: req.query.userId })
 		.then(async (post) => {
 			if (!post) {
 				return res.status(404).send("Post does not exist"); // This user does not exist

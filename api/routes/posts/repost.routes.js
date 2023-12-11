@@ -1,15 +1,11 @@
 const router = require("express").Router();
-const postController = require("../../controllers/posts/post.controllers");
 const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
 const {
 	canAccessPosts,
 } = require("../../middlewares/checkIfBlocked.middleware");
 const { postUpload } = require("../../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../../utils/multerErrors");
-
-// CRUD
-router.get("/", authenticate, canAccessPosts, postController.getPosts);
-router.get("/:id", authenticate, postController.getPost);
+const repostController = require("../../controllers/posts/repost.controller");
 
 router.post(
 	"/",
@@ -17,20 +13,20 @@ router.post(
 	authorize,
 	postUpload.fields([{ name: "media", maxCount: 4 }]),
 	multerErrorsHandler,
-	postController.sendPost
+	repostController.saveRepost
 );
-
+router.get("/", authenticate, repostController.getReposts);
+router.get("/:id", authenticate, repostController.getRepost);
+// router.patch();
+// router.patch();
 router.put(
 	"/:id",
+	authenticate,
+	authorize,
 	postUpload.fields([{ name: "media", maxCount: 4 }]),
 	multerErrorsHandler,
-	postController.updatePost
+	repostController.updateRepost
 );
-
-router.delete("/:id", postController.deletePost);
-
-// React to a post
-router.patch("/add-react/:id", postController.addReaction);
-router.patch("/remove-react/:id", postController.deleteReaction);
+router.delete("/:id", authenticate, authorize, repostController.deleteRepost);
 
 module.exports = router;

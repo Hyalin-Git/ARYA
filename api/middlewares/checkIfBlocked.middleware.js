@@ -162,13 +162,18 @@ exports.canAccessConversation = async (req, res, next) => {
 				.send({ error: true, message: "Paramètres manquants" });
 		}
 
+		// Getting the auth user
 		const authUser = res.locals.user;
+		// Getting the other user model in the conv
 		const otherUser = await UserModel.findById({ _id: otherUserId });
 
+		// If the auth user blocked the other user and vice versa
 		if (
 			authUser.blockedUsers.includes(otherUser._id) ||
 			otherUser.blockedUsers.includes(authUser._id)
 		) {
+			// Then return the conversation but with a status code of 403
+			// So the frontend know to not show the input to send a msg
 			ConversationModel.findOne({
 				_id: req.params.id,
 				$and: [{ users: userId }, { users: otherUserId }],
@@ -186,6 +191,7 @@ exports.canAccessConversation = async (req, res, next) => {
 				})
 				.catch((err) => res.status(500).send(err));
 		} else {
+			// Else the user can access the conversation normally
 			next();
 		}
 	} catch (err) {

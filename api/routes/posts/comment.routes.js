@@ -18,6 +18,8 @@ router.get("/:id", commentController.getComment);
 
 router.post(
 	"/",
+	authenticate,
+	authorize,
 	postUpload.fields([{ name: "media", maxCount: 4 }]),
 	multerErrorsHandler,
 	commentController.addComment

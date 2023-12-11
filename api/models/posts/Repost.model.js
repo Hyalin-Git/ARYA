@@ -1,13 +1,8 @@
 const mongoose = require("mongoose");
 
-const CommentSchema = mongoose.Schema(
+const RepostSchema = mongoose.Schema(
 	{
-		postId: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Post",
-			required: true,
-		},
-		commenterId: {
+		reposterId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 			required: true,
@@ -15,9 +10,15 @@ const CommentSchema = mongoose.Schema(
 		text: {
 			type: String,
 			required: true,
+			trim: true,
 		},
 		media: {
 			type: [String],
+		},
+		postId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Post",
+			required: true,
 		},
 		reactions: {
 			like: { type: [String] },
@@ -25,7 +26,11 @@ const CommentSchema = mongoose.Schema(
 			love: { type: [String] },
 			funny: { type: [String] },
 		},
-		answersLength: {
+		commentsLength: {
+			type: Number,
+			default: 0,
+		},
+		reported: {
 			type: Number,
 			default: 0,
 		},
@@ -35,4 +40,4 @@ const CommentSchema = mongoose.Schema(
 	}
 );
 
-module.exports = mongoose.model("Comment", CommentSchema);
+module.exports = mongoose.model("Repost", RepostSchema);

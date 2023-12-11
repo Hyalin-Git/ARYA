@@ -1,5 +1,8 @@
 const UserModel = require("../../models/users/User.model");
+const CompanyModel = require("../../models/users/Company.model");
+const WorkerModel = require("../../models/users/Worker.model");
 const PostModel = require("../../models/posts/Post.model");
+const RepostModel = require("../../models/posts/Repost.model");
 const CommentModel = require("../../models/posts/Comment.model");
 const TaskModel = require("../../models/users/Task.model");
 const ResetPasswordModel = require("../../models/verifications/ResetPassword.model");
@@ -422,10 +425,13 @@ exports.deleteOneUser = (req, res, next) => {
 					message: "Impossible de supprimer un utilisateur qui n'existe pas",
 				}); // Impossible to delete a non-existent user
 			}
-			await destroyFile(user, "profile"); // Delete all files from Cloudinary
+			if (user.picture) {
+				await destroyFile(user, "profile"); // Delete all files from Cloudinary
+			}
 			await UserModel.findByIdAndDelete({ _id: req.params.id }); // Then delete the comment
 			// Delete every document of the deleted user
 			await PostModel.deleteMany({ posterId: req.params.id });
+			await RepostModel.deleteMany({ reposterId: req.params.id });
 			await TaskModel.deleteMany({ userId: req.params.id });
 			await CommentModel.deleteMany({ commenterId: req.params.id });
 			await CompanyModel.deleteMany({ userId: req.params.id });

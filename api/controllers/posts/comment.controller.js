@@ -11,7 +11,7 @@ exports.addComment = async (req, res, next) => {
 
 	const comment = new CommentModel({
 		postId: req.body.postId,
-		commenterId: req.body.commenterId,
+		commenterId: req.query.userId,
 		text: req.body.text,
 		media: uploadResponse,
 	});
