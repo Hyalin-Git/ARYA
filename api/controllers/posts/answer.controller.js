@@ -6,47 +6,71 @@ const AnswerModel = require("../../models/posts/Answer.model");
 const CommentModel = require("../../models/posts/Comment.model");
 
 exports.saveAnswer = async (req, res, next) => {
-	const { commentId, answerId, text } = req.body;
-	const { userId } = req.query;
-	let medias = req.files["media"];
+	try {
+		const { commentId, parentAnswerId, answerToId, text } = req.body;
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user answer)
+		let medias = req.files["media"];
 
-	const uploadResponse = await uploadFiles(medias, "answer");
+		const uploadResponse = await uploadFiles(medias, "answer");
 
-	if (!commentId || !userId || !text) {
-		return res
-			.status(400)
-			.send({ error: true, message: "Paramètres manquants" });
-	}
+		if (!commentId || !userId || !text) {
+			return res
+				.status(400)
+				.send({ error: true, message: "Paramètres manquants" });
+			// Missing parameters
+		}
 
-	const answer = new AnswerModel({
-		commentId: commentId,
-		answerId: answerId,
-		answererId: userId, // Use the userId query as answererId
-		text: text,
-		media: medias ? uploadResponse : [],
-	});
+		// Get the comment where the user wants to answer
+		const comment = await CommentModel.findById({ _id: commentId });
 
-	answer
-		.save()
-		.then(async (answer) => {
-			// Always increments 1 to answersLength on the corresponding commentId when adding an answer
-			await CommentModel.findByIdAndUpdate(
-				{ _id: commentId },
-				{
-					$inc: {
-						answersLength: 1,
-					},
-				},
-				{
-					setDefaultsOnInsert: true,
-					new: true,
-				}
-			);
-			// If there is an answerId so if it's an answer to an answer
-			if (answerId) {
-				// Then incr 1 to the corresponding answer
-				await AnswerModel.findByIdAndUpdate(
-					{ _id: answerId },
+		// Checks if exist
+		if (!comment) {
+			return res.status(404).send({
+				error: true,
+				message: "Impossible d'ajouter une réponse à un commentaire inexistant",
+			});
+			// Cannot add an answer to a comment who doesn't exist
+		}
+
+		if (answerToId || parentAnswerId) {
+			const answer = await AnswerModel.findById({ _id: answerToId });
+
+			if (!answer) {
+				return res.status(404).send({
+					error: true,
+					message:
+						"Impossible d'ajouter une réponse à une réponse qui n'existe pas",
+				});
+			}
+
+			const parentAnswer = await AnswerModel.findById({
+				_id: parentAnswerId,
+			});
+
+			if (!parentAnswer) {
+				return res.status(404).send({
+					error: true,
+					message:
+						"Impossible d'ajouter une réponse à une réponse qui n'existe pas",
+				});
+			}
+		}
+
+		const newAnswer = new AnswerModel({
+			commentId: commentId,
+			parentAnswerId: parentAnswerId,
+			answerToId: answerToId,
+			answererId: userId, // Use the userId query as answererId
+			text: text,
+			media: medias ? uploadResponse : [],
+		});
+
+		newAnswer
+			.save()
+			.then(async (answer) => {
+				// Always increments 1 to answersLength on the corresponding commentId when adding an answer
+				await CommentModel.findByIdAndUpdate(
+					{ _id: commentId },
 					{
 						$inc: {
 							answersLength: 1,
@@ -57,10 +81,31 @@ exports.saveAnswer = async (req, res, next) => {
 						new: true,
 					}
 				);
-			}
-			return res.status(201).send(answer);
-		})
-		.catch((err) => res.status(500).send(err));
+				// If there is an answerId so if it's an answer to an answer
+				if (answerToId) {
+					// Then incr 1 to the corresponding answer
+					await AnswerModel.findByIdAndUpdate(
+						{ _id: answerToId },
+						{
+							$inc: {
+								answersLength: 1,
+							},
+						},
+						{
+							setDefaultsOnInsert: true,
+							new: true,
+						}
+					);
+				}
+				return res.status(201).send(answer);
+			})
+			.catch((err) => res.status(500).send(err));
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message,
+		});
+	}
 };
 
 exports.getAnswers = (req, res, next) => {
@@ -135,44 +180,40 @@ exports.updateAnswer = (req, res, next) => {
 
 exports.deleteAnswer = (req, res, next) => {
 	AnswerModel.findOneAndDelete({
-		_id: req.params.id,
-		answererId: req.query.userId,
+		_id: req.params.id, // Gets the _id from the params
+		answererId: req.query.userId, // Gets the userId from the query (Helps to verify if it's the user answer)
 	})
 		.then(async (answer) => {
 			if (!answer) {
 				return res.status(404).send({
 					error: true,
 					message: "Impossible de supprimer une réponse qui n'existe pas",
+					// Cannot delete an answer who doesn't exist
 				});
 			}
 
+			// If the answer has medias then delete those
 			if (answer.media.length > 0) {
 				await destroyFiles(answer, "answer");
 			}
 
-			const answerOfAnswer = await AnswerModel.find({
-				answerId: req.params.id,
+			// Gets every answers where _id is in the deleted answer.answersId array
+			const answersOfAnswers = await AnswerModel.find({
+				parentAnswerId: answer._id,
 			});
 
-			for (const answersOfAnswers of answerOfAnswer) {
-				if (answersOfAnswers.media.length > 0) {
-					await destroyFiles(answersOfAnswers, "answer");
-				}
-
-				if (answersOfAnswers.answerId) {
-					await AnswerModel.deleteMany({
-						answerId: answersOfAnswers.answerId,
-					});
+			for (const answerOfAnswer of answersOfAnswers) {
+				// Checks in every answer of answer if they have medias
+				if (answerOfAnswer.media.length > 0) {
+					// If yes delete those
+					await destroyFiles(answerOfAnswer, "answer");
 				}
 			}
 
-			await AnswerModel.deleteMany({
-				answerId: req.params.id,
-			});
+			// And delete every answer where parentAnswerId is == to the deleted answer ID.
+			await AnswerModel.deleteMany({ parentAnswerId: answer._id });
 
 			return res.status(200).send(answer);
 		})
-		.catch((err) =>
-			res.status(500).send(err.message || "Erreur interne du serveur")
-		);
+		.catch((err) => res.status(500).send(err));
 };

@@ -5,6 +5,8 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
+const CommentModel = require("../../models/posts/Comment.model");
+const AnswerModel = require("../../models/posts/Answer.model");
 
 exports.sendPost = async (req, res, next) => {
 	let date = moment();
@@ -124,8 +126,12 @@ exports.deletePost = (req, res, next) => {
 			if (!post) {
 				return res.status(404).send("Post does not exist"); // This user does not exist
 			}
-			await destroyFiles(post, "post"); // Delete all files from Cloudinary
+			if (post.media.length > 0) {
+				await destroyFiles(post, "post"); // Delete all files from Cloudinary
+			}
 			await PostModel.findByIdAndDelete({ _id: req.params.id }); // Then delete the post
+			await CommentModel.deleteMany({ postId: req.params.id });
+			await AnswerModel.deleteMany({ commentId: req.params.id });
 
 			return res.status(200).send(post);
 		})

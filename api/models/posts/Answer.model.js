@@ -7,7 +7,11 @@ const AnswerSchema = mongoose.Schema(
 			ref: "Comment",
 			required: true,
 		},
-		answerId: {
+		parentAnswerId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Answer",
+		},
+		answerToId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Answer",
 		},
@@ -32,6 +36,10 @@ const AnswerSchema = mongoose.Schema(
 		answersLength: {
 			type: Number,
 			default: 0,
+		},
+		answersIds: {
+			type: [mongoose.Schema.Types.ObjectId],
+			ref: "Answer",
 		},
 	},
 	{
