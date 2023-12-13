@@ -32,9 +32,11 @@ exports.saveAnswer = async (req, res, next) => {
 			// Cannot add an answer to a comment who doesn't exist
 		}
 
-		if (answerToId || parentAnswerId) {
-			const answer = await AnswerModel.findById({ _id: answerToId });
+		// If it's an answer to answer then checks if the answerToId is given
+		if (!answerToId) {
+			const answer = await AnswerModel.findById({ _id: answerToId }); // Fetch the answer of the answer
 
+			// Checks if the answer of the answer exist
 			if (!answer) {
 				return res.status(404).send({
 					error: true,
@@ -43,10 +45,20 @@ exports.saveAnswer = async (req, res, next) => {
 				});
 			}
 
+			// If it's an answer to answer we need to fill the parentAnswerId
+			if (!parentAnswerId) {
+				return res
+					.stataus(400)
+					.send({ error: true, message: "Paramètres manquants" });
+				// Missing parameters
+			}
+
+			// Fetch the parentAnswer
 			const parentAnswer = await AnswerModel.findById({
 				_id: parentAnswerId,
 			});
 
+			// Checks if the parentAnswer exist
 			if (!parentAnswer) {
 				return res.status(404).send({
 					error: true,
@@ -103,16 +115,34 @@ exports.saveAnswer = async (req, res, next) => {
 	} catch (err) {
 		return res.status(500).send({
 			error: true,
-			message: err.message,
+			message: err.message || "Erreur interne du serveur",
 		});
 	}
 };
 
 exports.getAnswers = (req, res, next) => {
-	AnswerModel.find({
-		commentId: req.query.commentId,
-		answerId: req.query.answerId,
-	})
+	const { commentId, answerToId } = req.query;
+	const filters = {};
+
+	// CommentId is required
+	if (!commentId) {
+		return res
+			.status(400)
+			.send({ error: true, message: "Paramètres manquants" });
+		// Missing parameters
+	}
+
+	// Fetch the answers by commentId and where answerToId is undefined
+	// So only returns the answers of the specified comment
+	filters.commentId = commentId;
+	filters.answerToId = undefined;
+
+	// But if answerToId is given in the query then it will get the answers of an answer
+	if (answerToId) {
+		filters.answerToId = answerToId;
+	}
+
+	AnswerModel.find(filters)
 		.populate("answererId", "lastName firstName userName")
 		.exec()
 		.then((answers) => res.status(200).send(answers))
@@ -142,7 +172,7 @@ exports.updateAnswer = (req, res, next) => {
 
 	AnswerModel.findOne({
 		_id: req.params.id,
-		answererId: req.query.userId,
+		answererId: req.query.userId, // Gets the userId from the query (Helps to verify if it's the user answer)
 	})
 		.then(async (answer) => {
 			if (!answer) {
@@ -150,6 +180,8 @@ exports.updateAnswer = (req, res, next) => {
 					.status(404)
 					.send({ error: true, message: "Aucune réponse trouvé" });
 			}
+
+			// If the answer has medias then we remove it from cloudinary
 			if (answer.media.length > 0) {
 				await destroyFiles(answer, "answer");
 			}
@@ -159,7 +191,7 @@ exports.updateAnswer = (req, res, next) => {
 			await AnswerModel.findOneAndUpdate(
 				{
 					_id: req.params.id,
-					answererId: req.query.userId,
+					answererId: req.query.userId, // Gets the userId from the query (Helps to verify if it's the user answer)
 				},
 				{
 					$set: {
@@ -197,7 +229,7 @@ exports.deleteAnswer = (req, res, next) => {
 				await destroyFiles(answer, "answer");
 			}
 
-			// Gets every answers where _id is in the deleted answer.answersId array
+			// Gets every answer where parentAnswerId are == to the deleted answer ID.
 			const answersOfAnswers = await AnswerModel.find({
 				parentAnswerId: answer._id,
 			});
@@ -210,7 +242,7 @@ exports.deleteAnswer = (req, res, next) => {
 				}
 			}
 
-			// And delete every answer where parentAnswerId is == to the deleted answer ID.
+			// And delete every answer where parentAnswerId are == to the deleted answer ID.
 			await AnswerModel.deleteMany({ parentAnswerId: answer._id });
 
 			return res.status(200).send(answer);
