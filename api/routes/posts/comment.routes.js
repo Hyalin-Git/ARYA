@@ -1,10 +1,6 @@
 const router = require("express").Router();
 const commentController = require("../../controllers/posts/comment.controller");
-const {
-	authenticate,
-	authorize,
-	isBlocked,
-} = require("../../middlewares/jwt.middleware");
+const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
 const {
 	canAccessComments,
 } = require("../../middlewares/checkIfBlocked.middleware");
@@ -13,29 +9,41 @@ const { postUpload } = require("../../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../../utils/multerErrors");
 
 // CRUD
-router.get("/", authenticate, canAccessComments, commentController.getComments);
-router.get("/:id", commentController.getComment);
-
 router.post(
 	"/",
 	authenticate,
 	authorize,
 	postUpload.fields([{ name: "media", maxCount: 4 }]),
 	multerErrorsHandler,
-	commentController.addComment
+	commentController.saveComment
 );
+
+router.get("/", authenticate, canAccessComments, commentController.getComments);
+router.get("/:id", commentController.getComment);
 
 router.put(
 	"/:id",
+	authenticate,
+	authorize,
 	postUpload.fields([{ name: "media", maxCount: 4 }]),
 	multerErrorsHandler,
-	commentController.editComment
+	commentController.updateComment
 );
 
-router.delete("/:id", commentController.deleteComment);
+router.delete("/:id", authenticate, authorize, commentController.deleteComment);
 
 // React to a comment
-router.patch("/add-react/:id", commentController.addReaction);
-router.patch("/delete-react/:id", commentController.deleteReaction);
+router.patch(
+	"/add-react/:id",
+	authenticate,
+	authorize,
+	commentController.addReaction
+);
+router.patch(
+	"/delete-react/:id",
+	authenticate,
+	authorize,
+	commentController.deleteReaction
+);
 
 module.exports = router;

@@ -7,25 +7,39 @@ const {
 } = require("../../helpers/cloudinaryManager");
 const CommentModel = require("../../models/posts/Comment.model");
 const AnswerModel = require("../../models/posts/Answer.model");
+const { getFormattedDates } = require("../../helpers/formattingDates");
 
-exports.sendPost = async (req, res, next) => {
-	let date = moment();
-	let medias = req.files["media"];
+exports.savePost = async (req, res, next) => {
+	const { text } = req.body;
+	const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user answer)
+	const medias = req.files["media"];
+	let scheduledSendTime = moment();
+	const { hour, minute, day, month, year } = req.body; // Getting filled dates
 
-	date
-		.add(req.body.days ? req.body.days : "", "d")
-		.add(req.body.hours ? req.body.hours : "", "h")
-		.add(req.body.minutes ? req.body.minutes : "", "m");
+	if (!text && !medias) {
+		return res
+			.status(400)
+			.send({ error: true, message: "Une publication ne peut pas être vide" });
+	}
 
-	const isScheduled = req.body.days || req.body.hours || req.body.minutes;
+	const sendingDateFormat = await getFormattedDates(
+		scheduledSendTime,
+		hour,
+		minute,
+		day,
+		month,
+		year
+	);
 
-	let uploadResponse = await uploadFiles(medias, "post");
+	const isScheduled = hour || minute || day || month || year;
+
+	const uploadResponse = await uploadFiles(medias, "post");
 
 	const post = new PostModel({
-		posterId: req.body.posterId,
-		text: req.body.text,
+		posterId: userId,
+		text: text,
 		media: medias ? uploadResponse : [],
-		scheduledSendTime: date.format(),
+		scheduledSendTime: sendingDateFormat,
 		status: isScheduled ? "scheduled" : "sent",
 	});
 	post
@@ -35,12 +49,18 @@ exports.sendPost = async (req, res, next) => {
 };
 
 exports.getPosts = (req, res, next) => {
-	const authUser = res.locals.user;
-	// If the authUserId does not appear in any user blocked Array
-	// Then just get posts where posterId is not in authUser blocked array (can be empty).
-	PostModel.find({
-		posterId: { $nin: authUser.blockedUsers },
-	})
+	const filter = {};
+	const { posterId, search } = req.query;
+
+	if (posterId) {
+		filter.posterId = posterId;
+	}
+
+	if (search) {
+		filter.search = search;
+	}
+
+	PostModel.find(filter)
 		.populate("posterId", "userName lastName firstName")
 		.exec()
 		.then((posts) => {
@@ -89,12 +109,16 @@ exports.getPost = (req, res, next) => {
 };
 
 exports.updatePost = async (req, res, next) => {
-	let medias = req.files["media"];
+	const { text } = req.body;
+	const medias = req.files["media"];
 
-	PostModel.findById({ _id: req.params.id, posterId: req.query.userId })
+	PostModel.findById({ _id: req.params.id, posterId: req.query.userId }) // Gets the userId from the query (Helps to verify if it's the user answer)
 		.then(async (post) => {
 			if (!post) {
-				return res.status(404).send("Post does not exist"); // This user does not exist
+				return res
+					.status(404)
+					.send("Impossible de mettre à jour une publication inexistante");
+				// Cannot update a post who doesn't exist
 			}
 
 			if (post.media.length > 0) {
@@ -102,11 +126,12 @@ exports.updatePost = async (req, res, next) => {
 			}
 
 			const uploadResponse = await uploadFiles(medias, "post");
-			const updatePost = await PostModel.findByIdAndUpdate(
-				{ _id: req.params.id },
+
+			const updatedPost = await PostModel.findOneAndUpdate(
+				{ _id: req.params.id, posterId: req.query.userId }, // Gets the userId from the query (Helps to verify if it's the user answer)
 				{
 					$set: {
-						text: req.body.text,
+						text: text,
 						media: medias ? uploadResponse : [],
 					},
 				},
@@ -115,23 +140,52 @@ exports.updatePost = async (req, res, next) => {
 					new: true,
 				}
 			);
-			return res.status(200).send(updatePost);
+			return res.status(200).send(updatedPost);
 		})
-		.catch((err) => res.status(500).send(err.message ? err.message : err));
+		.catch((err) =>
+			res.status(500).send(err.message || "Erreur interne du serveur")
+		);
 };
 
 exports.deletePost = (req, res, next) => {
-	PostModel.findById({ _id: req.params.id })
+	PostModel.findOneAndDelete({ _id: req.params.id, posterId: req.query.userId }) // Gets the userId from the query (Helps to verify if it's the user answer)
 		.then(async (post) => {
 			if (!post) {
-				return res.status(404).send("Post does not exist"); // This user does not exist
+				return res.status(404).send({
+					error: true,
+					message: "Impossible de supprimer une publication qui n'existe pas",
+					// Cannot delete a post who doesn't exist
+				});
 			}
+
+			// If the post has medias then delete those
 			if (post.media.length > 0) {
 				await destroyFiles(post, "post"); // Delete all files from Cloudinary
 			}
-			await PostModel.findByIdAndDelete({ _id: req.params.id }); // Then delete the post
+
+			// Gets every nested elements such as comments and answers
+			const comments = await CommentModel.find({ postId: req.params.id });
+			const answers = await AnswerModel.find({ postId: req.params.id });
+			// Then stock them in the const nestedElements
+			const nestedElements = [...comments, ...answers];
+
+			for (const nestedElement of nestedElements) {
+				// Checks if the nestedElement has media
+				if (nestedElement.media.length > 0) {
+					// Then checks if it's a comment
+					if (nestedElement.commenterId) {
+						await destroyFiles(nestedElement, "comment"); // Delete all files from Cloudinary
+					}
+					// Or an answer
+					if (nestedElement.answererId) {
+						await destroyFiles(nestedElement, "answer"); // Delete all files from Cloudinary
+					}
+				}
+			}
+
+			// Then delete every nested elements such as comments and answers
 			await CommentModel.deleteMany({ postId: req.params.id });
-			await AnswerModel.deleteMany({ commentId: req.params.id });
+			await AnswerModel.deleteMany({ postId: req.params.id });
 
 			return res.status(200).send(post);
 		})

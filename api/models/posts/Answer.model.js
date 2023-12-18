@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const AnswerSchema = mongoose.Schema(
 	{
+		postId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Post",
+			required: true,
+		},
 		commentId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Comment",

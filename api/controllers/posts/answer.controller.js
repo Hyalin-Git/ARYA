@@ -11,8 +11,6 @@ exports.saveAnswer = async (req, res, next) => {
 		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user answer)
 		let medias = req.files["media"];
 
-		const uploadResponse = await uploadFiles(medias, "answer");
-
 		if (!commentId || !userId || !text) {
 			return res
 				.status(400)
@@ -33,7 +31,7 @@ exports.saveAnswer = async (req, res, next) => {
 		}
 
 		// If it's an answer to answer then checks if the answerToId is given
-		if (!answerToId) {
+		if (answerToId) {
 			const answer = await AnswerModel.findById({ _id: answerToId }); // Fetch the answer of the answer
 
 			// Checks if the answer of the answer exist
@@ -68,7 +66,10 @@ exports.saveAnswer = async (req, res, next) => {
 			}
 		}
 
+		const uploadResponse = await uploadFiles(medias, "answer");
+
 		const newAnswer = new AnswerModel({
+			postId: comment.postId, // Always set the same postId as the answered comment
 			commentId: commentId,
 			parentAnswerId: parentAnswerId,
 			answerToId: answerToId,
@@ -163,12 +164,6 @@ exports.getAnswer = (req, res, next) => {
 exports.updateAnswer = (req, res, next) => {
 	const { text } = req.body;
 	let medias = req.files["media"];
-
-	if (!text) {
-		return res
-			.status(400)
-			.send({ error: true, message: "Paramètres manquant" });
-	}
 
 	AnswerModel.findOne({
 		_id: req.params.id,

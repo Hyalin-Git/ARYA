@@ -8,20 +8,31 @@ exports.addTask = (req, res, next) => {
 	let endingDate = moment();
 
 	// Getting filled dates informations
-	const { startingMonth, startingDay, startingYear } = req.body;
-	const { endingMonth, endingDay, endingYear } = req.body;
+	const {
+		startingHour,
+		startingMinute,
+		startingDay,
+		startingMonth,
+		startingYear,
+	} = req.body;
+	const { endingHour, endingMinute, endingDay, endingMonth, endingYear } =
+		req.body;
 
 	const startingDateFormat = getFormattedDates(
 		startingDate,
-		startingYear,
+		startingHour,
+		startingMinute,
+		startingDay,
 		startingMonth,
-		startingDay
+		startingYear
 	);
 	const endingDateFormat = getFormattedDates(
 		endingDate,
-		endingYear,
+		endingHour,
+		endingMinute,
+		endingDay,
 		endingMonth,
-		endingDay
+		endingYear
 	);
 
 	const allowedStatus = ["En attente", "En cours", "Terminé"];

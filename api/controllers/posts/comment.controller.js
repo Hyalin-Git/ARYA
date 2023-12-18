@@ -4,30 +4,85 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
+const PostModel = require("../../models/posts/Post.model");
+const AnswerModel = require("../../models/posts/Answer.model");
 
-exports.addComment = async (req, res, next) => {
-	let medias = req.files["media"];
-	let uploadResponse = await uploadFiles(medias, "comment");
+exports.saveComment = async (req, res, next) => {
+	try {
+		const { postId, text } = req.body;
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user answer)
+		const medias = req.files["media"];
 
-	const comment = new CommentModel({
-		postId: req.body.postId,
-		commenterId: req.query.userId,
-		text: req.body.text,
-		media: uploadResponse,
-	});
+		if (!postId || !text || !userId) {
+			return res
+				.status(400)
+				.send({ error: true, message: "Paramètres manquants" });
+			// Missing parameters
+		}
 
-	comment
-		.save()
-		.then((comment) => res.status(201).send(comment))
-		.catch((err) => res.status(500).send(err));
+		// Get the post where the user wants to comment
+		const post = await PostModel.findById({ _id: postId });
+
+		// Checks if exist
+		if (!post) {
+			return res.status(404).send({
+				error: true,
+				message:
+					"Impossible d'ajouter un commentaire à une publication inexistante",
+			});
+			// Cannot add a comment to a post who doesn't exist
+		}
+
+		const uploadResponse = await uploadFiles(medias, "comment");
+
+		const comment = new CommentModel({
+			postId: postId,
+			commenterId: userId, // Use the userId query as commenterId
+			text: text,
+			media: medias ? uploadResponse : [],
+		});
+
+		comment
+			.save()
+			.then(async (comment) => {
+				// Always increments 1 to commentsLength on the corresponding Post
+				await PostModel.findByIdAndUpdate(
+					{ _id: postId },
+					{
+						$inc: {
+							commentsLength: 1,
+						},
+					},
+					{
+						setDefaultsOnInsert: true,
+						new: true,
+					}
+				);
+
+				return res.status(201).send(comment);
+			})
+			.catch((err) => res.status(500).send(err));
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };
 
 exports.getComments = async (req, res, next) => {
+	const { postId } = req.query;
 	const authUser = res.locals.user;
+
+	if (!postId) {
+		return res
+			.status(400)
+			.send({ error: true, message: "Paramètres manquants" });
+	}
 
 	CommentModel.find({
 		commenterId: { $nin: authUser.blockedUsers },
-		postId: req.query.postId,
+		postId: postId,
 	})
 		.populate("commenterId", "userName lastName firstName")
 		.exec()
@@ -44,6 +99,7 @@ exports.getComments = async (req, res, next) => {
 
 exports.getComment = (req, res, next) => {
 	const authUser = res.locals.user;
+
 	CommentModel.findById({ _id: req.params.id })
 		.populate("commenterId", "userName lastName firstName")
 		.exec()
@@ -53,22 +109,25 @@ exports.getComment = (req, res, next) => {
 					.status(404)
 					.send({ error: true, message: "Aucun commentaire trouvé" });
 			}
-			const user = await UserModel.findById({ _id: comment.commenterId });
 
-			if (user.blockedUsers.includes(authUser._id)) {
-				return res.status(403).send({
-					error: true,
-					message:
-						"Impossible de récupérer la publication d'un utilisateur qui vous a bloqué",
-				});
-			}
+			if (authUser) {
+				const user = await UserModel.findById({ _id: comment.commenterId._id });
 
-			if (authUser.blockedUsers.includes(comment.commenterId)) {
-				return res.status(403).send({
-					error: true,
-					message:
-						"Impossible de récupérer la publication d'un utilisateur que vous avez bloqué",
-				});
+				if (user.blockedUsers.includes(authUser._id)) {
+					return res.status(403).send({
+						error: true,
+						message:
+							"Impossible de récupérer la publication d'un utilisateur qui vous a bloqué",
+					});
+				}
+
+				if (authUser.blockedUsers.includes(comment.commenterId._id)) {
+					return res.status(403).send({
+						error: true,
+						message:
+							"Impossible de récupérer la publication d'un utilisateur que vous avez bloqué",
+					});
+				}
 			}
 
 			return res.status(200).send(comment);
@@ -76,27 +135,37 @@ exports.getComment = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.editComment = (req, res, next) => {
-	let medias = req.files["media"];
-	CommentModel.findById({ _id: req.params.id })
+exports.updateComment = (req, res, next) => {
+	const { text } = req.body;
+	const medias = req.files["media"];
+
+	if (!text) {
+		return res
+			.status(400)
+			.send({ error: true, message: "Paramètres manquants" });
+	}
+
+	CommentModel.findOne({ _id: req.params.id, commenterId: req.query.userId }) // Gets the userId from the query (Helps to verify if it's the user answer)
 		.then(async (comment) => {
 			if (!comment) {
 				return res.status(404).send({
 					error: true,
-					message: "Could not find a matching comment",
+					message: "Aucun commentaire trouvé",
 				});
 			}
 
+			// If the comment has medias then we delete them
 			if (comment.media.length > 0) {
-				await destroyFiles(comment, "comment");
+				await destroyFiles(comment, "comment"); // Delete all files from Cloudinary
 			}
 
 			const uploadResponse = await uploadFiles(medias, "comment");
-			const updateComment = await CommentModel.findByIdAndUpdate(
-				{ _id: req.params.id },
+
+			const updatedComment = await CommentModel.findOneAndUpdate(
+				{ _id: req.params.id, commenterId: req.query.userId }, // Gets the userId from the query (Helps to verify if it's the user answer)
 				{
 					$set: {
-						text: req.body.text,
+						text: text,
 						media: medias ? uploadResponse : [],
 					},
 				},
@@ -105,29 +174,52 @@ exports.editComment = (req, res, next) => {
 					new: true,
 				}
 			);
-			return res.status(200).send(updateComment);
+
+			return res.status(200).send(updatedComment);
 		})
 		.catch((err) => res.status(500).send(err));
 };
 
 exports.deleteComment = (req, res, next) => {
-	CommentModel.findById({ _id: req.params.id })
+	CommentModel.findOneAndDelete({
+		_id: req.params.id,
+		commenterId: req.query.userId, // Gets the userId from the query (Helps to verify if it's the user answer)
+	})
 		.then(async (comment) => {
 			if (!comment) {
 				return res.status(404).send({
 					error: true,
-					message: "Could not find a matching comment",
+					message: "Impossible de supprimer un commentaire qui n'existe pas",
 				});
 			}
-			try {
+
+			// If the comment has medias then we delete them
+			if (comment.media.length > 0) {
 				await destroyFiles(comment, "comment"); // Delete all files from Cloudinary
-				await CommentModel.findByIdAndDelete({ _id: req.params.id }); // Then delete the comment
-				res.status(200).send(comment);
-			} catch (err) {
-				return res.status(500).json({ error: true, message: err.message });
 			}
+
+			// Get every nested answers of the specified comment
+			const answers = await AnswerModel.find({ commentId: req.params.id });
+
+			// For every answers we check if they got medias
+			for (const answer of answers) {
+				// If yes we delete them
+				if (answer.media.length > 0) {
+					await destroyFiles(answer, "answer");
+				}
+			}
+
+			// And then we deleted every nested answers
+			await AnswerModel.deleteMany({ commentId: req.params.id });
+
+			return res.status(200).send(comment);
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) =>
+			res.status(500).send({
+				error: true,
+				message: err.message || "Erreur interne du serveur",
+			})
+		);
 };
 
 const reactionsArray = ["like", "awesome", "funny", "love"];

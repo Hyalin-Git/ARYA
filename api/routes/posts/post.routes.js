@@ -8,8 +8,6 @@ const { postUpload } = require("../../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../../utils/multerErrors");
 
 // CRUD
-router.get("/", authenticate, canAccessPosts, postController.getPosts);
-router.get("/:id", authenticate, postController.getPost);
 
 router.post(
 	"/",
@@ -17,8 +15,11 @@ router.post(
 	authorize,
 	postUpload.fields([{ name: "media", maxCount: 4 }]),
 	multerErrorsHandler,
-	postController.sendPost
+	postController.savePost
 );
+
+router.get("/", postController.getPosts);
+router.get("/:id", postController.getPost);
 
 router.put(
 	"/:id",
