@@ -9,7 +9,6 @@ const RepostSchema = mongoose.Schema(
 		},
 		text: {
 			type: String,
-			required: true,
 			trim: true,
 		},
 		media: {

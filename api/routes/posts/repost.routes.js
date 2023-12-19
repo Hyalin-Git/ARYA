@@ -15,10 +15,9 @@ router.post(
 	multerErrorsHandler,
 	repostController.saveRepost
 );
-router.get("/", authenticate, repostController.getReposts);
+router.get("/", repostController.getReposts);
 router.get("/:id", authenticate, repostController.getRepost);
-// router.patch();
-// router.patch();
+
 router.put(
 	"/:id",
 	authenticate,
@@ -28,5 +27,19 @@ router.put(
 	repostController.updateRepost
 );
 router.delete("/:id", authenticate, authorize, repostController.deleteRepost);
+
+// React to a repost
+router.patch(
+	"/add-react/:id",
+	authenticate,
+	authorize,
+	repostController.addReaction
+);
+router.patch(
+	"/delete-react/:id",
+	authenticate,
+	authorize,
+	repostController.deleteReaction
+);
 
 module.exports = router;

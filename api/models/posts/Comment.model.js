@@ -5,11 +5,14 @@ const CommentSchema = mongoose.Schema(
 		postId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Post",
-			required: true,
+		},
+		repostId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Repost",
 		},
 		commenterId: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "User",
+			refPath: "User",
 			required: true,
 		},
 		text: {

@@ -5,7 +5,10 @@ const AnswerSchema = mongoose.Schema(
 		postId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Post",
-			required: true,
+		},
+		repostId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Repost",
 		},
 		commentId: {
 			type: mongoose.Schema.Types.ObjectId,

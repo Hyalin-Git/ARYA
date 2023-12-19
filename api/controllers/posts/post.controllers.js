@@ -11,7 +11,7 @@ const { getFormattedDates } = require("../../helpers/formattingDates");
 
 exports.savePost = async (req, res, next) => {
 	const { text } = req.body;
-	const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user answer)
+	const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user post)
 	const medias = req.files["media"];
 	let scheduledSendTime = moment();
 	const { hour, minute, day, month, year } = req.body; // Getting filled dates
@@ -48,19 +48,55 @@ exports.savePost = async (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.getPosts = (req, res, next) => {
-	const filter = {};
-	const { posterId, search } = req.query;
+exports.getPosts = async (req, res, next) => {
+	const { posterId, search, userLikes, sortByReact, sortByDate } = req.query;
+	let user;
 
-	if (posterId) {
-		filter.posterId = posterId;
+	if (userLikes) {
+		user = await UserModel.findById({ _id: userLikes });
 	}
 
-	if (search) {
-		filter.search = search;
+	function filter() {
+		const filter = {};
+
+		if (posterId) {
+			filter.posterId = posterId;
+		}
+
+		if (search) {
+			filter.text = { $regex: search, $options: "i" };
+		}
+
+		if (userLikes) {
+			filter._id = { $in: user.likes };
+		}
+
+		return filter;
 	}
 
-	PostModel.find(filter)
+	function sorting() {
+		if (sortByReact) {
+			return {
+				reactions: sortByReact,
+			};
+		}
+		if (sortByDate) {
+			return {
+				createdAt: sortByDate,
+			};
+		}
+	}
+
+	const params = {
+		posterId: posterId,
+		search: search,
+		sortByReact: sortByReact,
+		sortByDate: sortByDate,
+		userLikes: userLikes,
+	};
+
+	PostModel.find(filter())
+		.sort(sorting())
 		.populate("posterId", "userName lastName firstName")
 		.exec()
 		.then((posts) => {
@@ -69,7 +105,7 @@ exports.getPosts = (req, res, next) => {
 					.status(404)
 					.send({ error: true, message: "Aucune publication trouvée" });
 			}
-			return res.status(200).send(posts);
+			return res.status(200).send({ posts: posts, params: params });
 		})
 		.catch((err) => res.status(500).send(err));
 };
@@ -189,151 +225,179 @@ exports.deletePost = (req, res, next) => {
 
 			return res.status(200).send(post);
 		})
-		.catch((err) => res.status(500).send(err.message ? err.message : err));
+		.catch((err) =>
+			res.status(500).send(err.message || "Erreur interne du serveur")
+		);
 };
 
 // Reactions controllers
-const reactionsArray = ["like", "awesome", "funny", "love"];
+function checkIfReacted(post, userId) {
+	let hasReacted;
 
-exports.addReaction = (req, res, next) => {
-	const { reaction, userId } = req.body;
+	// Set the variable hasReacted value where it returns true
+	if (post.reactions.like.includes(userId)) {
+		hasReacted = "like";
+	} else if (post.reactions.awesome.includes(userId)) {
+		hasReacted = "awesome";
+	} else if (post.reactions.love.includes(userId)) {
+		hasReacted = "love";
+	} else if (post.reactions.funny.includes(userId)) {
+		hasReacted = "funny";
+	}
 
-	// this function adds user reaction to the specified post
-	function setReaction(reaction) {
-		PostModel.findByIdAndUpdate(
+	return hasReacted;
+}
+
+exports.addReaction = async (req, res, next) => {
+	try {
+		const { reaction } = req.body;
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
+		const allowedReactions = ["like", "awesome", "funny", "love"];
+
+		// Checks if the given reaction is in the allowedReactions array
+		if (!allowedReactions.includes(reaction)) {
+			return res
+				.status(400)
+				.send({ error: true, message: "La réaction fournit est invalide" });
+			// The given reaction is not valid
+		}
+
+		// Fetch the specified post
+		const post = await PostModel.findById({ _id: req.params.id });
+
+		if (!post) {
+			return res.status(404).send({
+				error: true,
+				message:
+					"Impossible d'ajouter une réaction à une publication inexistante",
+				// Cannot add a reaction to a post who doesn't exist
+			});
+		}
+
+		const lastUserReact = await checkIfReacted(post, userId);
+
+		// If the user already reacted
+		if (lastUserReact) {
+			if (lastUserReact === reaction) {
+				return res.status(401).send({
+					error: true,
+					message: "Impossible d'ajouter la même réaction",
+					// Cannot add the same reaction
+				});
+			}
+
+			const updatedPost = await PostModel.findByIdAndUpdate(
+				{ _id: req.params.id },
+				{
+					$pull: {
+						[`reactions.${lastUserReact}`]: userId, // Pull the old reaction
+					},
+					$addToSet: {
+						[`reactions.${reaction}`]: userId, // Add the new one
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
+
+			return res.status(200).send(updatedPost);
+		}
+
+		// If the user has not already voted
+		const updatedPost = await PostModel.findByIdAndUpdate(
 			{ _id: req.params.id },
 			{
 				$addToSet: {
-					[`reactions.${reaction}`]: userId,
+					[`reactions.${reaction}`]: userId, // Add the reaction in the corresponding reaction
 				},
 			},
-
-			{ new: true, setDefaultsOnInsert: true }
-		)
-			.then((post) => {
-				if (!post) {
-					return res.status(404).send("Post does not exist"); // This user does not exist
-				}
-				return res.status(200).send(post);
-			})
-			.catch((err) => res.status(500).send(err));
-	}
-
-	PostModel.findById({ _id: req.params.id })
-		.then((post) => {
-			// This condition is checking in every reaction array if it includes the userId
-			if (
-				reactionsArray.some((reaction) =>
-					post.reactions[reaction].includes(userId)
-				)
-			) {
-				return res
-					.status(401)
-					.send({ error: true, message: "User already reacted" });
+			{
+				new: true,
+				setDefaultsOnInsert: true,
 			}
+		);
 
-			UserModel.findByIdAndUpdate(
-				{ _id: req.body.userId },
-				{
-					$addToSet: {
-						likes: req.params.id,
-					},
+		await UserModel.findByIdAndUpdate(
+			{ _id: userId },
+			{
+				$addToSet: {
+					likes: req.params.id, // Add the answer id in the user likes array
 				},
-				{
-					new: true,
-					setDefaultsOnInsert: true,
-				}
-			)
-				.then((user) => {
-					if (!user) {
-						return res.status(404).send("User does not exist"); // This user does not exist
-					}
-					switch (reaction) {
-						case "like":
-							setReaction("like");
-							break;
-						case "awesome":
-							setReaction("awesome");
-							break;
-						case "funny":
-							setReaction("funny");
-							break;
-						case "love":
-							setReaction("love");
-							break;
-						default:
-							res.status(400).send({
-								error: true,
-								message: "Aucune réaction n'a été sélectionné",
-							});
-							break;
-					}
-				})
-				.catch((err) => res.status(500).send(err));
-		})
-		.catch((err) => res.status(500).send(err));
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		return res.status(200).send(updatedPost);
+	} catch (err) {
+		res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };
 
 exports.deleteReaction = async (req, res, next) => {
-	const { userId } = req.body;
+	try {
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
 
-	function delReaction(reaction) {
-		PostModel.findByIdAndUpdate(
+		// Fetch the specified post
+		const post = await PostModel.findById({ _id: req.params.id });
+
+		if (!post) {
+			return res.status(400).send({
+				error: true,
+				message:
+					"Impossible de supprimer la réaction d'une publication inexistante",
+				// Cannot delete a reaction from a post who doesn't exist
+			});
+		}
+
+		const lastUserReact = await checkIfReacted(post, userId);
+
+		if (!lastUserReact) {
+			return res.status(400).send({
+				error: true,
+				message: "Impossible de supprimer une réaction inexistante",
+				// Cannot delete a reaction who doesn't exist
+			});
+		}
+
+		const updatedPost = await PostModel.findByIdAndUpdate(
 			{ _id: req.params.id },
 			{
 				$pull: {
-					[`reactions.${reaction}`]: userId,
+					[`reactions.${lastUserReact}`]: userId,
 				},
 			},
-			{ new: true, setDefaultsOnInsert: true }
-		)
-			.then((post) => {
-				if (!post) {
-					return res.status(404).send("Post does not exist"); // This user does not exist
-				}
-				return res.status(200).send(post);
-			})
-			.catch((err) => res.status(500).send(err));
-	}
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
 
-	PostModel.findById({ _id: req.params.id })
-		.then((post) => {
-			UserModel.findByIdAndUpdate(
-				{ _id: userId },
-				{
-					$pull: {
-						likes: post._id,
-					},
+		await UserModel.findByIdAndUpdate(
+			{ _id: userId },
+			{
+				$pull: {
+					likes: req.params.id,
 				},
-				{
-					new: true,
-					setDefaultsOnInsert: true,
-				}
-			)
-				.then((user) => {
-					if (!user) {
-						return res.status(404).send("User does not exist"); // This user does not exist
-					} else {
-						if (post.reactions.like.includes(userId)) {
-							return delReaction("like");
-						}
-						if (post.reactions.awesome.includes(userId)) {
-							return delReaction("awesome");
-						}
-						if (post.reactions.funny.includes(userId)) {
-							return delReaction("funny");
-						}
-						if (post.reactions.love.includes(userId)) {
-							return delReaction("love");
-						} else {
-							return res.status(404).send({
-								error: true,
-								message: "User didn't react to any of these posts",
-							});
-						}
-					}
-				})
-				.catch((err) => res.status(500).send(err));
-		})
-		.catch((err) => res.status(500).send(err));
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		return res.status(200).send(updatedPost);
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };

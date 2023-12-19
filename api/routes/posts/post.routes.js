@@ -31,7 +31,17 @@ router.put(
 router.delete("/:id", postController.deletePost);
 
 // React to a post
-router.patch("/add-react/:id", postController.addReaction);
-router.patch("/remove-react/:id", postController.deleteReaction);
+router.patch(
+	"/add-react/:id",
+	authenticate,
+	authorize,
+	postController.addReaction
+);
+router.patch(
+	"/delete-react/:id",
+	authenticate,
+	authorize,
+	postController.deleteReaction
+);
 
 module.exports = router;

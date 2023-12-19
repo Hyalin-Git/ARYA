@@ -5,38 +5,72 @@ const {
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
 const PostModel = require("../../models/posts/Post.model");
+const RepostModel = require("../../models/posts/Repost.model");
 const AnswerModel = require("../../models/posts/Answer.model");
 
 exports.saveComment = async (req, res, next) => {
 	try {
-		const { postId, text } = req.body;
+		const { postId, repostId, text } = req.body;
 		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user answer)
 		const medias = req.files["media"];
 
-		if (!postId || !text || !userId) {
+		if (!text || !userId) {
 			return res
 				.status(400)
 				.send({ error: true, message: "Paramètres manquants" });
 			// Missing parameters
 		}
 
-		// Get the post where the user wants to comment
-		const post = await PostModel.findById({ _id: postId });
-
-		// Checks if exist
-		if (!post) {
-			return res.status(404).send({
+		if (!postId && !repostId) {
+			return res.status(400).send({
 				error: true,
 				message:
-					"Impossible d'ajouter un commentaire à une publication inexistante",
+					"Le commentaire doit être lié à au moins un élément (publications, reposts)",
 			});
-			// Cannot add a comment to a post who doesn't exist
+		}
+
+		if (postId && repostId) {
+			return res.status(400).send({
+				error: true,
+				message:
+					"Le commentaire ne peut être lié à deux éléments à la fois (publications, reposts)",
+			});
+		}
+
+		// Get the post where the user wants to comment
+		if (postId) {
+			const post = await PostModel.findById({ _id: postId });
+
+			// Checks if exist
+			if (!post) {
+				return res.status(404).send({
+					error: true,
+					message:
+						"Impossible d'ajouter un commentaire à une publication inexistante",
+				});
+				// Cannot add a comment to a post who doesn't exist
+			}
+		}
+
+		if (repostId) {
+			const repost = await RepostModel.findById({ _id: repostId });
+
+			// Checks if exist
+			if (!repost) {
+				return res.status(404).send({
+					error: true,
+					message:
+						"Impossible d'ajouter un commentaire à une publication inexistante",
+				});
+				// Cannot add a comment to a post who doesn't exist
+			}
 		}
 
 		const uploadResponse = await uploadFiles(medias, "comment");
 
 		const comment = new CommentModel({
 			postId: postId,
+			repostId: repostId,
 			commenterId: userId, // Use the userId query as commenterId
 			text: text,
 			media: medias ? uploadResponse : [],
@@ -46,18 +80,34 @@ exports.saveComment = async (req, res, next) => {
 			.save()
 			.then(async (comment) => {
 				// Always increments 1 to commentsLength on the corresponding Post
-				await PostModel.findByIdAndUpdate(
-					{ _id: postId },
-					{
-						$inc: {
-							commentsLength: 1,
+				if (comment.postId) {
+					await PostModel.findByIdAndUpdate(
+						{ _id: postId },
+						{
+							$inc: {
+								commentsLength: 1,
+							},
 						},
-					},
-					{
-						setDefaultsOnInsert: true,
-						new: true,
-					}
-				);
+						{
+							setDefaultsOnInsert: true,
+							new: true,
+						}
+					);
+				}
+				if (comment.repostId) {
+					await RepostModel.findByIdAndUpdate(
+						{ _id: repostId },
+						{
+							$inc: {
+								commentsLength: 1,
+							},
+						},
+						{
+							setDefaultsOnInsert: true,
+							new: true,
+						}
+					);
+				}
 
 				return res.status(201).send(comment);
 			})
@@ -222,118 +272,174 @@ exports.deleteComment = (req, res, next) => {
 		);
 };
 
-const reactionsArray = ["like", "awesome", "funny", "love"];
+// Reactions controllers
+function checkIfReacted(post, userId) {
+	let hasReacted;
 
-exports.addReaction = (req, res, next) => {
-	const { reaction, userId } = req.body;
+	// Set the variable hasReacted value where it returns true
+	if (post.reactions.like.includes(userId)) {
+		hasReacted = "like";
+	} else if (post.reactions.awesome.includes(userId)) {
+		hasReacted = "awesome";
+	} else if (post.reactions.love.includes(userId)) {
+		hasReacted = "love";
+	} else if (post.reactions.funny.includes(userId)) {
+		hasReacted = "funny";
+	}
 
-	// this function adds user reaction to the specified comment
-	function setReaction(reaction) {
-		CommentModel.findByIdAndUpdate(
+	return hasReacted;
+}
+
+exports.addReaction = async (req, res, next) => {
+	try {
+		const { reaction } = req.body;
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
+		const allowedReactions = ["like", "awesome", "funny", "love"];
+
+		// Checks if the given reaction is in the allowedReactions array
+		if (!allowedReactions.includes(reaction)) {
+			return res
+				.status(400)
+				.send({ error: true, message: "La réaction fournit est invalide" });
+			// The given reaction is not valid
+		}
+
+		// Fetch the specified comment
+		const comment = await CommentModel.findById({ _id: req.params.id });
+
+		if (!comment) {
+			return res.status(404).send({
+				error: true,
+				message:
+					"Impossible d'ajouter une réaction à un commentaire inexistante",
+				// Cannot add a reaction to a comment who doesn't exist
+			});
+		}
+
+		const lastUserReact = await checkIfReacted(comment, userId);
+
+		// If the user already reacted
+		if (lastUserReact) {
+			if (lastUserReact === reaction) {
+				return res.status(401).send({
+					error: true,
+					message: "Impossible d'ajouter la même réaction",
+					// Cannot add the same reaction
+				});
+			}
+
+			const updatedComment = await CommentModel.findByIdAndUpdate(
+				{ _id: req.params.id },
+				{
+					$pull: {
+						[`reactions.${lastUserReact}`]: userId, // Pull the old reaction
+					},
+					$addToSet: {
+						[`reactions.${reaction}`]: userId, // Add the new one
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
+
+			return res.status(200).send(updatedComment);
+		}
+
+		// If the user has not already voted
+		const updatedComment = await CommentModel.findByIdAndUpdate(
 			{ _id: req.params.id },
 			{
 				$addToSet: {
-					[`reactions.${reaction}`]: userId,
+					[`reactions.${reaction}`]: userId, // Add the reaction in the corresponding reaction
 				},
 			},
-			{ new: true, setDefaultsOnInsert: true }
-		)
-			.then((comment) => {
-				if (!comment) {
-					return res.status(404).send("Could not find a matching comment");
-				}
-				return res.status(200).send(comment);
-			})
-			.catch((err) => res.status(500).send(err));
-	}
-
-	CommentModel.findById({ _id: req.params.id })
-		.then((comment) => {
-			// This condition is checking in every reaction array if it includes the userId
-			if (
-				reactionsArray.some((reaction) =>
-					comment.reactions[reaction].includes(userId)
-				)
-			) {
-				return res
-					.status(401)
-					.send({ error: true, message: "Cet utilisateur a déjà réagit" }); // This user already reacted
+			{
+				new: true,
+				setDefaultsOnInsert: true,
 			}
+		);
 
-			// Checking if the user exist
-			UserModel.findById({ _id: userId })
-				.then((user) => {
-					if (!user) {
-						return res.status(404).send("Cet utilisateur n'existe pas"); // This user does not exist
-					}
-					switch (reaction) {
-						case "like":
-							setReaction("like");
-							break;
-						case "awesome":
-							setReaction("awesome");
-							break;
-						case "funny":
-							setReaction("funny");
-							break;
-						case "love":
-							setReaction("love");
-							break;
-						default:
-							res.status(400).send({
-								error: true,
-								message: "Aucune réaction n'a été sélectionné", // No reaction has been selected
-							});
-							break;
-					}
-				})
-				.catch((err) => res.status(500).send(err));
-		})
-		.catch((err) => res.status(500).send(err));
+		await UserModel.findByIdAndUpdate(
+			{ _id: userId },
+			{
+				$addToSet: {
+					likes: req.params.id, // Add the answer id in the user likes array
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		return res.status(200).send(updatedComment);
+	} catch (err) {
+		res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };
 
-exports.deleteReaction = (req, res, next) => {
-	const { userId } = req.body;
+exports.deleteReaction = async (req, res, next) => {
+	try {
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
 
-	// This function removes user reaction to the specified comment
-	function delReaction(reaction) {
-		CommentModel.findByIdAndUpdate(
+		// Fetch the specified comment
+		const comment = await CommentModel.findById({ _id: req.params.id });
+
+		if (!comment) {
+			return res.status(400).send({
+				error: true,
+				message:
+					"Impossible de supprimer la réaction d'une publication inexistante",
+				// Cannot delete a reaction from a comment who doesn't exist
+			});
+		}
+
+		const lastUserReact = await checkIfReacted(comment, userId);
+
+		if (!lastUserReact) {
+			return res.status(400).send({
+				error: true,
+				message: "Impossible de supprimer une réaction inexistante",
+				// Cannot delete a reaction who doesn't exist
+			});
+		}
+
+		const updatedComment = await CommentModel.findByIdAndUpdate(
 			{ _id: req.params.id },
 			{
 				$pull: {
-					[`reactions.${reaction}`]: userId,
+					[`reactions.${lastUserReact}`]: userId,
 				},
 			},
-			{ new: true, setDefaultsOnInsert: true }
-		)
-			.then((comment) => {
-				if (!comment) {
-					return res.status(404).send("Could not find a matching comment");
-				}
-				return res.status(200).send(comment);
-			})
-			.catch((err) => res.status(500).send(err));
-	}
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
 
-	CommentModel.findById({ _id: req.params.id })
-		.then((comment) => {
-			if (comment.reactions.like.includes(userId)) {
-				return delReaction("like");
+		await UserModel.findByIdAndUpdate(
+			{ _id: userId },
+			{
+				$pull: {
+					likes: req.params.id,
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
 			}
-			if (comment.reactions.awesome.includes(userId)) {
-				return delReaction("awesome");
-			}
-			if (comment.reactions.funny.includes(userId)) {
-				return delReaction("funny");
-			}
-			if (comment.reactions.love.includes(userId)) {
-				return delReaction("love");
-			} else {
-				return res.status(404).send({
-					error: true,
-					message: "Cet utilisateur n'a pas réagit à ce commentaire",
-				});
-			}
-		})
-		.catch((err) => res.status(500).send(err));
+		);
+
+		return res.status(200).send(updatedComment);
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };

@@ -1,9 +1,11 @@
+const { truncate } = require("fs");
 const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
 const AnswerModel = require("../../models/posts/Answer.model");
 const CommentModel = require("../../models/posts/Comment.model");
+const UserModel = require("../../models/users/User.model");
 
 exports.saveAnswer = async (req, res, next) => {
 	try {
@@ -11,7 +13,7 @@ exports.saveAnswer = async (req, res, next) => {
 		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user answer)
 		let medias = req.files["media"];
 
-		if (!commentId || !userId || !text) {
+		if (!commentId || !parentAnswerId || !userId || !text) {
 			return res
 				.status(400)
 				.send({ error: true, message: "Paramètres manquants" });
@@ -30,6 +32,20 @@ exports.saveAnswer = async (req, res, next) => {
 			// Cannot add an answer to a comment who doesn't exist
 		}
 
+		// Fetch the parentAnswer
+		const parentAnswer = await AnswerModel.findById({
+			_id: parentAnswerId,
+		});
+
+		// Checks if the parentAnswer exist
+		if (!parentAnswer) {
+			return res.status(404).send({
+				error: true,
+				message:
+					"Impossible d'ajouter une réponse à un parent qui n'existe pas",
+			});
+		}
+
 		// If it's an answer to answer then checks if the answerToId is given
 		if (answerToId) {
 			const answer = await AnswerModel.findById({ _id: answerToId }); // Fetch the answer of the answer
@@ -42,34 +58,13 @@ exports.saveAnswer = async (req, res, next) => {
 						"Impossible d'ajouter une réponse à une réponse qui n'existe pas",
 				});
 			}
-
-			// If it's an answer to answer we need to fill the parentAnswerId
-			if (!parentAnswerId) {
-				return res
-					.stataus(400)
-					.send({ error: true, message: "Paramètres manquants" });
-				// Missing parameters
-			}
-
-			// Fetch the parentAnswer
-			const parentAnswer = await AnswerModel.findById({
-				_id: parentAnswerId,
-			});
-
-			// Checks if the parentAnswer exist
-			if (!parentAnswer) {
-				return res.status(404).send({
-					error: true,
-					message:
-						"Impossible d'ajouter une réponse à une réponse qui n'existe pas",
-				});
-			}
 		}
 
 		const uploadResponse = await uploadFiles(medias, "answer");
 
 		const newAnswer = new AnswerModel({
 			postId: comment.postId, // Always set the same postId as the answered comment
+			repostId: comment.repostId, // Always set the same repostId as the answered comment
 			commentId: commentId,
 			parentAnswerId: parentAnswerId,
 			answerToId: answerToId,
@@ -82,18 +77,20 @@ exports.saveAnswer = async (req, res, next) => {
 			.save()
 			.then(async (answer) => {
 				// Always increments 1 to answersLength on the corresponding commentId when adding an answer
-				await CommentModel.findByIdAndUpdate(
-					{ _id: commentId },
-					{
-						$inc: {
-							answersLength: 1,
+				if (parentAnswerId === commentId) {
+					await CommentModel.findByIdAndUpdate(
+						{ _id: commentId },
+						{
+							$inc: {
+								answersLength: 1,
+							},
 						},
-					},
-					{
-						setDefaultsOnInsert: true,
-						new: true,
-					}
-				);
+						{
+							setDefaultsOnInsert: true,
+							new: true,
+						}
+					);
+				}
 				// If there is an answerId so if it's an answer to an answer
 				if (answerToId) {
 					// Then incr 1 to the corresponding answer
@@ -243,4 +240,174 @@ exports.deleteAnswer = (req, res, next) => {
 			return res.status(200).send(answer);
 		})
 		.catch((err) => res.status(500).send(err));
+};
+
+function checkIfReacted(answer, userId) {
+	let hasReacted;
+
+	// Set the variable hasReacted value where it returns true
+	if (answer.reactions.like.includes(userId)) {
+		hasReacted = "like";
+	} else if (answer.reactions.awesome.includes(userId)) {
+		hasReacted = "awesome";
+	} else if (answer.reactions.love.includes(userId)) {
+		hasReacted = "love";
+	} else if (answer.reactions.funny.includes(userId)) {
+		hasReacted = "funny";
+	}
+
+	return hasReacted;
+}
+
+exports.addReaction = async (req, res, next) => {
+	try {
+		const { reaction } = req.body;
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
+		const allowedReactions = ["like", "awesome", "funny", "love"];
+
+		// Checks if the given reaction is in the allowedReactions array
+		if (!allowedReactions.includes(reaction)) {
+			return res
+				.status(400)
+				.send({ error: true, message: "La réaction fournit est invalide" });
+			// The given reaction is not valid
+		}
+
+		// Fetch the specified answer
+		const answer = await AnswerModel.findById({ _id: req.params.id });
+
+		if (!answer) {
+			return res.status(404).send({
+				error: true,
+				message: "Impossible d'ajouter une réaction à une réponse inexistante",
+				// Cannot add a reaction to an answer who doesn't exist
+			});
+		}
+
+		const lastUserReact = await checkIfReacted(answer, userId);
+
+		// If the user already reacted
+		if (lastUserReact) {
+			if (lastUserReact === reaction) {
+				return res.status(401).send({
+					error: true,
+					message: "Impossible d'ajouter la même réaction",
+					// Cannot add the same reaction
+				});
+			}
+
+			const updatedReaction = await AnswerModel.findByIdAndUpdate(
+				{ _id: req.params.id },
+				{
+					$pull: {
+						[`reactions.${lastUserReact}`]: userId, // Pull the old reaction
+					},
+					$addToSet: {
+						[`reactions.${reaction}`]: userId, // Add the new one
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
+
+			return res.status(200).send(updatedReaction);
+		}
+
+		// If the user has not already voted
+		const updatedReaction = await AnswerModel.findByIdAndUpdate(
+			{ _id: req.params.id },
+			{
+				$addToSet: {
+					[`reactions.${reaction}`]: userId, // Add the reaction in the corresponding reaction
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		await UserModel.findByIdAndUpdate(
+			{ _id: userId },
+			{
+				$addToSet: {
+					likes: req.params.id, // Add the answer id in the user likes array
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		return res.status(200).send(updatedReaction);
+	} catch (err) {
+		res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
+};
+
+exports.deleteReaction = async (req, res, next) => {
+	try {
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
+
+		// Fetch the specified answer
+		const answer = await AnswerModel.findById({ _id: req.params.id });
+
+		if (!answer) {
+			return res.status(400).send({
+				error: true,
+				message:
+					"Impossible de supprimer la réaction d'une réponse inexistante",
+				// Cannot delete a reaction from an answer who doesn't exist
+			});
+		}
+
+		const lastUserReact = await checkIfReacted(answer, userId);
+
+		if (!lastUserReact) {
+			return res.status(400).send({
+				error: true,
+				message: "Impossible de supprimer une réaction inexistante",
+				// Cannot delete a reaction who doesn't exist
+			});
+		}
+
+		const updatedAnswer = await AnswerModel.findByIdAndUpdate(
+			{ _id: req.params.id },
+			{
+				$pull: {
+					[`reactions.${lastUserReact}`]: userId,
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		await UserModel.findByIdAndUpdate(
+			{ _id: userId },
+			{
+				$pull: {
+					likes: req.params.id,
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		return res.status(200).send(updatedAnswer);
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };

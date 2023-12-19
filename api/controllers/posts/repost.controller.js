@@ -2,44 +2,105 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
-const { getFormattedDates } = require("../../helpers/formattingDates");
+const AnswerModel = require("../../models/posts/Answer.model");
+const CommentModel = require("../../models/posts/Comment.model");
+const PostModel = require("../../models/posts/Post.model");
 const RepostModel = require("../../models/posts/Repost.model");
-const moment = require("moment");
 const UserModel = require("../../models/users/User.model");
 
 exports.saveRepost = async (req, res, next) => {
-	// let scheduledTime = moment();
-	let medias = req.files["media"];
+	try {
+		const { text, postId } = req.body;
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user repost)
+		const medias = req.files["media"];
 
-	// const { month, day, year, hour } = req.body;
-	// const scheduledSendTime = await getFormattedDates(
-	// 	scheduledTime,
-	// 	month,
-	// 	day,
-	// 	year,
-	// 	hour
-	// );
-	// const isScheduled = month || day || year || hour;
+		const post = await PostModel.findById({ _id: postId });
 
-	const uploadResponse = await uploadFiles(medias, "post");
+		if (!post) {
+			return res.status(404).send({
+				error: true,
+				message: "Impossible de repost une publication inexistante",
+			});
+		}
 
-	const repost = new RepostModel({
-		reposterId: req.query.userId,
-		text: req.body.text,
-		media: medias ? uploadResponse : [],
-		postId: req.body.postId,
-	});
-	repost
-		.save()
-		.then((repost) => res.status(201).send(repost))
-		.catch((err) => res.status(500).send(err));
+		const uploadResponse = await uploadFiles(medias, "repost");
+
+		const repost = new RepostModel({
+			reposterId: userId,
+			text: text,
+			media: medias ? uploadResponse : [],
+			postId: postId,
+		});
+		repost
+			.save()
+			.then((repost) => res.status(201).send(repost))
+			.catch((err) => res.status(500).send(err));
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };
 
-exports.getReposts = (req, res, next) => {
-	const authUser = res.locals.user;
+exports.getReposts = async (req, res, next) => {
+	const { posterId, search, userLikes, sortByReact, sortByDate } = req.query;
+	let user;
 
-	RepostModel.find({ reposterId: { $nin: authUser.blockedUsers } })
-		.populate("reposterId postId", "userName lastName firstName")
+	if (userLikes) {
+		user = await UserModel.findById({ _id: userLikes });
+	}
+
+	function filter() {
+		const filter = {};
+
+		if (posterId) {
+			filter.posterId = posterId;
+		}
+
+		if (search) {
+			filter.text = { $regex: search, $options: "i" };
+		}
+
+		if (userLikes) {
+			filter._id = { $in: user.likes };
+		}
+
+		return filter;
+	}
+
+	function sorting() {
+		if (sortByReact) {
+			return {
+				reactions: sortByReact,
+			};
+		}
+		if (sortByDate) {
+			return {
+				createdAt: sortByDate,
+			};
+		}
+	}
+
+	const params = {
+		posterId: posterId,
+		search: search,
+		sortByReact: sortByReact,
+		sortByDate: sortByDate,
+		userLikes: userLikes,
+	};
+
+	RepostModel.find(filter())
+		.sort(sorting())
+		.populate("reposterId", "userName lastName firstName")
+		.populate({
+			path: "postId",
+			select: "text media",
+			populate: {
+				path: "posterId",
+				select: "lastName firstName userName",
+			},
+		})
 		.exec()
 		.then((reposts) => {
 			if (reposts.length <= 0) {
@@ -47,7 +108,7 @@ exports.getReposts = (req, res, next) => {
 					.status(404)
 					.send({ error: true, message: "Aucune publication trouvée" });
 			}
-			return res.status(200).send(reposts);
+			return res.status(200).send({ reposts: reposts, params: params });
 		})
 		.catch((err) => res.status(500).send(err));
 };
@@ -56,17 +117,25 @@ exports.getRepost = (req, res, next) => {
 	const authUser = res.locals.user;
 
 	RepostModel.findById({ _id: req.params.id })
-		.populate("reposterId postId", "userName lastName firstName text media")
+		.populate("reposterId", "userName lastName firstName")
+		.populate({
+			path: "postId",
+			select: "text media",
+			populate: {
+				path: "posterId",
+				select: "lastName firstName userName",
+			},
+		})
 		.exec()
-		.then(async (reposts) => {
-			if (!reposts) {
+		.then(async (repost) => {
+			if (!repost) {
 				return res
 					.status(404)
 					.send({ error: true, message: "Aucune publication trouvée" });
 			}
 
 			const reposterUser = await UserModel.findById({
-				_id: reposts.reposterId._id,
+				_id: repost.reposterId._id,
 			});
 
 			if (reposterUser.blockedUsers.includes(authUser._id)) {
@@ -77,7 +146,7 @@ exports.getRepost = (req, res, next) => {
 				});
 			}
 
-			if (authUser.blockedUsers.includes(reposts.reposterId._id)) {
+			if (authUser.blockedUsers.includes(repost.reposterId._id)) {
 				return res.status(403).send({
 					error: true,
 					message:
@@ -85,13 +154,13 @@ exports.getRepost = (req, res, next) => {
 				});
 			}
 
-			return res.status(200).send(reposts);
+			return res.status(200).send(repost);
 		})
 		.catch((err) => res.status(500).send(err));
 };
 
 exports.updateRepost = (req, res, next) => {
-	let medias = req.files["media"];
+	const medias = req.files["media"];
 
 	RepostModel.findOne({
 		_id: req.params.id,
@@ -102,14 +171,16 @@ exports.updateRepost = (req, res, next) => {
 				return res.status(404).send({
 					error: true,
 					message: "Impossible de modifier une publication qui n'existe pas",
+					// Cannot update a post who doesn't exist
 				});
 			}
 
 			if (repost.media.length > 0) {
-				await destroyFiles(repost, "post"); // Destroy files only if there is medias
+				await destroyFiles(repost, "repost"); // Destroy files only if there is medias
 			}
 
-			const uploadResponse = await uploadFiles(medias, "post");
+			const uploadResponse = await uploadFiles(medias, "repost");
+
 			const updatedRepost = await RepostModel.findOneAndUpdate(
 				{ _id: req.params.id, reposterId: req.query.userId },
 				{
@@ -126,86 +197,229 @@ exports.updateRepost = (req, res, next) => {
 
 			return res.status(200).send(updatedRepost);
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) =>
+			res.status(500).send(err.message || "Erreur interne du serveur")
+		);
 };
-const reactionsArray = ["like", "awesome", "funny", "love"];
 
-exports.addReactionRepost = (req, res, next) => {
-	const { reaction } = req.body;
-	const { userId } = req.query;
+exports.deleteRepost = (req, res, next) => {
+	RepostModel.findOneAndDelete({
+		_id: req.params.id,
+		reposterId: req.query.userId,
+	})
+		.then(async (repost) => {
+			if (!repost) {
+				return res.status(404).send({
+					error: true,
+					message: "Impossible de supprimer un repost inexistant",
+					// Cannot delete a repost who doesn't exist
+				});
+			}
 
-	if (!reaction || userId) {
-		return res.status(400).send({
-			error: true,
-			message: "Paramètres manquant",
-		});
+			// If there is medias then delete those
+			if (repost.media.length > 0) {
+				await destroyFiles(repost, "repost");
+			}
+
+			// Gets every nested elements such as comments and answers
+			const comments = await CommentModel.find({ repostId: req.params.id });
+			const answers = await AnswerModel.find({ repostId: req.params.id });
+			// Then stock them in the const nestedElements
+			const nestedElements = [...comments, ...answers];
+
+			for (const nestedElement of nestedElements) {
+				// Checks if the nestedElement has media
+				if (nestedElement.media.length > 0) {
+					// Then checks if it's a comment
+					if (nestedElement.commenterId) {
+						await destroyFiles(nestedElement, "comment"); // Delete all files from Cloudinary
+					}
+					// Or an answer
+					if (nestedElement.answererId) {
+						await destroyFiles(nestedElement, "answer"); // Delete all files from Cloudinary
+					}
+				}
+			}
+
+			// Then delete every nested elements such as comments and answers
+			await CommentModel.deleteMany({ repostId: req.params.id });
+			await AnswerModel.deleteMany({ repostId: req.params.id });
+
+			return res.status(200).send(repost);
+		})
+		.catch((err) =>
+			res.status(500).send(err.message || "Erreur interne du serveur")
+		);
+};
+
+// Reactions controllers
+function checkIfReacted(post, userId) {
+	let hasReacted;
+
+	// Set the variable hasReacted value where it returns true
+	if (post.reactions.like.includes(userId)) {
+		hasReacted = "like";
+	} else if (post.reactions.awesome.includes(userId)) {
+		hasReacted = "awesome";
+	} else if (post.reactions.love.includes(userId)) {
+		hasReacted = "love";
+	} else if (post.reactions.funny.includes(userId)) {
+		hasReacted = "funny";
 	}
 
-	if (!reactionsArray.includes(reaction)) {
-		return res.status(400).send({
-			error: true,
-			message: "Les paramètres fournit sont invalides",
-		});
-	}
+	return hasReacted;
+}
 
-	function setReaction(reaction) {
-		RepostModel.findOneAndUpdate(
+exports.addReaction = async (req, res, next) => {
+	try {
+		const { reaction } = req.body;
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
+		const allowedReactions = ["like", "awesome", "funny", "love"];
+
+		// Checks if the given reaction is in the allowedReactions array
+		if (!allowedReactions.includes(reaction)) {
+			return res
+				.status(400)
+				.send({ error: true, message: "La réaction fournit est invalide" });
+			// The given reaction is not valid
+		}
+
+		// Fetch the specified repost
+		const repost = await RepostModel.findById({ _id: req.params.id });
+
+		if (!repost) {
+			return res.status(404).send({
+				error: true,
+				message:
+					"Impossible d'ajouter une réaction à une publication inexistante",
+				// Cannot add a reaction to a post who doesn't exist
+			});
+		}
+
+		const lastUserReact = await checkIfReacted(repost, userId);
+
+		// If the user already reacted
+		if (lastUserReact) {
+			if (lastUserReact === reaction) {
+				return res.status(401).send({
+					error: true,
+					message: "Impossible d'ajouter la même réaction",
+					// Cannot add the same reaction
+				});
+			}
+
+			const updatedRepost = await RepostModel.findByIdAndUpdate(
+				{ _id: req.params.id },
+				{
+					$pull: {
+						[`reactions.${lastUserReact}`]: userId, // Pull the old reaction
+					},
+					$addToSet: {
+						[`reactions.${reaction}`]: userId, // Add the new one
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
+
+			return res.status(200).send(updatedRepost);
+		}
+
+		// If the user has not already voted
+		const updatedRepost = await CommentModel.findByIdAndUpdate(
 			{ _id: req.params.id },
 			{
 				$addToSet: {
-					[`reactions.${reaction}`]: userId,
+					[`reactions.${reaction}`]: userId, // Add the reaction in the corresponding reaction
 				},
 			},
 			{
 				new: true,
 				setDefaultsOnInsert: true,
 			}
-		)
-			.then((repost) => {
-				if (!repost) {
-					return res
-						.status(404)
-						.send({ error: true, message: "Cette publication n'existe pas" });
-				}
-				return res.status(200).send(repost);
-			})
-			.catch((err) => res.status(500).send(err));
-	}
+		);
 
-	RepostModel.findById({ _id: req.params.id })
-		.then((repost) => {
-			if (
-				reactionsArray.some((reaction) =>
-					repost.reactions[reaction].includes(userId)
-				)
-			) {
-				return res.status(401).send({})
+		await UserModel.findByIdAndUpdate(
+			{ _id: userId },
+			{
+				$addToSet: {
+					likes: req.params.id, // Add the repost id in the user likes array
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
 			}
-		})
-		.catch((err) => res.status(500).send(err));
+		);
+
+		return res.status(200).send(updatedRepost);
+	} catch (err) {
+		res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };
 
-exports.deleteReactionRepost = (req, res, next) => {};
+exports.deleteReaction = async (req, res, next) => {
+	try {
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
 
-exports.deleteRepost = (req, res, next) => {
-	const { userId } = req.query;
-	RepostModel.findOne({ _id: req.params.id, reposterId: userId })
-		.then(async (repost) => {
-			if (!repost) {
-				return res.status(404).send({
-					error: true,
-					message: "Impossible de supprimer une publication qui n'existe pas",
-				});
-			}
-			if (repost.media.length > 0) {
-				await destroyFiles(repost, "post");
-			}
-			await RepostModel.findOneAndDelete({
-				_id: req.params.id,
-				reposterId: userId,
+		// Fetch the specified repost
+		const repost = await RepostModel.findById({ _id: req.params.id });
+
+		if (!repost) {
+			return res.status(400).send({
+				error: true,
+				message:
+					"Impossible de supprimer la réaction d'une publication inexistante",
+				// Cannot delete a reaction from a repost who doesn't exist
 			});
+		}
 
-			return res.status(200).send(repost);
-		})
-		.catch((err) => res.status(500).send(err));
+		const lastUserReact = await checkIfReacted(repost, userId);
+
+		if (!lastUserReact) {
+			return res.status(400).send({
+				error: true,
+				message: "Impossible de supprimer une réaction inexistante",
+				// Cannot delete a reaction who doesn't exist
+			});
+		}
+
+		const updatedRepost = await RepostModel.findByIdAndUpdate(
+			{ _id: req.params.id },
+			{
+				$pull: {
+					[`reactions.${lastUserReact}`]: userId,
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		await UserModel.findByIdAndUpdate(
+			{ _id: userId },
+			{
+				$pull: {
+					likes: req.params.id,
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		return res.status(200).send(updatedRepost);
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };

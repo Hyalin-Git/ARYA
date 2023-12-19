@@ -30,7 +30,18 @@ router.put(
 
 router.delete("/:id", authenticate, authorize, answerController.deleteAnswer);
 
-// router.patch("/", authenticate, answerController.getAnswers);
-// router.patch("/:id", authenticate, answerController.getAnswer);
+// React to a post
+router.patch(
+	"/add-react/:id",
+	authenticate,
+	authorize,
+	answerController.addReaction
+);
+router.patch(
+	"/delete-react/:id",
+	authenticate,
+	authorize,
+	answerController.deleteReaction
+);
 
 module.exports = router;
