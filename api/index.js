@@ -1,7 +1,7 @@
 require("dotenv").config({ path: "./config/.env" });
 const https = require("https");
+const http = require("http");
 const express = require("express");
-const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const fs = require("fs");
 const cors = require("cors");
@@ -12,19 +12,28 @@ require("./utils/cronJob");
 const adminRouter = require("./routes/users/admin.routes");
 const authRouter = require("./routes/users/auth.routes");
 
+// User related
 const userRouter = require("./routes/users/user.routes");
 const companyRouter = require("./routes/users/company.routes");
 const workerRouter = require("./routes/users/worker.routes");
 const taskRouter = require("./routes/users/task.routes");
-const reportUserRouter = require("./routes/users/reportUser.routes");
-const reportPostRouter = require("./routes/posts/reportPost.routes");
+
+// Posts related
+const feedRouter = require("./routes/posts/feed.routes");
 const postRouter = require("./routes/posts/post.routes");
 const repostRouter = require("./routes/posts/repost.routes");
 const commentRouter = require("./routes/posts/comment.routes");
 const answerRouter = require("./routes/posts/answer.routes");
+
+// Conversations
 const conversationRouter = require("./routes/chats/conversation.routes");
 const messageRouter = require("./routes/chats/message.routes");
+
 const verificationRouter = require("./routes/verifications/verification.routes");
+
+const reportUserRouter = require("./routes/users/reportUser.routes");
+const reportPostRouter = require("./routes/posts/reportPost.routes");
+
 const { authenticate } = require("./middlewares/jwt.middleware");
 
 const twitterRouter = require("./routes/twitter.routes");
@@ -52,7 +61,6 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
-app.use(cookieParser());
 
 // secure Express apps by setting HTTP response headers
 app.use(helmet());
@@ -68,10 +76,13 @@ app.use("/api/company", companyRouter);
 app.use("/api/worker", workerRouter);
 app.use("/api/task", taskRouter);
 app.use("/api/user/report", reportUserRouter);
+
+app.use("/api/feed", feedRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/reposts", repostRouter);
 app.use("/api/comments", commentRouter);
 app.use("/api/answers", answerRouter);
+
 app.use("/api/post/report", reportPostRouter);
 app.use("/api/conversations", conversationRouter);
 app.use("/api/messages", messageRouter);

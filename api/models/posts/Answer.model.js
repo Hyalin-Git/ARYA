@@ -19,10 +19,6 @@ const AnswerSchema = mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Answer",
 		},
-		answerToId: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Answer",
-		},
 		answererId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",

@@ -13,7 +13,7 @@ exports.saveAnswer = async (req, res, next) => {
 		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user answer)
 		let medias = req.files["media"];
 
-		if (!commentId || !parentAnswerId || !userId || !text) {
+		if (!commentId || !userId || !text) {
 			return res
 				.status(400)
 				.send({ error: true, message: "Paramètres manquants" });
@@ -32,26 +32,14 @@ exports.saveAnswer = async (req, res, next) => {
 			// Cannot add an answer to a comment who doesn't exist
 		}
 
-		// Fetch the parentAnswer
-		const parentAnswer = await AnswerModel.findById({
-			_id: parentAnswerId,
-		});
-
-		// Checks if the parentAnswer exist
-		if (!parentAnswer) {
-			return res.status(404).send({
-				error: true,
-				message:
-					"Impossible d'ajouter une réponse à un parent qui n'existe pas",
+		if (parentAnswerId) {
+			// Fetch the parentAnswer
+			const parentAnswer = await AnswerModel.findById({
+				_id: parentAnswerId,
 			});
-		}
 
-		// If it's an answer to answer then checks if the answerToId is given
-		if (answerToId) {
-			const answer = await AnswerModel.findById({ _id: answerToId }); // Fetch the answer of the answer
-
-			// Checks if the answer of the answer exist
-			if (!answer) {
+			// Checks if the parentAnswer exist
+			if (!parentAnswer) {
 				return res.status(404).send({
 					error: true,
 					message:
@@ -67,7 +55,6 @@ exports.saveAnswer = async (req, res, next) => {
 			repostId: comment.repostId, // Always set the same repostId as the answered comment
 			commentId: commentId,
 			parentAnswerId: parentAnswerId,
-			answerToId: answerToId,
 			answererId: userId, // Use the userId query as answererId
 			text: text,
 			media: medias ? uploadResponse : [],
@@ -77,7 +64,7 @@ exports.saveAnswer = async (req, res, next) => {
 			.save()
 			.then(async (answer) => {
 				// Always increments 1 to answersLength on the corresponding commentId when adding an answer
-				if (parentAnswerId === commentId) {
+				if (!parentAnswerId) {
 					await CommentModel.findByIdAndUpdate(
 						{ _id: commentId },
 						{
@@ -92,10 +79,10 @@ exports.saveAnswer = async (req, res, next) => {
 					);
 				}
 				// If there is an answerId so if it's an answer to an answer
-				if (answerToId) {
+				if (parentAnswerId) {
 					// Then incr 1 to the corresponding answer
 					await AnswerModel.findByIdAndUpdate(
-						{ _id: answerToId },
+						{ _id: parentAnswerId },
 						{
 							$inc: {
 								answersLength: 1,
@@ -221,25 +208,41 @@ exports.deleteAnswer = (req, res, next) => {
 				await destroyFiles(answer, "answer");
 			}
 
-			// Gets every answer where parentAnswerId are == to the deleted answer ID.
-			const answersOfAnswers = await AnswerModel.find({
-				parentAnswerId: answer._id,
-			});
+			async function hasNestedAnswers(answerId) {
+				// Fetch the nested answers from the deleted answer
+				const nestedAnswers = await AnswerModel.find({
+					parentAnswerId: answerId,
+				});
 
-			for (const answerOfAnswer of answersOfAnswers) {
-				// Checks in every answer of answer if they have medias
-				if (answerOfAnswer.media.length > 0) {
-					// If yes delete those
-					await destroyFiles(answerOfAnswer, "answer");
+				// If there is any
+				if (nestedAnswers.length > 0) {
+					for (const nestedAnswer of nestedAnswers) {
+						// Then loop through it to delete the medias (if there is any)
+						if (nestedAnswer.media.length > 0) {
+							await destroyFiles(nestedAnswer, "answer");
+						}
+						// Once medias are deleted we can delete the nested answers
+						await AnswerModel.deleteMany({ parentAnswerId: answerId });
+
+						// Then we call the function again for every nestedAnswer
+						// to propagate the deletion through the response hierarchy
+						await hasNestedAnswers(nestedAnswer._id);
+					}
 				}
+				return;
 			}
 
-			// And delete every answer where parentAnswerId are == to the deleted answer ID.
-			await AnswerModel.deleteMany({ parentAnswerId: answer._id });
+			// call the function and take the deleted answer._id has parameters
+			await hasNestedAnswers(answer._id);
 
 			return res.status(200).send(answer);
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) =>
+			res.status(500).send({
+				error: true,
+				message: err.message || "Erreur interne du serveur",
+			})
+		);
 };
 
 function checkIfReacted(answer, userId) {

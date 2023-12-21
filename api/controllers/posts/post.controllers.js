@@ -57,7 +57,7 @@ exports.getPosts = async (req, res, next) => {
 	}
 
 	function filter() {
-		const filter = {};
+		const filter = { status: "sent" };
 
 		if (posterId) {
 			filter.posterId = posterId;

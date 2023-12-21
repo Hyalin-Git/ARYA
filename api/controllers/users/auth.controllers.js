@@ -6,6 +6,7 @@ const RefreshTokenModel = require("../../models/users/RefreshToken.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const cookie = require("cookie");
 // Utils
 const { sendEmail } = require("../../utils/mail/nodeMailer");
 const { generateAccessToken } = require("../../utils/jwt/generateAccessToken");
@@ -110,6 +111,15 @@ exports.signIn = (req, res, next) => {
 							const accessToken = generateAccessToken(user);
 							const refreshToken = generateRefreshToken(user, rememberMe);
 
+							const cookies = cookie.serialize("session_id", `${user._id}`, {
+								httpOnly: true,
+								maxAge: 48 * 60 * 60, // 48 hours,
+								secure: true,
+								sameSite: true,
+							});
+
+							res.setHeader("Set-Cookie", cookies);
+
 							// Saving a new RefreshToken in the DB
 							new RefreshTokenModel({
 								userId: user._id,
@@ -118,6 +128,7 @@ exports.signIn = (req, res, next) => {
 								.save()
 								.then(() => {
 									res.status(201).send({
+										cook: cookies,
 										userId: user._id,
 										isAdmin: user.admin,
 										accessToken: accessToken,
@@ -188,7 +199,7 @@ exports.logout = (req, res, next) => {
 
 // Refresh token controller
 exports.refreshToken = (req, res, next) => {
-	const refreshToken = req.body.token;
+	const refreshToken = req.body.refreshToken;
 	const userId = req.body.userId;
 
 	// Send error if there is no token or userId
@@ -249,6 +260,19 @@ exports.refreshToken = (req, res, next) => {
 								.then((user) => {
 									// If an user has been found then generate the access token
 									const newAccessToken = generateAccessToken(user);
+
+									const cookies = cookie.serialize(
+										"session_id",
+										`${user._id}`,
+										{
+											httpOnly: true,
+											maxAge: 48 * 60 * 60, // 48 hours,
+											secure: true,
+											sameSite: true,
+										}
+									);
+
+									res.setHeader("Set-Cookie", cookies);
 
 									res.status(200).send({
 										newAccessToken: newAccessToken,

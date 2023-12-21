@@ -13,7 +13,7 @@
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "cloudinary": "^1.39.0",
-    "cookie-parser": "^1.4.6",
+    "cookie": "^0.6.0",
     "cors": "^2.8.5",
     "cron": "^2.4.0",
     "crypto": "^1.0.1",
