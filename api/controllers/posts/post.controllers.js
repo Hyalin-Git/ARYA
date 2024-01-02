@@ -8,6 +8,7 @@ const {
 const CommentModel = require("../../models/posts/Comment.model");
 const AnswerModel = require("../../models/posts/Answer.model");
 const { getFormattedDates } = require("../../helpers/formattingDates");
+const { filterPosts } = require("../../helpers/filterByBlocks");
 
 exports.savePost = async (req, res, next) => {
 	const { text } = req.body;
@@ -49,6 +50,8 @@ exports.savePost = async (req, res, next) => {
 };
 
 exports.getPosts = async (req, res, next) => {
+	const authUser = res.locals.user;
+
 	const { posterId, search, userLikes, sortByReact, sortByDate } = req.query;
 	let user;
 
@@ -97,15 +100,18 @@ exports.getPosts = async (req, res, next) => {
 
 	PostModel.find(filter())
 		.sort(sorting())
-		.populate("posterId", "userName lastName firstName")
+		.populate("posterId", "userName lastName firstName blockedUsers")
 		.exec()
-		.then((posts) => {
-			if (posts.length <= 0) {
+		.then(async (posts) => {
+			const filteredPosts = await filterPosts(posts, authUser);
+
+			if (filteredPosts.length <= 0) {
 				return res
 					.status(404)
 					.send({ error: true, message: "Aucune publication trouvée" });
 			}
-			return res.status(200).send({ posts: posts, params: params });
+
+			return res.status(200).send({ posts: filteredPosts, params: params });
 		})
 		.catch((err) => res.status(500).send(err));
 };

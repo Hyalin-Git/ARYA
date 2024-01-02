@@ -12,7 +12,7 @@ const CommentSchema = mongoose.Schema(
 		},
 		commenterId: {
 			type: mongoose.Schema.Types.ObjectId,
-			refPath: "User",
+			ref: "User",
 			required: true,
 		},
 		text: {

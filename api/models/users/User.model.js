@@ -77,6 +77,10 @@ const UserSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Worker",
 		},
+		lookingForJob: {
+			type: Boolean,
+			default: false,
+		},
 		subscription: {
 			type: String,
 		},
@@ -94,6 +98,10 @@ const UserSchema = new mongoose.Schema(
 			type: [mongoose.Schema.Types.ObjectId],
 			ref: "User",
 		},
+		isPrivate: {
+			type: Boolean,
+			default: false,
+		},
 		reported: {
 			type: Number,
 			default: 0,
@@ -102,7 +110,6 @@ const UserSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
-		
 	},
 	{
 		timestamps: true,

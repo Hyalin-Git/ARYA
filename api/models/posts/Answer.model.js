@@ -41,10 +41,6 @@ const AnswerSchema = mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
-		answersIds: {
-			type: [mongoose.Schema.Types.ObjectId],
-			ref: "Answer",
-		},
 	},
 	{
 		timestamps: true,

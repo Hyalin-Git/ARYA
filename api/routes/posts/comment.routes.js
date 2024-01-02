@@ -1,9 +1,7 @@
 const router = require("express").Router();
 const commentController = require("../../controllers/posts/comment.controller");
 const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
-const {
-	canAccessComments,
-} = require("../../middlewares/checkIfBlocked.middleware");
+
 const { postUpload } = require("../../middlewares/multer.middleware");
 
 const { multerErrorsHandler } = require("../../utils/multerErrors");
@@ -18,8 +16,8 @@ router.post(
 	commentController.saveComment
 );
 
-router.get("/", authenticate, canAccessComments, commentController.getComments);
-router.get("/:id", commentController.getComment);
+router.get("/", authenticate, commentController.getComments);
+router.get("/:id", authenticate, commentController.getComment);
 
 router.put(
 	"/:id",

@@ -1,15 +1,15 @@
-const { truncate } = require("fs");
 const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
+const { filterAnswers } = require("../../helpers/filterByBlocks");
 const AnswerModel = require("../../models/posts/Answer.model");
 const CommentModel = require("../../models/posts/Comment.model");
 const UserModel = require("../../models/users/User.model");
 
 exports.saveAnswer = async (req, res, next) => {
 	try {
-		const { commentId, parentAnswerId, answerToId, text } = req.body;
+		const { commentId, parentAnswerId, text } = req.body;
 		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user answer)
 		let medias = req.files["media"];
 
@@ -106,10 +106,9 @@ exports.saveAnswer = async (req, res, next) => {
 };
 
 exports.getAnswers = (req, res, next) => {
-	const { commentId, answerToId } = req.query;
-	const filters = {};
+	const { commentId, parentAnswerId } = req.query;
+	const authUser = res.locals.user;
 
-	// CommentId is required
 	if (!commentId) {
 		return res
 			.status(400)
@@ -117,20 +116,23 @@ exports.getAnswers = (req, res, next) => {
 		// Missing parameters
 	}
 
-	// Fetch the answers by commentId and where answerToId is undefined
-	// So only returns the answers of the specified comment
-	filters.commentId = commentId;
-	filters.answerToId = undefined;
-
-	// But if answerToId is given in the query then it will get the answers of an answer
-	if (answerToId) {
-		filters.answerToId = answerToId;
-	}
-
-	AnswerModel.find(filters)
-		.populate("answererId", "lastName firstName userName")
+	AnswerModel.find({
+		commentId: commentId,
+		parentAnswerId: parentAnswerId,
+	})
+		.populate("answererId", "lastName firstName userName blockedUsers")
 		.exec()
-		.then((answers) => res.status(200).send(answers))
+		.then(async (answers) => {
+			const filteredAnswers = await filterAnswers(answers, authUser);
+
+			if (filteredAnswers.length <= 0) {
+				return res
+					.status(404)
+					.send({ error: true, message: "Aucune réponses trouvée" });
+			}
+
+			res.status(200).send(filteredAnswers);
+		})
 		.catch((err) => res.status(500).send(err));
 };
 

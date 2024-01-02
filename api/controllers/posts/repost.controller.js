@@ -2,6 +2,7 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
+const { filterReposts } = require("../../helpers/filterByBlocks");
 const AnswerModel = require("../../models/posts/Answer.model");
 const CommentModel = require("../../models/posts/Comment.model");
 const PostModel = require("../../models/posts/Post.model");
@@ -44,6 +45,7 @@ exports.saveRepost = async (req, res, next) => {
 };
 
 exports.getReposts = async (req, res, next) => {
+	const authUser = res.locals.user;
 	const { posterId, search, userLikes, sortByReact, sortByDate } = req.query;
 	let user;
 
@@ -92,25 +94,28 @@ exports.getReposts = async (req, res, next) => {
 
 	RepostModel.find(filter())
 		.sort(sorting())
-		.populate("reposterId", "userName lastName firstName")
+		.populate("reposterId", "userName lastName firstName blockedUsers")
 		.populate({
 			path: "postId",
 			select: "text media",
 			populate: {
 				path: "posterId",
-				select: "lastName firstName userName",
+				select: "lastName firstName userName blockedUsers",
 			},
 		})
 		.exec()
-		.then((reposts) => {
-			if (reposts.length <= 0) {
+		.then(async (reposts) => {
+			const filteredReposts = await filterReposts(reposts, authUser);
+
+			if (filteredReposts.length <= 0) {
 				return res
 					.status(404)
 					.send({ error: true, message: "Aucune publication trouvée" });
 			}
-			return res.status(200).send({ reposts: reposts, params: params });
+
+			return res.status(200).send({ reposts: filteredReposts, params: params });
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) => res.status(500).send(err.message));
 };
 
 exports.getRepost = (req, res, next) => {

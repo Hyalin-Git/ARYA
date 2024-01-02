@@ -1,6 +1,4 @@
 const UserModel = require("../models/users/User.model");
-const PostModel = require("../models/posts/Post.model");
-const CommentModel = require("../models/posts/Comment.model");
 const ConversationModel = require("../models/chats/Conversation.model");
 
 exports.isBlocked = async (req, res, next) => {
@@ -38,69 +36,9 @@ exports.isBlocked = async (req, res, next) => {
 	}
 };
 
-exports.canAccessPosts = async (req, res, next) => {
-	const authUser = res.locals.user;
-	const users = await UserModel.find();
-	// Loop through every users
-	for (const user of users) {
-		// Checks if an user includes the authUserId in the blocked array.
-		if (user.blockedUsers.includes(authUser._id)) {
-			// Get every post where posterId !== user._id.
-			// And where posterId is not in authUser blocked array (can be empty).
-			const posts = await PostModel.find({
-				$and: [
-					{ posterId: { $ne: user._id } },
-					{
-						posterId: { $nin: authUser.blockedUsers },
-					},
-				],
-			})
-				.populate("posterId", "userName lastName firstName")
-				.exec();
-
-			if (posts.length <= 0) {
-				return res
-					.status(404)
-					.send({ error: true, message: "Aucune publication trouvée" });
-			}
-
-			return res.status(200).send(posts);
-		}
-	}
-	next();
-};
-
-exports.canAccessComments = async (req, res, next) => {
-	const authUser = res.locals.user;
-	const users = await UserModel.find();
-	// Loop through every users
-	for (const user of users) {
-		// Checks if an user includes the authUserId in the blocked array.
-		if (user.blockedUsers.includes(authUser._id)) {
-			// Get every post where posterId !== user._id.
-			// And where posterId is not in authUser blocked array (can be empty).
-			const comments = await CommentModel.find({
-				$and: [
-					{ commenterId: { $ne: user._id } },
-					{
-						commenterId: { $nin: authUser.blockedUsers },
-					},
-					{ postId: req.query.postId },
-				],
-			})
-				.populate("commenterId", "userName lastName firstName")
-				.exec();
-
-			if (comments.length <= 0) {
-				return res
-					.status(404)
-					.send({ error: true, message: "Aucune publication trouvée" });
-			}
-
-			return res.status(200).send(comments);
-		}
-	}
-	next();
+exports.checkMsgSpam = async (req, res, next) => {
+	try {
+	} catch (err) {}
 };
 
 exports.canSendMessage = async (req, res, next) => {

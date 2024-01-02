@@ -16,18 +16,38 @@ const {
 	resetEmailText,
 } = require("../../utils/mail/mailText");
 const { uploadFile, destroyFile } = require("../../helpers/cloudinaryManager");
+const { filterUsers } = require("../../helpers/filterByBlocks");
 
 // Get all users
 exports.getUsers = (req, res, next) => {
-	UserModel.find()
+	const authUser = res.locals.user;
+	const { userName, lookingForJob } = req.query;
+
+	function filter() {
+		const filter = {};
+
+		if (userName) {
+			filter.userName = { $regex: userName, $options: "i" };
+		}
+
+		if (lookingForJob) {
+			filter.lookingForJob = lookingForJob;
+		}
+
+		return filter;
+	}
+	UserModel.find(filter())
 		.select("-password")
-		.then((users) => {
-			if (!users) {
+		.then(async (users) => {
+			const filteredUsers = await filterUsers(users, authUser);
+
+			if (filteredUsers.length <= 0) {
 				return res
 					.status(404)
 					.send({ error: true, message: "Aucun utilisateur n'a été trouvé" }); // No users found
 			}
-			res.status(200).send(users);
+
+			res.status(200).send(filteredUsers);
 		})
 		.catch((err) => res.status(500).send(err));
 };

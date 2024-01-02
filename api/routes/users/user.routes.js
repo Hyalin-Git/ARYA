@@ -12,11 +12,12 @@ const userController = require("../../controllers/users/user.controllers");
 
 router.get("/", authenticate, userController.getUsers);
 router.get("/:id", authenticate, isBlocked, userController.getUser);
-router.delete("/:id", userController.deleteOneUser);
 
 // Update user picture
 router.put(
 	"/update-picture/:id",
+	authenticate,
+	authorize,
 	userPictureUpload.single("picture"),
 	multerErrorsHandler,
 	userController.updateUserPicture
@@ -32,6 +33,8 @@ router.put(
 // Update user phone
 router.put(
 	"/update-phone/:id",
+	authenticate,
+	authorize,
 	checkIfUserVerified,
 	userController.updateUserPhone
 );
@@ -52,6 +55,8 @@ router.put(
 	userController.updateUserPassword // If the user want to update his password
 );
 
+router.delete("/:id", authenticate, authorize, userController.deleteOneUser);
+
 // forgot passsword routes
 router.post(
 	"/forgot-password/reset-code/:id",
@@ -59,12 +64,17 @@ router.post(
 );
 router.put("/forgot-password/:id", userController.updateForgotPassword); // If the reset code is verified, then update the password
 
-router.patch("/block/:id", userController.blockAnUser);
-router.patch("/unblock/:id", userController.unblockAnUser);
+router.patch("/block/:id", authenticate, authorize, userController.blockAnUser);
+router.patch(
+	"/unblock/:id",
+	authenticate,
+	authorize,
+	userController.unblockAnUser
+);
 
-router.get("/follow/:id", userController.getFollow);
-router.get("/followers/:id", userController.getFollowers);
-router.patch("/follow/:id", userController.follow);
-router.patch("/unfollow/:id", userController.unfollow);
+router.get("/follow/:id", authenticate, userController.getFollow);
+router.get("/followers/:id", authenticate, userController.getFollowers);
+router.patch("/follow/:id", authenticate, authorize, userController.follow);
+router.patch("/unfollow/:id", authenticate, authorize, userController.unfollow);
 
 module.exports = router;

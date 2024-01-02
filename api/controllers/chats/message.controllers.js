@@ -5,31 +5,67 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
+const spamKeywords = require("../../helpers/spamwords");
 
 exports.saveMessage = async (req, res, next) => {
-	const { senderId, content, conversationId } = req.body;
-	let medias = req.files["media"];
+	try {
+		const { content, conversationId } = req.body;
+		const { userId } = req.query;
+		let medias = req.files["media"];
 
-	if (!senderId || !content || !conversationId) {
-		return res
-			.status(400)
-			.send({ error: true, message: "Les données fournit sont invalides" });
+		if (!userId || !content || !conversationId) {
+			return res
+				.status(400)
+				.send({ error: true, message: "Les données fournit sont invalides" });
+		}
+
+		const messagesOfConversation = await MessageModel.find({
+			conversationId: conversationId,
+		});
+
+		// If it's the first message of the conversation then it will checks if it's probably a spam or not
+		function spamChecker() {
+			const message = content.toLowerCase();
+			for (const keyword of spamKeywords) {
+				if (message.includes(keyword)) {
+					return true;
+				}
+			}
+		}
+
+		if (messagesOfConversation.length <= 0) {
+			if (spamChecker()) {
+				await ConversationModel.findByIdAndUpdate(
+					{ _id: conversationId },
+					{
+						$set: {
+							isSpam: true,
+						},
+					}
+				);
+			}
+		}
+
+		const uploadResponse = await uploadFiles(medias, "message");
+
+		const newMessage = new MessageModel({
+			conversationId: conversationId,
+			senderId: userId,
+			content: content,
+			media: medias ? uploadResponse : [],
+		});
+		newMessage
+			.save()
+			.then((newMessage) => {
+				res.status(201).send({ message: newMessage });
+			})
+			.catch((err) => res.status(500).send(err));
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
 	}
-
-	const uploadResponse = await uploadFiles(medias, "message");
-
-	const newMessage = new MessageModel({
-		conversationId: conversationId,
-		senderId: senderId,
-		content: content,
-		media: medias ? uploadResponse : [],
-	});
-	newMessage
-		.save()
-		.then((newMessage) => {
-			res.status(201).send({ message: newMessage });
-		})
-		.catch((err) => res.status(500).send(err));
 };
 
 exports.getMessage = (req, res, next) => {

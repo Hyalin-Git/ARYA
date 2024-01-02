@@ -17,11 +17,20 @@ exports.authenticate = (req, res, next) => {
 				});
 			} else {
 				if (decoded) {
-					let user = await UserModel.findById(decoded.userId);
+					const user = await UserModel.findById(decoded.userId);
+
+					if (!user) {
+						return res.status(404).send({
+							error: true,
+							message: "Impossible de se connecter à un compte inexistant",
+						});
+					}
+
 					res.locals.user = user;
 
 					console.log(user);
 					console.log(decoded);
+
 					console.log(
 						"---------- " + user.email + " est connecté" + "----------"
 					);
@@ -36,7 +45,7 @@ exports.authorize = (req, res, next) => {
 	let user = res.locals.user;
 	const targetUser = req.query.userId || req.params.id;
 
-	if (targetUser === user._id.toString()) {
+	if (targetUser === user._id.toString() || user.admin) {
 		next();
 	} else {
 		return res.status(403).send({

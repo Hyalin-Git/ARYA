@@ -7,6 +7,7 @@ const {
 const PostModel = require("../../models/posts/Post.model");
 const RepostModel = require("../../models/posts/Repost.model");
 const AnswerModel = require("../../models/posts/Answer.model");
+const { filterComments } = require("../../helpers/filterByBlocks");
 
 exports.saveComment = async (req, res, next) => {
 	try {
@@ -121,8 +122,8 @@ exports.saveComment = async (req, res, next) => {
 };
 
 exports.getComments = async (req, res, next) => {
-	const { postId } = req.query;
 	const authUser = res.locals.user;
+	const { postId } = req.query;
 
 	if (!postId) {
 		return res
@@ -130,21 +131,21 @@ exports.getComments = async (req, res, next) => {
 			.send({ error: true, message: "Paramètres manquants" });
 	}
 
-	CommentModel.find({
-		commenterId: { $nin: authUser.blockedUsers },
-		postId: postId,
-	})
-		.populate("commenterId", "userName lastName firstName")
+	CommentModel.find({ postId: postId })
+		.populate("commenterId", "userName lastName firstName blockedUsers")
 		.exec()
-		.then((comment) => {
-			if (comment.length <= 0) {
+		.then(async (comments) => {
+			const filteredComments = await filterComments(comments, authUser);
+
+			if (filteredComments.length <= 0) {
 				return res
 					.status(404)
 					.send({ error: true, message: "Aucun commentaire trouvé" });
 			}
-			res.status(200).send(comment);
+
+			res.status(200).send(filteredComments);
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) => res.status(500).send(err.message));
 };
 
 exports.getComment = (req, res, next) => {

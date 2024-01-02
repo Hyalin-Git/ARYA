@@ -15,8 +15,8 @@ router.post(
 	multerErrorsHandler,
 	repostController.saveRepost
 );
-router.get("/", repostController.getReposts);
-router.get("/:id", authenticate, repostController.getRepost);
+router.get("/", authenticate, repostController.getReposts);
+router.get("/:id", repostController.getRepost);
 
 router.put(
 	"/:id",
