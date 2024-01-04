@@ -17,6 +17,7 @@ const {
 } = require("../../utils/mail/mailText");
 const { uploadFile, destroyFile } = require("../../helpers/cloudinaryManager");
 const { filterUsers } = require("../../helpers/filterByBlocks");
+const FollowRequestModel = require("../../models/users/FollowRequest.model");
 
 // Get all users
 exports.getUsers = (req, res, next) => {
@@ -562,40 +563,166 @@ exports.getFollowers = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.follow = (req, res, next) => {
-	const idToFollow = req.body.idToFollow;
-	UserModel.findByIdAndUpdate(
-		{ _id: req.params.id },
-		{
-			$addToSet: {
-				following: idToFollow,
-			},
-		},
-		{ setDefaultsOnInsert: true, new: true }
-	)
-		// .then(() => res.status(200).send())
-		.catch((err) => res.status(500).send(err));
+exports.follow = async (req, res, next) => {
+	try {
+		const { userId, idToFollow } = req.query;
 
-	UserModel.findByIdAndUpdate(
-		{ _id: idToFollow },
-		{
-			$addToSet: {
-				followers: req.params.id,
+		if (!userId || !idToFollow) {
+			return res
+				.status(400)
+				.send({ error: true, message: "Paramètres manquant" });
+		}
+
+		const userToFollow = await UserModel.findById({ _id: idToFollow });
+
+		// If the user to follow is in private mode then send a
+		if (userToFollow.isPrivate === true) {
+			const getFollowRequest = await FollowRequestModel.findOne({
+				fromUserId: userId,
+				toUserId: idToFollow,
+			});
+
+			if (!getFollowRequest) {
+				const followRequest = new FollowRequestModel({
+					fromUserId: userId,
+					toUserId: idToFollow,
+				});
+
+				const savedFollowRequest = await followRequest.save();
+
+				return res.status(201).send(savedFollowRequest);
+			}
+
+			const deletedFollowRequest = await FollowRequestModel.findOneAndDelete({
+				fromUserId: userId,
+				toUserId: idToFollow,
+			});
+
+			return res.status(200).send(deletedFollowRequest);
+		}
+
+		const userFollowing = await UserModel.findByIdAndUpdate(
+			{ _id: userId },
+			{
+				$addToSet: {
+					following: idToFollow,
+				},
 			},
-		},
-		{ setDefaultsOnInsert: true, new: true }
-	)
-		.then((followUpdate) => res.status(200).send(followUpdate))
-		.catch((err) => res.status(500).send(err));
+			{ setDefaultsOnInsert: true, new: true }
+		);
+
+		const userFollowed = await UserModel.findByIdAndUpdate(
+			{ _id: idToFollow },
+			{
+				$addToSet: {
+					followers: userId,
+				},
+			},
+			{ setDefaultsOnInsert: true, new: true }
+		);
+
+		return res.status(200).send({
+			userFollowing: userFollowing.following,
+			userFollowed: userFollowed.followers,
+		});
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };
 
+exports.getFollowRequests = (req, res, next) => {
+	const { userId } = req.query;
+	FollowRequestModel.find({ toUserId: userId })
+		.then((followRequests) => {
+			if (!followRequests) {
+				return res.status(404).send({
+					error: true,
+					message: "Aucune demande de follow n'a été trouvé",
+				});
+			}
+			return res.status(200).send(followRequests);
+		})
+		.catch((err) => {
+			res.status(500).send({
+				error: true,
+				message: err.message || "Erreur interne du serveur",
+			});
+		});
+};
+
+exports.acceptFollowRequest = async (req, res, next) => {
+	try {
+		const { userId } = req.query;
+
+		if (!userId) {
+			return res
+				.status(400)
+				.send({ error: true, message: "Paramètres manquants" });
+		}
+
+		const followRequest = FollowRequestModel.findOne({
+			_id: req.params.id,
+			toUserId: userId,
+		});
+
+		if (!followRequest) {
+			return res.status(404).send({
+				error: true,
+				message: "Impossible d'accepter une demande inexistante",
+			});
+		}
+
+		await UserModel.findByIdAndUpdate(
+			{ _id: followRequest.fromUserId },
+			{
+				$addToSet: {
+					following: followRequest.toUserId,
+				},
+			},
+			{
+				setDefaultsOnInsert: true,
+				new: true,
+			}
+		);
+
+		await UserModel.findByIdAndUpdate(
+			{ _id: followRequest.toUserId },
+			{
+				$addToSet: {
+					followers: followRequest.fromUserId,
+				},
+			},
+			{
+				setDefaultsOnInsert: true,
+				new: true,
+			}
+		);
+
+		await FollowRequestModel.findOneAndDelete({
+			_id: req.params.id,
+			toUserId: userId,
+		});
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
+};
+
+exports.declineFollowRequest = (req, res, next) => {};
+
 exports.unfollow = (req, res, next) => {
-	const idToUnfollow = req.body.idToUnfollow;
+	const { userId, idToUnfollow } = req.query;
+
 	UserModel.findByIdAndUpdate(
-		{ _id: req.params.id },
+		{ _id: userId },
 		{
 			$pull: {
-				follow: idToUnfollow,
+				following: idToUnfollow,
 			},
 		},
 		{ setDefaultsOnInsert: true, new: true }
@@ -607,7 +734,7 @@ exports.unfollow = (req, res, next) => {
 		{ _id: idToUnfollow },
 		{
 			$pull: {
-				followers: req.params.id,
+				followers: userId,
 			},
 		},
 		{ setDefaultsOnInsert: true, new: true }

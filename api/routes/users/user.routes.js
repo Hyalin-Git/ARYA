@@ -2,16 +2,19 @@ const router = require("express").Router();
 const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
 const { isBlocked } = require("../../middlewares/checkIfBlocked.middleware");
 const {
+	isPrivate,
+} = require("../../middlewares/checkIfUserIsPrivate.middleware");
+
+const {
 	checkUserPassword,
 	checkIfUserVerified,
 } = require("../../middlewares/userVerifications.middleware");
 const { userPictureUpload } = require("../../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../../utils/multerErrors");
-
 const userController = require("../../controllers/users/user.controllers");
 
 router.get("/", authenticate, userController.getUsers);
-router.get("/:id", authenticate, isBlocked, userController.getUser);
+router.get("/:id", authenticate, isBlocked, isPrivate, userController.getUser);
 
 // Update user picture
 router.put(
@@ -74,7 +77,7 @@ router.patch(
 
 router.get("/follow/:id", authenticate, userController.getFollow);
 router.get("/followers/:id", authenticate, userController.getFollowers);
-router.patch("/follow/:id", authenticate, authorize, userController.follow);
-router.patch("/unfollow/:id", authenticate, authorize, userController.unfollow);
+router.patch("/follow/", authenticate, authorize, userController.follow);
+router.patch("/unfollow/", authenticate, authorize, userController.unfollow);
 
 module.exports = router;
