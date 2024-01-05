@@ -16,7 +16,7 @@ const {
 	resetEmailText,
 } = require("../../utils/mail/mailText");
 const { uploadFile, destroyFile } = require("../../helpers/cloudinaryManager");
-const { filterUsers } = require("../../helpers/filterByBlocks");
+const { filterUsers } = require("../../helpers/filterByBlocksByPrivate");
 const FollowRequestModel = require("../../models/users/FollowRequest.model");
 
 // Get all users
@@ -547,6 +547,8 @@ exports.unblockAnUser = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
+// Follow Controllers
+
 exports.getFollow = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id }, { following: 1 })
 		.populate("following", "lastName firstName userName")
@@ -632,88 +634,6 @@ exports.follow = async (req, res, next) => {
 		});
 	}
 };
-
-exports.getFollowRequests = (req, res, next) => {
-	const { userId } = req.query;
-	FollowRequestModel.find({ toUserId: userId })
-		.then((followRequests) => {
-			if (!followRequests) {
-				return res.status(404).send({
-					error: true,
-					message: "Aucune demande de follow n'a été trouvé",
-				});
-			}
-			return res.status(200).send(followRequests);
-		})
-		.catch((err) => {
-			res.status(500).send({
-				error: true,
-				message: err.message || "Erreur interne du serveur",
-			});
-		});
-};
-
-exports.acceptFollowRequest = async (req, res, next) => {
-	try {
-		const { userId } = req.query;
-
-		if (!userId) {
-			return res
-				.status(400)
-				.send({ error: true, message: "Paramètres manquants" });
-		}
-
-		const followRequest = FollowRequestModel.findOne({
-			_id: req.params.id,
-			toUserId: userId,
-		});
-
-		if (!followRequest) {
-			return res.status(404).send({
-				error: true,
-				message: "Impossible d'accepter une demande inexistante",
-			});
-		}
-
-		await UserModel.findByIdAndUpdate(
-			{ _id: followRequest.fromUserId },
-			{
-				$addToSet: {
-					following: followRequest.toUserId,
-				},
-			},
-			{
-				setDefaultsOnInsert: true,
-				new: true,
-			}
-		);
-
-		await UserModel.findByIdAndUpdate(
-			{ _id: followRequest.toUserId },
-			{
-				$addToSet: {
-					followers: followRequest.fromUserId,
-				},
-			},
-			{
-				setDefaultsOnInsert: true,
-				new: true,
-			}
-		);
-
-		await FollowRequestModel.findOneAndDelete({
-			_id: req.params.id,
-			toUserId: userId,
-		});
-	} catch (err) {
-		return res.status(500).send({
-			error: true,
-			message: err.message || "Erreur interne du serveur",
-		});
-	}
-};
-
-exports.declineFollowRequest = (req, res, next) => {};
 
 exports.unfollow = (req, res, next) => {
 	const { userId, idToUnfollow } = req.query;

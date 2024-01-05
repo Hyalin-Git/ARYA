@@ -75,8 +75,11 @@ router.patch(
 	userController.unblockAnUser
 );
 
+// Follow logic
+
 router.get("/follow/:id", authenticate, userController.getFollow);
 router.get("/followers/:id", authenticate, userController.getFollowers);
+
 router.patch("/follow/", authenticate, authorize, userController.follow);
 router.patch("/unfollow/", authenticate, authorize, userController.unfollow);
 

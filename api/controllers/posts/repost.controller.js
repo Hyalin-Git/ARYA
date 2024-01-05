@@ -2,7 +2,7 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
-const { filterReposts } = require("../../helpers/filterByBlocks");
+const { filterReposts } = require("../../helpers/filterByBlocksByPrivate");
 const AnswerModel = require("../../models/posts/Answer.model");
 const CommentModel = require("../../models/posts/Comment.model");
 const PostModel = require("../../models/posts/Post.model");
@@ -94,7 +94,7 @@ exports.getReposts = async (req, res, next) => {
 
 	RepostModel.find(filter())
 		.sort(sorting())
-		.populate("reposterId", "userName lastName firstName blockedUsers")
+		.populate("reposterId", "userName lastName firstName blockedUsers isPrivate followers")
 		.populate({
 			path: "postId",
 			select: "text media",

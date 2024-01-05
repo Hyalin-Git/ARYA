@@ -1,5 +1,6 @@
 const UserModel = require("../models/users/User.model");
 const ConversationModel = require("../models/chats/Conversation.model");
+const MessageRequestModel = require("../models/chats/MessageRequest.model");
 
 exports.isBlocked = async (req, res, next) => {
 	let authUser = res.locals.user;
@@ -34,11 +35,6 @@ exports.isBlocked = async (req, res, next) => {
 	} else {
 		next();
 	}
-};
-
-exports.checkMsgSpam = async (req, res, next) => {
-	try {
-	} catch (err) {}
 };
 
 exports.canSendMessage = async (req, res, next) => {
@@ -79,6 +75,18 @@ exports.canSendMessage = async (req, res, next) => {
 				message:
 					"Vous avez été bloqué par cet utilisateur, impossible de lui envoyer un message",
 			});
+		}
+
+		if (otherUser.isPrivate === true && !conversation.latestMessage) {
+			const messageRequest = new MessageRequestModel({
+				fromUserId: authUser._id,
+				toUserId: otherUser._id,
+				messageContent: req.body.content,
+			});
+
+			await messageRequest.save();
+
+			return res.status(200).send(messageRequest);
 		}
 
 		next();

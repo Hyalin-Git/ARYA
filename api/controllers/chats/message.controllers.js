@@ -9,8 +9,8 @@ const spamKeywords = require("../../helpers/spamwords");
 
 exports.saveMessage = async (req, res, next) => {
 	try {
-		const { content, conversationId } = req.body;
 		const { userId } = req.query;
+		const { content, conversationId } = req.body;
 		let medias = req.files["media"];
 
 		if (!userId || !content || !conversationId) {

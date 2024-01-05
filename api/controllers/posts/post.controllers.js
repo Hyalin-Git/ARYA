@@ -8,7 +8,7 @@ const {
 const CommentModel = require("../../models/posts/Comment.model");
 const AnswerModel = require("../../models/posts/Answer.model");
 const { getFormattedDates } = require("../../helpers/formattingDates");
-const { filterPosts } = require("../../helpers/filterByBlocks");
+const { filterPosts } = require("../../helpers/filterByBlocksByPrivate");
 
 exports.savePost = async (req, res, next) => {
 	const { text } = req.body;
@@ -100,7 +100,10 @@ exports.getPosts = async (req, res, next) => {
 
 	PostModel.find(filter())
 		.sort(sorting())
-		.populate("posterId", "userName lastName firstName blockedUsers")
+		.populate(
+			"posterId",
+			"userName lastName firstName blockedUsers isPrivate followers"
+		)
 		.exec()
 		.then(async (posts) => {
 			const filteredPosts = await filterPosts(posts, authUser);

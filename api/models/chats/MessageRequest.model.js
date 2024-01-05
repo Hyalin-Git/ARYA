@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const followRequestSchema = mongoose.Schema(
+const MessageRequestSchema = mongoose.Schema(
 	{
 		fromUserId: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -11,6 +11,11 @@ const followRequestSchema = mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 			required: true,
+		},
+		messageContent: {
+			type: String,
+			required: true,
+			trim: true,
 		},
 		status: {
 			type: String,
@@ -23,4 +28,4 @@ const followRequestSchema = mongoose.Schema(
 	}
 );
 
-module.exports = mongoose.model("FollowRequest", followRequestSchema);
+module.exports = mongoose.model("MessageRequest", MessageRequestSchema);

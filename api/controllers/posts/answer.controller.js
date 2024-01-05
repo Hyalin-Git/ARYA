@@ -2,7 +2,7 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
-const { filterAnswers } = require("../../helpers/filterByBlocks");
+const { filterAnswers } = require("../../helpers/filterByBlocksByPrivate");
 const AnswerModel = require("../../models/posts/Answer.model");
 const CommentModel = require("../../models/posts/Comment.model");
 const UserModel = require("../../models/users/User.model");
@@ -120,7 +120,10 @@ exports.getAnswers = (req, res, next) => {
 		commentId: commentId,
 		parentAnswerId: parentAnswerId,
 	})
-		.populate("answererId", "lastName firstName userName blockedUsers")
+		.populate(
+			"answererId",
+			"lastName firstName userName blockedUsers isPrivate followers"
+		)
 		.exec()
 		.then(async (answers) => {
 			const filteredAnswers = await filterAnswers(answers, authUser);

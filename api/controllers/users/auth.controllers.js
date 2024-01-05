@@ -111,15 +111,6 @@ exports.signIn = (req, res, next) => {
 							const accessToken = generateAccessToken(user);
 							const refreshToken = generateRefreshToken(user, rememberMe);
 
-							const cookies = cookie.serialize("session_id", `${user._id}`, {
-								httpOnly: true,
-								maxAge: 48 * 60 * 60, // 48 hours,
-								secure: true,
-								sameSite: true,
-							});
-
-							res.setHeader("Set-Cookie", cookies);
-
 							// Saving a new RefreshToken in the DB
 							new RefreshTokenModel({
 								userId: user._id,
@@ -128,7 +119,6 @@ exports.signIn = (req, res, next) => {
 								.save()
 								.then(() => {
 									res.status(201).send({
-										cook: cookies,
 										userId: user._id,
 										isAdmin: user.admin,
 										accessToken: accessToken,

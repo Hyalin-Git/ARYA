@@ -1,7 +1,10 @@
 const UserModel = require("../../models/users/User.model");
 const PostModel = require("../../models/posts/Post.model");
 const RepostModel = require("../../models/posts/Repost.model");
-const { filterPosts, filterReposts } = require("../../helpers/filterByBlocks");
+const {
+	filterPosts,
+	filterReposts,
+} = require("../../helpers/filterByBlocksByPrivate");
 
 exports.getAllFeed = async (req, res, next) => {
 	try {
@@ -9,11 +12,17 @@ exports.getAllFeed = async (req, res, next) => {
 		const { limit } = req.query;
 
 		const posts = await PostModel.find({ status: "sent" })
-			.populate("posterId", "userName lastName firstName blockedUsers")
+			.populate(
+				"posterId",
+				"userName lastName firstName blockedUsers isPrivate followers"
+			)
 			.exec();
 
 		const reposts = await RepostModel.find()
-			.populate("reposterId", "userName lastName firstName blockedUsers")
+			.populate(
+				"reposterId",
+				"userName lastName firstName blockedUsers isPrivate followers"
+			)
 			.populate({
 				path: "postId",
 				select: "text media",
