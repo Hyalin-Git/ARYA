@@ -34,3 +34,38 @@ exports.isPrivate = async (req, res, next) => {
 		});
 	}
 };
+
+exports.isBlocked = async (req, res, next) => {
+	let authUser = res.locals.user;
+
+	const AuthUserModel = await UserModel.findById({ _id: authUser._id });
+	// The authentified user is trying to fetch user informations
+	const requestedUser = await UserModel.findById({ _id: req.params.id });
+
+	const isAuthUserBlocked = requestedUser.blockedUsers.includes(
+		AuthUserModel._id
+	);
+	const isRequestedUserBlocked = AuthUserModel.blockedUsers.includes(
+		requestedUser._id
+	);
+
+	// Checking if auth user is blocked || if auth user has blocked the user
+	if (isAuthUserBlocked || isRequestedUserBlocked) {
+		return res.status(403).send({
+			error: true,
+			message: `${
+				isAuthUserBlocked
+					? "Vous avez été bloqué par cet utilisateur"
+					: "Vous avez bloqué cet utilisateur"
+			}`,
+			UserInfo: {
+				lastName: requestedUser.lastName,
+				firstName: requestedUser.firstName,
+				userName: requestedUser.userName,
+				picture: requestedUser.picture,
+			},
+		});
+	} else {
+		next();
+	}
+};

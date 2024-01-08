@@ -1,8 +1,5 @@
 const router = require("express").Router();
 const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
-const {
-	canAccessPosts,
-} = require("../../middlewares/checkIfBlocked.middleware");
 const { postUpload } = require("../../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../../utils/multerErrors");
 const repostController = require("../../controllers/posts/repost.controller");

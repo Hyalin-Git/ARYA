@@ -29,6 +29,7 @@ const answerRouter = require("./routes/posts/answer.routes");
 // Conversations
 const conversationRouter = require("./routes/chats/conversation.routes");
 const messageRouter = require("./routes/chats/message.routes");
+const messageRequestRouter = require("./routes/chats/messageRequest.routes");
 
 const verificationRouter = require("./routes/verifications/verification.routes");
 
@@ -88,6 +89,8 @@ app.use("/api/post/report", reportPostRouter);
 
 app.use("/api/conversations", conversationRouter);
 app.use("/api/messages", messageRouter);
+app.use("/api/messages-requests", messageRequestRouter);
+
 app.use("/api/verification", verificationRouter);
 
 app.get("/login/success", authenticate, (req, res, next) => {

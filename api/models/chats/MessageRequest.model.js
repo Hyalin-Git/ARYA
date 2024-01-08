@@ -12,6 +12,11 @@ const MessageRequestSchema = mongoose.Schema(
 			ref: "User",
 			required: true,
 		},
+		toConversationId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Conversation",
+			required: true,
+		},
 		messageContent: {
 			type: String,
 			required: true,

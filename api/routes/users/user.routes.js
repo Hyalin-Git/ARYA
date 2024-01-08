@@ -1,9 +1,6 @@
 const router = require("express").Router();
 const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
-const { isBlocked } = require("../../middlewares/checkIfBlocked.middleware");
-const {
-	isPrivate,
-} = require("../../middlewares/checkIfUserIsPrivate.middleware");
+const { isPrivate, isBlocked } = require("../../middlewares/user.middlewares");
 
 const {
 	checkUserPassword,

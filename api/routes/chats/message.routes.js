@@ -1,8 +1,6 @@
 const router = require("express").Router();
 const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
-const {
-	canSendMessage,
-} = require("../../middlewares/checkIfBlocked.middleware");
+const { canSendMessage } = require("../../middlewares/chats.middlewares");
 const messageController = require("../../controllers/chats/message.controllers");
 const { messageUpload } = require("../../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../../utils/multerErrors");
@@ -16,19 +14,31 @@ router.post(
 	canSendMessage,
 	messageController.saveMessage
 );
-// Usefull to fetch all data of the message data such as the send time
-router.get("/:id", messageController.getMessage);
+
+router.get("/:id", authenticate, messageController.getMessage);
 
 router.put(
 	"/:id",
+	authenticate,
+	authorize,
 	messageUpload.fields([{ name: "media", maxCount: 4 }]),
 	multerErrorsHandler,
 	messageController.editMessage
 );
 
-router.delete("/:id", messageController.deleteMessage);
+router.delete("/:id", authenticate, authorize, messageController.deleteMessage);
 
-router.patch("/add-react/:id", messageController.addReaction);
-router.patch("/delete-react/:id", messageController.deleteReaction);
+router.patch(
+	"/add-react/:id",
+	authenticate,
+	authorize,
+	messageController.addReaction
+);
+router.patch(
+	"/delete-react/:id",
+	authenticate,
+	authorize,
+	messageController.deleteReaction
+);
 
 module.exports = router;

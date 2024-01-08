@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
 const {
 	canAccessConversation,
-} = require("../../middlewares/checkIfBlocked.middleware");
+} = require("../../middlewares/chats.middlewares");
 const conversationController = require("../../controllers/chats/conversation.controllers");
 
 router.post("/", conversationController.accessOrCreateConversation);

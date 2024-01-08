@@ -5,7 +5,6 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
-const spamKeywords = require("../../helpers/spamwords");
 
 exports.saveMessage = async (req, res, next) => {
 	try {
@@ -19,33 +18,6 @@ exports.saveMessage = async (req, res, next) => {
 				.send({ error: true, message: "Les données fournit sont invalides" });
 		}
 
-		const messagesOfConversation = await MessageModel.find({
-			conversationId: conversationId,
-		});
-
-		// If it's the first message of the conversation then it will checks if it's probably a spam or not
-		function spamChecker() {
-			const message = content.toLowerCase();
-			for (const keyword of spamKeywords) {
-				if (message.includes(keyword)) {
-					return true;
-				}
-			}
-		}
-
-		if (messagesOfConversation.length <= 0) {
-			if (spamChecker()) {
-				await ConversationModel.findByIdAndUpdate(
-					{ _id: conversationId },
-					{
-						$set: {
-							isSpam: true,
-						},
-					}
-				);
-			}
-		}
-
 		const uploadResponse = await uploadFiles(medias, "message");
 
 		const newMessage = new MessageModel({
@@ -56,7 +28,19 @@ exports.saveMessage = async (req, res, next) => {
 		});
 		newMessage
 			.save()
-			.then((newMessage) => {
+			.then(async (newMessage) => {
+				await ConversationModel.findByIdAndUpdate(
+					{
+						_id: newMessage.conversationId,
+					},
+					{
+						$set: {
+							latestMessage: newMessage._id,
+						},
+					},
+					{ new: true, setDefaultsOnInsert: true }
+				);
+
 				res.status(201).send({ message: newMessage });
 			})
 			.catch((err) => res.status(500).send(err));
@@ -83,10 +67,11 @@ exports.getMessage = (req, res, next) => {
 };
 
 exports.editMessage = (req, res, next) => {
-	let medias = req.files["media"];
+	const { userId } = req.query;
 	const { content } = req.body;
+	let medias = req.files["media"];
 
-	MessageModel.findById({ _id: req.params.id })
+	MessageModel.findOne({ _id: req.params.id, senderId: userId })
 		.then(async (message) => {
 			if (!message) {
 				return res.status(404).send({
@@ -99,8 +84,9 @@ exports.editMessage = (req, res, next) => {
 			}
 
 			const uploadResponse = await uploadFiles(medias, "message");
-			const updatedMessage = await MessageModel.findByIdAndUpdate(
-				{ _id: req.params.id },
+
+			const updatedMessage = await MessageModel.findOneAndUpdate(
+				{ _id: req.params.id, senderId: userId },
 				{
 					$set: {
 						content: content,
@@ -113,13 +99,16 @@ exports.editMessage = (req, res, next) => {
 					setDefaultsOnInsert: true,
 				}
 			);
+
 			return res.status(200).send(updatedMessage);
 		})
 		.catch((err) => res.status(500).send(err));
 };
 
 exports.deleteMessage = (req, res, next) => {
-	MessageModel.findById({ _id: req.params.id })
+	const { userId } = req.query;
+
+	MessageModel.findOneAndDelete({ _id: req.params.id, senderId: userId })
 		.then(async (message) => {
 			if (!message) {
 				return res.status(404).send({
@@ -127,16 +116,98 @@ exports.deleteMessage = (req, res, next) => {
 					message: "Impossible de supprimer un message qui n'existe pas.",
 				});
 			}
+
 			if (message.media.length > 0) {
 				await destroyFiles(message, "message");
 			}
 
-			await MessageModel.findByIdAndDelete({ _id: req.params.id });
-			const conversationUpdated = await ConversationModel.findByIdAndUpdate(
-				{ _id: message.conversationId },
+			return res.status(200).send(message);
+		})
+		.catch((err) => {
+			res.status(500).send({
+				error: true,
+				message: err.message || "Erreur interne du serveur",
+			});
+		});
+};
+
+// Reactions controllers
+function checkIfReacted(post, userId) {
+	let hasReacted;
+
+	// Set the variable hasReacted value where it returns true
+	if (post.reactions.like.includes(userId)) {
+		hasReacted = "like";
+	} else if (post.reactions.awesome.includes(userId)) {
+		hasReacted = "awesome";
+	} else if (post.reactions.love.includes(userId)) {
+		hasReacted = "love";
+	} else if (post.reactions.funny.includes(userId)) {
+		hasReacted = "funny";
+	}
+
+	return hasReacted;
+}
+
+exports.addReaction = async (req, res, next) => {
+	try {
+		const { conversationId, senderId, reaction } = req.body;
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
+		const allowedReactions = ["like", "awesome", "funny", "love"];
+
+		if (!conversationId || !senderId) {
+			return res
+				.status(400)
+				.send({ error: true, message: "Paramètres manquants" });
+		}
+
+		// Checks if the given reaction is in the allowedReactions array
+		if (!allowedReactions.includes(reaction)) {
+			return res
+				.status(400)
+				.send({ error: true, message: "La réaction fournit est invalide" });
+			// The given reaction is not valid
+		}
+
+		// Fetch the specified comment
+		const message = await MessageModel.findOneAndUpdate({
+			_id: req.params.id,
+			conversationId: conversationId,
+			senderId: senderId,
+		});
+
+		if (!message) {
+			return res.status(404).send({
+				error: true,
+				message: "Impossible d'ajouter une réaction à un message inexistant",
+				// Cannot add a reaction to a comment who doesn't exist
+			});
+		}
+
+		const lastUserReact = checkIfReacted(message, userId);
+
+		// If the user already reacted
+		if (lastUserReact) {
+			if (lastUserReact === reaction) {
+				return res.status(401).send({
+					error: true,
+					message: "Impossible d'ajouter la même réaction",
+					// Cannot add the same reaction
+				});
+			}
+
+			const updatedMessage = await MessageModel.findOneAndUpdate(
+				{
+					_id: req.params.id,
+					conversationId: conversationId,
+					senderId: senderId,
+				},
 				{
 					$pull: {
-						messages: message._id,
+						[`reactions.${lastUserReact}`]: userId, // Pull the old reaction
+					},
+					$addToSet: {
+						[`reactions.${reaction}`]: userId, // Add the new one
 					},
 				},
 				{
@@ -145,143 +216,94 @@ exports.deleteMessage = (req, res, next) => {
 				}
 			);
 
-			return res
-				.status(200)
-				.send({ message: message, conversation: conversationUpdated });
-		})
-		.catch((err) => res.status(500).send(err.message ? err.message : err));
-};
+			return res.status(200).send(updatedMessage);
+		}
 
-const reactionsArray = ["like", "awesome", "funny", "love"];
-
-exports.addReaction = (req, res, next) => {
-	const { reaction, userId } = req.body;
-
-	function setReaction(reaction) {
-		MessageModel.findByIdAndUpdate(
-			{ _id: req.params.id },
+		// If the user has not already voted
+		const updatedMessage = await MessageModel.findByIdAndUpdate(
+			{
+				_id: req.params.id,
+				conversationId: conversationId,
+				senderId: senderId,
+			},
 			{
 				$addToSet: {
-					[`reactions.${reaction}`]: userId,
+					[`reactions.${reaction}`]: userId, // Add the reaction in the corresponding reaction
 				},
 			},
 			{
 				new: true,
 				setDefaultsOnInsert: true,
 			}
-		)
-			.then((message) => {
-				if (!message) {
-					return res
-						.status(404)
-						.send(
-							"Impossible d'ajouter une reaction sur un message qui n'existe pas."
-						);
-				}
-				res.status(200).send(message);
-			})
-			.catch((err) => res.status(500).send(err));
-	}
+		);
 
-	MessageModel.findById({ _id: req.params.id })
-		.then((message) => {
-			if (!message) {
-				return res.status(404).send({
-					error: true,
-					message: "Ce message n'existe pas",
-				});
-			}
-			if (
-				reactionsArray.some((reaction) =>
-					message.reactions[reaction].includes(userId)
-				)
-			) {
-				return res
-					.status(401)
-					.send({ error: true, message: "Cet utilisateur a déjà réagit" }); // This user already reacted
-			}
-			UserModel.findById({ _id: userId })
-				.then((user) => {
-					if (!user) {
-						return res.status(404).send({
-							error: true,
-							message: "Utilisateur introuvable.",
-						});
-					}
-					switch (reaction) {
-						case "like":
-							setReaction("like");
-							break;
-						case "awesome":
-							setReaction("awesome");
-							break;
-						case "funny":
-							setReaction("funny");
-							break;
-						case "love":
-							setReaction("love");
-							break;
-						default:
-							res.status(400).send({
-								error: true,
-								message: "Aucune réaction n'a été sélectionné", // No reaction has been selected
-							});
-							break;
-					}
-				})
-				.catch((err) => res.status(500).send(err));
-		})
-		.catch((err) => res.status(500).send(err));
+		return res.status(200).send(updatedMessage);
+	} catch (err) {
+		res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };
 
-exports.deleteReaction = (req, res, next) => {
-	const { userId } = req.body;
+exports.deleteReaction = async (req, res, next) => {
+	try {
+		const { conversationId, senderId } = req.body;
+		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
 
-	function delReaction(reaction) {
-		MessageModel.findByIdAndUpdate(
-			{ _id: req.params.id },
+		if (!conversationId || !senderId) {
+			return res
+				.status(400)
+				.send({ error: true, message: "Paramètres manquants" });
+		}
+
+		// Fetch the specified comment
+		const message = await MessageModel.findById({
+			_id: req.params.id,
+			conversationId: conversationId,
+			senderId: senderId,
+		});
+
+		if (!message) {
+			return res.status(400).send({
+				error: true,
+				message: "Impossible de supprimer la réaction d'un message inexistant",
+				// Cannot delete a reaction from a comment who doesn't exist
+			});
+		}
+
+		const lastUserReact = checkIfReacted(message, userId);
+
+		if (!lastUserReact) {
+			return res.status(400).send({
+				error: true,
+				message: "Impossible de supprimer une réaction inexistante",
+				// Cannot delete a reaction who doesn't exist
+			});
+		}
+
+		const updatedMessage = await MessageModel.findByIdAndUpdate(
+			{
+				_id: req.params.id,
+				conversationId: conversationId,
+				senderId: senderId,
+			},
 			{
 				$pull: {
-					[`reactions.${reaction}`]: userId,
+					[`reactions.${lastUserReact}`]: userId,
 				},
 			},
 			{
 				new: true,
 				setDefaultsOnInsert: true,
 			}
-		)
-			.then((message) => {
-				if (!message) {
-					return res
-						.status(404)
-						.send(
-							"Impossible d'ajouter une reaction sur un message qui n'existe pas."
-						);
-				}
-				res.status(200).send(message);
-			})
-			.catch((err) => res.status(500).send(err));
-	}
+		);
 
-	MessageModel.findById({ _id: req.params.id })
-		.then((message) => {
-			if (message.reactions.like.includes(userId)) {
-				return delReaction("like");
-			}
-			if (message.reactions.awesome.includes(userId)) {
-				return delReaction("awesome");
-			}
-			if (message.reactions.funny.includes(userId)) {
-				return delReaction("funny");
-			}
-			if (message.reactions.love.includes(userId)) {
-				return delReaction("love");
-			} else {
-				return res.status(404).send({
-					error: true,
-					message: "Cet utilisateur n'a pas réagit à ce message",
-				});
-			}
-		})
-		.catch((err) => res.status(500).send(err));
+		return res.status(200).send(updatedMessage);
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };
