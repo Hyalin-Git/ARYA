@@ -8,7 +8,7 @@ const {
 const CommentModel = require("../../models/posts/Comment.model");
 const AnswerModel = require("../../models/posts/Answer.model");
 const { getFormattedDates } = require("../../helpers/formattingDates");
-const { filterPosts } = require("../../helpers/filterByBlocksByPrivate");
+const Filter = require("../../helpers/filterByBlocksByPrivate");
 
 exports.savePost = async (req, res, next) => {
 	const { text } = req.body;
@@ -106,7 +106,11 @@ exports.getPosts = async (req, res, next) => {
 		)
 		.exec()
 		.then(async (posts) => {
-			const filteredPosts = await filterPosts(posts, authUser);
+			const filteredPosts = await Filter.filterAllElements(
+				posts,
+				"posterId",
+				authUser
+			);
 
 			if (filteredPosts.length <= 0) {
 				return res
@@ -114,15 +118,20 @@ exports.getPosts = async (req, res, next) => {
 					.send({ error: true, message: "Aucune publication trouvée" });
 			}
 
-			return res.status(200).send({ posts: filteredPosts, params: params });
+			return res.status(200).send({ data: filteredPosts, params: params });
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) =>
+			res.status(500).send(err.message || "Erreur interne du serveur")
+		);
 };
 
 exports.getPost = (req, res, next) => {
 	const authUser = res.locals.user;
 	PostModel.findById({ _id: req.params.id })
-		.populate("posterId", "userName lastName firstName")
+		.populate(
+			"posterId",
+			"userName lastName firstName blockedUsers isPrivate followers"
+		)
 		.exec()
 		.then(async (post) => {
 			if (!post) {
@@ -131,24 +140,24 @@ exports.getPost = (req, res, next) => {
 					message: "Cette publication n'existe pas",
 				});
 			}
-			const user = await UserModel.findById({ _id: post.posterId._id });
 
-			if (user.blockedUsers.includes(authUser._id)) {
-				return res.status(403).send({
-					error: true,
-					message:
-						"Impossible de récupérer la publication d'un utilisateur qui vous a bloqué",
-				});
-			}
-			if (authUser.blockedUsers.includes(post.posterId._id)) {
-				return res.status(403).send({
-					error: true,
-					message:
-						"Impossible de récupérer la publication d'un utilisateur que vous avez bloqué",
-				});
+			const filteredPost = await Filter.filterOneElement(
+				post,
+				"posterId",
+				authUser
+			);
+
+			if (filteredPost.error) {
+				let message;
+				if (filteredPost.isBlockedByAuthUser) {
+					message =
+						"Impossible de voir la publication d'un utilisateur que vous avez bloqué";
+				}
+				// Create a function to handle the message depending on what elt it is
+				return res.status(403).send({ error: true, message: message });
 			}
 
-			return res.status(200).send(post);
+			return res.status(200).send(filteredPost);
 		})
 		.catch((err) => res.status(500).send(err.message));
 };

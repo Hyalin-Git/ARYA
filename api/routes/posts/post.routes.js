@@ -16,7 +16,7 @@ router.post(
 );
 
 router.get("/", authenticate, postController.getPosts);
-router.get("/:id", postController.getPost);
+router.get("/:id", authenticate, postController.getPost);
 
 router.put(
 	"/:id",

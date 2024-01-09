@@ -14,24 +14,19 @@ exports.filterUsers = (users, authUser) => {
 	return filteredUsers;
 };
 
-exports.filterPosts = (posts, authUser) => {
-	const filteredPosts = posts.filter((post) => {
+exports.filterAllElements = (elements, path, authUser) => {
+	const filteredPosts = elements.filter((elt) => {
 		// Logic for blocked user
-		const isBlockedByAuthUser = authUser.blockedUsers.includes(
-			post.posterId._id
-		);
+		const isBlockedByAuthUser = authUser.blockedUsers.includes(elt[path]._id);
 
-		const isBlockedByPoster = post.posterId.blockedUsers.includes(authUser._id);
+		const isBlockedByPoster = elt[path].blockedUsers.includes(authUser._id);
 
 		// Logic for private account
-		const userIsPrivate = post.posterId.isPrivate === true;
+		const userIsPrivate = elt[path].isPrivate === true;
 
-		const authUserIsFollowingUser = authUser.following.includes(
-			post.posterId._id
-		);
-		const userIsFollowedByAuthUser = post.posterId.followers.includes(
-			authUser._id
-		);
+		const authUserIsFollowingUser = authUser.following.includes(elt[path]._id);
+
+		const userIsFollowedByAuthUser = elt[path].followers.includes(authUser._id);
 
 		return (
 			!isBlockedByAuthUser &&
@@ -41,13 +36,33 @@ exports.filterPosts = (posts, authUser) => {
 	});
 
 	const response = filteredPosts.map((filteredPost) => {
-		filteredPost.posterId.blockedUsers = undefined;
-		filteredPost.posterId.followers = undefined;
+		filteredPost[path].blockedUsers = undefined;
+		filteredPost[path].followers = undefined;
 
 		return filteredPost;
 	});
 
 	return response;
+};
+
+exports.filterOneElement = (post, path, authUser) => {
+	const reason = { error: true };
+	const isBlockedByAuthUser = authUser.blockedUsers.includes(post[path]._id);
+	const isBlockedByPoster = post[path].blockedUsers.includes(authUser._id);
+
+	if (isBlockedByAuthUser) {
+		reason.isBlockedByAuthUser = true;
+		return reason;
+	}
+	if (isBlockedByPoster) {
+		reason.isBlockedByPosterssage = true;
+		return reason;
+	}
+
+	post[path].blockedUsers = undefined;
+	post[path].followers = undefined;
+
+	return post;
 };
 
 exports.filterReposts = (reposts, authUser) => {

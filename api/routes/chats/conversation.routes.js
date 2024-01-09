@@ -20,6 +20,8 @@ router.get(
 	conversationController.getConversation
 );
 router.put("/:id", conversationController.editConversation);
-router.delete("/:id", conversationController.deleteConversation);
+
+// There is no DELETE operation because we dont want the conversations to be deleted from the DB, but deleted for the user
+router.patch("/:id", conversationController.deleteConversation);
 
 module.exports = router;

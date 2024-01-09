@@ -22,6 +22,10 @@ const conversationSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		isDeletedFor: {
+			type: [mongoose.Schema.Types.ObjectId],
+			ref: "User",
+		},
 	},
 	{ timestamps: true }
 );
