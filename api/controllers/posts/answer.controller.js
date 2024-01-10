@@ -2,7 +2,10 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
-const { filterAnswers } = require("../../helpers/filterByBlocksByPrivate");
+const {
+	filterElements,
+	filterElement,
+} = require("../../helpers/filterByBlocksByPrivate");
 const AnswerModel = require("../../models/posts/Answer.model");
 const CommentModel = require("../../models/posts/Comment.model");
 const UserModel = require("../../models/users/User.model");
@@ -126,7 +129,11 @@ exports.getAnswers = (req, res, next) => {
 		)
 		.exec()
 		.then(async (answers) => {
-			const filteredAnswers = await filterAnswers(answers, authUser);
+			const filteredAnswers = await filterElements(
+				answers,
+				"answererId",
+				authUser
+			);
 
 			if (filteredAnswers.length <= 0) {
 				return res
@@ -140,14 +147,38 @@ exports.getAnswers = (req, res, next) => {
 };
 
 exports.getAnswer = (req, res, next) => {
+	const authUser = res.locals.user;
+
 	AnswerModel.findOne({
 		_id: req.params.id,
 		commentId: req.query.commentId,
 	})
-		.populate("answererId", "lastName firstName userName")
+		.populate(
+			"answererId",
+			"lastName firstName userName blockedUsers isPrivate followers"
+		)
 		.exec()
-		.then((answer) => res.status(200).send(answer))
-		.catch((err) => res.status(500).send(err));
+		.then(async (answer) => {
+			if (!answer) {
+				return res
+					.status(404)
+					.send({ error: true, message: "Aucune réponse trouvé" });
+			}
+			const filteredAnswer = await filterElement(
+				answer,
+				"answererId",
+				authUser
+			);
+
+			if (filteredAnswer.error) {
+				return res.status(403).send(filteredAnswer);
+			}
+
+			return res.status(200).send(filteredAnswer);
+		})
+		.catch((err) =>
+			res.status(500).send(err.message || "Erreur interne du serveur")
+		);
 };
 
 exports.updateAnswer = (req, res, next) => {

@@ -14,8 +14,8 @@ exports.filterUsers = (users, authUser) => {
 	return filteredUsers;
 };
 
-exports.filterAllElements = (elements, path, authUser) => {
-	const filteredPosts = elements.filter((elt) => {
+exports.filterElements = (elements, path, authUser) => {
+	const filteredElts = elements.filter((elt) => {
 		// Logic for blocked user
 		const isBlockedByAuthUser = authUser.blockedUsers.includes(elt[path]._id);
 
@@ -35,160 +35,112 @@ exports.filterAllElements = (elements, path, authUser) => {
 		);
 	});
 
-	const response = filteredPosts.map((filteredPost) => {
-		filteredPost[path].blockedUsers = undefined;
-		filteredPost[path].followers = undefined;
+	return generateResponse(filteredElts, path, authUser);
+};
 
-		return filteredPost;
+function generateResponse(filteredElts, path, authUser) {
+	// Map through every filtered elements
+	const response = filteredElts.map((elt) => {
+		// There is a condition with reposterId because,
+		// if you didn't block or anything the reposterId the repost will appears in the feed
+		// but what if you blocked the user of the reposted post ?
+		// which means that we need to check the reposted post
+		if (path === "reposterId") {
+			const isBlockedByAuthUser = authUser.blockedUsers.includes(
+				elt.postId?.posterId._id
+			);
+			const isBlockedByPoster = elt.postId?.posterId.blockedUsers.includes(
+				authUser._id
+			);
+
+			const isPrivate = elt.postId?.posterId.isPrivate === true;
+			const isAuthUserFollowingPoster = authUser.following.includes(
+				elt.postId?.posterId._id
+			);
+			const isAuthUserInPosterFollowers =
+				elt.postId?.posterId.followers.includes(authUser._id);
+
+			function shouldHideContent() {
+				// If auth user blocked the posterId and vice versa then return true
+				if (isBlockedByAuthUser || isBlockedByPoster) {
+					// Removing isPrivate for the frontend to know if it's a block issue or a private account issue
+					elt.postId.posterId.isPrivate = undefined;
+					return true;
+				}
+
+				// If the poster has a private acc
+				if (isPrivate) {
+					// Then we check if auth user is following the poster and vice versa
+					if (!isAuthUserFollowingPoster) {
+						return true;
+					}
+					if (!isAuthUserInPosterFollowers) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			// Calling the function to check if we need to hide or not the content
+			if (shouldHideContent()) {
+				elt.postId.text = undefined;
+				elt.postId.media = undefined;
+			}
+
+			if (elt.postId !== null) {
+				elt.postId.posterId.blockedUsers = undefined;
+				elt.postId.posterId.followers = undefined;
+			}
+		}
+
+		elt[path].blockedUsers = undefined;
+		elt[path].followers = undefined;
+
+		return elt;
 	});
 
 	return response;
-};
+}
 
-exports.filterOneElement = (post, path, authUser) => {
+exports.filterElement = (elt, path, authUser) => {
 	const reason = { error: true };
-	const isBlockedByAuthUser = authUser.blockedUsers.includes(post[path]._id);
-	const isBlockedByPoster = post[path].blockedUsers.includes(authUser._id);
+
+	const isBlockedByAuthUser = authUser.blockedUsers.includes(elt[path]._id);
+
+	const isBlockedByPoster = elt[path].blockedUsers.includes(authUser._id);
+
+	const userIsPrivate = elt[path].isPrivate === true;
+
+	const authUserIsFollowingUser = authUser.following.includes(elt[path]._id);
+
+	const userIsFollowedByAuthUser = elt[path].followers.includes(authUser._id);
 
 	if (isBlockedByAuthUser) {
-		reason.isBlockedByAuthUser = true;
+		reason.message =
+			"Impossible de voir la publication d'un utilisateur que vous avez bloqué";
 		return reason;
 	}
 	if (isBlockedByPoster) {
-		reason.isBlockedByPosterssage = true;
+		reason.message =
+			"Impossible de voir la publication d'un utilisateur qui vous a bloqué";
 		return reason;
 	}
-
-	post[path].blockedUsers = undefined;
-	post[path].followers = undefined;
-
-	return post;
-};
-
-exports.filterReposts = (reposts, authUser) => {
-	const filteredReposts = reposts.filter((repost) => {
-		// Logic for blocked user
-		const isBlockedByAuthUser = authUser.blockedUsers.includes(
-			repost.reposterId._id
-		);
-
-		const isBlockedByPoster = repost.reposterId.blockedUsers.includes(
-			authUser._id
-		);
-
-		// Logic for private account
-		const userIsPrivate = repost.reposterId.isPrivate === true;
-
-		const authUserIsFollowingUser = authUser.following.includes(
-			repost.reposterId._id
-		);
-		const userIsFollowedByAuthUser = repost.reposterId.followers.includes(
-			authUser._id
-		);
-
-		return (
-			!isBlockedByAuthUser &&
-			!isBlockedByPoster &&
-			(!userIsPrivate || (authUserIsFollowingUser && userIsFollowedByAuthUser))
-		);
-	});
-
-	const response = filteredReposts.map((filteredRepost) => {
-		if (
-			authUser.blockedUsers.includes(filteredRepost.postId?.posterId._id) ||
-			filteredRepost.postId?.posterId.blockedUsers.includes(authUser._id)
-		) {
-			filteredRepost.postId.text = null;
-			filteredRepost.postId.media = null;
+	if (userIsPrivate) {
+		if (!authUserIsFollowingUser) {
+			reason.message =
+				"Cette publication vient d'un compte privé, veuillez suivre ce compte pour voir ses publications";
+			return reason;
 		}
-
-		if (filteredRepost.postId !== null) {
-			filteredRepost.postId.posterId.blockedUsers = undefined;
+		if (!userIsFollowedByAuthUser) {
+			reason.message =
+				"Cette publication vient d'un compte privé, veuillez suivre ce compte pour voir ses publications";
+			return reason;
 		}
+	}
 
-		filteredRepost.reposterId.blockedUsers = undefined;
-		filteredRepost.reposterId.followers = undefined;
+	elt[path].blockedUsers = undefined;
+	elt[path].followers = undefined;
 
-		return filteredRepost;
-	});
-
-	return response;
-};
-
-exports.filterComments = (comments, authUser) => {
-	const filteredComments = comments.filter((comment) => {
-		// Logic for blocked user
-		const isBlockedByAuthUser = authUser.blockedUsers.includes(
-			comment.commenterId._id
-		);
-
-		const isBlockedByPoster = comment.commenterId.blockedUsers.includes(
-			authUser._id
-		);
-
-		// Logic for private account
-		const userIsPrivate = comment.commenterId.isPrivate === true;
-
-		const authUserIsFollowingUser = authUser.following.includes(
-			comment.commenterId._id
-		);
-
-		const userIsFollowedByAuthUser = comment.commenterId.followers.includes(
-			authUser._id
-		);
-
-		return (
-			!isBlockedByAuthUser &&
-			!isBlockedByPoster &&
-			(!userIsPrivate || (authUserIsFollowingUser && userIsFollowedByAuthUser))
-		);
-	});
-
-	const response = filteredComments.map((filteredComment) => {
-		filteredComment.commenterId.blockedUsers = undefined;
-		filteredComment.commenterId.followers = undefined;
-
-		return filteredComment;
-	});
-
-	return response;
-};
-
-exports.filterAnswers = (answers, authUser) => {
-	const filteredAnswers = answers.filter((answer) => {
-		// Logic for blocked user
-		const isBlockedByAuthUser = authUser.blockedUsers.includes(
-			answer.answererId._id
-		);
-
-		const isBlockedByPoster = answer.answererId.blockedUsers.includes(
-			authUser._id
-		);
-
-		// Logic for private account
-		const userIsPrivate = answer.answererId.isPrivate === true;
-
-		const authUserIsFollowingUser = authUser.following.includes(
-			answer.answererId._id
-		);
-
-		const userIsFollowedByAuthUser = answer.answererId.followers.includes(
-			authUser._id
-		);
-
-		return (
-			!isBlockedByAuthUser &&
-			!isBlockedByPoster &&
-			(!userIsPrivate || (authUserIsFollowingUser && userIsFollowedByAuthUser))
-		);
-	});
-
-	const response = filteredAnswers.map((filteredAnswer) => {
-		filteredAnswer.answererId.blockedUsers = undefined;
-		filteredAnswer.answererId.followers = undefined;
-
-		return filteredAnswer;
-	});
-
-	return response;
+	return elt;
 };

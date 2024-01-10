@@ -8,7 +8,10 @@ const {
 const CommentModel = require("../../models/posts/Comment.model");
 const AnswerModel = require("../../models/posts/Answer.model");
 const { getFormattedDates } = require("../../helpers/formattingDates");
-const Filter = require("../../helpers/filterByBlocksByPrivate");
+const {
+	filterElements,
+	filterElement,
+} = require("../../helpers/filterByBlocksByPrivate");
 
 exports.savePost = async (req, res, next) => {
 	const { text } = req.body;
@@ -106,11 +109,7 @@ exports.getPosts = async (req, res, next) => {
 		)
 		.exec()
 		.then(async (posts) => {
-			const filteredPosts = await Filter.filterAllElements(
-				posts,
-				"posterId",
-				authUser
-			);
+			const filteredPosts = await filterElements(posts, "posterId", authUser);
 
 			if (filteredPosts.length <= 0) {
 				return res
@@ -141,20 +140,10 @@ exports.getPost = (req, res, next) => {
 				});
 			}
 
-			const filteredPost = await Filter.filterOneElement(
-				post,
-				"posterId",
-				authUser
-			);
+			const filteredPost = await filterElement(post, "posterId", authUser);
 
 			if (filteredPost.error) {
-				let message;
-				if (filteredPost.isBlockedByAuthUser) {
-					message =
-						"Impossible de voir la publication d'un utilisateur que vous avez bloqué";
-				}
-				// Create a function to handle the message depending on what elt it is
-				return res.status(403).send({ error: true, message: message });
+				return res.status(403).send(filteredPost);
 			}
 
 			return res.status(200).send(filteredPost);

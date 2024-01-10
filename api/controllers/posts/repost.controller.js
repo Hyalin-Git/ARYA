@@ -2,7 +2,10 @@ const {
 	uploadFiles,
 	destroyFiles,
 } = require("../../helpers/cloudinaryManager");
-const { filterReposts } = require("../../helpers/filterByBlocksByPrivate");
+const {
+	filterElements,
+	filterElement,
+} = require("../../helpers/filterByBlocksByPrivate");
 const AnswerModel = require("../../models/posts/Answer.model");
 const CommentModel = require("../../models/posts/Comment.model");
 const PostModel = require("../../models/posts/Post.model");
@@ -94,18 +97,25 @@ exports.getReposts = async (req, res, next) => {
 
 	RepostModel.find(filter())
 		.sort(sorting())
-		.populate("reposterId", "userName lastName firstName blockedUsers isPrivate followers")
+		.populate(
+			"reposterId",
+			"userName lastName firstName blockedUsers isPrivate followers"
+		)
 		.populate({
 			path: "postId",
 			select: "text media",
 			populate: {
 				path: "posterId",
-				select: "lastName firstName userName blockedUsers",
+				select: "lastName firstName userName blockedUsers isPrivate followers",
 			},
 		})
 		.exec()
 		.then(async (reposts) => {
-			const filteredReposts = await filterReposts(reposts, authUser);
+			const filteredReposts = await filterElements(
+				reposts,
+				"reposterId",
+				authUser
+			);
 
 			if (filteredReposts.length <= 0) {
 				return res
@@ -122,13 +132,16 @@ exports.getRepost = (req, res, next) => {
 	const authUser = res.locals.user;
 
 	RepostModel.findById({ _id: req.params.id })
-		.populate("reposterId", "userName lastName firstName")
+		.populate(
+			"reposterId",
+			"userName lastName firstName blockedUsers isPrivate followers"
+		)
 		.populate({
 			path: "postId",
 			select: "text media",
 			populate: {
 				path: "posterId",
-				select: "lastName firstName userName",
+				select: "lastName firstName userName blockedUsers isPrivate followers",
 			},
 		})
 		.exec()
@@ -139,29 +152,21 @@ exports.getRepost = (req, res, next) => {
 					.send({ error: true, message: "Aucune publication trouvée" });
 			}
 
-			const reposterUser = await UserModel.findById({
-				_id: repost.reposterId._id,
-			});
+			const filteredRepost = await filterElement(
+				repost,
+				"reposterId",
+				authUser
+			);
 
-			if (reposterUser.blockedUsers.includes(authUser._id)) {
-				return res.status(403).send({
-					error: true,
-					message:
-						"Impossible de récupérer la publication d'un utilisateur qui vous a bloqué",
-				});
+			if (filteredRepost.error) {
+				return res.status(403).send(filteredRepost);
 			}
 
-			if (authUser.blockedUsers.includes(repost.reposterId._id)) {
-				return res.status(403).send({
-					error: true,
-					message:
-						"Impossible de récupérer la publication d'un utilisateur que vous avez bloqué",
-				});
-			}
-
-			return res.status(200).send(repost);
+			return res.status(200).send(filteredRepost);
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) =>
+			res.status(500).send(err.message || "Erreur interne du serveur")
+		);
 };
 
 exports.updateRepost = (req, res, next) => {

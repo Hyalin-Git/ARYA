@@ -7,7 +7,10 @@ const {
 const PostModel = require("../../models/posts/Post.model");
 const RepostModel = require("../../models/posts/Repost.model");
 const AnswerModel = require("../../models/posts/Answer.model");
-const { filterComments } = require("../../helpers/filterByBlocksByPrivate");
+const {
+	filterElements,
+	filterElement,
+} = require("../../helpers/filterByBlocksByPrivate");
 
 exports.saveComment = async (req, res, next) => {
 	try {
@@ -138,7 +141,11 @@ exports.getComments = async (req, res, next) => {
 		)
 		.exec()
 		.then(async (comments) => {
-			const filteredComments = await filterComments(comments, authUser);
+			const filteredComments = await filterElements(
+				comments,
+				"commenterId",
+				authUser
+			);
 
 			if (filteredComments.length <= 0) {
 				return res
@@ -155,7 +162,10 @@ exports.getComment = (req, res, next) => {
 	const authUser = res.locals.user;
 
 	CommentModel.findById({ _id: req.params.id })
-		.populate("commenterId", "userName lastName firstName")
+		.populate(
+			"commenterId",
+			"userName lastName firstName blockedUsers isPrivate followers"
+		)
 		.exec()
 		.then(async (comment) => {
 			if (!comment) {
@@ -164,27 +174,17 @@ exports.getComment = (req, res, next) => {
 					.send({ error: true, message: "Aucun commentaire trouvé" });
 			}
 
-			if (authUser) {
-				const user = await UserModel.findById({ _id: comment.commenterId._id });
+			const filteredComment = await filterElement(
+				comment,
+				"commenterId",
+				authUser
+			);
 
-				if (user.blockedUsers.includes(authUser._id)) {
-					return res.status(403).send({
-						error: true,
-						message:
-							"Impossible de récupérer la publication d'un utilisateur qui vous a bloqué",
-					});
-				}
-
-				if (authUser.blockedUsers.includes(comment.commenterId._id)) {
-					return res.status(403).send({
-						error: true,
-						message:
-							"Impossible de récupérer la publication d'un utilisateur que vous avez bloqué",
-					});
-				}
+			if (filteredComment.error) {
+				return res.status(403).send(filteredComment);
 			}
 
-			return res.status(200).send(comment);
+			return res.status(200).send(filteredComment);
 		})
 		.catch((err) => res.status(500).send(err));
 };

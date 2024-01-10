@@ -13,7 +13,7 @@ router.post(
 	repostController.saveRepost
 );
 router.get("/", authenticate, repostController.getReposts);
-router.get("/:id", repostController.getRepost);
+router.get("/:id", authenticate, repostController.getRepost);
 
 router.put(
 	"/:id",
