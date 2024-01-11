@@ -38,26 +38,6 @@ exports.filterElements = (elements, path, authUser) => {
 	return generateResponse(filteredElts, path, authUser);
 };
 
-function generateResponse(filteredElts, path, authUser) {
-	// Map through every filtered elements
-	const response = filteredElts.map((elt) => {
-		// There is a condition with reposterId because,
-		// if you didn't block or anything the reposterId the repost will appears in the feed
-		// but what if you blocked the user of the reposted post ?
-		// which means that we need to check the reposted post
-		if (path === "reposterId") {
-			generateRepostResponse(elt, authUser);
-		}
-
-		elt[path].blockedUsers = undefined;
-		elt[path].followers = undefined;
-
-		return elt;
-	});
-
-	return response;
-}
-
 exports.filterElement = (elt, path, authUser) => {
 	const reason = { error: true };
 
@@ -103,6 +83,26 @@ exports.filterElement = (elt, path, authUser) => {
 
 	return elt;
 };
+
+function generateResponse(filteredElts, path, authUser) {
+	// Map through every filtered elements
+	const response = filteredElts.map((elt) => {
+		// There is a condition with reposterId because,
+		// if you didn't block or anything the reposterId the repost will appears in the feed
+		// but what if you blocked the user of the reposted post ?
+		// which means that we need to check the reposted post
+		if (path === "reposterId") {
+			generateRepostResponse(elt, authUser);
+		}
+
+		elt[path].blockedUsers = undefined;
+		elt[path].followers = undefined;
+
+		return elt;
+	});
+
+	return response;
+}
 
 function generateRepostResponse(elt, authUser) {
 	const isBlockedByAuthUser = authUser.blockedUsers.includes(

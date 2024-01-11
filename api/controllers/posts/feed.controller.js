@@ -1,10 +1,7 @@
 const UserModel = require("../../models/users/User.model");
 const PostModel = require("../../models/posts/Post.model");
 const RepostModel = require("../../models/posts/Repost.model");
-const {
-	filterPosts,
-	filterReposts,
-} = require("../../helpers/filterByBlocksByPrivate");
+const { filterPosts, filterReposts } = require("../../helpers/filterResponse");
 
 exports.getAllFeed = async (req, res, next) => {
 	try {

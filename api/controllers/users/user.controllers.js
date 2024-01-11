@@ -16,7 +16,7 @@ const {
 	resetEmailText,
 } = require("../../utils/mail/mailText");
 const { uploadFile, destroyFile } = require("../../helpers/cloudinaryManager");
-const { filterUsers } = require("../../helpers/filterByBlocksByPrivate");
+const { filterUsers } = require("../../helpers/filterResponse");
 const FollowRequestModel = require("../../models/users/FollowRequest.model");
 
 // Get all users

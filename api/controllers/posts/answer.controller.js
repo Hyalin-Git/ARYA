@@ -5,7 +5,7 @@ const {
 const {
 	filterElements,
 	filterElement,
-} = require("../../helpers/filterByBlocksByPrivate");
+} = require("../../helpers/filterResponse");
 const AnswerModel = require("../../models/posts/Answer.model");
 const CommentModel = require("../../models/posts/Comment.model");
 const UserModel = require("../../models/users/User.model");

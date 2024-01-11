@@ -5,7 +5,8 @@ const {
 const {
 	filterElements,
 	filterElement,
-} = require("../../helpers/filterByBlocksByPrivate");
+	isPrivateRepost,
+} = require("../../helpers/filterResponse");
 const AnswerModel = require("../../models/posts/Answer.model");
 const CommentModel = require("../../models/posts/Comment.model");
 const PostModel = require("../../models/posts/Post.model");
@@ -134,14 +135,18 @@ exports.getRepost = (req, res, next) => {
 	RepostModel.findById({ _id: req.params.id })
 		.populate(
 			"reposterId",
-			"userName lastName firstName blockedUsers isPrivate followers"
+			`userName lastName firstName isPrivate ${
+				authUser && "blockedUsers followers"
+			}`
 		)
 		.populate({
 			path: "postId",
 			select: "text media",
 			populate: {
 				path: "posterId",
-				select: "lastName firstName userName blockedUsers isPrivate followers",
+				select: `userName lastName firstName isPrivate ${
+					authUser && "blockedUsers followers"
+				}`,
 			},
 		})
 		.exec()
@@ -152,17 +157,34 @@ exports.getRepost = (req, res, next) => {
 					.send({ error: true, message: "Aucune publication trouvée" });
 			}
 
-			const filteredRepost = await filterElement(
-				repost,
-				"reposterId",
-				authUser
-			);
+			if (authUser) {
+				const filteredRepost = await filterElement(
+					repost,
+					"reposterId",
+					authUser
+				);
 
-			if (filteredRepost.error) {
-				return res.status(403).send(filteredRepost);
+				if (filteredRepost.error) {
+					return res.status(403).send(filteredRepost);
+				}
+
+				return res.status(200).send(filteredRepost);
+			} else {
+				if (repost.reposterId.isPrivate) {
+					return res.status(403).send({
+						error: true,
+						message:
+							"Cette publication vient d'un compte privé, veuillez suivre ce compte pour voir ses publications",
+					});
+				}
+
+				if (repost.postId.posterId.isPrivate) {
+					repost.postId.text = undefined;
+					repost.postId.media = undefined;
+				}
+
+				return res.status(200).send(repost);
 			}
-
-			return res.status(200).send(filteredRepost);
 		})
 		.catch((err) =>
 			res.status(500).send(err.message || "Erreur interne du serveur")

@@ -10,7 +10,7 @@ const AnswerModel = require("../../models/posts/Answer.model");
 const {
 	filterElements,
 	filterElement,
-} = require("../../helpers/filterByBlocksByPrivate");
+} = require("../../helpers/filterResponse");
 
 exports.saveComment = async (req, res, next) => {
 	try {

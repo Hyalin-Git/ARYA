@@ -11,7 +11,7 @@ const { getFormattedDates } = require("../../helpers/formattingDates");
 const {
 	filterElements,
 	filterElement,
-} = require("../../helpers/filterByBlocksByPrivate");
+} = require("../../helpers/filterResponse");
 
 exports.savePost = async (req, res, next) => {
 	const { text } = req.body;
@@ -129,7 +129,9 @@ exports.getPost = (req, res, next) => {
 	PostModel.findById({ _id: req.params.id })
 		.populate(
 			"posterId",
-			"userName lastName firstName blockedUsers isPrivate followers"
+			`userName lastName firstName isPrivate ${
+				authUser && "blockedUsers  followers"
+			}`
 		)
 		.exec()
 		.then(async (post) => {
@@ -140,13 +142,24 @@ exports.getPost = (req, res, next) => {
 				});
 			}
 
-			const filteredPost = await filterElement(post, "posterId", authUser);
+			if (authUser) {
+				const filteredPost = await filterElement(post, "posterId", authUser);
 
-			if (filteredPost.error) {
-				return res.status(403).send(filteredPost);
+				if (filteredPost.error) {
+					return res.status(403).send(filteredPost);
+				}
+
+				return res.status(200).send(filteredPost);
+			} else {
+				if (post.posterId.isPrivate) {
+					return res.status(403).send({
+						error: true,
+						message:
+							"Cette publication vient d'un compte privé, veuillez suivre ce compte pour voir ses publications",
+					});
+				}
+				return res.status(200).send(post);
 			}
-
-			return res.status(200).send(filteredPost);
 		})
 		.catch((err) => res.status(500).send(err.message));
 };

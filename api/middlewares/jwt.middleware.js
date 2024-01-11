@@ -4,6 +4,17 @@ const UserModel = require("../models/users/User.model");
 exports.authenticate = (req, res, next) => {
 	const token = req.headers?.authorization?.split(" ")[1];
 	if (!token) {
+		const getId = req.url.split("/")[1];
+		const postUrl = "/api/posts";
+		const repostUrl = "/api/reposts";
+		if (req.baseUrl === postUrl || req.baseUrl === repostUrl) {
+			if (!getId) {
+				return res
+					.status(403)
+					.send({ error: true, message: "Accès refusé: aucun token reçu" });
+			}
+			return next();
+		}
 		return res
 			.status(403)
 			.send({ error: true, message: "Accès refusé: aucun token reçu" });
