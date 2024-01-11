@@ -46,52 +46,7 @@ function generateResponse(filteredElts, path, authUser) {
 		// but what if you blocked the user of the reposted post ?
 		// which means that we need to check the reposted post
 		if (path === "reposterId") {
-			const isBlockedByAuthUser = authUser.blockedUsers.includes(
-				elt.postId?.posterId._id
-			);
-			const isBlockedByPoster = elt.postId?.posterId.blockedUsers.includes(
-				authUser._id
-			);
-
-			const isPrivate = elt.postId?.posterId.isPrivate === true;
-			const isAuthUserFollowingPoster = authUser.following.includes(
-				elt.postId?.posterId._id
-			);
-			const isAuthUserInPosterFollowers =
-				elt.postId?.posterId.followers.includes(authUser._id);
-
-			function shouldHideContent() {
-				// If auth user blocked the posterId and vice versa then return true
-				if (isBlockedByAuthUser || isBlockedByPoster) {
-					// Removing isPrivate for the frontend to know if it's a block issue or a private account issue
-					elt.postId.posterId.isPrivate = undefined;
-					return true;
-				}
-
-				// If the poster has a private acc
-				if (isPrivate) {
-					// Then we check if auth user is following the poster and vice versa
-					if (!isAuthUserFollowingPoster) {
-						return true;
-					}
-					if (!isAuthUserInPosterFollowers) {
-						return true;
-					}
-				}
-
-				return false;
-			}
-
-			// Calling the function to check if we need to hide or not the content
-			if (shouldHideContent()) {
-				elt.postId.text = undefined;
-				elt.postId.media = undefined;
-			}
-
-			if (elt.postId !== null) {
-				elt.postId.posterId.blockedUsers = undefined;
-				elt.postId.posterId.followers = undefined;
-			}
+			generateRepostResponse(elt, authUser);
 		}
 
 		elt[path].blockedUsers = undefined;
@@ -139,8 +94,62 @@ exports.filterElement = (elt, path, authUser) => {
 		}
 	}
 
+	if (path === "reposterId") {
+		generateRepostResponse(elt, authUser);
+	}
+
 	elt[path].blockedUsers = undefined;
 	elt[path].followers = undefined;
 
 	return elt;
 };
+
+function generateRepostResponse(elt, authUser) {
+	const isBlockedByAuthUser = authUser.blockedUsers.includes(
+		elt.postId?.posterId._id
+	);
+	const isBlockedByPoster = elt.postId?.posterId.blockedUsers.includes(
+		authUser._id
+	);
+
+	const isPrivate = elt.postId?.posterId.isPrivate === true;
+	const isAuthUserFollowingPoster = authUser.following.includes(
+		elt.postId?.posterId._id
+	);
+	const isAuthUserInPosterFollowers = elt.postId?.posterId.followers.includes(
+		authUser._id
+	);
+
+	function shouldHideContent() {
+		// If auth user blocked the posterId and vice versa then return true
+		if (isBlockedByAuthUser || isBlockedByPoster) {
+			// Removing isPrivate for the frontend to know if it's a block issue or a private account issue
+			elt.postId.posterId.isPrivate = undefined;
+			return true;
+		}
+
+		// If the poster has a private acc
+		if (isPrivate) {
+			// Then we check if auth user is following the poster and vice versa
+			if (!isAuthUserFollowingPoster) {
+				return true;
+			}
+			if (!isAuthUserInPosterFollowers) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	// Calling the function to check if we need to hide or not the content
+	if (shouldHideContent()) {
+		elt.postId.text = undefined;
+		elt.postId.media = undefined;
+	}
+
+	if (elt.postId !== null) {
+		elt.postId.posterId.blockedUsers = undefined;
+		elt.postId.posterId.followers = undefined;
+	}
+}
