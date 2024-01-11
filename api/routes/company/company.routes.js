@@ -1,10 +1,13 @@
 const router = require("express").Router();
-const companyController = require("../../controllers/users/company.controller");
+const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
+const companyController = require("../../controllers/company/company.controller");
 const { userPictureUpload } = require("../../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../../utils/multerErrors");
 
 router.post(
-	"/:id",
+	"/",
+	authenticate,
+	authorize,
 	userPictureUpload.single("logo"),
 	multerErrorsHandler,
 	companyController.saveCompany

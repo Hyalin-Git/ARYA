@@ -1,5 +1,5 @@
 const UserModel = require("../../models/users/User.model");
-const CompanyModel = require("../../models/users/Company.model");
+const CompanyModel = require("../../models/company/Company.model");
 const WorkerModel = require("../../models/users/Worker.model");
 const PostModel = require("../../models/posts/Post.model");
 const RepostModel = require("../../models/posts/Repost.model");

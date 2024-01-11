@@ -3,6 +3,10 @@ const { resizeImageAndWebpConvert } = require("../utils/resizeImg");
 
 exports.uploadFile = async (picture, folder) => {
 	try {
+		if (!picture) {
+			return;
+		}
+
 		const resizedAndCovertedImg = await resizeImageAndWebpConvert(
 			picture.buffer,
 			200,

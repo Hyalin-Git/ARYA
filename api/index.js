@@ -15,9 +15,10 @@ const authRouter = require("./routes/users/auth.routes");
 // User related
 const userRouter = require("./routes/users/user.routes");
 const followRequestRouter = require("./routes/users/followRequest.routes");
-const companyRouter = require("./routes/users/company.routes");
 const workerRouter = require("./routes/users/worker.routes");
 const taskRouter = require("./routes/users/task.routes");
+
+const companyRouter = require("./routes/company/company.routes");
 
 // Posts related
 const feedRouter = require("./routes/posts/feed.routes");
@@ -75,10 +76,11 @@ app.use("/api/facebook/auth", facebookRouter);
 
 app.use("/api/users", userRouter);
 app.use("/api/follow-requests", followRequestRouter);
-app.use("/api/company", companyRouter);
 app.use("/api/worker", workerRouter);
 app.use("/api/task", taskRouter);
 app.use("/api/user/report", reportUserRouter);
+
+app.use("/api/company", companyRouter);
 
 app.use("/api/feed", feedRouter);
 app.use("/api/posts", postRouter);

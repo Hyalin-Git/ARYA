@@ -1,58 +1,78 @@
 const UserModel = require("../../models/users/User.model");
-const CompanyModel = require("../../models/users/Company.model");
+const CompanyModel = require("../../models/company/Company.model");
 const { uploadFile, destroyFile } = require("../../helpers/cloudinaryManager");
 
-exports.saveCompany = (req, res, next) => {
-	const picture = req.file;
-	UserModel.findById({ _id: req.params.id })
-		.then(async (user) => {
-			if (user.worker !== undefined) {
-				return res.status(400).send({
-					error: true,
-					message: "User account cannot be worker and company at the same",
-				});
-			}
-			if (!user) {
-				return res.status(404).send("User does not exist");
-			}
+exports.saveCompany = async (req, res, next) => {
+	try {
+		const { userId } = req.query;
+		const { name, activity, lookingForEmployees, bio, links } = req.body;
+		const { memberId, role } = req.body;
+		const picture = req.file;
 
-			const uploadResponse = await uploadFile(picture, "logo");
+		const user = await UserModel.findById({ _id: userId });
 
-			new CompanyModel({
-				userId: user._id,
-				name: req.body.name,
-				picture: picture ? uploadResponse : "",
-				activity: req.body.activity,
-				lookingForEmployes: req.body.lookingForEmployes,
-				bio: req.body.bio,
-				websiteLink: req.body.websiteLink,
-			})
-				.save()
-				.then((company) => {
-					UserModel.findByIdAndUpdate(
-						{ _id: req.params.id },
-						{
-							$set: {
-								company: company._id,
-							},
-						},
-						{
-							new: true,
-							setDefaultsOnInsert: true,
-						}
-					)
-						.then((updated) => res.status(200).send(updated))
-						.catch((err) => res.status(500).send(err));
-				})
-				.catch((err) => {
-					if (err.code === 11000)
-						return res
-							.status(409)
-							.send({ error: true, message: "Duplicate record" });
-					res.status(500).send(err);
-				});
-		})
-		.catch((err) => res.status(500).send(err));
+		if (!user) {
+			return res.status(404).send({
+				error: true,
+				message: "Cet utilisateur n'existe pas",
+			});
+		}
+
+		if (user.company) {
+			return res.status(400).send({
+				error: true,
+				message:
+					"Un utilisateur qui est dans une compagnie ne peut en créer une",
+			});
+		}
+
+		if (user.worker) {
+			return res.status(400).send({
+				error: true,
+				message: "Un utilisateur ne peut être worker et avoir une compagnie",
+			});
+		}
+
+		const uploadResponse = await uploadFile(picture, "logo");
+
+		const company = new CompanyModel({
+			leaderId: userId,
+			members: [
+				{
+					memberId: memberId,
+					role: role,
+				},
+			],
+			name: name,
+			picture: picture ? uploadResponse : "",
+			activity: activity,
+			bio: bio,
+			lookingForEmployees: lookingForEmployees,
+			links: links,
+		});
+
+		const saveCompany = await company.save();
+
+		await UserModel.findByIdAndUpdate(
+			{ _id: userId },
+			{
+				$set: {
+					company: saveCompany._id,
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		res.status(201).send(saveCompany);
+	} catch (err) {
+		return res.status(500).send({
+			error: true,
+			message: err.message || "Erreur interne du serveur",
+		});
+	}
 };
 
 exports.getCompany = (req, res, next) => {
