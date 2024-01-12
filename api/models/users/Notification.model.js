@@ -8,7 +8,13 @@ const notificationSchema = mongoose.model({
 	},
 	type: {
 		type: String,
-		enum: ["social", "message"],
+		enum: ["social", "company"],
+	},
+	urlId: {
+		type: mongoose.Schema.Types.ObjectId,
+	},
+	picture: {
+		type: String,
 	},
 	title: {
 		type: String,

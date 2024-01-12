@@ -52,16 +52,32 @@ exports.authenticate = (req, res, next) => {
 	}
 };
 
-exports.authorize = (req, res, next) => {
-	let user = res.locals.user;
-	const targetUser = req.query.userId || req.params.id;
+exports.authorize = async (req, res, next) => {
+	try {
+		const authUser = res.locals.user;
+		const userId = req.query.userId || req.params.id;
 
-	if (targetUser === user._id.toString() || user.admin) {
-		next();
-	} else {
-		return res.status(403).send({
+		const user = await UserModel.findById({ _id: userId });
+
+		if (!user) {
+			return res.status(404).send({
+				error: true,
+				message: `L'utilisateur avec ID : ${userId} n'existe pas`,
+			});
+		}
+
+		if (userId === authUser._id.toString() || user.admin) {
+			next();
+		} else {
+			return res.status(403).send({
+				error: true,
+				message: "Access denied",
+			});
+		}
+	} catch (err) {
+		return res.status(500).send({
 			error: true,
-			message: "Access denied",
+			message: err.message || "Erreur interne du serveur",
 		});
 	}
 };

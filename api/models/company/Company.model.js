@@ -14,7 +14,7 @@ const companySchema = new mongoose.Schema(
 					memberId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 					role: {
 						type: String,
-						enum: ["recruiter", "worker"],
+						enum: ["moderator", "recruiter", "worker"],
 						default: "worker",
 					},
 				},
@@ -38,7 +38,7 @@ const companySchema = new mongoose.Schema(
 		bio: {
 			type: String,
 		},
-		lookingForEmployees: { type: Boolean },
+		lookingForEmployees: { type: Boolean, required: true },
 		links: { type: [String] },
 	},
 	{

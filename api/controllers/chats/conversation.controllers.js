@@ -1,5 +1,4 @@
 const ConversationModel = require("../../models/chats/Conversation.model");
-const MessageModel = require("../../models/chats/Message.model");
 
 exports.accessOrCreateConversation = (req, res, next) => {
 	const { userId, otherUserId } = req.query;
@@ -35,7 +34,7 @@ exports.accessOrCreateConversation = (req, res, next) => {
 			}
 
 			if (conversation[0].isDeletedFor.includes(userId)) {
-				const updatedConversation = await ConversationModel.findByIdAndUpdate(
+				await ConversationModel.findByIdAndUpdate(
 					{ _id: conversation[0]._id },
 					{
 						$pull: {
@@ -47,7 +46,6 @@ exports.accessOrCreateConversation = (req, res, next) => {
 						setDefaultsOnInsert: true,
 					}
 				);
-				return res.status(200).send(updatedConversation);
 			}
 
 			res.status(200).send(conversation[0]);

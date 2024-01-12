@@ -165,10 +165,11 @@ exports.getPost = (req, res, next) => {
 };
 
 exports.updatePost = async (req, res, next) => {
+	const {userId} = req.query
 	const { text } = req.body;
 	const medias = req.files["media"];
 
-	PostModel.findById({ _id: req.params.id, posterId: req.query.userId }) // Gets the userId from the query (Helps to verify if it's the user answer)
+	PostModel.findOne({ _id: req.params.id, posterId: userId }) // Gets the userId from the query (Helps to verify if it's the user answer)
 		.then(async (post) => {
 			if (!post) {
 				return res
@@ -184,7 +185,7 @@ exports.updatePost = async (req, res, next) => {
 			const uploadResponse = await uploadFiles(medias, "post");
 
 			const updatedPost = await PostModel.findOneAndUpdate(
-				{ _id: req.params.id, posterId: req.query.userId }, // Gets the userId from the query (Helps to verify if it's the user answer)
+				{ _id: req.params.id, posterId: userId }, // Gets the userId from the query (Helps to verify if it's the user answer)
 				{
 					$set: {
 						text: text,
