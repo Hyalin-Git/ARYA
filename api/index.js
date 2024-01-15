@@ -19,6 +19,7 @@ const workerRouter = require("./routes/users/worker.routes");
 const taskRouter = require("./routes/users/task.routes");
 
 const companyRouter = require("./routes/company/company.routes");
+const companyRequestRouter = require("./routes/company/companyRequest.routes");
 
 // Posts related
 const feedRouter = require("./routes/posts/feed.routes");
@@ -81,6 +82,7 @@ app.use("/api/task", taskRouter);
 app.use("/api/user/report", reportUserRouter);
 
 app.use("/api/company", companyRouter);
+app.use("/api/companyRequests", companyRequestRouter);
 
 app.use("/api/feed", feedRouter);
 app.use("/api/posts", postRouter);

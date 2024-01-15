@@ -33,7 +33,7 @@ const compagnyRequestSchema = mongoose.Schema(
 			type: [String],
 			required: true,
 		},
-		cv: { type: Buffer, required: "Veuillez fournir votre CV" },
+		cv: { type: Buffer },
 		portfolio: { type: String },
 		status: {
 			type: String,

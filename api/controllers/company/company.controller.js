@@ -344,7 +344,18 @@ exports.removeMember = async (req, res, next) => {
 			}
 		);
 
-		// Still needs to remove the company from the user model and send a notif but will see with socket.io
+		await UserModel.findByIdAndUpdate(
+			{ _id: memberId },
+			{
+				$set: { company: "" },
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		);
+
+		// Still needs to send a notif but will see with socket.io
 
 		return res.status(200).send(updatedCompany);
 	} catch (err) {
