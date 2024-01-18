@@ -1,6 +1,8 @@
 import Image from "next/image";
 import styles from "../styles/pages/home.module.css";
 import { josefinSans } from "@/libs/fonts";
+import Hero from "@/components/home/Hero";
+import Service from "@/components/home/Services";
 
 export default function Home() {
 	return (
@@ -8,156 +10,14 @@ export default function Home() {
 			<div className={styles.container}>
 				{/* heading  */}
 				<div className={styles.hero}>
-					<div className={styles.hero__header}>
-						<div className={styles.hero__header__title}>
-							<h1>
-								Travailler, anticiper, partager.
-								<span>
-									<span>Arya</span> est l'espace de travail parfait pour
-									organiser son travail, échanger.
-								</span>
-							</h1>
-						</div>
-						<div className={styles.hero__header__btn}>
-							<button className={josefinSans.className}>
-								Rejoindre la communauté
-							</button>
-						</div>
-					</div>
-					<div className={styles.hero__content}>
-						<div className={styles.hero__content__articles}>
-							<a href="">
-								<article>
-									<div>
-										<Image
-											src="/images/icons/work_icon.svg"
-											width={20}
-											height={20}
-										/>
-									</div>
-									<div>
-										<h2>Trouve un travail</h2>
-									</div>
-									<div>
-										<p>
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-											Nulla interdum egestas imperdiet.
-										</p>
-									</div>
-									<div>
-										<span>En savoir plus</span>
-									</div>
-								</article>
-							</a>
-							<a href="">
-								<article>
-									<div>
-										<Image
-											src="/images/icons/social_icon.svg"
-											width={20}
-											height={20}
-										/>
-									</div>
-									<div>
-										<h2>Réseau social</h2>
-									</div>
-									<div>
-										<p>
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-											Nulla interdum egestas imperdiet.
-										</p>
-									</div>
-									<div>
-										<span>En savoir plus</span>
-									</div>
-								</article>
-							</a>
-							<a href="">
-								<article>
-									<div>
-										<Image
-											src="/images/icons/calendar_icon.svg"
-											width={20}
-											height={20}
-										/>
-									</div>
-									<div>
-										<h2>Organise toi</h2>
-									</div>
-									<div>
-										<p>
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-											Nulla interdum egestas imperdiet.
-										</p>
-									</div>
-									<div>
-										<span>En savoir plus</span>
-									</div>
-								</article>
-							</a>
-							<a href="">
-								<article>
-									<div>
-										<Image
-											src="/images/icons/chart_icon.svg"
-											width={20}
-											height={20}
-										/>
-									</div>
-									<div>
-										<h2>Organise toi</h2>
-									</div>
-									<div>
-										<p>
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-											Nulla interdum egestas imperdiet.
-										</p>
-									</div>
-									<div>
-										<span>En savoir plus</span>
-									</div>
-								</article>
-							</a>
-							<a href="">
-								<article>
-									<div>
-										<Image
-											src="/images/icons/schedule_icon.svg"
-											width={20}
-											height={20}
-										/>
-									</div>
-									<div>
-										<h2>Organise toi</h2>
-									</div>
-									<div>
-										<p>
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-											Nulla interdum egestas imperdiet.
-										</p>
-									</div>
-									<div>
-										<span>En savoir plus</span>
-									</div>
-								</article>
-							</a>
-							<div>
-								<ul>
-									<li>gratuit</li>
-									<li>Prenium</li>
-								</ul>
-							</div>
-						</div>
-					</div>
+					<Hero />
 				</div>
 				{/* content */}
 				<div className={styles.main}>
+					<Service />
 					{/* partie gratuite */}
 					<section className={styles.main__section}>
-						<h2>
-							Vous avez besoin d'un travail ? De vous faire connaître ? Ou
-							encore mieux vous organiser ?
-						</h2>
+						<h2></h2>
 						{/* find job */}
 						<article>
 							<div></div>

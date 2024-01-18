@@ -1,0 +1,85 @@
+/* title container section  */
+
+.hero__title {
+	max-width: 1800px;
+	width: 100%;
+}
+
+/* main title section  */
+
+.hero__maintitle {
+	max-width: 1300px;
+	margin: 0 auto 0 auto;
+}
+
+.hero__maintitle h1 {
+	/* background-color: green; */
+	font-size: 8rem;
+	font-weight: 300;
+}
+
+.hero__maintitle__span:nth-child(1) {
+	color: var(--lavender-color);
+	-webkit-text-stroke-color: white;
+	-webkit-text-stroke-width: 2px;
+	letter-spacing: 2rem;
+	font-weight: 800;
+}
+
+.hero__maintitle__span:nth-child(2) {
+	/* background-color: red; */
+	text-align: right;
+	display: block;
+}
+
+.hero__maintitle__span:nth-child(2) a {
+	position: relative;
+	top: -20px;
+	padding: 15px;
+	border-radius: 8px;
+	box-shadow: var(--passive-shadow);
+	background-image: linear-gradient(
+		-0.4turn,
+		var(--meteorite-color) 60%,
+		var(--lavender-color)
+	);
+	background-position: right;
+	background-size: 300%;
+	border: none;
+	font-size: 1.5rem;
+	color: white;
+	font-weight: 400;
+	transition: all 0.45s linear;
+	text-decoration: none;
+}
+.hero__maintitle__span:nth-child(2) a:hover {
+	cursor: pointer;
+	background-position: left;
+	/* box-shadow: var(--active-shadow); */
+	transition: all 0.45s linear;
+}
+
+.hero__maintitle__span:nth-child(3) {
+	margin-left: -120px;
+	/* padding-right: 120px; */
+	/* background-color: red; */
+}
+
+/* subtitle section */
+
+.hero__subtitle h1 {
+	font-size: 2rem;
+	font-weight: 300;
+}
+
+.hero__subtitle:first-child {
+	position: relative;
+	/* bottom: 80px; */
+	text-align: left;
+}
+
+.hero__subtitle:last-child {
+	text-align: right;
+	position: relative;
+	/* top: 80px; */
+}
