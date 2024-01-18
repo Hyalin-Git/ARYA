@@ -1,0 +1,33 @@
+.header {
+	position: sticky;
+	top: 0;
+}
+.nav {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	padding: 0 0px 10px 0px;
+	/* border-bottom: 1px solid var(--meteorite-color); */
+	background: var(--lavender-color);
+	box-shadow: var(--passive-shadow);
+}
+
+.logo {
+	display: flex;
+	align-items: center;
+}
+
+.logo h1 {
+	margin: 20px 0 0 -10px;
+	font-size: 2rem;
+}
+
+.menu ul {
+	margin-bottom: 10px;
+	padding: 0;
+	display: flex;
+	gap: 20px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	list-style-type: none;
+}
