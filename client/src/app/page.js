@@ -8,37 +8,18 @@ export default function Home() {
 	return (
 		<main className={styles.main}>
 			<div className={styles.container}>
-				{/* heading  */}
+				{/* Hero  */}
 				<div className={styles.hero}>
 					<Hero />
 				</div>
 				{/* content */}
-				<div className={styles.main}>
-					<Service />
+				<div>
+					<section className={styles.services}>
+						<h2>Une solution pour tous</h2>
+						<Service />
+					</section>
+
 					{/* partie gratuite */}
-					<section className={styles.main__section}>
-						<h2></h2>
-						{/* find job */}
-						<article>
-							<div></div>
-							<div></div>
-						</article>
-						{/* social */}
-						<article>
-							<div></div>
-							<div></div>
-						</article>
-						{/* agenda */}
-						<article>
-							<div></div>
-							<div></div>
-						</article>
-					</section>
-					{/* partie payante */}
-					<section className={styles.main__section}>
-						<article></article>
-						<article></article>
-					</section>
 				</div>
 				{/* foot */}
 				<div></div>

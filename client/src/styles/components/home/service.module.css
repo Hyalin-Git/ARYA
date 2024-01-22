@@ -1,0 +1,32 @@
+.services__wrapper {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+	flex-wrap: nowrap;
+	overflow: hidden;
+
+	scroll-behavior: smooth;
+}
+
+.services__wrapper article {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	background-color: grey;
+	border-radius: 12px;
+	min-width: 350px;
+	max-width: 350px;
+	height: 350px;
+	text-align: left;
+}
+
+.services__wrapper article div {
+	padding-left: 20px;
+}
+
+/* article header  */
+
+/* .services__wrapper article h3 {
+    te
+} */

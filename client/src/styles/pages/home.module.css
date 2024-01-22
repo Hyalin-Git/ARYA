@@ -1,5 +1,4 @@
-/* Home  */
-
+/* Home page */
 .main {
 	margin: 20px 20px 0 20px;
 }
@@ -10,16 +9,24 @@
 	width: 100%;
 }
 
-/* Hero */
-
+/* Hero  */
 .hero {
 	/* opacity: 0.1; */
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	text-align: center;
-	/* background-color: #fafafa; */
+	background-color: #fafafa;
 	height: 770px;
 	border-radius: 14px;
 	flex-direction: column;
+}
+
+/* Services */
+
+.services {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100vh;
 }
