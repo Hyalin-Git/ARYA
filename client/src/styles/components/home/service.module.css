@@ -77,9 +77,11 @@
 
 .article__title {
 	/* margin-top: -20px; */
+	transition: all 150ms linear;
 }
 
 .article__content {
+	transition: all 150ms linear;
 }
 
 .services__wrapper article:hover .article__title {
