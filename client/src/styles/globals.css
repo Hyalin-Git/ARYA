@@ -158,6 +158,6 @@ button:hover {
 	transition: all 0.45s linear;
 }
 
-body::-webkit-scrollbar {
+/* body::-webkit-scrollbar {
 	display: none;
-}
+} */

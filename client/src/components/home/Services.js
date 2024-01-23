@@ -62,7 +62,7 @@ export default function Service() {
 	);
 
 	const transformScroll = useDebouncedCallback((e, target) => {
-		target.scrollLeft += e.deltaY * 4; // Allow horizontal scroll
+		target.scrollLeft += e.deltaY * 2; // Allow horizontal scroll
 
 		const progressBar = document.getElementById("progress-bar");
 
@@ -72,7 +72,7 @@ export default function Service() {
 				(target.scrollLeft / (target.scrollWidth - target.clientWidth)) * 100;
 			progressBar.style.width = scrollPercentage + "%";
 		});
-	}, 250);
+	}, 100);
 
 	function scrollAgain() {
 		const htmlElement = document.getElementsByTagName("html")[0];
@@ -94,17 +94,14 @@ export default function Service() {
 			{sortedServices.map((service) => {
 				return (
 					<article key={service.id} data-sub={service.subscriptions}>
-						<div>
+						<div className={styles.article__img}>
 							<Image src={service.icon} width={45} height={45} />
 						</div>
-						<div>
+						<div className={styles.article__title}>
 							<h3>{service.title}</h3>
 						</div>
-						<div>
+						<div className={styles.article__content}>
 							<p>{service.description}</p>
-						</div>
-						<div>
-							<span>En savoir plus</span>
 						</div>
 					</article>
 				);

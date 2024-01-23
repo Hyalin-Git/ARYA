@@ -24,7 +24,9 @@ export default function Home() {
 								<div id="progress-bar"></div>
 							</div>
 						</div>
-						<Service />
+						<div className={styles.services__background}>
+							<Service />
+						</div>
 					</section>
 					<section></section>
 

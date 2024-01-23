@@ -27,6 +27,12 @@
 	height: 100vh;
 }
 
+.services__background {
+	background-color: #fafafa;
+	padding: 20px;
+	border-radius: 14px;
+}
+
 .services__header {
 	display: flex;
 	justify-content: space-between;
