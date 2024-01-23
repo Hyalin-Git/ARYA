@@ -103,6 +103,9 @@ export default function Service() {
 						<div className={styles.article__content}>
 							<p>{service.description}</p>
 						</div>
+						<div className={styles.article__more}>
+							<span>En savoir plus</span>
+						</div>
 					</article>
 				);
 			})}

@@ -28,7 +28,9 @@ export default function Home() {
 							<Service />
 						</div>
 					</section>
-					<section></section>
+					<section>
+						<h2>Un travail à porté de main !</h2>
+					</section>
 
 					{/* partie gratuite */}
 				</div>
