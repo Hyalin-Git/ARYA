@@ -157,3 +157,7 @@ button:hover {
 	/* box-shadow: var(--active-shadow); */
 	transition: all 0.45s linear;
 }
+
+body::-webkit-scrollbar {
+	display: none;
+}

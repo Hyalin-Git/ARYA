@@ -11,7 +11,6 @@
 
 /* Hero  */
 .hero {
-	/* opacity: 0.1; */
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -25,8 +24,48 @@
 /* Services */
 
 .services {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
 	height: 100vh;
+}
+
+.services__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.services__header h2 {
+	text-align: left;
+	padding-left: 20px;
+	font-size: 4rem;
+}
+
+.services__header p {
+	margin-top: -40px;
+	text-align: left;
+	margin-left: 70px;
+	font-size: 2rem;
+	font-weight: 300;
+}
+
+.services__progress {
+	margin-right: 20px;
+	/* align-self: flex-end;
+	margin-bottom: 25px; */
+	width: 20%;
+	height: 5px;
+	border-radius: 20px;
+	background-color: #fafafa;
+}
+
+.services__progress > div {
+	width: 0%;
+	max-width: 100%;
+	height: 5px;
+	border-radius: 20px;
+	background: linear-gradient(
+		-135deg,
+		var(--meteorite-color) 0%,
+		var(--lavender-color) 40%
+	);
+	transition: width ease-out 150ms;
 }

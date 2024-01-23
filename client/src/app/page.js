@@ -15,9 +15,18 @@ export default function Home() {
 				{/* content */}
 				<div>
 					<section className={styles.services}>
-						<h2>Une solution pour tous</h2>
+						<div className={styles.services__header}>
+							<div>
+								<h2>Une solution pour tous,</h2>
+								<p>Une multitude de service pour satisfaire tout le monde</p>
+							</div>
+							<div className={styles.services__progress}>
+								<div id="progress-bar"></div>
+							</div>
+						</div>
 						<Service />
 					</section>
+					<section></section>
 
 					{/* partie gratuite */}
 				</div>

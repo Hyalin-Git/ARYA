@@ -25,7 +25,7 @@ export default function Service() {
 		},
 		{
 			id: 3,
-			title: "Organuse toi",
+			title: "Organise toi",
 			icon: "./images/icons/work_icon.svg",
 			subscriptions: false,
 			description:
@@ -55,14 +55,6 @@ export default function Service() {
 			description:
 				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
 		},
-		{
-			id: 7,
-			title: "Tes statistiques",
-			icon: "./images/icons/work_icon.svg",
-			subscriptions: true,
-			description:
-				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
-		},
 	];
 
 	const sortedServices = servicesElements.sort(
@@ -70,24 +62,40 @@ export default function Service() {
 	);
 
 	const transformScroll = useDebouncedCallback((e, target) => {
-		console.log(e);
-		e.preventDefault(); // Empêche le défilement vertical
-		target.scrollLeft += e.deltaY * 4;
-	}, 200);
+		target.scrollLeft += e.deltaY * 4; // Allow horizontal scroll
+
+		const progressBar = document.getElementById("progress-bar");
+
+		target.addEventListener("scroll", (e) => {
+			// On scroll make the progress bar progress depending on where is the horizontal scroll bar
+			const scrollPercentage =
+				(target.scrollLeft / (target.scrollWidth - target.clientWidth)) * 100;
+			progressBar.style.width = scrollPercentage + "%";
+		});
+	}, 250);
+
+	function scrollAgain() {
+		const htmlElement = document.getElementsByTagName("html")[0];
+		htmlElement.style.overflow = "auto";
+	}
+
+	function stopScrolling() {
+		const htmlElement = document.getElementsByTagName("html")[0];
+		htmlElement.style.overflow = "hidden";
+	}
 
 	return (
 		<div
 			className={styles.services__wrapper}
 			ref={serviceWrapper}
-			onWheel={(e) => {
-				console.log(e.currentTarget);
-				transformScroll(e, serviceWrapper.current);
-			}}>
+			onMouseEnter={stopScrolling}
+			onWheel={(e) => transformScroll(e, serviceWrapper.current)}
+			onMouseLeave={scrollAgain}>
 			{sortedServices.map((service) => {
 				return (
-					<article key={service.id}>
+					<article key={service.id} data-sub={service.subscriptions}>
 						<div>
-							<Image src={service.icon} width={25} height={25} />
+							<Image src={service.icon} width={45} height={45} />
 						</div>
 						<div>
 							<h3>{service.title}</h3>
