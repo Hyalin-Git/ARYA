@@ -8,21 +8,13 @@
 /* main title section  */
 
 .hero__maintitle {
-	max-width: 1100px;
-	width: 100%;
-	margin: 0 auto 0 auto;
+	text-align: center;
 }
 
 .hero__maintitle h1 {
 	font-size: 6rem;
 	font-weight: 700;
 	color: white;
-}
-
-.hero__maintitle button {
-	position: relative;
-	top: -15px;
-	left: 40px;
 }
 
 .hero__maintitle__arya {
@@ -38,26 +30,11 @@
 }
 
 .hero__maintitle__span:nth-child(1) {
-	text-align: center;
 	display: block;
 	/* background-color: red; */
 }
 
 .hero__maintitle__span:nth-child(2) {
-	/* background-color: green; */
-	width: 50%;
-	margin-left: auto;
-	margin-right: auto;
-	display: block;
-	text-align: right;
-}
-
-.hero__maintitle__span:nth-child(3) {
-	text-align: right;
-	margin-left: auto;
-	margin-right: auto;
-	width: 80%;
-	/* background-color: red; */
 	display: block;
 }
 

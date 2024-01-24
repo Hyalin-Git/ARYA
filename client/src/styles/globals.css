@@ -76,8 +76,10 @@ a {
 	--black-color: #000000;
 	--white-color: #ffffff;
 
-	--background-color: #2D262D;
-	--block-color: rgb(0, 0, 0, 0.15)
+	--primary-gradiant-color: #2d262d;
+	--secondary-gradiant-color: #3a323b;
+
+	--layer-color: 0, 0, 0, 0.15;
 
 	/* shadows  */
 	--passive-shadow: 0 1px 1px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.12);
@@ -92,34 +94,25 @@ body {
 	box-sizing: border-box;
 	padding: 0;
 	margin: 0;
-	/* background-color: #2D262D; */
-	background-image: linear-gradient(#2D262D, #3a323b);
+	background-image: linear-gradient(
+		var(--primary-gradiant-color),
+		var(--secondary-gradiant-color)
+	);
 }
-
 body::before {
 	content: "";
 	position: absolute;
-	z-index: 2;
 	top: 0;
+	bottom: 0;
 	width: 100%;
 	height: 100%;
-	bottom: 0;
 	opacity: 0.03;
-	background: repeating-radial-gradient(#000 0 0.0001%, #8a8888 0 0.0002%) 50%
-			0/2500px 2500px,
+	background: repeating-radial-gradient(#000 0 0.0001%, #8a8888 0 0.0002%) 50% 0/2500px
+			2500px,
 		repeating-conic-gradient(#000 0 0.0001%, #8a8888 0 0.0002%) 50% 50%/2500px
 			2500px;
 	background-blend-mode: difference;
-	pointer-events: none;
-	animation: noiseAnim 0.2s infinite alternate;
-
-	
 }
-/* @keyframes noiseAnim {
-	100% {
-		background-position: 50% 0, 50% 0%;
-	}
-} */
 
 main {
 	color: white;
@@ -167,6 +160,7 @@ button {
 	}
 } */
 button {
+	position: relative;
 	padding: 15px;
 	border-radius: 8px;
 	box-shadow: var(--passive-shadow);

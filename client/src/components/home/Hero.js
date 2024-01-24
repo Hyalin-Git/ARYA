@@ -13,10 +13,8 @@ export default function Hero() {
 						<span className={styles.hero__maintitle__arya}>Arya</span> le
 						meilleur
 					</span>
-					<span className={styles.hero__maintitle__span}>ami du</span>{" "}
-					<span className={styles.hero__maintitle__span}>
-						freelance <button>Rejoindre la communauté</button>
-					</span>
+					<span className={styles.hero__maintitle__span}>ami du freelance</span>
+					<button>Rejoindre la communauté</button>
 				</h1>
 			</div>
 			<div className={styles.hero__subtitle}>
