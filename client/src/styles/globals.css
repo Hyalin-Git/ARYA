@@ -104,7 +104,7 @@ body::before {
 	width: 100%;
 	height: 100%;
 	bottom: 0;
-	opacity: 0.02;
+	opacity: 0.03;
 	background: repeating-radial-gradient(#000 0 0.0001%, #8a8888 0 0.0002%) 50%
 			0/2500px 2500px,
 		repeating-conic-gradient(#000 0 0.0001%, #8a8888 0 0.0002%) 50% 50%/2500px
