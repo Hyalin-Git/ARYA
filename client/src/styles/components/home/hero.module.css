@@ -14,10 +14,9 @@
 }
 
 .hero__maintitle h1 {
-	/* background-color: green; */
-	font-size: 8rem;
-	font-weight: 300;
-	/* background-color: red; */
+	font-size: 6rem;
+	font-weight: 700;
+	color: white;
 }
 
 .hero__maintitle button {
@@ -27,11 +26,15 @@
 }
 
 .hero__maintitle__arya {
-	color: var(--lavender-color);
-	-webkit-text-stroke-color: white;
-	-webkit-text-stroke-width: 2px;
+	background-image: -webkit-linear-gradient(
+		25deg,
+		var(--lavender-color),
+		var(--meteorite-color)
+	);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
 	letter-spacing: 2rem;
-	font-weight: 800;
 }
 
 .hero__maintitle__span:nth-child(1) {
@@ -61,8 +64,10 @@
 /* subtitle section */
 
 .hero__subtitle h1 {
-	font-size: 2rem;
+	font-size: 1.8rem;
 	font-weight: 300;
+
+	color: color-mix(in srgb, var(--white-color), black 25%);
 }
 
 .hero__subtitle:first-child {

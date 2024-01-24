@@ -1,4 +1,4 @@
-import { josefinSans } from "@/libs/fonts";
+import { montserrat } from "@/libs/fonts";
 import "../styles/globals.css";
 import Header from "@/components/header/Header";
 import Footer from "@/components/footer/Footer";
@@ -14,7 +14,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
 	return (
 		<html lang="fr">
-			<body className={josefinSans.className}>
+			<body className={montserrat.className}>
 				<Header />
 				{children}
 				<Footer />

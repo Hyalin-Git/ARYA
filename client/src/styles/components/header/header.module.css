@@ -1,20 +1,26 @@
 .header {
-	/* position: sticky;
-	top: 0; */
+	position: sticky;
+	top: 0;
+	z-index: 2500;
 }
+
 .nav {
 	display: flex;
-	align-items: center;
+	margin-top: -10px;
 	justify-content: space-around;
-	padding: 0 0px 10px 0px;
-	/* border-bottom: 1px solid var(--meteorite-color); */
-	background: var(--lavender-color);
-	box-shadow: var(--passive-shadow);
+	align-items: flex-start;
+	background-color: transparent;
+	transition: 100ms all linear;
+}
+
+.slide {
+	background-color: var(--meteorite-color);
+	transition: 100ms all linear;
 }
 
 .logo {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 }
 
 .logo h1 {
@@ -23,7 +29,6 @@
 }
 
 .menu ul {
-	margin-bottom: 10px;
 	padding: 0;
 	display: flex;
 	gap: 20px;

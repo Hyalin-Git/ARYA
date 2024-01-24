@@ -95,7 +95,7 @@ export default function Service() {
 				return (
 					<article key={service.id} data-sub={service.subscriptions}>
 						<div className={styles.article__img}>
-							<Image src={service.icon} width={45} height={45} />
+							<Image src={service.icon} width={60} height={60} />
 						</div>
 						<div className={styles.article__title}>
 							<h3>{service.title}</h3>
