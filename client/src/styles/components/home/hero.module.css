@@ -1,8 +1,9 @@
 /* title container section  */
 
 .hero__titles {
-	max-width: 1800px;
+	max-width: 95%;
 	width: 100%;
+	height: 100%;
 }
 
 /* main title section  */
@@ -29,21 +30,11 @@
 	letter-spacing: 2rem;
 }
 
-.hero__maintitle__span:nth-child(1) {
-	display: block;
-	/* background-color: red; */
-}
-
-.hero__maintitle__span:nth-child(2) {
-	display: block;
-}
-
 /* subtitle section */
 
 .hero__subtitle h1 {
 	font-size: 1.8rem;
 	font-weight: 300;
-
 	color: color-mix(in srgb, var(--white-color), black 25%);
 }
 

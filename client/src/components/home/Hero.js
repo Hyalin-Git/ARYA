@@ -1,4 +1,4 @@
-import { josefinSans } from "@/libs/fonts";
+import { montserrat } from "@/libs/fonts";
 import styles from "../../styles/components/home/hero.module.css";
 
 export default function Hero() {
@@ -9,12 +9,13 @@ export default function Hero() {
 			</div>
 			<div className={styles.hero__maintitle}>
 				<h1>
-					<span className={styles.hero__maintitle__span}>
-						<span className={styles.hero__maintitle__arya}>Arya</span> le
-						meilleur
-					</span>
-					<span className={styles.hero__maintitle__span}>ami du freelance</span>
-					<button>Rejoindre la communauté</button>
+					<span className={styles.hero__maintitle__arya}>Arya</span> le meilleur
+					<br />
+					ami du freelance
+					<br />
+					<button className={montserrat.className}>
+						Rejoindre la communauté
+					</button>
 				</h1>
 			</div>
 			<div className={styles.hero__subtitle}>
