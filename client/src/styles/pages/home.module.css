@@ -19,7 +19,7 @@
 	justify-content: center;
 	text-align: center;
 	background-color: rgb(0, 0, 0, 0.15);
-	filter: blur(0.5px);
+	filter: blur(0.8px);
 	height: 100%;
 	min-height: 770px;
 	border-radius: 14px;
