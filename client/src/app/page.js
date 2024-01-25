@@ -16,13 +16,8 @@ export default function Home() {
 				<div>
 					<section className={styles.services}>
 						<div className={styles.services__header}>
-							<div>
-								<h2>Une solution pour tous,</h2>
-								<p>Une multitude de service pour satisfaire tout le monde</p>
-							</div>
-							<div className={styles.services__progress}>
-								<div id="progress-bar"></div>
-							</div>
+							<h2>Une solution pour tous,</h2>
+							<p>Une multitude de service pour satisfaire tout le monde</p>
 						</div>
 						<div className={styles.services__background}>
 							<Service />

@@ -6,6 +6,7 @@ import Image from "next/image";
 
 export default function Service() {
 	const serviceWrapper = useRef("");
+
 	const servicesElements = [
 		{
 			id: 1,
@@ -20,21 +21,20 @@ export default function Service() {
 			title: "Réseau social",
 			icon: "./images/icons/social_icon.svg",
 			subscriptions: false,
-			description:
-				"Postez et échangez avec la communauté Arya. Soyez libres de poster ce qui vous plaît, montrez vos talents, libérez votre imaginaire dans cette sphère créative !",
+			description: `Postez et échangez avec la communauté <span>ARYA</span>. Soyez libres de poster ce qui vous plaît, montrez vos talents, libérez votre imaginaire dans cette sphère créative !`,
 		},
 		{
 			id: 3,
 			title: "Organise toi",
-			icon: "./images/icons/work_icon.svg",
+			icon: "./images/icons/calendar_icon.svg",
 			subscriptions: false,
 			description:
-				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
+				"Organisez-vous de manière simple et méthodique, puis suivez vos projets planifiés sur ARYA",
 		},
 		{
 			id: 4,
 			title: "Planifie à l'avance",
-			icon: "./images/icons/work_icon.svg",
+			icon: "./images/icons/schedule_icon.svg",
 			subscriptions: true,
 			description:
 				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
@@ -42,7 +42,7 @@ export default function Service() {
 		{
 			id: 5,
 			title: "Tes statistiques",
-			icon: "./images/icons/work_icon.svg",
+			icon: "./images/icons/chart_icon.svg",
 			subscriptions: true,
 			description:
 				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
@@ -62,16 +62,7 @@ export default function Service() {
 	);
 
 	const transformScroll = useDebouncedCallback((e, target) => {
-		target.scrollLeft += e.deltaY * 2; // Allow horizontal scroll
-
-		const progressBar = document.getElementById("progress-bar");
-
-		target.addEventListener("scroll", (e) => {
-			// On scroll make the progress bar progress depending on where is the horizontal scroll bar
-			const scrollPercentage =
-				(target.scrollLeft / (target.scrollWidth - target.clientWidth)) * 100;
-			progressBar.style.width = scrollPercentage + "%";
-		});
+		target.scrollLeft += e.deltaY * 4; // Allow horizontal scroll
 	}, 100);
 
 	function scrollAgain() {
@@ -94,18 +85,31 @@ export default function Service() {
 			{sortedServices.map((service) => {
 				return (
 					<article key={service.id} data-sub={service.subscriptions}>
-						<div className={styles.article__img}>
-							<Image src={service.icon} width={60} height={60} />
+						<div className={styles.article__images}>
+							<div className={styles.article__logo}>
+								<Image src={service.icon} width={60} height={60} />
+							</div>
+							{service.subscriptions && (
+								<div className={styles.article__crown}>
+									<Image
+										src="/images/icons/crown_icon.svg"
+										width={35}
+										height={35}
+									/>
+								</div>
+							)}
 						</div>
-						<div className={styles.article__title}>
-							<h3>{service.title}</h3>
+						<div className={styles.article__body}>
+							<div className={styles.article__title}>
+								<h3>{service.title}</h3>
+							</div>
+							<div className={styles.article__content}>
+								<p>{service.description}</p>
+							</div>
 						</div>
-						<div className={styles.article__content}>
-							<p>{service.description}</p>
-						</div>
-						<div className={styles.article__more}>
+						{/* <div className={styles.article__more}>
 							<span>En savoir plus</span>
-						</div>
+						</div> */}
 					</article>
 				);
 			})}
