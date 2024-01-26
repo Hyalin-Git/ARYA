@@ -3,6 +3,7 @@ import styles from "../styles/pages/home.module.css";
 import { josefinSans } from "@/libs/fonts";
 import Hero from "@/components/home/Hero";
 import Service from "@/components/home/Services";
+import Features from "@/components/home/Features";
 
 export default function Home() {
 	return (
@@ -19,15 +20,14 @@ export default function Home() {
 							<h2>Une solution pour tous,</h2>
 							<p>Une multitude de service pour satisfaire tout le monde</p>
 						</div>
-						<div className={styles.services__background}>
+						<div className={styles.services__container}>
 							<Service />
 						</div>
 					</section>
-					<section>
-						<h2>Un travail à porté de main !</h2>
+					<div className={styles.line}></div>
+					<section className={styles.features}>
+						<Features />
 					</section>
-
-					{/* partie gratuite */}
 				</div>
 				{/* foot */}
 				<div></div>

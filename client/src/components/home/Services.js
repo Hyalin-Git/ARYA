@@ -15,13 +15,15 @@ export default function Service() {
 			subscriptions: false,
 			description:
 				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
+			anchor: "work",
 		},
 		{
 			id: 2,
 			title: "Réseau social",
 			icon: "./images/icons/social_icon.svg",
 			subscriptions: false,
-			description: `Postez et échangez avec la communauté <span>ARYA</span>. Soyez libres de poster ce qui vous plaît, montrez vos talents, libérez votre imaginaire dans cette sphère créative !`,
+			description: `Postez et échangez avec la communauté ARYA. Soyez libres de poster ce qui vous plaît, montrez vos talents, libérez votre imaginaire dans cette sphère créative !`,
+			anchor: "social",
 		},
 		{
 			id: 3,
@@ -30,6 +32,7 @@ export default function Service() {
 			subscriptions: false,
 			description:
 				"Organisez-vous de manière simple et méthodique, puis suivez vos projets planifiés sur ARYA",
+			anchor: "organize",
 		},
 		{
 			id: 4,
@@ -38,7 +41,9 @@ export default function Service() {
 			subscriptions: true,
 			description:
 				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
+			anchor: "organize",
 		},
+
 		{
 			id: 5,
 			title: "Tes statistiques",
@@ -46,14 +51,25 @@ export default function Service() {
 			subscriptions: true,
 			description:
 				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
+			anchor: "organize",
 		},
 		{
 			id: 6,
 			title: "Tes statistiques",
-			icon: "./images/icons/work_icon.svg",
+			icon: "./images/icons/chart_icon.svg",
 			subscriptions: true,
 			description:
 				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
+			anchor: "organize",
+		},
+		{
+			id: 7,
+			title: "Tes statistiques",
+			icon: "./images/icons/chart_icon.svg",
+			subscriptions: true,
+			description:
+				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
+			anchor: "organize",
 		},
 	];
 
@@ -61,33 +77,50 @@ export default function Service() {
 		(a, b) => a.subscriptions - b.subscriptions
 	);
 
-	const transformScroll = useDebouncedCallback((e, target) => {
-		target.scrollLeft += e.deltaY * 4; // Allow horizontal scroll
+	const horizontalScroll = useDebouncedCallback((e) => {
+		console.log(e);
+		e.currentTarget.scrollLeft += e.deltaY * 4;
+		console.log(e);
 	}, 100);
 
-	function scrollAgain() {
-		const htmlElement = document.getElementsByTagName("html")[0];
-		htmlElement.style.overflow = "auto";
+	// function horizontalScroll(e) {
+	// 	e.preventDefault();
+	// 	e.currentTarget.scrollLeft += e.deltaY * 4;
+	// }
+
+	function scrollToAnchor(e) {
+		const anchor = e.currentTarget.getAttribute("data-anchor");
+		document.getElementById(anchor).scrollIntoView({ behavior: "smooth" });
 	}
 
-	function stopScrolling() {
-		const htmlElement = document.getElementsByTagName("html")[0];
-		htmlElement.style.overflow = "hidden";
-	}
+	useEffect(() => {
+		serviceWrapper.current.addEventListener(
+			"wheel",
+			(e) => {
+				e.preventDefault();
+				horizontalScroll(e);
+			},
+			{
+				passive: false,
+			}
+		);
+
+		return () =>
+			serviceWrapper.current.removeEventListener("wheel", horizontalScroll);
+	}, []);
 
 	return (
-		<div
-			className={styles.services__wrapper}
-			ref={serviceWrapper}
-			onMouseEnter={stopScrolling}
-			onWheel={(e) => transformScroll(e, serviceWrapper.current)}
-			onMouseLeave={scrollAgain}>
+		<div className={styles.services__wrapper} ref={serviceWrapper}>
 			{sortedServices.map((service) => {
 				return (
-					<article key={service.id} data-sub={service.subscriptions}>
+					<article
+						data-sub={service.subscriptions}
+						data-anchor={service.anchor}
+						key={service.id}
+						onClick={scrollToAnchor}>
 						<div className={styles.article__images}>
 							<div className={styles.article__logo}>
-								<Image src={service.icon} width={60} height={60} />
+								<Image src={service.icon} width={60} height={60} alt="logo" />
 							</div>
 							{service.subscriptions && (
 								<div className={styles.article__crown}>
@@ -95,6 +128,7 @@ export default function Service() {
 										src="/images/icons/crown_icon.svg"
 										width={35}
 										height={35}
+										alt="crown"
 									/>
 								</div>
 							)}
