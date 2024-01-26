@@ -37,30 +37,10 @@
 }
 
 /* Services */
-
-.services {
-}
-
-.services__container {
+.content {
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
 }
-
-.services__header h2 {
-	text-align: left;
-	padding-left: 20px;
-	font-size: 4rem;
-}
-
-.services__header p {
-	margin-top: -40px;
-	margin-bottom: 0px;
-	text-align: left;
-	margin-left: 70px;
-	font-size: 2rem;
-	font-weight: 100;
-}
-
 /* line  */
 .line {
 	margin: 200px 0 200px 0;

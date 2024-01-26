@@ -22,29 +22,24 @@ export default function Features() {
 	];
 
 	return (
-		<>
+		<div className={styles.container}>
 			{featuresElements.map((feature) => {
 				return (
-					<div
-						className={styles.features__container}
-						id={feature.anchor}
-						key={feature.id}>
-						<div className={styles.feature__wrapper}>
-							<div className={styles.feature__left}>
-								<div className={styles.feature__img}></div>
+					<div className={styles.wrapper} id={feature.anchor} key={feature.id}>
+						<div className={styles.left}>
+							<div className={styles.img}></div>
+						</div>
+						<div className={styles.right}>
+							<div className={styles.title}>
+								<h3>{feature.title}</h3>
 							</div>
-							<div className={styles.feature__right}>
-								<div className={styles.feature__title}>
-									<h3>{feature.title}</h3>
-								</div>
-								<div className={styles.feature__description}>
-									<p>{feature.description}</p>
-								</div>
+							<div className={styles.description}>
+								<p>{feature.description}</p>
 							</div>
 						</div>
 					</div>
 				);
 			})}
-		</>
+		</div>
 	);
 }

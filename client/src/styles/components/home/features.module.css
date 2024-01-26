@@ -1,56 +1,59 @@
-.features__container {
+.container {
 	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 120px;
 }
-.feature__wrapper {
+.wrapper {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	gap: 40px;
 }
-.feature__left,
-.feature__right {
+.left,
+.right {
 	width: 620px;
 	max-width: 620px;
 	height: 400px;
 }
 
-.feature__right {
+.right {
 	text-align: left;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 }
 
-.feature__img {
+.img {
 	background-color: rgb(var(--layer-color));
 	width: 100%;
 	height: 100%;
 	border-radius: 14px;
 }
-.feature__title {
+.title {
 	color: var(--meteorite-color);
 	text-transform: uppercase;
 	letter-spacing: 0.2rem;
 }
-.feature__description {
+.description {
 	max-height: 300px;
 	overflow: hidden;
 	font-size: 0.9rem;
 }
 
-.feature__description p {
+.description p {
 }
 
 /* reverse features */
 
-.features__container:nth-child(even) .feature__wrapper {
+.wrapper:nth-child(even) {
 	display: flex;
 	flex-direction: row-reverse;
 	justify-content: center;
 	align-items: center;
 }
 
-.features__container:nth-child(even) .feature__right {
+.wrapper:nth-child(even) .right {
 	text-align: right;
 }
 

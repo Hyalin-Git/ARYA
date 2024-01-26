@@ -14,20 +14,10 @@ export default function Home() {
 					<Hero />
 				</div>
 				{/* content */}
-				<div>
-					<section className={styles.services}>
-						<div className={styles.services__header}>
-							<h2>Une solution pour tous,</h2>
-							<p>Une multitude de service pour satisfaire tout le monde</p>
-						</div>
-						<div className={styles.services__container}>
-							<Service />
-						</div>
-					</section>
+				<div className={styles.content}>
+					<Service />
 					<div className={styles.line}></div>
-					<section className={styles.features}>
-						<Features />
-					</section>
+					<Features />
 				</div>
 				{/* foot */}
 				<div></div>
