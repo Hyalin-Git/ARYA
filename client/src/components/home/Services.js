@@ -77,36 +77,50 @@ export default function Service() {
 		(a, b) => a.subscriptions - b.subscriptions
 	);
 
-	const horizontalScroll = useDebouncedCallback((e) => {
-		console.log(e);
-		e.currentTarget.scrollLeft += e.deltaY * 4;
-		console.log(e);
-	}, 100);
-
-	// function horizontalScroll(e) {
-	// 	e.preventDefault();
-	// 	e.currentTarget.scrollLeft += e.deltaY * 4;
-	// }
-
 	function scrollToAnchor(e) {
 		const anchor = e.currentTarget.getAttribute("data-anchor");
 		document.getElementById(anchor).scrollIntoView({ behavior: "smooth" });
 	}
 
+	const horizontalScroll = useDebouncedCallback((e, target) => {
+		target.scrollLeft += e.deltaY + e.deltaX * 4;
+	}, 150);
+	let previousScrollLeft = 5;
+	function handleScroll(e) {
+		const scrollContainer = serviceWrapper.current;
+
+		// Récupérer la position actuelle de défilement horizontal
+		const currentScrollLeft = scrollContainer.scrollLeft;
+		console.log(currentScrollLeft);
+		// Récupérer la largeur totale du contenu déroulable
+		const scrollWidth = scrollContainer.scrollWidth;
+
+		// Récupérer la largeur de la fenêtre visible
+		const clientWidth = scrollContainer.clientWidth;
+		console.log(scrollWidth - clientWidth);
+		// Si le défilement est au début ou à la fin, permettre le défilement vertical
+
+		console.log(currentScrollLeft === 0 && e.deltaY < 0);
+		if (
+			(currentScrollLeft === 0 && e.deltaY < 0) ||
+			(currentScrollLeft === scrollWidth - clientWidth && e.deltaY > 0)
+		) {
+			return;
+		}
+		// Appliquer le défilement horizontal par défaut tout en arrêtant le scroll vertical avec preventDefault
+		scrollContainer.scrollLeft += e.deltaY * 4;
+		e.preventDefault();
+
+		previousScrollLeft = currentScrollLeft;
+	}
+
 	useEffect(() => {
-		serviceWrapper.current.addEventListener(
-			"wheel",
-			(e) => {
-				e.preventDefault();
-				horizontalScroll(e);
-			},
-			{
-				passive: false,
-			}
-		);
+		serviceWrapper.current.addEventListener("wheel", handleScroll, {
+			passive: false,
+		});
 
 		return () =>
-			serviceWrapper.current.removeEventListener("wheel", horizontalScroll);
+			serviceWrapper.current.removeEventListener("wheel", handleScroll);
 	}, []);
 
 	return (
