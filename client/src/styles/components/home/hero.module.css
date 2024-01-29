@@ -1,6 +1,6 @@
 /* title container section  */
 
-.hero__titles {
+.titles {
 	max-width: 95%;
 	width: 100%;
 	height: 100%;
@@ -8,17 +8,17 @@
 
 /* main title section  */
 
-.hero__maintitle {
+.maintitle {
 	text-align: center;
 }
 
-.hero__maintitle h1 {
+.maintitle h1 {
 	font-size: 6rem;
 	font-weight: 700;
 	color: white;
 }
 
-.hero__maintitle__arya {
+.maintitle__arya {
 	background-image: -webkit-linear-gradient(
 		25deg,
 		var(--lavender-color),
@@ -31,18 +31,18 @@
 
 /* subtitle section */
 
-.hero__subtitle h1 {
+.subtitle h1 {
 	font-size: 1.8rem;
 	font-weight: 300;
 	color: color-mix(in srgb, var(--white-color), black 25%);
 }
 
-.hero__subtitle:first-child {
+.subtitle:first-child {
 	position: relative;
 	text-align: left;
 }
 
-.hero__subtitle:last-child {
+.subtitle:last-child {
 	text-align: right;
 	position: relative;
 }

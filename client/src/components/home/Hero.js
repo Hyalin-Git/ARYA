@@ -3,13 +3,13 @@ import styles from "../../styles/components/home/hero.module.css";
 
 export default function Hero() {
 	return (
-		<div className={styles.hero__titles}>
-			<div className={styles.hero__subtitle}>
+		<div className={styles.titles}>
+			<div className={styles.subtitle}>
 				<h1>Créez, Optimisez, Partagez !</h1>
 			</div>
-			<div className={styles.hero__maintitle}>
+			<div className={styles.maintitle}>
 				<h1>
-					<span className={styles.hero__maintitle__arya}>Arya</span> le meilleur
+					<span className={styles.maintitle__arya}>Arya</span> le meilleur
 					<br />
 					ami du freelance
 					<br />
@@ -18,7 +18,7 @@ export default function Hero() {
 					</button>
 				</h1>
 			</div>
-			<div className={styles.hero__subtitle}>
+			<div className={styles.subtitle}>
 				<h1>L’outil incontournable des créatifs.</h1>
 			</div>
 		</div>

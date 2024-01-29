@@ -1,9 +1,10 @@
 import Image from "next/image";
 import styles from "../styles/pages/home.module.css";
-import { josefinSans } from "@/libs/fonts";
+import { josefinSans, montserrat } from "@/libs/fonts";
 import Hero from "@/components/home/Hero";
 import Service from "@/components/home/Services";
 import Features from "@/components/home/Features";
+import JoinArya from "@/components/home/JoinArya";
 
 export default function Home() {
 	return (
@@ -18,9 +19,12 @@ export default function Home() {
 					<Service />
 					<div className={styles.line}></div>
 					<Features />
+					<div className={styles.line}></div>
 				</div>
 				{/* foot */}
-				<div></div>
+				<div className={styles.bottom}>
+					<JoinArya />
+				</div>
 			</div>
 		</main>
 	);

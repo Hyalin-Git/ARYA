@@ -27,7 +27,7 @@ export default function Service() {
 		},
 		{
 			id: 3,
-			title: "Organise toi",
+			title: "Organise-toi",
 			icon: "./images/icons/calendar_icon.svg",
 			subscriptions: false,
 			description:
@@ -36,24 +36,15 @@ export default function Service() {
 		},
 		{
 			id: 4,
-			title: "Planifie à l'avance",
+			title: "Automatiser votre activité",
 			icon: "./images/icons/schedule_icon.svg",
 			subscriptions: true,
 			description:
-				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
+				"Arya dispose d’une fonctionnalité visant à automatiser votre activité afin de fructifier votre productivité et de garder la conscience tranquille. Programmez vos posts, puis qu’ils soient publiés automatiquement directement dans cette capsule !",
 			anchor: "organize",
 		},
 		{
 			id: 5,
-			title: "Tes statistiques",
-			icon: "./images/icons/chart_icon.svg",
-			subscriptions: true,
-			description:
-				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
-			anchor: "organize",
-		},
-		{
-			id: 6,
 			title: "Tes statistiques",
 			icon: "./images/icons/chart_icon.svg",
 			subscriptions: true,

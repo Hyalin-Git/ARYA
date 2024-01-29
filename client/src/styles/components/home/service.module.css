@@ -25,6 +25,5 @@
 	flex-wrap: nowrap;
 	overflow: hidden;
 	scroll-behavior: smooth;
-	padding: 0px 0 40px 0;
-	/* background-color: red; */
+	padding: 5px 10px 40px 10px;
 }

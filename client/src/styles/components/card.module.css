@@ -99,11 +99,13 @@
 .container:hover .body {
 	margin-top: 0;
 	/* background-color: red; */
+
 	transition: 250ms all ease-in;
 }
 
 .container:hover .content {
 	translate: 0 -30px;
 	opacity: 1;
+
 	transition: 250ms all ease-out 250ms;
 }
