@@ -3,7 +3,7 @@ import styles from "../../styles/components/home/joinArya.module.css";
 
 export default function JoinArya() {
 	return (
-		<section>
+		<section className={styles.container}>
 			<div className={styles.titles}>
 				<h2>
 					Prêt à vivre une expérience unique <span>?</span>

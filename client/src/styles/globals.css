@@ -169,7 +169,7 @@ button {
 		var(--meteorite-color) 60%,
 		var(--lavender-color)
 	);
-	background-position: right;
+	background-position: center;
 	background-size: 300%;
 	border: none;
 	font-size: 1.2rem;
