@@ -9,7 +9,7 @@ export default function Features() {
 	const options = {
 		root: null, // L'élément racine utilisé comme viewport. Si null, le viewport du navigateur est utilisé.
 		rootMargin: "0px", // Marge autour du viewport pour étendre ou réduire la zone d'intersection.
-		threshold: 0.9, // Valeur de seuil pour déterminer quand l'élément est considéré comme intersecté (0.5 signifie que la moitié de l'élément doit être visible).
+		threshold: 0.6, // Valeur de seuil pour déterminer quand l'élément est considéré comme intersecté (0.5 signifie que la moitié de l'élément doit être visible).
 	};
 
 	const featuresElements = [

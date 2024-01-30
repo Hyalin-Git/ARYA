@@ -13,15 +13,8 @@
 	overflow: hidden;
 }
 
-.inView .left {
-	border-radius: 14px;
-	box-shadow: -15px -15px 0 var(--meteorite-color);
-	transition: all 150ms ease-out;
-}
-
 .left,
 .right {
-	/* background-color: red; */
 	position: relative;
 	width: 620px;
 	max-width: 620px;
@@ -35,15 +28,6 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	translate: 650px;
-	opacity: 0;
-	transition: all 150ms ease-out;
-}
-
-.inView .right {
-	translate: 0;
-	opacity: 1;
-	transition: all 150ms ease-out;
 }
 
 .img {
@@ -54,14 +38,29 @@
 }
 
 .title {
-	color: var(--meteorite-color);
+	position: relative;
+	width: fit-content;
+	color: var(--white-color);
 	text-transform: uppercase;
 	letter-spacing: 0.2rem;
+}
+
+.title::before {
+	position: absolute;
+	content: "";
+	bottom: 0;
+	left: 0;
+	width: 0%;
+	height: 2px;
+	background-color: var(--meteorite-color);
+	transition: 200ms all linear;
 }
 .description {
 	max-height: 300px;
 	overflow: hidden;
 	font-size: 0.9rem;
+	opacity: 0;
+	transition: all 200ms linear 250ms;
 }
 
 .description p::first-letter {
@@ -73,39 +72,67 @@
 
 /* reverse features */
 
-.inView:nth-child(even) .left {
-	box-shadow: 15px 15px 0 var(--meteorite-color);
-}
-
-.wrapper:nth-child(even) .right {
-	translate: -650px;
-}
-
-.inView:nth-child(even) .right {
-	translate: 0px;
-}
-
 .wrapper:nth-child(even) {
 	display: flex;
 	flex-direction: row-reverse;
 	justify-content: center;
 	align-items: center;
+	text-align: right;
+}
+
+.wrapper:nth-child(even) .description {
+	text-align: right;
+}
+
+.wrapper:nth-child(even) .title {
+	margin-left: auto;
+	text-align: right;
+}
+
+.wrapper:nth-child(even) .title::before {
+	right: 0;
+	left: inherit;
 }
 
 #id {
 	scroll-behavior: smooth;
 }
 
-@keyframes doc {
-	from {
-		transform: translate(0);
+/* inView animations  */
+
+.inView .left {
+	border-radius: 14px;
+	box-shadow: -15px -15px 0 var(--meteorite-color);
+	transition: all 200ms ease-out;
+}
+
+.inView .title::before {
+	width: 80%;
+	transition: 200ms all linear;
+}
+
+.inView .description {
+	opacity: 1;
+	transition: all 200ms linear 250ms;
+}
+
+/* reverse  */
+.inView:nth-child(even) .left {
+	box-shadow: 15px 15px 0 var(--meteorite-color);
+}
+
+/* media queries */
+
+@media (max-width: 1024px) {
+	.container {
+		gap: 0px;
 	}
-	50% {
-		opacity: 1;
-		transform: translate(640px);
+	.wrapper {
+		flex-wrap: wrap;
 	}
-	100% {
-		opacity: 0;
-		transform: translate(640px);
+
+	.right {
+		height: fit-content;
+		justify-content: flex-start;
 	}
 }

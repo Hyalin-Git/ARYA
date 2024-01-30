@@ -46,3 +46,17 @@
 	text-align: right;
 	position: relative;
 }
+
+/* media queries  */
+
+@media (max-width: 1024px) {
+	.maintitle h1 {
+		font-size: 4rem;
+	}
+
+	.subtitle h1 {
+		font-size: 1.4rem;
+		font-weight: 300;
+		color: color-mix(in srgb, var(--white-color), black 25%);
+	}
+}

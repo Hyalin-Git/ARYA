@@ -46,8 +46,8 @@ export default function Header() {
 				<div className={styles.logo}>
 					<Image
 						src="/images/logo/Arya_Monochrome_White.png"
-						width={65}
-						height={65}
+						width={60}
+						height={60}
 						alt="logo"
 						loading="lazy"
 					/>

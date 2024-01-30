@@ -18,7 +18,7 @@
 	justify-content: center;
 	flex-direction: column;
 	text-align: center;
-	min-height: 770px;
+	min-height: 805px;
 	height: 100%;
 	background-color: rgb(var(--layer-color));
 	border-radius: 14px 14px 0 14px;
@@ -31,7 +31,7 @@
 	width: 20px;
 	bottom: 0px;
 	right: 0px;
-	background-color: color-mix(in srgb, #372f37, white 3%);
+	background-color: #372f37;
 	border-radius: 14px 0 0 0;
 	padding: 20px;
 }
@@ -40,7 +40,6 @@
 .content {
 	display: flex;
 	flex-direction: column;
-	margin-bottom: 120px;
 }
 /* line  */
 .line {

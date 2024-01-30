@@ -1,5 +1,7 @@
+"use client";
 import { montserrat } from "@/libs/fonts";
 import styles from "../../styles/components/home/joinArya.module.css";
+import { useEffect, useRef } from "react";
 
 export default function JoinArya() {
 	return (
