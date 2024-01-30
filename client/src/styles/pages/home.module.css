@@ -18,7 +18,7 @@
 	justify-content: center;
 	flex-direction: column;
 	text-align: center;
-	min-height: 805px;
+	min-height: 91vh;
 	height: 100%;
 	background-color: rgb(var(--layer-color));
 	border-radius: 14px 14px 0 14px;

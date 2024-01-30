@@ -22,8 +22,7 @@
 
 .disapear {
 	translate: 0 -150px;
-	opacity: 0;
-	transition: 100ms linear;
+	transition: 180ms all linear;
 }
 
 .logo {
