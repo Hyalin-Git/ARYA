@@ -81,6 +81,7 @@
 
 /* articles  */
 .container:hover {
+	transform: translateZ(0);
 	cursor: pointer;
 	scale: 1.02;
 	translate: 0 4px;
@@ -90,6 +91,7 @@
 
 .container:hover::before {
 	translate: 0px 0px;
+	transform: translateZ(0);
 	transition: 450ms all ease-out 100ms;
 }
 
@@ -99,6 +101,7 @@
 .container:hover .body {
 	margin-top: 0;
 	transition: 250ms all ease-in;
+	transform: translateZ(0);
 }
 
 .container:hover .content {
