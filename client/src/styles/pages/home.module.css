@@ -55,7 +55,7 @@
 /* line  */
 .line {
 	margin-top: 100px;
-	margin-bottom: 120px;
+	margin-bottom: -120px;
 	margin-inline: auto;
 	width: 80%;
 	height: 1px;
@@ -64,9 +64,19 @@
 	background-color: white;
 }
 
+.content .line:last-child {
+	margin-bottom: 120px;
+}
+
 .bottom {
 	margin-top: -120px;
 	margin-bottom: 120px;
+}
+
+@media (max-width: 1024px) {
+	.line {
+		margin-bottom: 0px;
+	}
 }
 
 @media (max-height: 780px) {

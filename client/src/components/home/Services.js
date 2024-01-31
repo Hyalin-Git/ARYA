@@ -41,7 +41,7 @@ export default function Service() {
 			subscriptions: true,
 			description:
 				"<p><span>ARYA</span> dispose d’une fonctionnalité visant à automatiser votre activité afin de fructifier votre productivité et de garder la conscience tranquille. Programmez vos posts, puis qu’ils soient publiés automatiquement directement dans cette capsule !</p>",
-			anchor: "organize",
+			anchor: "plan",
 		},
 		{
 			id: 5,
@@ -50,7 +50,7 @@ export default function Service() {
 			subscriptions: true,
 			description:
 				"<p>Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.</p>",
-			anchor: "organize",
+			anchor: "stat",
 		},
 	];
 

@@ -35,7 +35,7 @@ export default function Features() {
 			image: "",
 			description:
 				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vitae mauris libero. Mauris non nisi eleifend, iaculis diam vitae, lobortis lorem. Duis et ex lacus. Suspendisse potenti. Suspendisse nulla lacus, aliquam in fringilla faucibus, interdum ut metus. Nunc vehicula metus ac est commodo suscipit. Donec fringilla sollicitudin nunc, eget dapibus dui rhoncus in. Nullam ac velit id orci viverra consectetur. Morbi nec nisl tortor. Etiam nec suscipit dolor. Nullam felis massa, vehicula a scelerisque sed, cursus in erat.",
-			anchor: "social",
+			anchor: "organize",
 		},
 		{
 			id: 4,
@@ -43,7 +43,7 @@ export default function Features() {
 			image: "",
 			description:
 				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vitae mauris libero. Mauris non nisi eleifend, iaculis diam vitae, lobortis lorem. Duis et ex lacus. Suspendisse potenti. Suspendisse nulla lacus, aliquam in fringilla faucibus, interdum ut metus. Nunc vehicula metus ac est commodo suscipit. Donec fringilla sollicitudin nunc, eget dapibus dui rhoncus in. Nullam ac velit id orci viverra consectetur. Morbi nec nisl tortor. Etiam nec suscipit dolor. Nullam felis massa, vehicula a scelerisque sed, cursus in erat.",
-			anchor: "social",
+			anchor: "plan",
 		},
 		{
 			id: 5,
@@ -51,7 +51,7 @@ export default function Features() {
 			image: "",
 			description:
 				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vitae mauris libero. Mauris non nisi eleifend, iaculis diam vitae, lobortis lorem. Duis et ex lacus. Suspendisse potenti. Suspendisse nulla lacus, aliquam in fringilla faucibus, interdum ut metus. Nunc vehicula metus ac est commodo suscipit. Donec fringilla sollicitudin nunc, eget dapibus dui rhoncus in. Nullam ac velit id orci viverra consectetur. Morbi nec nisl tortor. Etiam nec suscipit dolor. Nullam felis massa, vehicula a scelerisque sed, cursus in erat.",
-			anchor: "social",
+			anchor: "stat",
 		},
 	];
 
@@ -75,7 +75,8 @@ export default function Features() {
 					<div
 						ref={featureWrapper}
 						className={clsx(styles.wrapper, "feature")}
-						key={feature.id}>
+						key={feature.id}
+						id={feature.anchor}>
 						<div className={styles.left}>
 							<div className={styles.img}></div>
 						</div>
