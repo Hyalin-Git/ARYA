@@ -136,3 +136,9 @@
 		justify-content: flex-start;
 	}
 }
+
+@media (max-width: 580px) {
+	.left {
+		height: 200px;
+	}
+}

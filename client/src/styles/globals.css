@@ -87,7 +87,9 @@ a {
 		0 4px 4px rgba(0, 0, 0, 0.12), 0 8px 8px rgba(0, 0, 0, 0.12),
 		0 16px 16px rgba(0, 0, 0, 0.12);
 }
-
+html {
+	scroll-behavior: smooth;
+}
 body {
 	position: relative;
 	color: white;
@@ -104,6 +106,7 @@ body::before {
 	position: absolute;
 	top: 0;
 	bottom: 0;
+	z-index: 0;
 	width: 100%;
 	height: 100%;
 	opacity: 0.03;
@@ -122,7 +125,6 @@ body::before {
 			50% 0/2500px 2500px,
 		-moz-repeating-radial-gradient(#000 0 0.0001%, #8a8888 0 0.0002%) 50% 50%/2500px
 			2500px;
-
 	background-blend-mode: difference;
 }
 
@@ -208,5 +210,12 @@ body::-webkit-scrollbar {
 @media (max-width: 580px) {
 	button {
 		font-size: 0.9rem;
+	}
+}
+
+@media (max-width: 380px) {
+	button {
+		font-weight: 600;
+		font-size: 0.7rem;
 	}
 }

@@ -3,7 +3,11 @@
 .titles {
 	max-width: 95%;
 	width: 100%;
+	min-height: 80vh;
 	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
 }
 
 /* main title section  */
@@ -56,8 +60,6 @@
 
 	.subtitle h1 {
 		font-size: 1.4rem;
-		font-weight: 300;
-		color: color-mix(in srgb, var(--white-color), black 25%);
 	}
 }
 
@@ -68,7 +70,43 @@
 
 	.subtitle h1 {
 		font-size: 1.2rem;
-		font-weight: 300;
-		color: color-mix(in srgb, var(--white-color), black 25%);
+	}
+}
+
+@media (max-width: 525px) {
+	.maintitle h1 {
+		font-size: 3rem;
+	}
+}
+
+@media (max-width: 485px) {
+	.maintitle h1 {
+		font-size: 2.5rem;
+	}
+}
+
+@media (max-width: 380px) {
+	.maintitle h1 {
+		font-size: 2.2rem;
+	}
+
+	.subtitle h1 {
+		font-size: 1rem;
+	}
+}
+
+@media (max-width: 360px) {
+	.maintitle h1 {
+		font-size: 2rem;
+	}
+
+	.subtitle h1 {
+		font-size: 0.9rem;
+	}
+}
+
+@media (max-width: 320px) {
+	.maintitle h1 {
+		font-size: 1.8rem;
 	}
 }

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import styles from "../styles/pages/home.module.css";
 import { josefinSans, montserrat } from "@/libs/fonts";
 import Hero from "@/components/home/Hero";
@@ -13,9 +14,20 @@ export default function Home() {
 				{/* Hero  */}
 				<div className={styles.hero}>
 					<Hero />
+
+					<div className={styles.arrow}>
+						<Link href="#content">
+							<Image
+								src="images/icons/arrow_icon.svg"
+								width={20}
+								height={20}
+								alt="arrow"
+							/>
+						</Link>
+					</div>
 				</div>
 				{/* content */}
-				<div className={styles.content}>
+				<div className={styles.content} id="content">
 					<Service />
 					<div className={styles.line}></div>
 					<Features />
