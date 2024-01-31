@@ -104,8 +104,6 @@
 	transition: 450ms all ease-out 100ms;
 }
 
-/* article header  */
-
 /* article body, content */
 .container:hover .body {
 	margin-top: 0;
@@ -116,7 +114,37 @@
 .container:hover .content {
 	translate: 0 -30px;
 	opacity: 1;
+	transition: 250ms all ease-out 250ms;
+}
 
+/* inView for mobile  */
+
+/* articles  */
+.inView {
+	transform: translateZ(0);
+	cursor: pointer;
+	scale: 1.02;
+	translate: 0 4px;
+	box-shadow: var(--active-shadow);
+	transition: 250ms all ease-in 150ms;
+}
+
+.inView::before {
+	translate: 0px 0px;
+	transform: translateZ(0);
+	transition: 450ms all ease-out 100ms;
+}
+
+/* article body, content */
+.inView .body {
+	margin-top: 0;
+	transition: 250ms all ease-in;
+	transform: translateZ(0);
+}
+
+.inView .content {
+	translate: 0 -30px;
+	opacity: 1;
 	transition: 250ms all ease-out 250ms;
 }
 
