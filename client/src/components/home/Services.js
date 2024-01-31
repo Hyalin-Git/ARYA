@@ -81,9 +81,6 @@ export default function Service() {
 		serviceWrapper.current.addEventListener("wheel", handleScroll, {
 			passive: false,
 		});
-
-		return () =>
-			serviceWrapper.current.removeEventListener("wheel", handleScroll);
 	}, []);
 
 	return (

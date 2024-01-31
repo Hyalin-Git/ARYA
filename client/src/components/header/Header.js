@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import Image from "next/image";
 import styles from "../../styles/components/header/header.module.css";
 import clsx from "clsx";
@@ -44,21 +45,26 @@ export default function Header() {
 				id="nav">
 				{/* Logo  */}
 				<div className={styles.logo}>
-					<Image
-						src="/images/logo/Arya_Monochrome_White.png"
-						width={60}
-						height={60}
-						alt="logo"
-						loading="lazy"
-					/>
-					<h1>rya</h1>
+					<Link href="/">
+						<Image
+							src="/images/logo/Arya_Monochrome_White.png"
+							width={60}
+							height={60}
+							alt="logo"
+							loading="lazy"
+						/>
+						<h1>rya</h1>
+					</Link>
 				</div>
 				{/* Menu  */}
 				<div className={styles.menu}>
 					<ul>
 						<li>Link</li>
 						<li>Link</li>
-						<li>Link</li>
+
+						<li>
+							<Link href="/auth">Connexion </Link>
+						</li>
 					</ul>
 				</div>
 			</nav>

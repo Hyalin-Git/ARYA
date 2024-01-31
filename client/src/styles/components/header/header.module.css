@@ -25,7 +25,7 @@
 	transition: 180ms all linear;
 }
 
-.logo {
+.logo a {
 	position: relative;
 	top: -5px;
 	display: flex;

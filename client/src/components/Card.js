@@ -22,6 +22,7 @@ export default function Card({ elements }) {
 				entries.forEach((entry) => {
 					if (window.innerWidth <= "780") {
 						entry.target.classList.toggle(styles.inView, entry.isIntersecting);
+						entry.target.classList.toggle(styles.hover, entry.isIntersecting);
 					} else {
 						entry.target.classList.remove(styles.inView);
 					}
@@ -37,7 +38,7 @@ export default function Card({ elements }) {
 		<Link href={"#" + elements.anchor} className={styles.link}>
 			<article
 				data-sub={elements.subscriptions}
-				className={clsx(styles.container, "card")}>
+				className={clsx(styles.container, styles.hover, "card")}>
 				<div className={styles.images}>
 					<div className={styles.logo}>
 						<Image src={elements.icon} width={60} height={60} alt="logo" />

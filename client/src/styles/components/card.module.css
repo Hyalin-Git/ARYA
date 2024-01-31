@@ -89,7 +89,7 @@
 /* hover  */
 
 /* articles  */
-.container:hover {
+.hover:hover {
 	transform: translateZ(0);
 	cursor: pointer;
 	scale: 1.02;
@@ -98,20 +98,20 @@
 	transition: 250ms all ease-in 150ms;
 }
 
-.container:hover::before {
+.hover:hover::before {
 	translate: 0px 0px;
 	transform: translateZ(0);
 	transition: 450ms all ease-out 100ms;
 }
 
 /* article body, content */
-.container:hover .body {
+.hover:hover .body {
 	margin-top: 0;
 	transition: 250ms all ease-in;
 	transform: translateZ(0);
 }
 
-.container:hover .content {
+.hover:hover .content {
 	translate: 0 -30px;
 	opacity: 1;
 	transition: 250ms all ease-out 250ms;
