@@ -111,6 +111,18 @@ body::before {
 			2500px,
 		repeating-conic-gradient(#000 0 0.0001%, #8a8888 0 0.0002%) 50% 50%/2500px
 			2500px;
+	background: -webkit-repeating-radial-gradient(
+				#000 0 0.0001%,
+				#8a8888 0 0.0002%
+			)
+			50% 0/2500px 2500px,
+		-webkit-repeating-radial-gradient(#000 0 0.0001%, #8a8888 0 0.0002%) 50% 50%/2500px
+			2500px;
+	background: -moz-repeating-radial-gradient(#000 0 0.0001%, #8a8888 0 0.0002%)
+			50% 0/2500px 2500px,
+		-moz-repeating-radial-gradient(#000 0 0.0001%, #8a8888 0 0.0002%) 50% 50%/2500px
+			2500px;
+
 	background-blend-mode: difference;
 }
 
