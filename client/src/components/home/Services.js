@@ -14,7 +14,7 @@ export default function Service() {
 			icon: "./images/icons/work_icon.svg",
 			subscriptions: false,
 			description:
-				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
+				"<p>Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.</p>",
 			anchor: "work",
 		},
 		{
@@ -22,7 +22,7 @@ export default function Service() {
 			title: "Réseau social",
 			icon: "./images/icons/social_icon.svg",
 			subscriptions: false,
-			description: `Postez et échangez avec la communauté ARYA. Soyez libres de poster ce qui vous plaît, montrez vos talents, libérez votre imaginaire dans cette sphère créative !`,
+			description: `<p>Postez et échangez avec la communauté <span>ARYA</span>. Soyez libres de poster ce qui vous plaît, montrez vos talents, libérez votre imaginaire dans cette sphère créative !</p>`,
 			anchor: "social",
 		},
 		{
@@ -31,7 +31,7 @@ export default function Service() {
 			icon: "./images/icons/calendar_icon.svg",
 			subscriptions: false,
 			description:
-				"Organisez-vous de manière simple et méthodique, puis suivez vos projets planifiés sur ARYA",
+				"<p>Organisez-vous de manière simple et méthodique, puis suivez vos projets planifiés sur <span>ARYA</span></p>",
 			anchor: "organize",
 		},
 		{
@@ -40,7 +40,7 @@ export default function Service() {
 			icon: "./images/icons/schedule_icon.svg",
 			subscriptions: true,
 			description:
-				"Arya dispose d’une fonctionnalité visant à automatiser votre activité afin de fructifier votre productivité et de garder la conscience tranquille. Programmez vos posts, puis qu’ils soient publiés automatiquement directement dans cette capsule !",
+				"<p><span>ARYA</span> dispose d’une fonctionnalité visant à automatiser votre activité afin de fructifier votre productivité et de garder la conscience tranquille. Programmez vos posts, puis qu’ils soient publiés automatiquement directement dans cette capsule !</p>",
 			anchor: "organize",
 		},
 		{
@@ -49,7 +49,7 @@ export default function Service() {
 			icon: "./images/icons/chart_icon.svg",
 			subscriptions: true,
 			description:
-				"Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.",
+				"<p>Un espace simple et abordable dans lequel vous pourrez décrocher l’emploi de vos rêves ou trouver votre candidat idéal en un clic.</p>",
 			anchor: "organize",
 		},
 	];

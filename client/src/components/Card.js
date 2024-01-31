@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Markdown from "markdown-to-jsx";
 import styles from "../styles/components/card.module.css";
 
 export default function Card({ elements }) {
@@ -27,7 +28,7 @@ export default function Card({ elements }) {
 					<h3>{elements.title}</h3>
 				</div>
 				<div className={styles.content}>
-					<p>{elements.description}</p>
+					<Markdown>{elements.description}</Markdown>
 				</div>
 			</div>
 		</article>

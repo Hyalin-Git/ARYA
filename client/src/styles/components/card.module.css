@@ -77,6 +77,10 @@
 	font-weight: 300;
 }
 
+.content span {
+	font-weight: bold;
+}
+
 /* hover  */
 
 /* articles  */
