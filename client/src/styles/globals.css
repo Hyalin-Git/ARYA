@@ -213,6 +213,12 @@ body::-webkit-scrollbar {
 	}
 }
 
+@media (max-width: 600px) {
+	body::before {
+		display: none;
+	}
+}
+
 @media (max-width: 380px) {
 	button {
 		font-weight: 600;
