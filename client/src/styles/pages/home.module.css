@@ -71,18 +71,18 @@
 
 @media (max-height: 780px) {
 	.hero {
-		min-height: 90vh;
+		min-height: 90svh;
 	}
 }
 
 @media (max-height: 720px) {
 	.hero {
-		min-height: 89vh;
+		min-height: 89svh;
 	}
 }
 
 @media (max-height: 680px) {
 	.hero {
-		min-height: 88vh;
+		min-height: 88svh;
 	}
 }
