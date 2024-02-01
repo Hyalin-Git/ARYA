@@ -3,10 +3,11 @@ import Link from "next/link";
 import Image from "next/image";
 import Markdown from "markdown-to-jsx";
 import styles from "../styles/components/card.module.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 
 export default function Card({ elements }) {
+	const [isClient, setIsClient] = useState(false);
 	const options = {
 		root: null, // L'élément racine utilisé comme viewport. Si null, le viewport du navigateur est utilisé.
 		rootMargin: "0px", // Marge autour du viewport pour étendre ou réduire la zone d'intersection.
@@ -16,8 +17,6 @@ export default function Card({ elements }) {
 		const cards = document.getElementsByClassName("card");
 
 		window.addEventListener("touchstart", function (e) {
-			e.preventDefault();
-
 			const observer = new IntersectionObserver((entries) => {
 				entries.forEach((entry) => {
 					if (window.innerWidth <= "780") {
@@ -33,6 +32,7 @@ export default function Card({ elements }) {
 				observer.observe(card);
 			}
 		});
+		setIsClient(true);
 	}, []);
 	return (
 		<Link href={"#" + elements.anchor} className={styles.link}>
@@ -59,7 +59,7 @@ export default function Card({ elements }) {
 						<h3>{elements.title}</h3>
 					</div>
 					<div className={styles.content}>
-						<Markdown>{elements.description}</Markdown>
+						{isClient && <Markdown>{elements.description}</Markdown>}
 					</div>
 				</div>
 			</article>

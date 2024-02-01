@@ -47,3 +47,9 @@
 	font-weight: 500;
 	list-style-type: none;
 }
+
+@media (max-width: 800px) {
+	.menu {
+		display: none;
+	}
+}
