@@ -1,4 +1,5 @@
 import { montserrat } from "@/libs/fonts";
+import Link from "next/link";
 import styles from "../../styles/components/home/hero.module.css";
 
 export default function Hero() {
@@ -13,9 +14,11 @@ export default function Hero() {
 					<br />
 					ami du freelance
 					<br />
-					<button className={montserrat.className}>
-						Rejoindre la communauté
-					</button>
+					<Link href="/auth">
+						<button className={montserrat.className}>
+							Rejoindre la communauté
+						</button>
+					</Link>
 				</h1>
 			</div>
 			<div className={styles.subtitle}>

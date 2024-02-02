@@ -1,0 +1,104 @@
+.container {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	margin: 0 70px 0 70px;
+
+	height: 100%;
+}
+
+/* titles  */
+.titles {
+	text-align: left;
+	padding-bottom: 20px;
+	margin-bottom: 30px;
+	border-bottom: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+}
+
+.titles h2 {
+	font-size: 1rem;
+	font-weight: 400;
+}
+
+/* form  */
+
+.form {
+	position: relative;
+	margin-bottom: 10px;
+}
+
+.form input {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 15px 40px 15px 40px;
+	background-color: inherit;
+	border: none;
+	outline: none;
+	border-radius: 8px;
+	border: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+	box-shadow: var(--passive-shadow);
+	caret-color: var(--meteorite-color);
+	transition: 150ms all linear;
+	color: white;
+	font-size: 1rem;
+	font-weight: 600;
+	max-width: 355px;
+	width: 100%;
+}
+
+.form input:focus {
+	border: 1px solid var(--meteorite-color);
+	transition: 150ms all linear;
+	/* box-shadow: var(--active-shadow); */
+	background: rgb(var(--layer-color));
+}
+
+.form input:nth-child(3) {
+	background-image: url("../../../../public/images/icons/email_icon.svg");
+	background-size: 20px;
+	background-repeat: no-repeat;
+	background-position: 12px center;
+}
+
+.form input:nth-child(8) {
+	background-image: url("../../../../public/images/icons/password_icon.svg");
+	background-size: 20px;
+	background-repeat: no-repeat;
+	background-position: 12px center;
+}
+
+.visible {
+	position: absolute;
+	margin-top: -45px;
+	right: 12px;
+	filter: invert(1) brightness(60%);
+}
+
+.visible:hover {
+	cursor: pointer;
+	filter: invert(1) brightness(70%);
+}
+
+.form button {
+	margin-top: -10px;
+	width: 100%;
+	min-width: 440px;
+	font-size: 1.2rem;
+	font-weight: 500;
+}
+
+/* bottom text  */
+
+.text {
+	text-align: center;
+	font-weight: 300;
+}
+
+.text span {
+	color: var(--lavender-color);
+	font-weight: bold;
+}
+
+.text span:hover {
+	cursor: pointer;
+}

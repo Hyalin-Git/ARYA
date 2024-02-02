@@ -1,6 +1,7 @@
 "use client";
 import { montserrat } from "@/libs/fonts";
 import styles from "../../styles/components/home/joinArya.module.css";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 export default function JoinArya() {
@@ -16,9 +17,11 @@ export default function JoinArya() {
 				</h3>
 			</div>
 			<div className={styles.button__container}>
-				<button className={montserrat.className}>
-					Rejoindre la communauté
-				</button>
+				<Link href="/auth">
+					<button className={montserrat.className}>
+						Rejoindre la communauté
+					</button>
+				</Link>
 			</div>
 		</section>
 	);

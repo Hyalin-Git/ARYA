@@ -1,0 +1,29 @@
+.container {
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.left {
+	background-color: var(--meteorite-color);
+	height: 100%;
+	/* border-radius: 14px; */
+	/* margin-left: 10px; */
+	width: 70%;
+
+	box-shadow: var(--active-shadow);
+}
+
+.right {
+	position: relative;
+	z-index: 100;
+
+	/* background-color: white; */
+	width: 30%;
+	min-width: 550px;
+	height: 100%;
+}
+
+.forms {
+}

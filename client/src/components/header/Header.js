@@ -16,12 +16,13 @@ export default function Header() {
 			const marginOfError = 100;
 
 			const header = document.getElementById("header");
+
 			// When the user starts scrolling make the background appear
-			if (header.offsetTop > 10) {
+			if (header?.offsetTop > 10) {
 				setIsScroll(true);
 			}
 			// If the user is at the top of the page then make the header background disapear
-			if (header.offsetTop <= 10) {
+			if (header?.offsetTop <= 10) {
 				setIsScroll(false);
 			}
 
