@@ -1,21 +1,19 @@
+"use client";
 import Image from "next/image";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/auth/signIn.module.css";
 import clsx from "clsx";
+import { useState } from "react";
 
 export default function SignIn() {
+	const [isHide, setIsHide] = useState(false);
 	function handleShowHidePassowrd(e) {
+		e.preventDefault();
 		const element = e.currentTarget;
-		const image = element.children[0];
 		const passwordInput = element.previousElementSibling;
 
-		if (passwordInput.getAttribute("type") === "password") {
-			image.src = "/images/icons/eye-slash_icon.svg";
-			passwordInput.setAttribute("type", "text");
-		} else {
-			image.src = "/images/icons/eye_icon.svg";
-			passwordInput.setAttribute("type", "password");
-		}
+		passwordInput.focus();
+		setIsHide(!isHide);
 	}
 	return (
 		<div className={styles.container}>
@@ -39,13 +37,17 @@ export default function SignIn() {
 					<br />
 					<input
 						className={montserrat.className}
-						type="password"
+						type={isHide ? "text" : "password"}
 						name="password"
 						id="password"
 					/>
 					<div className={styles.visible} onClick={handleShowHidePassowrd}>
 						<Image
-							src="/images/icons/eye_icon.svg"
+							src={
+								isHide
+									? "/images/icons/eye-slash_icon.svg"
+									: "/images/icons/eye_icon.svg"
+							}
 							width={20}
 							height={20}
 							alt="eye logo"
