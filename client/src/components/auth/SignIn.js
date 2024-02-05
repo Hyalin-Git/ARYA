@@ -34,6 +34,7 @@ export default function SignIn({ setIsSignIn, setIsSignUp }) {
 						type="email"
 						name="email"
 						id="email"
+						placeholder="example@email.com"
 					/>
 					<br />
 					<br />
@@ -44,6 +45,7 @@ export default function SignIn({ setIsSignIn, setIsSignUp }) {
 						type={isHide ? "text" : "password"}
 						name="password"
 						id="password"
+						placeholder="Au moins 8 caractères"
 					/>
 					<div className={styles.visible} onClick={handleShowHidePassowrd}>
 						<Image

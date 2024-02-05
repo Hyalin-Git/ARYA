@@ -30,17 +30,15 @@
 .names {
 	display: flex;
 	justify-content: center;
-	align-items: center;
 	gap: 50px;
-	/* background-color: red; */
 }
 
 .names div {
-	text-align: center;
+	text-align: left;
 }
 
 .names div input {
-	text-align: center;
+	text-align: left;
 	max-width: 120px;
 }
 

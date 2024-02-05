@@ -35,6 +35,7 @@ export default function SignUp({ setIsSignUp, setIsSignIn }) {
 								type="text"
 								name="lastname"
 								id="lastname"
+								placeholder="Nom"
 							/>
 						</div>
 						<div>
@@ -44,6 +45,7 @@ export default function SignUp({ setIsSignUp, setIsSignIn }) {
 								type="text"
 								name="firstname"
 								id="firstname"
+								placeholder="Prénom"
 							/>
 						</div>
 					</div>
@@ -56,6 +58,7 @@ export default function SignUp({ setIsSignUp, setIsSignIn }) {
 						type="text"
 						name="username"
 						id="username"
+						placeholder="@utilisateur"
 					/>
 					<br />
 					<br />
@@ -66,6 +69,7 @@ export default function SignUp({ setIsSignUp, setIsSignIn }) {
 						type="email"
 						name="email"
 						id="email"
+						placeholder="example@email.com"
 					/>
 					<br />
 					<br />
@@ -76,16 +80,30 @@ export default function SignUp({ setIsSignUp, setIsSignIn }) {
 						type={isHide ? "text" : "password"}
 						name="password"
 						id="password"
+						placeholder="Au moins 8 caractères"
 					/>
+					<div className={styles.visible} onClick={handleShowHidePassowrd}>
+						<Image
+							src={
+								isHide
+									? "/images/icons/eye-slash_icon.svg"
+									: "/images/icons/eye_icon.svg"
+							}
+							width={20}
+							height={20}
+							alt="eye logo"
+						/>
+					</div>
+
 					<br />
-					<br />
-					<label htmlFor="password">Mot de passe</label>
+					<label htmlFor="password">Vérifiez votre mot de passe</label>
 					<br />
 					<input
 						className={montserrat.className}
 						type={isHide ? "text" : "password"}
 						name="password"
 						id="password"
+						placeholder="Retapez votre mot de passe"
 					/>
 					<div className={styles.visible} onClick={handleShowHidePassowrd}>
 						<Image
