@@ -27,6 +27,23 @@
 	margin-bottom: 10px;
 }
 
+.names {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 50px;
+	/* background-color: red; */
+}
+
+.names div {
+	text-align: center;
+}
+
+.names div input {
+	text-align: center;
+	max-width: 120px;
+}
+
 .form input {
 	margin-top: 10px;
 	margin-bottom: 10px;

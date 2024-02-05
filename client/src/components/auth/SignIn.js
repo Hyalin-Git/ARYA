@@ -2,10 +2,9 @@
 import Image from "next/image";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/auth/signIn.module.css";
-import clsx from "clsx";
 import { useState } from "react";
 
-export default function SignIn() {
+export default function SignIn({ setIsSignIn, setIsSignUp }) {
 	const [isHide, setIsHide] = useState(false);
 	function handleShowHidePassowrd(e) {
 		e.preventDefault();
@@ -14,6 +13,11 @@ export default function SignIn() {
 
 		passwordInput.focus();
 		setIsHide(!isHide);
+	}
+
+	function handleSignUp() {
+		setIsSignIn(false);
+		setIsSignUp(true);
 	}
 	return (
 		<div className={styles.container}>
@@ -62,7 +66,8 @@ export default function SignIn() {
 			</div>
 			<div className={styles.text}>
 				<p>
-					Vous n'avez pas de compte ? <span>Créer un compte</span>
+					Vous n'avez pas de compte ?{" "}
+					<span onClick={handleSignUp}>Créer un compte</span>
 				</p>
 			</div>
 		</div>
