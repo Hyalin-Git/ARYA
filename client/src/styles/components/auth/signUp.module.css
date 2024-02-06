@@ -3,7 +3,6 @@
 	justify-content: center;
 	flex-direction: column;
 	margin: 0 70px 0 70px;
-
 	height: 100%;
 }
 
@@ -21,10 +20,15 @@
 }
 
 /* form  */
-
 .form {
 	position: relative;
 	margin-bottom: 10px;
+}
+
+.steps[data-step="1"],
+.steps[data-step="2"],
+.steps[data-step="3"] {
+	display: none;
 }
 
 .names {
@@ -106,7 +110,8 @@
 	filter: invert(1) brightness(70%);
 }
 
-.form button {
+/* button  */
+.form .main {
 	margin-top: -10px;
 	width: 100%;
 	min-width: 440px;

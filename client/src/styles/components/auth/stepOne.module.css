@@ -1,0 +1,83 @@
+.titles {
+	text-align: left;
+	padding-bottom: 20px;
+	margin-bottom: 30px;
+	border-bottom: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+}
+
+.titles h2 {
+	font-size: 1rem;
+	font-weight: 400;
+}
+
+.form {
+	margin-bottom: 30px;
+}
+
+.form div {
+	border-radius: 8px;
+	border: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+	box-shadow: var(--passive-shadow);
+	transition: 150ms all linear;
+}
+
+.form div:hover {
+	cursor: pointer;
+	border: 1px solid var(--meteorite-color);
+	transition: 150ms all linear;
+	box-shadow: var(--active-shadow);
+	background: rgb(var(--layer-color));
+}
+
+.form .checked {
+	cursor: pointer;
+	border: 1px solid var(--meteorite-color);
+	transition: 150ms all linear;
+	box-shadow: var(--active-shadow);
+	background: rgb(var(--layer-color));
+}
+
+.form div h3 {
+	text-align: left;
+	padding-left: 10px;
+}
+
+.form div p {
+	padding-left: 10px;
+	padding-right: 10px;
+	font-weight: 300;
+	padding-bottom: 10px;
+}
+
+.form input {
+	display: none;
+}
+
+/* buttons  */
+
+.buttons {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.skip {
+	margin-left: -12px;
+	background: inherit;
+	min-width: inherit;
+	width: fit-content;
+	font-size: 1rem;
+	font-weight: 400;
+	box-shadow: inherit;
+	color: color-mix(in srgb, var(--white-color), black 25%);
+}
+
+.skip:hover {
+	color: white;
+	transition: color 150ms linear;
+}
+
+.previous,
+.next {
+	width: 120px;
+}
