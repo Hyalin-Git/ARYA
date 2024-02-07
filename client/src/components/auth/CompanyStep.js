@@ -12,7 +12,6 @@ export default function CompanyStep() {
 				</h2>
 			</div>
 			<div></div>
-			<Buttons />
 		</>
 	);
 }

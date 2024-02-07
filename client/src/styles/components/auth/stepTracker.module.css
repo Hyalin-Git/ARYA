@@ -1,14 +1,19 @@
+.container {
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 100%;
+}
+
 .tracker {
 	position: relative;
-	background-color: white;
-	width: 4px;
-	height: 500px;
-	border-radius: 14px;
-	margin-top: 50px;
-	margin-bottom: 50px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
+	background-color: white;
+	width: 4px;
+	height: 100%;
+	border-radius: 14px;
 }
 .tracker::before {
 	position: absolute;
@@ -17,11 +22,11 @@
 	left: 0;
 	height: 0%;
 	width: 4px;
-	background-color: var(--meteorite-color);
+	background-color: var(--lavender-color);
 }
 
 .tracker[data-step="1"]::before {
-	height: 20%;
+	height: 25%;
 	transition: all 150ms linear;
 }
 
@@ -31,31 +36,6 @@
 }
 
 .tracker[data-step="3"]::before {
-	height: 100%;
+	height: 85%;
 	transition: all 150ms linear;
-}
-
-.tracker div {
-	position: relative;
-	top: 0;
-	left: -23px;
-	height: 50px;
-	width: 50px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-weight: bold;
-	border-radius: 50%; /* may require vendor prefixes */
-	color: color-mix(in srgb, var(--white-color), black 65%);
-}
-
-.unactive {
-	background-color: white;
-	transition: all 150ms linear;
-}
-
-.active {
-	background-color: var(--meteorite-color);
-	transition: all 150ms linear 150ms;
-	color: white !important;
 }

@@ -6,25 +6,24 @@ import clsx from "clsx";
 import { useState } from "react";
 import StepTracker from "./StepTracker";
 
-export default function UserStep({ setStep }) {
+export default function UserStep({ step, setStep }) {
 	const [isHide, setIsHide] = useState(false);
 
 	function handleShowHidePassowrd(e) {
 		e.preventDefault();
 		const element = e.currentTarget;
 		const passwordInput = element.previousElementSibling;
-
 		passwordInput.focus();
 		setIsHide(!isHide);
 	}
 
 	function handleForm(e) {
 		e.preventDefault();
-		const step = e.target.parentElement.parentElement;
-		console.log(step);
-		const nextStep = step.nextElementSibling;
-		setStep(2);
-		step.style.display = "none";
+		const steps = e.target.parentElement.parentElement;
+
+		setStep(step + 1);
+		const nextStep = steps.nextElementSibling;
+		steps.style.display = "none";
 		nextStep.style.display = "block";
 	}
 	return (

@@ -3,33 +3,33 @@ import styles from "@/styles/components/auth/buttons.module.css";
 import { montserrat } from "@/libs/fonts";
 import clsx from "clsx";
 
-export default function Buttons({ setStep }) {
+export default function Buttons({ step, setStep }) {
 	// Previous step
 	function handlePrevious(e) {
 		e.preventDefault();
-		const step = e.target.parentElement.parentElement;
-		console.log(step);
-		const previousStep = step.previousElementSibling;
-		setStep(1);
-		step.style.display = "none";
+		const steps = e.target.parentElement.parentElement;
+		const previousStep = steps.previousElementSibling;
+		if (step > 1) setStep(step - 1);
+		steps.style.display = "none";
 		previousStep.style.display = "block";
 	}
 
 	// Next step
 	function handleForm(e) {
 		e.preventDefault();
-		const step = e.target.parentElement.parentElement;
-		console.log(step);
-		const nextStep = step.nextElementSibling;
-		setStep(3);
-		step.style.display = "none";
+		const steps = e.target.parentElement.parentElement;
+		setStep(step + 1);
+		const nextStep = steps.nextElementSibling;
+		steps.style.display = "none";
 		nextStep.style.display = "block";
 	}
 
 	return (
 		<div className={styles.buttons}>
-			<button type="submit" className={clsx(montserrat.className, styles.skip)}>
-				Passer les étapes
+			<button
+				onClick={handleForm}
+				className={clsx(montserrat.className, styles.skip)}>
+				Passer cette étape
 			</button>
 			<button
 				onClick={handlePrevious}

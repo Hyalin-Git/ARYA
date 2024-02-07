@@ -1,10 +1,7 @@
 import styles from "@/styles/components/auth/accountType.module.css";
 import clsx from "clsx";
-import StepTracker from "./StepTracker";
-import { montserrat } from "@/libs/fonts";
-import Buttons from "./Buttons";
 
-export default function AccountType({ setIsCompany, setIsWorker, setStep }) {
+export default function AccountType({ setIsCompany, setIsWorker }) {
 	function handleChoice(e, id) {
 		e.preventDefault();
 		const choices = document.getElementsByClassName("choices");
@@ -58,7 +55,6 @@ export default function AccountType({ setIsCompany, setIsWorker, setStep }) {
 					<input type="radio" name="accountType" id="worker" value="worker" />
 				</div>
 			</div>
-			<Buttons setStep={setStep} />
 		</>
 	);
 }

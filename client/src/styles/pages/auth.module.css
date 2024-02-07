@@ -6,10 +6,20 @@
 }
 
 .leftside {
+	position: relative;
+	z-index: -10;
 	background-color: var(--meteorite-color);
 	height: 100%;
 	width: 70%;
 	box-shadow: var(--active-shadow);
+	box-sizing: border-box;
+}
+.content {
+	margin: 0 70px 0 70px;
+	height: 100%;
+}
+.logo {
+	text-align: center;
 }
 
 .rightside {

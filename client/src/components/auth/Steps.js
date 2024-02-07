@@ -5,6 +5,7 @@ import UserStep from "./UserStep";
 import AccountType from "./AccountTypeStep";
 import CompanyStep from "./CompanyStep";
 import WorkerStep from "./WorkerStep";
+import Buttons from "./Buttons";
 
 export default function Steps({ step, setStep }) {
 	const [isCompany, setIsCompany] = useState(false);
@@ -13,26 +14,25 @@ export default function Steps({ step, setStep }) {
 	return (
 		<>
 			<div className={styles.steps} data-step="1" id="step-1">
-				<UserStep setStep={setStep} />
+				<UserStep step={step} setStep={setStep} />
 			</div>
 
 			<div className={styles.steps} data-step="2" id="step-2">
-				<AccountType
-					setIsCompany={setIsCompany}
-					setIsWorker={setIsWorker}
-					setStep={setStep}
-				/>
+				<AccountType setIsCompany={setIsCompany} setIsWorker={setIsWorker} />
+				<Buttons step={step} setStep={setStep} />
 			</div>
 
 			<div className={styles.steps} data-step="3" id="step-3">
 				{isCompany && (
 					<>
 						<CompanyStep />
+						<Buttons step={step} setStep={setStep} />
 					</>
 				)}
 				{isWorker && (
 					<>
 						<WorkerStep />
+						<Buttons step={step} setStep={setStep} />
 					</>
 				)}
 			</div>

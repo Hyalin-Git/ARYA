@@ -9,7 +9,7 @@ export default function WorkerStep() {
 					Veuillez fournir des informations complémentaire pour votre work
 				</h2>
 			</div>
-			<Buttons />
+
 		</>
 	);
 }
