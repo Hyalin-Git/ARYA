@@ -1,50 +1,23 @@
 .container {
 	display: flex;
 	justify-content: center;
-	flex-direction: column;
+	gap: 30px;
+	align-items: center;
 	margin: 0 70px 0 70px;
 	height: 100%;
 }
-
-/* titles  */
-.titles {
-	text-align: left;
-	padding-bottom: 20px;
-	margin-bottom: 30px;
-	border-bottom: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+.tracker {
+	position: relative;
+	top: 25px;
+	right: 20px;
 }
-
-.titles h2 {
-	font-size: 1rem;
-	font-weight: 400;
-}
-
 /* form  */
 .form {
 	position: relative;
 	margin-bottom: 10px;
 }
 
-.steps[data-step="1"],
-.steps[data-step="2"],
-.steps[data-step="3"] {
-	display: none;
-}
-
-.names {
-	display: flex;
-	justify-content: center;
-	gap: 50px;
-}
-
-.names div {
-	text-align: left;
-}
-
-.names div input {
-	text-align: left;
-	max-width: 120px;
-}
+/* styles for inputs  */
 
 .form input {
 	margin-top: 10px;
@@ -61,62 +34,15 @@
 	color: white;
 	font-size: 1rem;
 	font-weight: 600;
-	max-width: 355px;
+	box-sizing: border-box;
+	max-width: 100%;
 	width: 100%;
 }
 
 .form input:focus {
 	border: 1px solid var(--meteorite-color);
 	transition: 150ms all linear;
-	/* box-shadow: var(--active-shadow); */
 	background: rgb(var(--layer-color));
-}
-
-.form input:nth-child(3) {
-	background-image: url("../../../../public/images/icons/email_icon.svg");
-	background-size: 20px;
-	background-repeat: no-repeat;
-	background-position: 12px center;
-}
-
-.form input:nth-child(3):focus {
-	background-size: 20px;
-	background-repeat: no-repeat;
-	background-position: 12px center;
-}
-
-.form input:nth-child(8) {
-	background-image: url("../../../../public/images/icons/password_icon.svg");
-	background-size: 20px;
-	background-repeat: no-repeat;
-	background-position: 12px center;
-}
-
-.form input:nth-child(8):focus {
-	background-size: 20px;
-	background-repeat: no-repeat;
-	background-position: 12px center;
-}
-
-.visible {
-	position: absolute;
-	margin-top: -45px;
-	right: 12px;
-	filter: invert(1) brightness(60%);
-}
-
-.visible:hover {
-	cursor: pointer;
-	filter: invert(1) brightness(70%);
-}
-
-/* button  */
-.form .main {
-	margin-top: -10px;
-	width: 100%;
-	min-width: 440px;
-	font-size: 1.2rem;
-	font-weight: 500;
 }
 
 /* bottom text  */

@@ -5,25 +5,17 @@
 	align-items: center;
 }
 
-.left {
+.leftside {
 	background-color: var(--meteorite-color);
 	height: 100%;
-	/* border-radius: 14px; */
-	/* margin-left: 10px; */
 	width: 70%;
-
 	box-shadow: var(--active-shadow);
 }
 
-.right {
+.rightside {
 	position: relative;
 	z-index: 100;
-
-	/* background-color: white; */
 	width: 30%;
 	min-width: 550px;
 	height: 100%;
-}
-
-.forms {
 }

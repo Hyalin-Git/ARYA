@@ -1,0 +1,28 @@
+/* buttons  */
+
+.buttons {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.skip {
+	margin-left: -12px;
+	background: inherit;
+	min-width: inherit;
+	width: fit-content;
+	font-size: 1rem;
+	font-weight: 400;
+	box-shadow: inherit;
+	color: color-mix(in srgb, var(--white-color), black 25%);
+}
+
+.skip:hover {
+	color: white;
+	transition: color 150ms linear;
+}
+
+.previous,
+.next {
+	width: 120px;
+}

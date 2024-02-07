@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export default function SignIn({ setIsSignIn, setIsSignUp }) {
 	const [isHide, setIsHide] = useState(false);
+
 	function handleShowHidePassowrd(e) {
 		e.preventDefault();
 		const element = e.currentTarget;
@@ -16,9 +17,10 @@ export default function SignIn({ setIsSignIn, setIsSignUp }) {
 	}
 
 	function handleSignUp() {
-		setIsSignIn(false);
 		setIsSignUp(true);
+		setIsSignIn(false);
 	}
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.titles}>

@@ -1,0 +1,4 @@
+.steps[data-step="2"],
+.steps[data-step="3"] {
+	display: none;
+}

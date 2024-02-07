@@ -45,15 +45,15 @@ const facebookRouter = require("./routes/facebook.routes");
 
 const app = express();
 
-const privateKey = fs.readFileSync("./config/localhost-key.pem", "utf8");
-const certificate = fs.readFileSync("./config/localhost.pem", "utf8");
+// const privateKey = fs.readFileSync("./config/localhost-key.pem", "utf8");
+// const certificate = fs.readFileSync("./config/localhost.pem", "utf8");
 
-const credentials = { key: privateKey, cert: certificate };
+// const credentials = { key: privateKey, cert: certificate };
 
-const httpsServer = https.createServer(credentials, app);
+// const httpsServer = https.createServer(credentials, app);
 
 const corsOptions = {
-	origin: `http://192.168.0.32:3000`,
+	origin: `http://localhost:3000`,
 	credentials: true,
 	allowedHeaders: ["sessionId", "Content-Type"],
 	exposedHeaders: ["sessionId"],
@@ -107,7 +107,7 @@ app.get("/login/success", authenticate, (req, res, next) => {
 	}
 });
 
-const server = httpsServer.listen(process.env.PORT, (err) => {
+const server = app.listen(process.env.PORT, (err) => {
 	if (err) {
 		console.log(err);
 	} else {

@@ -1,0 +1,77 @@
+.titles {
+	text-align: left;
+	padding-bottom: 20px;
+	margin-bottom: 30px;
+	border-bottom: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+}
+
+.titles h2 {
+	font-size: 1rem;
+	font-weight: 400;
+}
+
+/* style for firstname & lastname  */
+
+.names {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+}
+
+.names div {
+	text-align: left;
+}
+
+.names div input {
+	text-align: left;
+}
+
+/* inputs  */
+.lastname,
+.firstname {
+	background-image: url("../../../../public/images/icons/user_icon.svg") !important;
+	background-size: 20px !important;
+	background-repeat: no-repeat !important;
+	background-position: 12px center !important;
+}
+
+.username {
+	background-image: url("../../../../public/images/icons/at_icon.svg") !important;
+	background-size: 20px !important;
+	background-repeat: no-repeat !important;
+	background-position: 12px center !important;
+}
+
+.email {
+	background-image: url("../../../../public/images/icons/email_icon.svg") !important;
+	background-size: 20px !important;
+	background-repeat: no-repeat !important;
+	background-position: 12px center !important;
+}
+
+.password {
+	background-image: url("../../../../public/images/icons/password_icon.svg") !important;
+	background-size: 20px !important;
+	background-repeat: no-repeat !important;
+	background-position: 12px center !important;
+}
+
+/* Eye icon  */
+
+.visible {
+	position: absolute;
+	margin-top: -45px;
+	right: 12px;
+	filter: invert(1) brightness(60%);
+}
+
+.visible:hover {
+	cursor: pointer;
+	filter: invert(1) brightness(70%);
+}
+
+.button button {
+	width: 100%;
+	font-size: 1.2rem;
+	font-weight: 500;
+}

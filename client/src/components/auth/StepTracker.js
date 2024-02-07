@@ -2,8 +2,8 @@ import styles from "@/styles/components/auth/stepTracker.module.css";
 import clsx from "clsx";
 export default function StepTracker({ step }) {
 	return (
-		<div className={styles.container}>
-			<div className={styles.tracker}>
+		<>
+			<div className={styles.tracker} data-step={step}>
 				<div className={clsx(step >= 1 ? styles.active : styles.unactive)}>
 					1
 				</div>
@@ -14,6 +14,6 @@ export default function StepTracker({ step }) {
 					3
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }
