@@ -1,11 +1,5 @@
 /* buttons  */
 
-.buttons {
-	display: flex;
-	justify-content: space-between;
-	margin-bottom: 10px;
-}
-
 .skip {
 	margin-left: -12px;
 	background: inherit;

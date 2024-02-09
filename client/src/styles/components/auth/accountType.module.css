@@ -52,3 +52,9 @@
 .form input {
 	display: none;
 }
+
+.buttons {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}

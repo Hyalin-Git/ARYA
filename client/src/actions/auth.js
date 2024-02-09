@@ -1,7 +1,6 @@
 "use server";
 import axios from "axios";
 export async function createUser(formData) {
-	console.log(formData.pending);
 	console.log(formData);
 }
 

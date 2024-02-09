@@ -1,7 +1,13 @@
 import styles from "@/styles/components/auth/accountType.module.css";
 import clsx from "clsx";
+import Buttons from "./Buttons";
 
-export default function AccountType({ setIsCompany, setIsWorker }) {
+export default function AccountType({
+	setIsCompany,
+	setIsWorker,
+	step,
+	setStep,
+}) {
 	function handleChoice(e, id) {
 		e.preventDefault();
 		const choices = document.getElementsByClassName("choices");
@@ -13,7 +19,7 @@ export default function AccountType({ setIsCompany, setIsWorker }) {
 			setIsWorker(false);
 		}
 
-		if (input.id === "worker") {
+		if (input.id === "freelance") {
 			setIsCompany(false);
 			setIsWorker(true);
 		}
@@ -40,20 +46,65 @@ export default function AccountType({ setIsCompany, setIsWorker }) {
 						Le compte travail, vous permettra de chercher du travail auprès des
 						entreprises, vous pourrez ajouter votre CV etc
 					</p>
-					<input type="radio" name="accountType" id="company" value="company" />
+					<input
+						className={styles.input}
+						type="radio"
+						name="accountType"
+						id="company"
+						value="company"
+					/>
+				</div>
+				<br />
+				{/* <div
+					className={clsx("choices")}
+					onClick={(e) => handleChoice(e, "society")}
+					data-checked={false}>
+					<h3>Société</h3>
+					<p>
+						Le compte société, vous permettra de chercher du travail auprès des
+						entreprises, vous pourrez ajouter votre CV etc
+					</p>
+					<input type="radio" name="accountType" id="society" value="society" />
+				</div>
+				<br /> */}
+				<div
+					className={clsx("choices")}
+					onClick={(e) => handleChoice(e, "freelance")}
+					data-checked={false}>
+					<h3>Freelance</h3>
+					<p>
+						Le compte freelance, vous permettra de chercher du travail auprès
+						des entreprises, vous pourrez ajouter votre CV etc
+					</p>
+					<input
+						className={styles.input}
+						type="radio"
+						name="accountType"
+						id="freelance"
+						value="freelance"
+					/>
 				</div>
 				<br />
 				<div
 					className={clsx("choices")}
-					onClick={(e) => handleChoice(e, "worker")}
+					onClick={(e) => handleChoice(e, "other")}
 					data-checked={false}>
-					<h3>Tu cherche un travail ?</h3>
+					<h3>Autre</h3>
 					<p>
-						Le compte travail, vous permettra de chercher du travail auprès des
+						Le compte autre, vous permettra de chercher du travail auprès des
 						entreprises, vous pourrez ajouter votre CV etc
 					</p>
-					<input type="radio" name="accountType" id="worker" value="worker" />
+					<input
+						className={styles.input}
+						type="radio"
+						name="accountType"
+						id="other"
+						value="other"
+					/>
 				</div>
+			</div>
+			<div className={styles.buttons}>
+				<Buttons step={step} setStep={setStep} />
 			</div>
 		</>
 	);

@@ -1,3 +1,4 @@
+/* titles  */
 .titles {
 	text-align: left;
 	padding-bottom: 20px;
@@ -8,4 +9,64 @@
 .titles h2 {
 	font-size: 1rem;
 	font-weight: 400;
+}
+.form .logo {
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	margin-top: 10px;
+	/* border: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+	border-radius: 8px;
+	box-shadow: var(--passive-shadow); */
+	/* gap: 40px; */
+}
+.form img {
+	border-radius: 8px;
+	object-fit: cover;
+	object-position: top;
+	display: none;
+}
+
+.form .recruiting {
+	display: flex;
+	justify-content: space-evenly;
+	gap: 20px;
+	margin-top: 10px;
+}
+
+.form .recruiting div {
+	text-align: center;
+	width: 100%;
+	border-radius: 8px;
+	border: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+	box-shadow: var(--passive-shadow);
+	transition: 150ms all linear;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.form .recruiting div:hover,
+.form .recruiting div:has(input[type="radio"]:checked) {
+	cursor: pointer;
+	border: 1px solid var(--meteorite-color);
+	transition: 150ms all linear;
+	box-shadow: var(--active-shadow);
+	background: rgb(var(--layer-color));
+}
+
+.form .recruiting label {
+	pointer-events: none;
+	text-align: center;
+}
+
+.form .recruiting input[type="radio"] {
+	display: none;
+}
+
+/* buttons  */
+.buttons {
+	margin-top: 25px;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 10px;
 }

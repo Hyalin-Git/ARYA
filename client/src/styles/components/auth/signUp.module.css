@@ -19,7 +19,8 @@
 
 /* styles for inputs  */
 
-.form input {
+.form input:not([type="file"]):not([type="radio"]),
+.form select {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	padding: 15px 40px 15px 40px;
@@ -38,8 +39,22 @@
 	max-width: 100%;
 	width: 100%;
 }
+.form select {
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+}
+.form select:active {
+	border-radius: 8px 8px 0 0;
+	border: 1px solid var(--meteorite-color);
+	background: rgb(var(--layer-color));
+}
+.form option {
+	border: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+	color: black;
+}
 
-.form input:focus {
+.form input:not([type="radio"]):focus {
 	border: 1px solid var(--meteorite-color);
 	transition: 150ms all linear;
 	background: rgb(var(--layer-color));

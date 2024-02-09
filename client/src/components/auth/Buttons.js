@@ -2,8 +2,19 @@
 import styles from "@/styles/components/auth/buttons.module.css";
 import { montserrat } from "@/libs/fonts";
 import clsx from "clsx";
+import { accountTypeValidation } from "@/libs/utils";
 
 export default function Buttons({ step, setStep }) {
+	// Skip step
+	function handleSkip(e) {
+		e.preventDefault();
+		const steps = e.target.parentElement.parentElement;
+		setStep(step + 1);
+		const nextStep = steps.nextElementSibling;
+		steps.style.display = "none";
+		nextStep.style.display = "block";
+	}
+
 	// Previous step
 	function handlePrevious(e) {
 		e.preventDefault();
@@ -15,9 +26,14 @@ export default function Buttons({ step, setStep }) {
 	}
 
 	// Next step
-	function handleForm(e) {
+	async function handleForm(e) {
 		e.preventDefault();
 		const steps = e.target.parentElement.parentElement;
+		// form validation
+		const isValidate = accountTypeValidation();
+		if (!isValidate) {
+			return;
+		}
 		setStep(step + 1);
 		const nextStep = steps.nextElementSibling;
 		steps.style.display = "none";
@@ -25,9 +41,9 @@ export default function Buttons({ step, setStep }) {
 	}
 
 	return (
-		<div className={styles.buttons}>
+		<>
 			<button
-				onClick={handleForm}
+				onClick={handleSkip}
 				className={clsx(montserrat.className, styles.skip)}>
 				Passer cette étape
 			</button>
@@ -42,6 +58,6 @@ export default function Buttons({ step, setStep }) {
 				className={clsx(montserrat.className, styles.next)}>
 				Suivant
 			</button>
-		</div>
+		</>
 	);
 }

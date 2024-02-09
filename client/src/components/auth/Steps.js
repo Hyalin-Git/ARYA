@@ -18,21 +18,23 @@ export default function Steps({ step, setStep }) {
 			</div>
 
 			<div className={styles.steps} data-step="2" id="step-2">
-				<AccountType setIsCompany={setIsCompany} setIsWorker={setIsWorker} />
-				<Buttons step={step} setStep={setStep} />
+				<AccountType
+					setIsCompany={setIsCompany}
+					setIsWorker={setIsWorker}
+					step={step}
+					setStep={setStep}
+				/>
 			</div>
 
 			<div className={styles.steps} data-step="3" id="step-3">
 				{isCompany && (
 					<>
-						<CompanyStep />
-						<Buttons step={step} setStep={setStep} />
+						<CompanyStep step={step} setStep={setStep} />
 					</>
 				)}
 				{isWorker && (
 					<>
-						<WorkerStep />
-						<Buttons step={step} setStep={setStep} />
+						<WorkerStep step={step} setStep={setStep} />
 					</>
 				)}
 			</div>
