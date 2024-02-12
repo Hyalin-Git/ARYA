@@ -220,3 +220,22 @@ body::-webkit-scrollbar {
 		font-size: 0.7rem;
 	}
 }
+
+#addFile {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0;
+	padding: 0;
+	padding-left: 25px;
+	border-radius: 0 4px 4px 0;
+	width: 45%;
+	font-weight: bold;
+	text-align: center;
+	background-color: var(--meteorite-color);
+	cursor: pointer;
+	background-image: url("../../public/images/icons/upload_icon.svg");
+	background-repeat: no-repeat;
+	background-size: 18px;
+	background-position: 12px 15px;
+}

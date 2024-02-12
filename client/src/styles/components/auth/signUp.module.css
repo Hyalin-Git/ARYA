@@ -18,6 +18,14 @@
 }
 
 /* styles for inputs  */
+.form input[type="file"] {
+	position: absolute;
+	z-index: -1;
+	overflow: hidden;
+	opacity: 0;
+	width: 0.1px;
+	height: 0.1px;
+}
 
 .form input:not([type="file"]):not([type="radio"]),
 .form select {
@@ -36,7 +44,6 @@
 	font-size: 1rem;
 	font-weight: 600;
 	box-sizing: border-box;
-	max-width: 100%;
 	width: 100%;
 }
 .form select {

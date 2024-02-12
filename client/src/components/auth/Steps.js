@@ -37,6 +37,11 @@ export default function Steps({ step, setStep }) {
 						<WorkerStep step={step} setStep={setStep} />
 					</>
 				)}
+				{/* {isOther && (
+					<>
+						<OtherStep step={step} setStep={setStep} />
+					</>
+				)} */}
 			</div>
 		</>
 	);

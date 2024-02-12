@@ -55,6 +55,11 @@
 
 .buttons {
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
+	gap: 15px;
 	margin-bottom: 10px;
+}
+
+.buttons > button:nth-child(1) {
+	display: none;
 }

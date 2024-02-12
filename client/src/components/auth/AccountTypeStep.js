@@ -41,7 +41,7 @@ export default function AccountType({
 					className={clsx("choices")}
 					onClick={(e) => handleChoice(e, "company")}
 					data-checked={false}>
-					<h3>Tu veux monter une entreprise ?</h3>
+					<h3>Entreprise</h3>
 					<p>
 						Le compte travail, vous permettra de chercher du travail auprès des
 						entreprises, vous pourrez ajouter votre CV etc
@@ -55,18 +55,7 @@ export default function AccountType({
 					/>
 				</div>
 				<br />
-				{/* <div
-					className={clsx("choices")}
-					onClick={(e) => handleChoice(e, "society")}
-					data-checked={false}>
-					<h3>Société</h3>
-					<p>
-						Le compte société, vous permettra de chercher du travail auprès des
-						entreprises, vous pourrez ajouter votre CV etc
-					</p>
-					<input type="radio" name="accountType" id="society" value="society" />
-				</div>
-				<br /> */}
+
 				<div
 					className={clsx("choices")}
 					onClick={(e) => handleChoice(e, "freelance")}

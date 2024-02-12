@@ -1,24 +1,20 @@
-import Image from "next/image";
-import styles from "@/styles/components/auth/companyStep.module.css";
+import styles from "@/styles/components/auth/thirdStep.module.css";
 import Buttons from "./Buttons";
 
 export default function CompanyStep({ step, setStep }) {
-	function handlePreview(e) {
+	function handleFile(e) {
 		e.preventDefault();
+		const { name } = e.target.files[0];
 
-		const [file] = e.currentTarget.files;
-
-		if (file) {
-			const preview = document.getElementById("preview");
-			preview.style.display = "block";
-			preview.src = URL.createObjectURL(file);
-		}
+		document.getElementById("fileName").innerHTML = name;
 	}
+
 	function handleChoices(e) {
 		e.preventDefault();
 		const input = e.currentTarget.children[0];
 		input.checked = true;
 	}
+
 	return (
 		<>
 			<div className={styles.titles}>
@@ -30,27 +26,40 @@ export default function CompanyStep({ step, setStep }) {
 			<div className={styles.form}>
 				<label htmlFor="name">Nom</label>
 				<br />
-				<input type="text" id="name" name="name" required />
+				<input
+					type="text"
+					id="name"
+					name="name"
+					placeholder="Nom de l'entreprise"
+					required
+				/>
 				<br />
 				<br />
-				<label htmlFor="logo">Logo</label>
+				<span className={styles.fakeLabel}>Logo</span>
 				<br />
-
-				<div className={styles.logo}>
-					<Image src="" width={65} height={65} id="preview" alt="preview" />
+				<br />
+				<div className={styles.file}>
 					<input
 						type="file"
 						id="logo"
 						name="logo"
-						onChange={handlePreview}
+						onChange={handleFile}
+						accept="image/png, image/jpeg"
 						required
 					/>
+					<div>
+						<span id="fileName"></span>
+					</div>
+					<label id="addFile" htmlFor="logo">
+						Choisir un fichier
+					</label>
 				</div>
 				<br />
-
+				<br />
 				<label htmlFor="activity">Secteur d'activité</label>
 				<br />
 				<select name="activity" id="activity">
+					<option value="">Veuillez choisir votre activité</option>
 					<option value="Audio">Audio</option>
 					<option value="btp">BTP</option>
 					<option value="Montage">Montage</option>
@@ -59,8 +68,7 @@ export default function CompanyStep({ step, setStep }) {
 				<br />
 				<br />
 				<label htmlFor="lookingForEmployees">Recrutez-vous ?</label>
-
-				<div className={styles.recruiting}>
+				<div className={styles.choices}>
 					<div onClick={handleChoices}>
 						<input
 							type="radio"
