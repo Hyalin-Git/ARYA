@@ -1,7 +1,7 @@
 import styles from "@/styles/components/auth/thirdStep.module.css";
 import Buttons from "./Buttons";
 
-export default function CompanyStep({ step, setStep }) {
+export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 	function handleFile(e) {
 		e.preventDefault();
 		const { name } = e.target.files[0];
@@ -31,7 +31,6 @@ export default function CompanyStep({ step, setStep }) {
 					id="name"
 					name="name"
 					placeholder="Nom de l'entreprise"
-					required
 				/>
 				<br />
 				<br />
@@ -45,7 +44,6 @@ export default function CompanyStep({ step, setStep }) {
 						name="logo"
 						onChange={handleFile}
 						accept="image/png, image/jpeg"
-						required
 					/>
 					<div>
 						<span id="fileName"></span>
@@ -90,7 +88,12 @@ export default function CompanyStep({ step, setStep }) {
 				</div>
 			</div>
 			<div className={styles.buttons}>
-				<Buttons step={step} setStep={setStep} />
+				<Buttons
+					step={step}
+					setStep={setStep}
+					isCompany={isCompany}
+					isWorker={isWorker}
+				/>
 			</div>
 		</>
 	);

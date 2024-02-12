@@ -31,7 +31,7 @@ export default function WorkerStep({ step, setStep }) {
 						id="cv"
 						name="cv"
 						accept="image/png, image/jpeg"
-						required
+				
 					/>
 					<div>
 						<span id="fileName"></span>
@@ -50,7 +50,7 @@ export default function WorkerStep({ step, setStep }) {
 				<br />
 				<label htmlFor="activity">Secteur d'activité</label>
 				<br />
-				<select name="activity" id="activity" required>
+				<select name="activity" id="activity">
 					<option value="">Veuillez choisir votre secteur d'activité</option>
 					<option value="Audio">Audio</option>
 					<option value="btp">BTP</option>
@@ -68,7 +68,7 @@ export default function WorkerStep({ step, setStep }) {
 							name="lookingForJob"
 							id="lookingForJobYes"
 							value="yes"
-							required
+					
 						/>
 						<label htmlFor="lookingForJobYes">Oui</label>
 					</div>
@@ -78,7 +78,7 @@ export default function WorkerStep({ step, setStep }) {
 							name="lookingForJob"
 							id="lookingForJobNo"
 							value="no"
-							required
+				
 						/>
 						<label htmlFor="lookingForJobNo">Non</label>
 					</div>

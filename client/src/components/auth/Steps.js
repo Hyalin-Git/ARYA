@@ -29,12 +29,22 @@ export default function Steps({ step, setStep }) {
 			<div className={styles.steps} data-step="3" id="step-3">
 				{isCompany && (
 					<>
-						<CompanyStep step={step} setStep={setStep} />
+						<CompanyStep
+							step={step}
+							setStep={setStep}
+							isCompany={isCompany}
+							isWorker={isWorker}
+						/>
 					</>
 				)}
 				{isWorker && (
 					<>
-						<WorkerStep step={step} setStep={setStep} />
+						<WorkerStep
+							step={step}
+							setStep={setStep}
+							isCompany={isCompany}
+							isWorker={isWorker}
+						/>
 					</>
 				)}
 				{/* {isOther && (

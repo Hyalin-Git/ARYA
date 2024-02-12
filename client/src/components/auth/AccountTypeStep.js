@@ -24,6 +24,14 @@ export default function AccountType({
 			setIsWorker(true);
 		}
 
+		if (input.id === "other") {
+			document.getElementById("next").style.display = "none";
+			document.getElementById("end").style.display = "block";
+			// console.log("insane");
+		} else {
+			document.getElementById("next").style.display = "block";
+			document.getElementById("end").style.display = "none";
+		}
 		for (const choice of choices) {
 			const input = choice.children[2];
 			choice.classList.toggle(styles.checked, input.checked);
