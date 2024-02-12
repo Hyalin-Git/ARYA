@@ -46,6 +46,9 @@
 	box-sizing: border-box;
 	width: 100%;
 }
+.form input::placeholder {
+	transition: 150ms all linear;
+}
 .form select {
 	appearance: none;
 	-webkit-appearance: none;

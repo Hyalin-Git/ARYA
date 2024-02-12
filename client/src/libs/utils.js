@@ -67,11 +67,27 @@ export const userStepValidation = () => {
 	}
 
 	// passwords
-
-	if (!regex.password.test(password.value)) {
+	if (!regex.password.pass.test(password.value)) {
 		password.classList.add(styles.error);
+
+		let placeHolderMsg = "";
+
+		if (password.value.length < 8) {
+			placeHolderMsg = "Au moins 8 caractères";
+		} else if (password.value.search(regex.password.hasLowerCase)) {
+			placeHolderMsg = "Au moins une minuscule";
+		} else if (password.value.search(regex.password.hasUpperCase)) {
+			placeHolderMsg = "Au moins une majuscule";
+		} else if (password.value.search(regex.password.hasDigit)) {
+			placeHolderMsg = "Doit contenir un chiffre";
+		} else if (password.value.search(regex.password.hasSymbol)) {
+			placeHolderMsg = "Doit contenir un symbol (!@#$)";
+		} else {
+			placeHolderMsg = "Mot de passe invalide";
+		}
+
 		password.value = "";
-		password.setAttribute("placeholder", "Mot de passe invalide");
+		password.setAttribute("placeholder", placeHolderMsg);
 		setTimeout(() => {
 			password.classList.remove(styles.error);
 			password.setAttribute("placeholder", "Au moins 8 caractères");
@@ -79,6 +95,7 @@ export const userStepValidation = () => {
 		return false;
 	}
 
+	// If password & newPassword aren't the same
 	if (newPassword.value !== password.value) {
 		newPassword.classList.add(styles.error);
 		newPassword.value = "";
@@ -99,6 +116,24 @@ export const accountTypeValidation = () => {
 	const other = document.getElementById("other");
 
 	if (!company.checked && !freelance.checked && !other.checked) {
+		return false;
+	}
+
+	return true;
+};
+
+export const companyStepValidation = () => {
+	const name = document.getElementById("name");
+	const logo = document.getElementById("logo");
+	const activity = document.getElementById("activity");
+	const lookingForEmployeesYes = document.getElementById(
+		"lookingForEmployeesYes"
+	);
+	const lookingForEmployeesNo = document.getElementById(
+		"lookingForEmployeesNo"
+	);
+
+	if (!lookingForEmployeesYes.checked && !lookingForEmployeesNo.checked) {
 		return false;
 	}
 

@@ -5,16 +5,6 @@ import clsx from "clsx";
 import { accountTypeValidation } from "@/libs/utils";
 
 export default function Buttons({ step, setStep }) {
-	// Skip step
-	function handleSkip(e) {
-		e.preventDefault();
-		const steps = e.target.parentElement.parentElement;
-		setStep(step + 1);
-		const nextStep = steps.nextElementSibling;
-		steps.style.display = "none";
-		nextStep.style.display = "block";
-	}
-
 	// Previous step
 	function handlePrevious(e) {
 		e.preventDefault();
@@ -42,11 +32,6 @@ export default function Buttons({ step, setStep }) {
 
 	return (
 		<>
-			<button
-				onClick={handleSkip}
-				className={clsx(montserrat.className, styles.skip)}>
-				Passer cette étape
-			</button>
 			<button
 				onClick={handlePrevious}
 				className={clsx(montserrat.className, styles.previous)}>
