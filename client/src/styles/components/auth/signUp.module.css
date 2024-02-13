@@ -50,6 +50,8 @@
 	transition: 150ms all linear;
 }
 .form select {
+	padding: 15px 0 15px 0;
+	text-align: center;
 	appearance: none;
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -68,6 +70,11 @@
 	border: 1px solid var(--meteorite-color);
 	transition: 150ms all linear;
 	background: rgb(var(--layer-color));
+}
+
+.form span {
+	position: relative;
+	left: 5px;
 }
 
 /* bottom text  */

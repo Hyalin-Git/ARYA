@@ -11,13 +11,9 @@
 	font-weight: 400;
 }
 
-.form i {
-	margin-left: 40px;
-	font-size: 0.8rem;
-	font-weight: 300;
-}
-
 .form .fakeLabel {
+	position: relative;
+	right: inherit;
 	font-size: 1rem;
 	font-weight: inherit;
 }
@@ -85,6 +81,15 @@
 
 .form .choices input[type="radio"] {
 	display: none;
+}
+
+.error {
+	border: 1px solid red !important;
+}
+
+.error::placeholder {
+	transition: 150ms all linear;
+	color: red;
 }
 
 /* buttons  */

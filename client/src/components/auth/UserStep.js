@@ -39,6 +39,7 @@ export default function UserStep({ step, setStep }) {
 				<div className={styles.names}>
 					<div>
 						<label htmlFor="lastname">Nom</label>
+						<span>*</span>
 						<input
 							className={clsx(montserrat.className, styles.lastname)}
 							type="text"
@@ -52,6 +53,7 @@ export default function UserStep({ step, setStep }) {
 					</div>
 					<div>
 						<label htmlFor="firstname">Prénom</label>
+						<span>*</span>
 						<input
 							className={clsx(montserrat.className, styles.firstname)}
 							type="text"
@@ -64,6 +66,7 @@ export default function UserStep({ step, setStep }) {
 				</div>
 				<br />
 				<label htmlFor="username">Nom d'utilisateur</label>
+				<span>*</span>
 				<br />
 				<input
 					className={clsx(montserrat.className, styles.username)}
@@ -76,6 +79,7 @@ export default function UserStep({ step, setStep }) {
 				<br />
 				<br />
 				<label htmlFor="email">Adresse mail</label>
+				<span>*</span>
 				<br />
 				<input
 					className={clsx(montserrat.className, styles.email)}
@@ -88,6 +92,7 @@ export default function UserStep({ step, setStep }) {
 				<br />
 				<br />
 				<label htmlFor="password">Mot de passe</label>
+				<span>*</span>
 				<br />
 				<input
 					className={clsx(montserrat.className, styles.password)}
@@ -111,7 +116,9 @@ export default function UserStep({ step, setStep }) {
 				</div>
 				<br />
 				<br />
+
 				<label htmlFor="newPassword">Confirmez votre mot de passe</label>
+				<span>*</span>
 				<br />
 				<input
 					className={clsx(montserrat.className, styles.password)}

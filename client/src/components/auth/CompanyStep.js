@@ -25,6 +25,7 @@ export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 			</div>
 			<div className={styles.form}>
 				<label htmlFor="name">Nom</label>
+				<span>*</span>
 				<br />
 				<input
 					type="text"
@@ -43,7 +44,7 @@ export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 						id="logo"
 						name="logo"
 						onChange={handleFile}
-						accept="image/png, image/jpeg"
+						accept="image/png, image/jpeg, image/jpg"
 					/>
 					<div>
 						<span id="fileName"></span>
@@ -55,6 +56,7 @@ export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 				<br />
 				<br />
 				<label htmlFor="activity">Secteur d'activité</label>
+				<span>*</span>
 				<br />
 				<select name="activity" id="activity">
 					<option value="">Veuillez choisir votre activité</option>
@@ -62,10 +64,11 @@ export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 					<option value="btp">BTP</option>
 					<option value="Montage">Montage</option>
 				</select>
-
 				<br />
 				<br />
 				<label htmlFor="lookingForEmployees">Recrutez-vous ?</label>
+				<span>*</span>
+				<br />
 				<div className={styles.choices}>
 					<div onClick={handleChoices}>
 						<input

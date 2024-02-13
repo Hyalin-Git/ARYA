@@ -1,6 +1,6 @@
 import styles from "@/styles/components/auth/thirdStep.module.css";
 import Buttons from "./Buttons";
-export default function WorkerStep({ step, setStep }) {
+export default function WorkerStep({ step, setStep, isCompany, isWorker }) {
 	function handleFile(e) {
 		const { name } = e.target.files[0];
 		console.log(e.target.files);
@@ -30,8 +30,7 @@ export default function WorkerStep({ step, setStep }) {
 						type="file"
 						id="cv"
 						name="cv"
-						accept="image/png, image/jpeg"
-				
+						accept="application/pdf"
 					/>
 					<div>
 						<span id="fileName"></span>
@@ -42,13 +41,18 @@ export default function WorkerStep({ step, setStep }) {
 				</div>
 				<br />
 				<br />
-				<label htmlFor="portfolio">Un lien vers votre portfolio ?</label>{" "}
-				<i>Ceci n'est pas obligatoire</i>
+				<label htmlFor="portfolio">Un lien vers votre portfolio ?</label>
 				<br />
-				<input type="text" id="portfolio" name="portfolio" />
+				<input
+					type="text"
+					id="portfolio"
+					name="portfolio"
+					placeholder="https://portfolio.fr"
+				/>
 				<br />
 				<br />
 				<label htmlFor="activity">Secteur d'activité</label>
+				<span>*</span>
 				<br />
 				<select name="activity" id="activity">
 					<option value="">Veuillez choisir votre secteur d'activité</option>
@@ -61,6 +65,7 @@ export default function WorkerStep({ step, setStep }) {
 				<label htmlFor="lookingForEmployees">
 					Êtes-vous à la recherche d'emploi ?
 				</label>
+				<span>*</span>
 				<div className={styles.choices}>
 					<div onClick={handleChoices}>
 						<input
@@ -68,7 +73,6 @@ export default function WorkerStep({ step, setStep }) {
 							name="lookingForJob"
 							id="lookingForJobYes"
 							value="yes"
-					
 						/>
 						<label htmlFor="lookingForJobYes">Oui</label>
 					</div>
@@ -78,14 +82,18 @@ export default function WorkerStep({ step, setStep }) {
 							name="lookingForJob"
 							id="lookingForJobNo"
 							value="no"
-				
 						/>
 						<label htmlFor="lookingForJobNo">Non</label>
 					</div>
 				</div>
 			</div>
 			<div className={styles.buttons}>
-				<Buttons step={step} setStep={setStep} />
+				<Buttons
+					step={step}
+					setStep={setStep}
+					isCompany={isCompany}
+					isWorker={isWorker}
+				/>
 			</div>
 		</>
 	);

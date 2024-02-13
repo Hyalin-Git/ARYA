@@ -6,7 +6,7 @@ export default function Hero() {
 	return (
 		<div className={styles.titles}>
 			<div className={styles.subtitle}>
-				<h1>Créez, Optimisez, Partagez !</h1>
+				<span>Créez, Optimisez, Partagez !</span>
 			</div>
 			<div className={styles.maintitle}>
 				<h1>
@@ -22,7 +22,7 @@ export default function Hero() {
 				</h1>
 			</div>
 			<div className={styles.subtitle}>
-				<h1>L’outil incontournable des créatifs.</h1>
+				<span>L’outil incontournable des créatifs.</span>
 			</div>
 		</div>
 	);

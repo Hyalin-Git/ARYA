@@ -132,8 +132,99 @@ export const companyStepValidation = () => {
 	const lookingForEmployeesNo = document.getElementById(
 		"lookingForEmployeesNo"
 	);
+	const allowedMimetypes = ["image/png", "image/jpg", "image/jpeg"];
+
+	if (name.value.length <= 0) {
+		name.classList.add(styles.error);
+		setTimeout(() => {
+			name.classList.remove(styles.error);
+		}, 2000);
+		return false;
+	}
+
+	if (!regex.company.test(name.value)) {
+		name.classList.add(styles.error);
+		name.value = "";
+		name.setAttribute("placeholder", "Nom de l'entreprise invalide");
+		setTimeout(() => {
+			name.classList.remove(styles.error);
+			name.setAttribute("placeholder", "Nom de l'entreprise");
+		}, 2000);
+		return false;
+	}
+
+	if (logo.files.length >= 1) {
+		if (!allowedMimetypes.includes(logo.files[0]?.type)) {
+			logo.parentElement.classList.add(styles.error);
+			logo.value = "";
+			document.getElementById("fileName").innerHTML = "Accepte: png/jpg";
+			document.getElementById("fileName").style.color = "red";
+			setTimeout(() => {
+				logo.parentElement.classList.remove(styles.error);
+				document.getElementById("fileName").innerHTML = "";
+				document.getElementById("fileName").style.color = "white";
+			}, 2000);
+			return false;
+		}
+	}
+
+	if (activity.value === "") {
+		activity.classList.add(styles.error);
+		setTimeout(() => {
+			activity.classList.remove(styles.error);
+		}, 2000);
+		return false;
+	}
 
 	if (!lookingForEmployeesYes.checked && !lookingForEmployeesNo.checked) {
+		lookingForEmployeesYes.parentElement.classList.add(styles.error);
+		lookingForEmployeesNo.parentElement.classList.add(styles.error);
+		setTimeout(() => {
+			lookingForEmployeesYes.parentElement.classList.remove(styles.error);
+			lookingForEmployeesNo.parentElement.classList.remove(styles.error);
+		}, 2000);
+		return false;
+	}
+
+	return true;
+};
+
+export const freelanceStepValidation = () => {
+	const cv = document.getElementById("cv");
+	const portfolio = document.getElementById("portfolio");
+	const activity = document.getElementById("activity");
+	const lookingForJobYes = document.getElementById("lookingForJobYes");
+	const lookingForJobNo = document.getElementById("lookingForJobNo");
+	const allowedMimetypes = ["image/png", "image/jpg", "image/jpeg"];
+
+	if (portfolio.value.length >= 1) {
+		if (!regex.link.test(portfolio)) {
+			portfolio.classList.add(styles.error);
+			portfolio.value = "";
+			portfolio.setAttribute("placeholder", "Ceci n'est pas un lien valide");
+			setTimeout(() => {
+				portfolio.classList.remove(styles.error);
+				portfolio.setAttribute("placeholder", "https://portfolio.fr");
+			}, 2000);
+			return false;
+		}
+	}
+
+	if (activity.value === "") {
+		activity.classList.add(styles.error);
+		setTimeout(() => {
+			activity.classList.remove(styles.error);
+		}, 2000);
+		return false;
+	}
+
+	if (!lookingForJobYes.checked && !lookingForJobNo.checked) {
+		lookingForJobYes.parentElement.classList.add(styles.error);
+		lookingForJobNo.parentElement.classList.add(styles.error);
+		setTimeout(() => {
+			lookingForJobYes.parentElement.classList.remove(styles.error);
+			lookingForJobNo.parentElement.classList.remove(styles.error);
+		}, 2000);
 		return false;
 	}
 

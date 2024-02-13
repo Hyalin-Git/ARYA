@@ -2,7 +2,11 @@
 import styles from "@/styles/components/auth/buttons.module.css";
 import { montserrat } from "@/libs/fonts";
 import clsx from "clsx";
-import { accountTypeValidation, companyStepValidation } from "@/libs/utils";
+import {
+	accountTypeValidation,
+	companyStepValidation,
+	freelanceStepValidation,
+} from "@/libs/utils";
 
 export default function Buttons({ step, setStep, isCompany, isWorker }) {
 	// Previous step
@@ -39,7 +43,13 @@ export default function Buttons({ step, setStep, isCompany, isWorker }) {
 				e.preventDefault();
 				return;
 			}
-		} else if (isWorker) {
+		}
+		if (isWorker) {
+			const isValidate = freelanceStepValidation();
+			if (!isValidate) {
+				e.preventDefault();
+				return;
+			}
 		}
 	}
 
