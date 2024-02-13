@@ -157,12 +157,11 @@ export const companyStepValidation = () => {
 		if (!allowedMimetypes.includes(logo.files[0]?.type)) {
 			logo.parentElement.classList.add(styles.error);
 			logo.value = "";
-			document.getElementById("fileName").innerHTML = "Accepte: png/jpg";
+			document.getElementById("fileName").innerHTML = ".png / .jpg";
 			document.getElementById("fileName").style.color = "red";
 			setTimeout(() => {
 				logo.parentElement.classList.remove(styles.error);
-				document.getElementById("fileName").innerHTML = "";
-				document.getElementById("fileName").style.color = "white";
+				document.getElementById("fileName").style.color = "grey";
 			}, 2000);
 			return false;
 		}
@@ -201,12 +200,11 @@ export const freelanceStepValidation = () => {
 		if (!allowedMimetypes.includes(cv.files[0]?.type)) {
 			cv.parentElement.classList.add(styles.error);
 			cv.value = "";
-			document.getElementById("fileName").innerHTML = "Accepte: png/jpg";
+			document.getElementById("fileName").innerHTML = ".pdf";
 			document.getElementById("fileName").style.color = "red";
 			setTimeout(() => {
 				cv.parentElement.classList.remove(styles.error);
-				document.getElementById("fileName").innerHTML = "";
-				document.getElementById("fileName").style.color = "white";
+				document.getElementById("fileName").style.color = "grey";
 			}, 2000);
 			return false;
 		}

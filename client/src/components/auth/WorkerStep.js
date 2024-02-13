@@ -5,9 +5,11 @@ export default function WorkerStep({ step, setStep, isCompany, isWorker }) {
 		const name = e?.target?.files[0]?.name;
 
 		if (name === undefined) {
-			document.getElementById("fileName").innerHTML = "";
+			document.getElementById("fileName").innerHTML = ".pdf";
+			document.getElementById("fileName").style.color = "grey";
 		} else {
 			document.getElementById("fileName").innerHTML = name;
+			document.getElementById("fileName").style.color = "white";
 		}
 	}
 	function handleChoices(e) {
@@ -37,7 +39,7 @@ export default function WorkerStep({ step, setStep, isCompany, isWorker }) {
 						accept="application/pdf"
 					/>
 					<div>
-						<span id="fileName"></span>
+						<span id="fileName">.pdf</span>
 					</div>
 					<label id="addFile" htmlFor="cv">
 						Choisir un fichier

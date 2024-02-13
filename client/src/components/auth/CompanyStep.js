@@ -7,9 +7,11 @@ export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 		const name = e?.target?.files[0]?.name;
 
 		if (name === undefined) {
-			document.getElementById("fileName").innerHTML = "";
+			document.getElementById("fileName").innerHTML = ".png / .jpg";
+			document.getElementById("fileName").style.color = "grey";
 		} else {
 			document.getElementById("fileName").innerHTML = name;
+			document.getElementById("fileName").style.color = "white";
 		}
 	}
 
@@ -49,10 +51,10 @@ export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 						id="logo"
 						name="logo"
 						onChange={handleFile}
-						accept="image/png, image/jpeg, image/jpg"
+						accept="image/png, image/jpeg, image/jpg, application/pdf"
 					/>
 					<div>
-						<span id="fileName"></span>
+						<span id="fileName">.png / .jpg</span>
 					</div>
 					<label id="addFile" htmlFor="logo">
 						Choisir un fichier
