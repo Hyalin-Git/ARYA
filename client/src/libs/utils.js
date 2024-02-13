@@ -195,7 +195,22 @@ export const freelanceStepValidation = () => {
 	const activity = document.getElementById("activity");
 	const lookingForJobYes = document.getElementById("lookingForJobYes");
 	const lookingForJobNo = document.getElementById("lookingForJobNo");
-	const allowedMimetypes = ["image/png", "image/jpg", "image/jpeg"];
+	const allowedMimetypes = ["application/pdf"];
+
+	if (cv.files.length >= 1) {
+		if (!allowedMimetypes.includes(cv.files[0]?.type)) {
+			cv.parentElement.classList.add(styles.error);
+			cv.value = "";
+			document.getElementById("fileName").innerHTML = "Accepte: png/jpg";
+			document.getElementById("fileName").style.color = "red";
+			setTimeout(() => {
+				cv.parentElement.classList.remove(styles.error);
+				document.getElementById("fileName").innerHTML = "";
+				document.getElementById("fileName").style.color = "white";
+			}, 2000);
+			return false;
+		}
+	}
 
 	if (portfolio.value.length >= 1) {
 		if (!regex.link.test(portfolio)) {

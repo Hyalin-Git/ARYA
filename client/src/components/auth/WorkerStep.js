@@ -2,10 +2,13 @@ import styles from "@/styles/components/auth/thirdStep.module.css";
 import Buttons from "./Buttons";
 export default function WorkerStep({ step, setStep, isCompany, isWorker }) {
 	function handleFile(e) {
-		const { name } = e.target.files[0];
-		console.log(e.target.files);
+		const name = e?.target?.files[0]?.name;
 
-		document.getElementById("fileName").innerHTML = name;
+		if (name === undefined) {
+			document.getElementById("fileName").innerHTML = "";
+		} else {
+			document.getElementById("fileName").innerHTML = name;
+		}
 	}
 	function handleChoices(e) {
 		e.preventDefault();
@@ -17,7 +20,8 @@ export default function WorkerStep({ step, setStep, isCompany, isWorker }) {
 			<div className={styles.titles}>
 				<h1>Rejoignez la communauté</h1>
 				<h2>
-					Veuillez fournir des informations complémentaire pour votre work
+					Veuillez fournir des informations complémentaire pour votre compte
+					freelance
 				</h2>
 			</div>
 			<div className={styles.form}>

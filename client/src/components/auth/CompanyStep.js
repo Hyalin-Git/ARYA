@@ -4,9 +4,13 @@ import Buttons from "./Buttons";
 export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 	function handleFile(e) {
 		e.preventDefault();
-		const { name } = e.target.files[0];
+		const name = e?.target?.files[0]?.name;
 
-		document.getElementById("fileName").innerHTML = name;
+		if (name === undefined) {
+			document.getElementById("fileName").innerHTML = "";
+		} else {
+			document.getElementById("fileName").innerHTML = name;
+		}
 	}
 
 	function handleChoices(e) {
@@ -20,7 +24,8 @@ export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 			<div className={styles.titles}>
 				<h1>Rejoignez la communauté</h1>
 				<h2>
-					Veuillez fournir des informations complémentaire pour votre entreprise
+					Veuillez fournir des informations complémentaire pour votre compte
+					entreprise
 				</h2>
 			</div>
 			<div className={styles.form}>
