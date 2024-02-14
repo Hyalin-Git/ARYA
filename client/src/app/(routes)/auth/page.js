@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "@/styles/pages/auth.module.css";
 import SignIn from "@/components/auth/signIn/SignIn";

@@ -46,37 +46,24 @@
 	width: 100%;
 }
 
-.form input:focus {
+.form input:not([type="radio"]):focus {
 	border: 1px solid var(--meteorite-color);
 	transition: 150ms all linear;
-	/* box-shadow: var(--active-shadow); */
 	background: rgb(var(--layer-color));
 }
 
-.form input:nth-child(3) {
-	background-image: url("../../../../public/images/icons/email_icon.svg");
-	background-size: 20px;
-	background-repeat: no-repeat;
-	background-position: 12px center;
+.email {
+	background-image: url("../../../../public/images/icons/email_icon.svg") !important;
+	background-size: 20px !important;
+	background-repeat: no-repeat !important;
+	background-position: 12px center !important;
 }
 
-.form input:nth-child(3):focus {
-	background-size: 20px;
-	background-repeat: no-repeat;
-	background-position: 12px center;
-}
-
-.form input:nth-child(8) {
-	background-image: url("../../../../public/images/icons/password_icon.svg");
-	background-size: 20px;
-	background-repeat: no-repeat;
-	background-position: 12px center;
-}
-
-.form input:nth-child(8):focus {
-	background-size: 20px;
-	background-repeat: no-repeat;
-	background-position: 12px center;
+.password {
+	background-image: url("../../../../public/images/icons/password_icon.svg") !important;
+	background-size: 20px !important;
+	background-repeat: no-repeat !important;
+	background-position: 12px center !important;
 }
 
 .visible {

@@ -4,6 +4,7 @@ const http = require("http");
 const express = require("express");
 const helmet = require("helmet");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
 const cors = require("cors");
 require("./config/db.config");
 require("./utils/cronJob");

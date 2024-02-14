@@ -2,6 +2,6 @@ export const metadata = {
 	title: "Auth",
 };
 
-export default function RootLayout({ children }) {
+export default function AuthLayout({ children }) {
 	return <>{children}</>;
 }

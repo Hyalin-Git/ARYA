@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useFormState } from "react-dom";
 import { logIn } from "@/actions/auth";
 import Submit from "./Submit";
+import clsx from "clsx";
 
 export default function SignIn({ setIsSignIn, setIsSignUp }) {
 	const [isHide, setIsHide] = useState(false);
@@ -29,7 +30,7 @@ export default function SignIn({ setIsSignIn, setIsSignUp }) {
 		setIsSignUp(true);
 		setIsSignIn(false);
 	}
-	console.log(state);
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.titles}>
@@ -41,7 +42,7 @@ export default function SignIn({ setIsSignIn, setIsSignUp }) {
 					<label htmlFor="email">Adresse mail</label>
 					<br />
 					<input
-						className={montserrat.className}
+						className={clsx(montserrat.className, styles.email)}
 						type="email"
 						name="email"
 						id="email"
@@ -53,7 +54,7 @@ export default function SignIn({ setIsSignIn, setIsSignUp }) {
 					<label htmlFor="password">Mot de passe </label>
 					<br />
 					<input
-						className={montserrat.className}
+						className={clsx(montserrat.className, styles.password)}
 						type={isHide ? "text" : "password"}
 						name="password"
 						id="password"

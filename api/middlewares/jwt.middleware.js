@@ -28,6 +28,7 @@ exports.authenticate = (req, res, next) => {
 				});
 			} else {
 				if (decoded) {
+					console.log(decoded);
 					const user = await UserModel.findById(decoded.userId);
 
 					if (!user) {
