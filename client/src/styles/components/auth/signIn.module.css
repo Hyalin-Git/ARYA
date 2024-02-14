@@ -99,6 +99,21 @@
 	font-weight: 500;
 }
 
+.error {
+	border: 1px solid red !important;
+}
+
+.error::placeholder {
+	transition: 150ms all linear;
+	color: red;
+}
+
+.errorMsg {
+	color: red;
+	font-weight: bold;
+	font-style: inherit;
+}
+
 /* bottom text  */
 
 .text {

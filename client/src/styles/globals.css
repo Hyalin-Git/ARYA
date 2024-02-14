@@ -191,6 +191,11 @@ button:hover {
 	/* box-shadow: var(--active-shadow); */
 	transition: all 0.45s linear;
 }
+button.loading {
+	background: none;
+	transition: inherit;
+	border: 1px solid white;
+}
 
 body::-webkit-scrollbar {
 	/* display: none; */

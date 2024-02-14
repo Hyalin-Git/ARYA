@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import styles from "@/styles/pages/auth.module.css";
-import SignIn from "@/components/auth/SignIn";
+import SignIn from "@/components/auth/signIn/SignIn";
 import SignUp from "@/components/auth/SignUp";
 import StepTracker from "@/components/auth/StepTracker";
 

@@ -51,7 +51,7 @@ export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 						id="logo"
 						name="logo"
 						onChange={handleFile}
-						accept="image/png, image/jpeg, image/jpg, application/pdf"
+						accept="image/png, image/jpeg, image/jpg"
 					/>
 					<div>
 						<span id="fileName">.png / .jpg</span>

@@ -1,5 +1,64 @@
 import styles from "@/styles/components/auth/userStep.module.css";
 import { regex } from "./regex";
+
+// Form validation for sign in
+
+export const signInValidation = () => {
+	const email = document.getElementById("email");
+	const password = document.getElementById("password");
+	const inputs = [email, password];
+
+	for (const input of inputs) {
+		if (input.value.length <= 0) {
+			input.classList.add(styles.error);
+			setTimeout(() => {
+				input.classList.remove(styles.error);
+			}, 2000);
+			return false;
+		}
+	}
+
+	if (!regex.email.test(email.value)) {
+		email.classList.add(styles.error);
+		email.value = "";
+		email.setAttribute("placeholder", "Adresse mail invalide");
+		setTimeout(() => {
+			email.classList.remove(styles.error);
+			email.setAttribute("placeholder", "exemple@email.com");
+		}, 2000);
+		return false;
+	}
+
+	// passwords
+	if (!regex.password.pass.test(password.value)) {
+		password.classList.add(styles.error);
+
+		let placeHolderMsg = "";
+
+		if (password.value.length < 8) {
+			placeHolderMsg = "Au moins 8 caractères";
+		} else if (password.value.search(regex.password.hasLowerCase)) {
+			placeHolderMsg = "Au moins une minuscule";
+		} else if (password.value.search(regex.password.hasUpperCase)) {
+			placeHolderMsg = "Au moins une majuscule";
+		} else if (password.value.search(regex.password.hasDigit)) {
+			placeHolderMsg = "Doit contenir un chiffre";
+		} else if (password.value.search(regex.password.hasSymbol)) {
+			placeHolderMsg = "Doit contenir un symbol (!@#$)";
+		}
+
+		password.value = "";
+		password.setAttribute("placeholder", placeHolderMsg);
+		setTimeout(() => {
+			password.classList.remove(styles.error);
+			password.setAttribute("placeholder", "Au moins 8 caractères");
+		}, 2000);
+		return false;
+	}
+
+	return true;
+};
+
 // Form validation for account creation
 
 export const userStepValidation = () => {

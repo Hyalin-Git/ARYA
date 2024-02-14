@@ -3,9 +3,18 @@ import Image from "next/image";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/auth/signIn.module.css";
 import { useState } from "react";
+import { useFormState } from "react-dom";
+import { logIn } from "@/actions/auth";
+import Submit from "./Submit";
 
 export default function SignIn({ setIsSignIn, setIsSignUp }) {
 	const [isHide, setIsHide] = useState(false);
+	const initialState = {
+		isEmail: false,
+		isPassword: false,
+		message: "",
+	};
+	const [state, formAction] = useFormState(logIn, initialState);
 
 	function handleShowHidePassowrd(e) {
 		e.preventDefault();
@@ -20,7 +29,7 @@ export default function SignIn({ setIsSignIn, setIsSignUp }) {
 		setIsSignUp(true);
 		setIsSignIn(false);
 	}
-
+	console.log(state);
 	return (
 		<div className={styles.container}>
 			<div className={styles.titles}>
@@ -28,7 +37,7 @@ export default function SignIn({ setIsSignIn, setIsSignUp }) {
 				<h2>Entrez vos coordonnées pour accéder à votre compte</h2>
 			</div>
 			<div className={styles.form}>
-				<form action="">
+				<form action={formAction}>
 					<label htmlFor="email">Adresse mail</label>
 					<br />
 					<input
@@ -38,9 +47,10 @@ export default function SignIn({ setIsSignIn, setIsSignUp }) {
 						id="email"
 						placeholder="example@email.com"
 					/>
+					{state?.isEmail && <i className={styles.errorMsg}>{state.message}</i>}
 					<br />
 					<br />
-					<label htmlFor="password">Mot de passe</label>
+					<label htmlFor="password">Mot de passe </label>
 					<br />
 					<input
 						className={montserrat.className}
@@ -61,11 +71,15 @@ export default function SignIn({ setIsSignIn, setIsSignUp }) {
 							alt="eye logo"
 						/>
 					</div>
+					{state?.isPassword && (
+						<>
+							<i className={styles.errorMsg}>{state.message}</i>
+							<br />
+						</>
+					)}
 					<br />
 					<br />
-					<button type="submit" className={montserrat.className}>
-						Accédez à mon compte
-					</button>
+					<Submit />
 				</form>
 			</div>
 			<div className={styles.text}>
