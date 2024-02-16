@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "@/styles/pages/home.module.css";
@@ -14,7 +15,6 @@ export default function Home() {
 				{/* Hero  */}
 				<div className={styles.hero}>
 					<Hero />
-
 					<div className={styles.arrow}>
 						<Link href="#content">
 							<Image

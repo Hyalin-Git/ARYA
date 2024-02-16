@@ -7,6 +7,7 @@ export default function SignUp({ setIsSignUp, setIsSignIn, step, setStep }) {
 		setIsSignUp(false);
 		setIsSignIn(true);
 	}
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.form}>

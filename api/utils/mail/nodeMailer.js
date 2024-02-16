@@ -6,15 +6,14 @@ exports.sendEmail = async (email, subject, text) => {
 		port: 587,
 		secure: false,
 		auth: {
-			user: `${process.env.USER}`,
+			user: `${process.env.EMAIL_USER}`,
 			pass: `${process.env.PASS}`,
 		},
-		tls: {
-			rejectUnauthorized: false,
-		},
+		tls: { rejectUnauthorized: false },
+		debug: true,
 	};
 	const message = {
-		from: `${process.env.USER}`,
+		from: `${process.env.EMAIL_USER}`,
 		to: email,
 		subject: subject,
 		html: text,

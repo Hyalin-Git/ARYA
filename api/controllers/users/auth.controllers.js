@@ -20,6 +20,8 @@ const {
 } = require("../../helpers/formValidation");
 const otp = require("otpauth");
 const qrcode = require("qrcode");
+const CompanyModel = require("../../models/company/Company.model");
+const { uploadFile } = require("../../helpers/cloudinaryManager");
 
 // SignUp controller
 exports.signUp = (req, res, next) => {
@@ -41,14 +43,35 @@ exports.signUp = (req, res, next) => {
 				userName: "@" + req.body.userName,
 				email: req.body.email,
 				password: hash,
-				phone: req.body.phone,
-				dateOfBirth: req.body.dateOfBirth,
-				company: req.body.company,
-				worker: req.body.worker,
 			});
 			user
 				.save()
 				.then(async (user) => {
+					const isCompany = req.body.accountType === "company";
+					// Needs to create freelance or company
+					if (isCompany) {
+						try {
+							const logo = req.file;
+							console.log(logo);
+
+							const uploadResponse = await uploadFile(logo, "logo");
+
+							const company = new CompanyModel({
+								leaderId: user._id,
+								name: req.body.name,
+								logo: logo ? uploadResponse : "",
+								activity: req.body.activity,
+								lookingForEmployees: req.body.lookingForEmployees,
+							});
+
+							await company.save();
+						} catch (err) {
+							console.log(err);
+						}
+
+						console.log("saved company");
+					}
+
 					const generateUniqueToken = crypto.randomBytes(32).toString("hex");
 					const uniqueToken = generateUniqueToken;
 					const url = `${process.env.CLIENT_URL}/verify/${user._id}/${uniqueToken}`;

@@ -27,9 +27,8 @@ const companySchema = new mongoose.Schema(
 			type: String,
 			required: "Le nom de la compagnie doit être fournit",
 		},
-		picture: {
+		logo: {
 			type: String,
-			required: "La photo de la compagnie doit être fournit",
 		},
 		activity: {
 			type: String,

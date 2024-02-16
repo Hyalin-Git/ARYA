@@ -1,9 +1,16 @@
 const router = require("express").Router();
 const authController = require("../../controllers/users/auth.controllers");
 const { authenticate } = require("../../middlewares/jwt.middleware");
+const { userPictureUpload } = require("../../middlewares/multer.middleware");
+const { multerErrorsHandler } = require("../../utils/multerErrors");
 
 // auth routes
-router.post("/signUp", authController.signUp);
+router.post(
+	"/signUp",
+	userPictureUpload.single("logo"),
+	multerErrorsHandler,
+	authController.signUp
+);
 router.post("/signIn", authController.signIn);
 router.delete("/logout", authenticate, authController.logout);
 

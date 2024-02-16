@@ -61,7 +61,9 @@ export default function Header() {
 				<div className={styles.menu}>
 					<ul>
 						<li>Link</li>
-						<li>Link</li>
+						<li>
+							<Link href="/portal">Connexion </Link>
+						</li>
 
 						<li>
 							<Link href="/auth">Connexion </Link>

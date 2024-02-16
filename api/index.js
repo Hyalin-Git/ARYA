@@ -104,6 +104,8 @@ app.get("/login/success", authenticate, (req, res, next) => {
 			error: false,
 			message: "Successfully Loged in",
 			userId: res.locals.user.id,
+			iat: res.locals.decodedToken.iat,
+			exp: res.locals.decodedToken.exp,
 		});
 	}
 });

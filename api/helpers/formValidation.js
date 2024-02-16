@@ -27,16 +27,16 @@ exports.signUpValidation = (req) => {
 			message =
 				"Votre mot de passe doit contenir 8 caractères, 1 chiffre, une majuscule, une minuscule et un symbol (!#@)";
 			break;
-		case regex.phone.test(req.body.phone):
-			isValid = false;
-			// Phone is invalid
-			message = "Votre numéro de téléphone est invalide";
-			break;
-		case regex.dateOfBirth.test(req.body.dateOfBirth):
-			isValid = false;
-			// Date of birth is invalid
-			message = "Votre date de naissance n'est pas valide";
-			break;
+		// case regex.phone.test(req.body.phone):
+		// 	isValid = false;
+		// 	// Phone is invalid
+		// 	message = "Votre numéro de téléphone est invalide";
+		// 	break;
+		// case regex.dateOfBirth.test(req.body.dateOfBirth):
+		// 	isValid = false;
+		// 	// Date of birth is invalid
+		// 	message = "Votre date de naissance n'est pas valide";
+		// 	break;
 		default:
 			// Please fill in the form fields
 			message = "Veuillez remplir les champs du formulaire";

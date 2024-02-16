@@ -6,7 +6,7 @@ exports.saveCompany = async (req, res, next) => {
 	try {
 		const { userId } = req.query;
 		const { name, activity, lookingForEmployees, bio, links } = req.body;
-		const picture = req.file;
+		const logo = req.file;
 
 		const user = await UserModel.findById({ _id: userId });
 
@@ -32,12 +32,12 @@ exports.saveCompany = async (req, res, next) => {
 			});
 		}
 
-		const uploadResponse = await uploadFile(picture, "logo");
+		const uploadResponse = await uploadFile(logo, "logo");
 
 		const company = new CompanyModel({
 			leaderId: userId,
 			name: name,
-			picture: picture ? uploadResponse : "",
+			logo: logo ? uploadResponse : "",
 			activity: activity,
 			bio: bio,
 			lookingForEmployees: lookingForEmployees,

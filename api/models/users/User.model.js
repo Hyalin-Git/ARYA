@@ -49,14 +49,14 @@ const UserSchema = new mongoose.Schema(
 			unique: true,
 			minLength: 4,
 			maxLength: 20,
-			required: "Un numéro de téléphone est requis",
+			// required: "Un numéro de téléphone est requis",
 		},
 		picture: {
 			type: String,
 		},
 		dateOfBirth: {
 			type: String,
-			required: "Date de naissance requise",
+			// required: "Date de naissance requise",
 		},
 		likes: {
 			type: [String],
