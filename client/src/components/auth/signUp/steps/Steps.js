@@ -5,7 +5,7 @@ import UserStep from "./UserStep";
 import AccountType from "./AccountTypeStep";
 import CompanyStep from "./CompanyStep";
 import WorkerStep from "./WorkerStep";
-import Buttons from "./Buttons";
+import Buttons from "../buttons/Buttons";
 
 export default function Steps({ step, setStep }) {
 	const [isCompany, setIsCompany] = useState(false);

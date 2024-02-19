@@ -1,5 +1,5 @@
 const UserModel = require("../../models/users/User.model");
-const WorkerModel = require("../../models/users/Worker.model");
+const WorkerModel = require("../../models/users/Freelance.model");
 
 exports.saveWorker = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id })

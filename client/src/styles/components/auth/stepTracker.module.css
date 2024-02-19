@@ -39,3 +39,8 @@
 	height: 85%;
 	transition: all 150ms linear;
 }
+
+.tracker[data-step="4"]::before {
+	height: 100%;
+	transition: all 150ms linear;
+}

@@ -2,8 +2,8 @@
 import axios from "axios";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-// import FormData from "form-data";
-export async function createUser(formData) {
+
+export async function createUser(prevState, formData) {
 	try {
 		const data = new FormData();
 		data.append("lastName", formData.get("lastname"));
@@ -12,13 +12,22 @@ export async function createUser(formData) {
 		data.append("email", formData.get("email"));
 		data.append("password", formData.get("password"));
 		data.append("accountType", formData.get("accountType"));
+		// For company
 		data.append("name", formData.get("name"));
 		data.append("logo", formData.get("logo"));
-		data.append("activity", formData.get("activity"));
+		data.append("activity", formData.get("activity")); // company & freelance
 		data.append(
 			"lookingForEmployees",
 			formData.get("lookingForEmployees") === "yes" ? "true" : "false"
 		);
+		// For freelance
+		// data.append("cv", formData.get("cv"));
+		data.append("portfolio", formData.get("portfolio"));
+		data.append(
+			"lookingForJob",
+			formData.get("lookingForJob") === "yes" ? "true" : "false"
+		);
+
 		console.log(data);
 		const res = await axios({
 			method: "POST",
@@ -31,6 +40,11 @@ export async function createUser(formData) {
 		});
 
 		console.log(res);
+		const response = res.data;
+		return {
+			isSuccess: "true",
+			message: `${formData.get("email")}`,
+		};
 	} catch (err) {
 		console.log(err);
 		// Display errors on the form

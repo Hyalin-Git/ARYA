@@ -1,5 +1,5 @@
 import styles from "@/styles/components/auth/thirdStep.module.css";
-import Buttons from "./Buttons";
+import Buttons from "../buttons/Buttons";
 
 export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 	function handleFile(e) {

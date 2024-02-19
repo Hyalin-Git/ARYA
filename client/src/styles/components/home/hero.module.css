@@ -37,7 +37,6 @@
 
 .subtitle {
 	font-size: 1.8rem;
-	font-style: italic;
 	font-weight: 300;
 	color: color-mix(in srgb, var(--white-color), black 25%);
 }

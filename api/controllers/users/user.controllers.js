@@ -1,6 +1,6 @@
 const UserModel = require("../../models/users/User.model");
 const CompanyModel = require("../../models/company/Company.model");
-const WorkerModel = require("../../models/users/Worker.model");
+const FreelanceModel = require("../../models/users/Freelance.model");
 const PostModel = require("../../models/posts/Post.model");
 const RepostModel = require("../../models/posts/Repost.model");
 const CommentModel = require("../../models/posts/Comment.model");
@@ -456,7 +456,7 @@ exports.deleteOneUser = (req, res, next) => {
 			await TaskModel.deleteMany({ userId: req.params.id });
 			await CommentModel.deleteMany({ commenterId: req.params.id });
 			await CompanyModel.deleteMany({ userId: req.params.id });
-			await WorkerModel.deleteMany({ userId: req.params.id });
+			await FreelanceModel.deleteMany({ userId: req.params.id });
 
 			return res.status(200).send(user);
 		})

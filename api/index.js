@@ -16,7 +16,7 @@ const authRouter = require("./routes/users/auth.routes");
 // User related
 const userRouter = require("./routes/users/user.routes");
 const followRequestRouter = require("./routes/users/followRequest.routes");
-const workerRouter = require("./routes/users/worker.routes");
+const freelanceRouter = require("./routes/users/freelance.routes");
 const taskRouter = require("./routes/users/task.routes");
 
 const companyRouter = require("./routes/company/company.routes");
@@ -78,7 +78,7 @@ app.use("/api/facebook/auth", facebookRouter);
 
 app.use("/api/users", userRouter);
 app.use("/api/follow-requests", followRequestRouter);
-app.use("/api/worker", workerRouter);
+app.use("/api/freelance", freelanceRouter);
 app.use("/api/task", taskRouter);
 app.use("/api/user/report", reportUserRouter);
 

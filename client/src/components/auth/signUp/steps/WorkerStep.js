@@ -1,5 +1,5 @@
 import styles from "@/styles/components/auth/thirdStep.module.css";
-import Buttons from "./Buttons";
+import Buttons from "../buttons/Buttons";
 export default function WorkerStep({ step, setStep, isCompany, isWorker }) {
 	function handleFile(e) {
 		const name = e?.target?.files[0]?.name;
@@ -68,7 +68,7 @@ export default function WorkerStep({ step, setStep, isCompany, isWorker }) {
 				</select>
 				<br />
 				<br />
-				<label htmlFor="lookingForEmployees">
+				<label htmlFor="lookingForJob">
 					Êtes-vous à la recherche d'emploi ?
 				</label>
 				<span>*</span>

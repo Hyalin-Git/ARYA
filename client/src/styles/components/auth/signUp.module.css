@@ -1,10 +1,7 @@
 .container {
-	display: flex;
-	justify-content: center;
-	gap: 30px;
-	align-items: center;
 	margin: 0 70px 0 70px;
 	height: 100%;
+	display: flex;
 }
 .tracker {
 	position: relative;

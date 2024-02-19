@@ -3,8 +3,8 @@ import { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "@/styles/pages/auth.module.css";
 import SignIn from "@/components/auth/signIn/SignIn";
-import SignUp from "@/components/auth/SignUp";
-import StepTracker from "@/components/auth/StepTracker";
+import SignUp from "@/components/auth/signUp/SignUp";
+import StepTracker from "@/components/auth/signUp/StepTracker";
 
 export default function Auth() {
 	const [isSignIn, setIsSignIn] = useState(true);

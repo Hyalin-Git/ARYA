@@ -22,6 +22,7 @@ const otp = require("otpauth");
 const qrcode = require("qrcode");
 const CompanyModel = require("../../models/company/Company.model");
 const { uploadFile } = require("../../helpers/cloudinaryManager");
+const FreelanceModel = require("../../models/users/Freelance.model");
 
 // SignUp controller
 exports.signUp = (req, res, next) => {
@@ -48,6 +49,7 @@ exports.signUp = (req, res, next) => {
 				.save()
 				.then(async (user) => {
 					const isCompany = req.body.accountType === "company";
+					const isFreelance = req.body.accountType === "freelance";
 					// Needs to create freelance or company
 					if (isCompany) {
 						try {
@@ -70,6 +72,23 @@ exports.signUp = (req, res, next) => {
 						}
 
 						console.log("saved company");
+					}
+					if (isFreelance) {
+						try {
+							const freelance = new FreelanceModel({
+								userId: user._id,
+								cv: req.body.cv,
+								portfolio: req.body.portfolio,
+								activity: req.body.activity,
+								lookingForJob: req.body.lookingForJob,
+							});
+
+							await freelance.save();
+						} catch (err) {
+							console.log(err);
+						}
+
+						console.log("saved freelance");
 					}
 
 					const generateUniqueToken = crypto.randomBytes(32).toString("hex");

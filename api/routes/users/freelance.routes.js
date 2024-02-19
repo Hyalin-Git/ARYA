@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const workerController = require("../../controllers/users/worker.controller");
+const workerController = require("../../controllers/users/freelance.controller");
 
 router.post("/:id", workerController.saveWorker);
 

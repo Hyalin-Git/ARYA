@@ -1,0 +1,64 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+}
+
+.container p {
+	font-weight: 300;
+}
+.container strong {
+	display: block;
+	/* text-align: center; */
+}
+
+.container > div:nth-child(2) {
+	margin-top: -20px;
+}
+
+.bottom {
+	margin-top: 20px;
+	border-top: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+	border-bottom: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.bottom h4 {
+	font-size: 1.2rem;
+}
+
+.or {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+}
+
+.or span {
+	font-weight: 400;
+	letter-spacing: 0.1rem;
+}
+
+.or .line {
+	width: 100%;
+	height: 1px;
+	background-color: color-mix(in srgb, var(--white-color), black 65%);
+}
+
+.button {
+	text-align: center;
+	margin-top: 20px;
+	margin-bottom: 30px;
+}
+
+.help {
+	text-align: center;
+}
+
+.container a {
+	color: var(--lavender-color);
+	font-weight: bold;
+	/* cursor: pointer; */
+}

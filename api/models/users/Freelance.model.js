@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const WorkerSchema = mongoose.Schema(
+const freelanceSchema = mongoose.Schema(
 	{
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -10,7 +10,7 @@ const WorkerSchema = mongoose.Schema(
 		},
 		cv: { type: Buffer },
 		portfolio: { type: String },
-		business: { type: String },
+		activity: { type: String },
 		lookingForJob: { type: Boolean },
 	},
 	{
@@ -18,4 +18,4 @@ const WorkerSchema = mongoose.Schema(
 	}
 );
 
-module.exports = mongoose.model("Worker", WorkerSchema);
+module.exports = mongoose.model("Freelance", freelanceSchema);

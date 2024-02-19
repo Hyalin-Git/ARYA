@@ -1,0 +1,46 @@
+.container {
+	height: 100vh;
+	margin: 0 20px 0 20px;
+}
+
+.background {
+	position: relative;
+	top: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: rgb(var(--layer-color));
+	height: 95%;
+	width: 100%;
+	border-radius: 14px;
+}
+
+.container div:nth-child(1) {
+	display: flex;
+	align-content: center;
+	gap: 20px;
+}
+
+.container div:nth-child(1) img {
+	filter: invert(21%) sepia(76%) saturate(3304%) hue-rotate(257deg)
+		brightness(85%) contrast(100%);
+}
+
+.container h2 {
+	font-size: 3rem;
+	position: relative;
+	top: 10px;
+	margin: 0;
+	padding: 0;
+}
+
+.container div:nth-child(2) {
+	margin-bottom: 20px;
+	font-size: 1.5rem;
+	font-weight: 300;
+}
+
+.container span {
+	font-weight: bold;
+}

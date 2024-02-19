@@ -51,6 +51,7 @@ export default function Buttons({ step, setStep, isCompany, isWorker }) {
 				return;
 			}
 		}
+		setStep(4);
 	}
 
 	return (

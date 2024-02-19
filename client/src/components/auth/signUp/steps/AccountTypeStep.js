@@ -1,6 +1,6 @@
 import styles from "@/styles/components/auth/accountType.module.css";
 import clsx from "clsx";
-import Buttons from "./Buttons";
+import Buttons from "../buttons/Buttons";
 
 export default function AccountType({
 	setIsCompany,
