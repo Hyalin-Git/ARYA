@@ -3,10 +3,28 @@
 	flex-direction: column;
 	justify-content: center;
 	height: 100%;
+	text-align: center;
+}
+
+.titles {
+	padding-bottom: 20px;
+	margin-bottom: 30px;
+	border-bottom: 1px solid color-mix(in srgb, var(--white-color), black 65%);
+}
+.titles h2 {
+	margin-left: -5px;
+}
+
+.titles h3 {
+	font-size: 1rem;
+	font-weight: 400;
 }
 
 .container p {
 	font-weight: 300;
+}
+.container h2 {
+	font-size: 2rem;
 }
 .container strong {
 	display: block;
@@ -22,7 +40,6 @@
 	border-top: 1px solid color-mix(in srgb, var(--white-color), black 65%);
 	border-bottom: 1px solid color-mix(in srgb, var(--white-color), black 65%);
 	margin-bottom: 20px;
-	text-align: center;
 }
 
 .bottom h4 {

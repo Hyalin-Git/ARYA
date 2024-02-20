@@ -7,6 +7,23 @@ exports.uploadFile = async (picture, folder) => {
 			return;
 		}
 
+		if (picture.mimetype === "application/pdf") {
+			const uploadOptions = {
+				folder: `Arya/${folder}`,
+				use_filename: true,
+			};
+			const cloudinaryResponse = await new Promise((resolve, reject) => {
+				cloudinary.uploader
+					.upload_stream(uploadOptions, async (err, result) => {
+						if (err) reject(err);
+						resolve(result);
+					})
+					.end(picture.buffer);
+			});
+
+			return cloudinaryResponse.secure_url;
+		}
+
 		const resizedAndCovertedImg = await resizeImageAndWebpConvert(
 			picture.buffer,
 			200,

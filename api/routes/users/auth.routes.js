@@ -7,7 +7,10 @@ const { multerErrorsHandler } = require("../../utils/multerErrors");
 // auth routes
 router.post(
 	"/signUp",
-	userPictureUpload.single("logo"),
+	userPictureUpload.fields([
+		{ name: "logo", maxCount: 1 },
+		{ name: "cv", maxCount: 1 },
+	]),
 	multerErrorsHandler,
 	authController.signUp
 );

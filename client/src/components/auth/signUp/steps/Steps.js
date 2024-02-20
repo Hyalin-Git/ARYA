@@ -7,14 +7,14 @@ import CompanyStep from "./CompanyStep";
 import WorkerStep from "./WorkerStep";
 import Buttons from "../buttons/Buttons";
 
-export default function Steps({ step, setStep }) {
+export default function Steps({ state, step, setStep }) {
 	const [isCompany, setIsCompany] = useState(false);
 	const [isWorker, setIsWorker] = useState(false);
 
 	return (
 		<>
 			<div className={styles.steps} data-step="1" id="step-1">
-				<UserStep step={step} setStep={setStep} />
+				<UserStep state={state} step={step} setStep={setStep} />
 			</div>
 
 			<div className={styles.steps} data-step="2" id="step-2">

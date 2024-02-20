@@ -21,14 +21,13 @@ export async function createUser(prevState, formData) {
 			formData.get("lookingForEmployees") === "yes" ? "true" : "false"
 		);
 		// For freelance
-		// data.append("cv", formData.get("cv"));
+		data.append("cv", formData.get("cv"));
 		data.append("portfolio", formData.get("portfolio"));
 		data.append(
 			"lookingForJob",
 			formData.get("lookingForJob") === "yes" ? "true" : "false"
 		);
 
-		console.log(data);
 		const res = await axios({
 			method: "POST",
 			url: "http://localhost:5000/api/auth/signUp",
@@ -39,15 +38,32 @@ export async function createUser(prevState, formData) {
 			},
 		});
 
-		console.log(res);
-		const response = res.data;
 		return {
-			isSuccess: "true",
+			isSuccess: true,
+			status: "sent",
 			message: `${formData.get("email")}`,
 		};
 	} catch (err) {
-		console.log(err);
+		console.log(err.response.data);
+		const isEmailDupp =
+			err.response.data.code === 11000 &&
+			err.response.data.keyPattern.email === 1;
+
 		// Display errors on the form
+		if (isEmailDupp) {
+			return {
+				isSuccess: false,
+				isFailure: false,
+				status: "pending",
+				isEmail: true,
+				message: "Cette adresse mail est déjà utilisée",
+			};
+		}
+		return {
+			isFailure: true,
+			status: "sent",
+			// message: `${formData.get("email")}`,
+		};
 	}
 }
 

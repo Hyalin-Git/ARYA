@@ -1,6 +1,7 @@
 .container {
 	height: 100vh;
 	margin: 0 20px 0 20px;
+	font-weight: 300;
 }
 
 .background {
@@ -17,28 +18,26 @@
 	text-align: center;
 }
 
-.container div:nth-child(1) {
-	text-align: center;
+.container h2 {
+	margin: 0;
+	padding: 0;
+	font-size: 3rem;
 }
 
-.container div:nth-child(1) img {
+.container img {
 	filter: invert(21%) sepia(76%) saturate(3304%) hue-rotate(257deg)
 		brightness(85%) contrast(100%);
 }
 
-.container h2 {
-	font-size: 3rem;
-
-	margin: 0;
-	padding: 0;
+.container .buttons {
+	display: flex;
+	gap: 20px;
 }
 
-.container div:nth-child(2) {
-	margin-bottom: 20px;
-	font-size: 1.5rem;
-	font-weight: 300;
+.container .buttons button {
+	min-width: 220px;
 }
-
-.container span {
+.container a {
 	font-weight: bold;
+	color: var(--lavender-color);
 }

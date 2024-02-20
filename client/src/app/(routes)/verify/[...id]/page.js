@@ -7,14 +7,8 @@ import { montserrat } from "@/libs/fonts";
 import { cookies } from "next/headers";
 
 export default async function Verify({ params }) {
-	const res = await verifyEmail(params.id[0], params.id[1]);
-	const data = res;
+	await verifyEmail(params.id[0], params.id[1]);
 	const log = cookies().get("session");
-
-	console.log(data);
-
-	// Call not found if no user
-	// 1H expire
 
 	return (
 		<main>
@@ -22,6 +16,7 @@ export default async function Verify({ params }) {
 				<div className={styles.background}>
 					<div>
 						<h2>Adresse mail vérifiée avec succès</h2>
+						<br />
 						<Image
 							src="/images/icons/success_icon.svg"
 							width={80}

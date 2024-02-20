@@ -3,11 +3,31 @@ import Image from "next/image";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/auth/userStep.module.css";
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { userStepValidation } from "@/libs/utils";
 
-export default function UserStep({ step, setStep }) {
+export default function UserStep({ state, step, setStep }) {
 	const [isHide, setIsHide] = useState(false);
+	const [isEmail, setIsEmail] = useState(false);
+	console.log(isEmail);
+
+	useEffect(() => {
+		function resetStep() {
+			const firstStep = document.getElementById("step-1");
+			const secondStep = document.getElementById("step-2");
+			const thirdStep = document.getElementById("step-3");
+
+			firstStep.style.display = "block";
+			secondStep.style.display = "none";
+			thirdStep.style.display = "none";
+			setStep(1);
+		}
+		if (state.isEmail === true) {
+			setIsEmail(true);
+			resetStep();
+			state.isEmail = false;
+		}
+	}, [step, state]);
 
 	function handleShowHidePassowrd(e) {
 		e.preventDefault();
@@ -29,6 +49,7 @@ export default function UserStep({ step, setStep }) {
 		steps.style.display = "none";
 		nextStep.style.display = "block";
 	}
+
 	return (
 		<>
 			<div className={styles.titles}>
@@ -82,6 +103,9 @@ export default function UserStep({ step, setStep }) {
 				<span>*</span>
 				<br />
 				<input
+					onChange={(e) => {
+						setIsEmail(false);
+					}}
 					className={clsx(montserrat.className, styles.email)}
 					type="email"
 					name="email"
@@ -89,6 +113,11 @@ export default function UserStep({ step, setStep }) {
 					placeholder="example@email.com"
 					required
 				/>
+				{isEmail && (
+					<>
+						<i className={styles.errorMsg}>{state.message}</i>
+					</>
+				)}
 				<br />
 				<br />
 				<label htmlFor="password">Mot de passe</label>

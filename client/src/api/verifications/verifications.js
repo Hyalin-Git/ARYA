@@ -10,9 +10,9 @@ export async function verifyEmail(id, token) {
 			withCredentials: true,
 		});
 
-		return res;
+		return res.data;
 	} catch (err) {
-		// const message = err?.response?.data?.message;
-		// throw new Error(message || "Une erreur est survenue");
+		const message = err?.response?.data?.message;
+		throw new Error(message || "Une erreur est survenue");
 	}
 }

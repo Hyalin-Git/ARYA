@@ -6,7 +6,13 @@ const storage = multer.memoryStorage({
 	},
 });
 
-const allowedMimetypes = ["image/jpg", "image/png", "image/jpeg", "image/gif"];
+const allowedMimetypes = [
+	"image/jpg",
+	"image/png",
+	"image/jpeg",
+	"image/gif",
+	"application/pdf",
+];
 
 const fileFilter = (req, file, cb) => {
 	// Accepted mimetype

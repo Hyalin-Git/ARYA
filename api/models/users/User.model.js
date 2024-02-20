@@ -46,7 +46,6 @@ const UserSchema = new mongoose.Schema(
 		},
 		phone: {
 			type: String,
-			unique: true,
 			minLength: 4,
 			maxLength: 20,
 			// required: "Un numéro de téléphone est requis",

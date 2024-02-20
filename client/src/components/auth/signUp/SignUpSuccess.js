@@ -3,18 +3,18 @@ import styles from "@/styles/components/auth/signUpSuccess.module.css";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-export default function SignUpSuccess() {
+export default function SignUpSuccess({ state }) {
 	return (
 		<div className={styles.container}>
 			<div>
-				<h2>Félicitations et bienvenue !</h2>
+				<h2>Félicitations et bienvenue</h2>
 				<h3>Un mail de confirmation vous a été envoyé</h3>
 			</div>
 			<div>
 				<p>
 					Veuillez confirmer votre adresse mail en cliquant sur le lien de
 					confirmation envoyé à : <br /> <br />
-					<strong>nicolas.tombal01@gmail.com</strong>
+					<strong>{state.message}</strong>
 				</p>
 			</div>
 			<div className={styles.bottom}>

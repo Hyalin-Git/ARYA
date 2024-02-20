@@ -65,6 +65,12 @@
 	color: red;
 }
 
+.errorMsg {
+	color: red;
+	font-weight: bold;
+	font-style: inherit;
+}
+
 /* Eye icon  */
 
 .visible {

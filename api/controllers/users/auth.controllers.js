@@ -27,6 +27,7 @@ const FreelanceModel = require("../../models/users/Freelance.model");
 // SignUp controller
 exports.signUp = (req, res, next) => {
 	// form validation
+
 	const data = signUpValidation(req);
 	// If not valid then return an err with the corresponding field
 	if (!data.isValid) {
@@ -53,15 +54,14 @@ exports.signUp = (req, res, next) => {
 					// Needs to create freelance or company
 					if (isCompany) {
 						try {
-							const logo = req.file;
-							console.log(logo);
+							const { logo } = req.files;
 
-							const uploadResponse = await uploadFile(logo, "logo");
+							const uploadResponse = await uploadFile(logo[0], "logo");
 
 							const company = new CompanyModel({
 								leaderId: user._id,
 								name: req.body.name,
-								logo: logo ? uploadResponse : "",
+								logo: logo[0] ? uploadResponse : "",
 								activity: req.body.activity,
 								lookingForEmployees: req.body.lookingForEmployees,
 							});
@@ -70,14 +70,16 @@ exports.signUp = (req, res, next) => {
 						} catch (err) {
 							console.log(err);
 						}
-
-						console.log("saved company");
 					}
 					if (isFreelance) {
 						try {
+							const { cv } = req.files;
+
+							const uploadResponse = await uploadFile(cv[0], "cv");
+
 							const freelance = new FreelanceModel({
 								userId: user._id,
-								cv: req.body.cv,
+								cv: cv[0] ? uploadResponse : "",
 								portfolio: req.body.portfolio,
 								activity: req.body.activity,
 								lookingForJob: req.body.lookingForJob,
@@ -87,8 +89,6 @@ exports.signUp = (req, res, next) => {
 						} catch (err) {
 							console.log(err);
 						}
-
-						console.log("saved freelance");
 					}
 
 					const generateUniqueToken = crypto.randomBytes(32).toString("hex");
