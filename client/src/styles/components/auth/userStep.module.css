@@ -26,6 +26,11 @@
 	text-align: left;
 }
 
+.labels {
+	display: flex;
+	justify-content: space-between;
+}
+
 /* inputs  */
 .lastname,
 .firstname {
@@ -60,15 +65,13 @@
 	border: 1px solid red !important;
 }
 
-.error::placeholder {
-	transition: 150ms all linear;
-	color: red;
-}
-
 .errorMsg {
 	color: red;
 	font-weight: bold;
 	font-style: inherit;
+	font-size: 0.9rem;
+	position: relative;
+	top: -2px;
 }
 
 /* Eye icon  */

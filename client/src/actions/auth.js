@@ -12,21 +12,31 @@ export async function createUser(prevState, formData) {
 		data.append("email", formData.get("email"));
 		data.append("password", formData.get("password"));
 		data.append("accountType", formData.get("accountType"));
-		// For company
-		data.append("name", formData.get("name"));
-		data.append("logo", formData.get("logo"));
-		data.append("activity", formData.get("activity")); // company & freelance
-		data.append(
-			"lookingForEmployees",
-			formData.get("lookingForEmployees") === "yes" ? "true" : "false"
-		);
-		// For freelance
-		data.append("cv", formData.get("cv"));
-		data.append("portfolio", formData.get("portfolio"));
-		data.append(
-			"lookingForJob",
-			formData.get("lookingForJob") === "yes" ? "true" : "false"
-		);
+
+		if (formData.get("accountType") === "company") {
+			// For company
+			data.append("name", formData.get("name"));
+			formData.get("logo").name !== "undefined" &&
+				data.append("logo", formData.get("logo"));
+
+			data.append("activity", formData.get("activity")); // company & freelance
+			data.append(
+				"lookingForEmployees",
+				formData.get("lookingForEmployees") === "yes" ? "true" : "false"
+			);
+		}
+
+		if (formData.get("accountType") === "freelance") {
+			// For freelance
+			formData.get("cv").name !== "undefined" &&
+				data.append("cv", formData.get("cv"));
+			data.append("portfolio", formData.get("portfolio"));
+			data.append("activity", formData.get("activity")); // company & freelance
+			data.append(
+				"lookingForJob",
+				formData.get("lookingForJob") === "yes" ? "true" : "false"
+			);
+		}
 
 		const res = await axios({
 			method: "POST",
@@ -44,19 +54,117 @@ export async function createUser(prevState, formData) {
 			message: `${formData.get("email")}`,
 		};
 	} catch (err) {
-		console.log(err.response.data);
-		const isEmailDupp =
-			err.response.data.code === 11000 &&
-			err.response.data.keyPattern.email === 1;
+		// console.log(err);
 
+		const isInvalidLastName = err.response?.data?.message?.includes(
+			"Ce nom est invalide"
+		);
+
+		const isInvalidFirstName = err.response?.data?.message?.includes(
+			"Ce prénom est invalide"
+		);
+
+		const isInvalidUsername =
+			err.response?.data?.message?.includes("nom d'utilisateur");
+
+		const isInvalidEmail = err.response?.data?.message?.includes(
+			"adresse mail est invalide"
+		);
+		const isEmailDupp =
+			err.response?.data?.code === 11000 &&
+			err.response?.data?.keyPattern.email === 1;
+		const isUsernameDupp =
+			err.response?.data?.code === 11000 &&
+			err.response?.data?.keyPattern.userName === 1;
+		const isInvalidPass = err.response?.data?.message?.includes("mot de passe");
 		// Display errors on the form
+		if (isInvalidLastName) {
+			return {
+				isSuccess: false,
+				isFailure: false,
+				status: "pending",
+				isLastname: true,
+				isFirstname: false,
+				isUsername: false,
+				isEmail: false,
+				isPassword: false,
+			};
+		}
+		if (isInvalidFirstName) {
+			console.log("first name issue");
+			return {
+				isSuccess: false,
+				isFailure: false,
+				status: "pending",
+				isLastname: false,
+				isFirstname: true,
+				isUsername: false,
+				isEmail: false,
+				isPassword: false,
+			};
+		}
+		if (isInvalidUsername) {
+			return {
+				isSuccess: false,
+				isFailure: false,
+				status: "pending",
+				isLastname: false,
+				isFirstname: false,
+				isUsername: true,
+				isEmail: false,
+				isPassword: false,
+				message: err.response.data.message,
+			};
+		}
+		if (isUsernameDupp) {
+			return {
+				isSuccess: false,
+				isFailure: false,
+				status: "pending",
+				isLastname: false,
+				isFirstname: false,
+				isUsername: true,
+				isEmail: false,
+				isPassword: false,
+				message: "Ce nom d'utilisateur est déjà utilisé",
+			};
+		}
+		if (isInvalidEmail) {
+			return {
+				isSuccess: false,
+				isFailure: false,
+				status: "pending",
+				isLastname: false,
+				isFirstname: false,
+				isUsername: false,
+				isEmail: true,
+				isPassword: false,
+				message: err.response.data.message,
+			};
+		}
 		if (isEmailDupp) {
 			return {
 				isSuccess: false,
 				isFailure: false,
 				status: "pending",
+				isLastname: false,
+				isFirstname: false,
+				isUsername: false,
 				isEmail: true,
+				isPassword: false,
 				message: "Cette adresse mail est déjà utilisée",
+			};
+		}
+		if (isInvalidPass) {
+			return {
+				isSuccess: false,
+				isFailure: false,
+				status: "pending",
+				isLastname: false,
+				isFirstname: false,
+				isUsername: false,
+				isEmail: false,
+				isPassword: true,
 			};
 		}
 		return {

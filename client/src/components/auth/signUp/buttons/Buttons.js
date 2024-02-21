@@ -7,8 +7,10 @@ import {
 	companyStepValidation,
 	freelanceStepValidation,
 } from "@/libs/utils";
+import { useFormStatus } from "react-dom";
 
 export default function Buttons({ step, setStep, isCompany, isWorker }) {
+	const { pending } = useFormStatus();
 	// Previous step
 	function handlePrevious(e) {
 		e.preventDefault();
@@ -37,6 +39,7 @@ export default function Buttons({ step, setStep, isCompany, isWorker }) {
 	}
 
 	async function handleForm(e) {
+		console.log("played");
 		if (isCompany) {
 			const isValidate = companyStepValidation();
 			if (!isValidate) {
@@ -62,17 +65,22 @@ export default function Buttons({ step, setStep, isCompany, isWorker }) {
 				className={clsx(montserrat.className, styles.previous)}>
 				Retour
 			</button>
-
 			<button
 				id="next"
 				onClick={handleNext}
 				className={clsx(montserrat.className, styles.next)}>
 				Suivant
 			</button>
+
 			<button
 				id="end"
 				onClick={handleForm}
-				className={clsx(montserrat.className, styles.next)}>
+				disabled={pending}
+				className={clsx(
+					montserrat.className,
+					styles.next,
+					pending && "loading"
+				)}>
 				Terminer
 			</button>
 		</>

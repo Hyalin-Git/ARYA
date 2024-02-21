@@ -17,6 +17,7 @@ const { verifyAccountText } = require("../../utils/mail/mailText");
 const {
 	signUpValidation,
 	signInValidation,
+	freelanceValidation,
 } = require("../../helpers/formValidation");
 const otp = require("otpauth");
 const qrcode = require("qrcode");
@@ -51,17 +52,21 @@ exports.signUp = (req, res, next) => {
 				.then(async (user) => {
 					const isCompany = req.body.accountType === "company";
 					const isFreelance = req.body.accountType === "freelance";
+
 					// Needs to create freelance or company
+
 					if (isCompany) {
 						try {
 							const { logo } = req.files;
 
-							const uploadResponse = await uploadFile(logo[0], "logo");
+							const uploadResponse = logo
+								? await uploadFile(logo[0], "logo")
+								: "";
 
 							const company = new CompanyModel({
 								leaderId: user._id,
 								name: req.body.name,
-								logo: logo[0] ? uploadResponse : "",
+								logo: uploadResponse,
 								activity: req.body.activity,
 								lookingForEmployees: req.body.lookingForEmployees,
 							});
@@ -75,11 +80,11 @@ exports.signUp = (req, res, next) => {
 						try {
 							const { cv } = req.files;
 
-							const uploadResponse = await uploadFile(cv[0], "cv");
+							const uploadResponse = cv ? await uploadFile(cv[0], "cv") : "";
 
 							const freelance = new FreelanceModel({
 								userId: user._id,
-								cv: cv[0] ? uploadResponse : "",
+								cv: uploadResponse,
 								portfolio: req.body.portfolio,
 								activity: req.body.activity,
 								lookingForJob: req.body.lookingForJob,

@@ -27,8 +27,15 @@ export default function WorkerStep({ step, setStep, isCompany, isWorker }) {
 				</h2>
 			</div>
 			<div className={styles.form}>
-				<span className={styles.fakeLabel}>Veuillez joindre votre CV</span>
-				<br />
+				<div className={styles.labels}>
+					<div>
+						<span className={styles.fakeLabel}>Joindre un CV </span>
+						<span>*</span>
+					</div>
+					<div>
+						<i className={styles.errorMsg} id="file-error"></i>
+					</div>
+				</div>
 				<br />
 				<div className={styles.file}>
 					<input
@@ -47,8 +54,14 @@ export default function WorkerStep({ step, setStep, isCompany, isWorker }) {
 				</div>
 				<br />
 				<br />
-				<label htmlFor="portfolio">Un lien vers votre portfolio ?</label>
-				<br />
+				<div className={styles.labels}>
+					<div>
+						<label htmlFor="portfolio">Un lien vers votre portfolio ?</label>
+					</div>
+					<div>
+						<i className={styles.errorMsg} id="portfolio-error"></i>
+					</div>
+				</div>
 				<input
 					type="text"
 					id="portfolio"
@@ -57,9 +70,15 @@ export default function WorkerStep({ step, setStep, isCompany, isWorker }) {
 				/>
 				<br />
 				<br />
-				<label htmlFor="activity">Secteur d'activité</label>
-				<span>*</span>
-				<br />
+				<div className={styles.labels}>
+					<div>
+						<label htmlFor="activity">Secteur d'activité</label>
+						<span>*</span>
+					</div>
+					<div>
+						<i className={styles.errorMsg} id="activity-error"></i>
+					</div>
+				</div>
 				<select name="activity" id="activity">
 					<option value="">Veuillez choisir votre secteur d'activité</option>
 					<option value="Audio">Audio</option>

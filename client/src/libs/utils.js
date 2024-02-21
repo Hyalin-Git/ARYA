@@ -83,86 +83,81 @@ export const userStepValidation = () => {
 
 	if (!regex.names.test(lastname.value)) {
 		lastname.classList.add(styles.error);
-		lastname.value = "";
-		lastname.setAttribute("placeholder", "Nom invalide");
-		setTimeout(() => {
-			lastname.classList.remove(styles.error);
-			lastname.setAttribute("placeholder", "Nom");
-		}, 2000);
+		document.getElementById("lastname-error").innerHTML = "Nom invalide";
+
+		lastname.addEventListener("input", function () {
+			document.getElementById("lastname-error").innerHTML = "";
+		});
 		return false;
 	}
 
 	if (!regex.names.test(firstname.value)) {
 		firstname.classList.add(styles.error);
-		firstname.value = "";
-		firstname.setAttribute("placeholder", "Prénom invalide");
-		setTimeout(() => {
-			firstname.classList.remove(styles.error);
-			firstname.setAttribute("placeholder", "Prénom");
-		}, 2000);
+		document.getElementById("firstname-error").innerHTML = "Prénom invalide";
+
+		firstname.addEventListener("input", function () {
+			document.getElementById("firstname-error").innerHTML = "";
+		});
 		return false;
 	}
 
 	if (!regex.userName.test(username.value)) {
 		username.classList.add(styles.error);
-		username.value = "";
-		username.setAttribute("placeholder", "Nom d'utilisateur invalide");
-		setTimeout(() => {
-			username.classList.remove(styles.error);
-			username.setAttribute("placeholder", "utilisateur");
-		}, 2000);
+		document.getElementById("username-error").innerHTML =
+			"Ce nom d'utilisateur est invalide";
+
+		username.addEventListener("input", function () {
+			document.getElementById("username-error").innerHTML = "";
+		});
 		return false;
 	}
 
 	if (!regex.email.test(email.value)) {
 		email.classList.add(styles.error);
-		email.value = "";
-		email.setAttribute("placeholder", "Adresse mail invalide");
-		setTimeout(() => {
-			email.classList.remove(styles.error);
-			email.setAttribute("placeholder", "exemple@email.com");
-		}, 2000);
+		document.getElementById("email-error").innerHTML =
+			"Cette adresse mail est invalide";
+
+		email.addEventListener("input", function () {
+			document.getElementById("email-error").innerHTML = "";
+		});
 		return false;
 	}
 
 	// passwords
 	if (!regex.password.pass.test(password.value)) {
 		password.classList.add(styles.error);
-
-		let placeHolderMsg = "";
-
+		let msg = "";
 		if (password.value.length < 8) {
-			placeHolderMsg = "Au moins 8 caractères";
+			msg = "Au moins 8 caractères";
 		} else if (password.value.search(regex.password.hasLowerCase)) {
-			placeHolderMsg = "Au moins une minuscule";
+			msg = "Au moins une minuscule";
 		} else if (password.value.search(regex.password.hasUpperCase)) {
-			placeHolderMsg = "Au moins une majuscule";
+			msg = "Au moins une majuscule";
 		} else if (password.value.search(regex.password.hasDigit)) {
-			placeHolderMsg = "Doit contenir un chiffre";
+			msg = "Doit contenir un chiffre";
 		} else if (password.value.search(regex.password.hasSymbol)) {
-			placeHolderMsg = "Doit contenir un symbol (!@#$)";
+			msg = "Doit contenir un symbol (!@#$)";
 		} else {
-			placeHolderMsg = "Mot de passe invalide";
+			msg = "Mot de passe invalide";
 		}
 
-		password.value = "";
-		password.setAttribute("placeholder", placeHolderMsg);
-		setTimeout(() => {
-			password.classList.remove(styles.error);
-			password.setAttribute("placeholder", "Au moins 8 caractères");
-		}, 2000);
+		document.getElementById("password-error").innerHTML = msg;
+		password.addEventListener("input", function () {
+			document.getElementById("password-error").innerHTML = "";
+		});
+
 		return false;
 	}
 
 	// If password & newPassword aren't the same
 	if (newPassword.value !== password.value) {
 		newPassword.classList.add(styles.error);
-		newPassword.value = "";
-		newPassword.setAttribute("placeholder", "Le mot de passe est différent");
-		setTimeout(() => {
-			newPassword.classList.remove(styles.error);
-			newPassword.setAttribute("placeholder", "Confirmez votre mot de passe");
-		}, 2000);
+		document.getElementById("newPassword-error").innerHTML =
+			"Mot de passe différent";
+
+		newPassword.addEventListener("input", function () {
+			document.getElementById("newPassword-error").innerHTML = "";
+		});
 		return false;
 	}
 
@@ -175,6 +170,14 @@ export const accountTypeValidation = () => {
 	const other = document.getElementById("other");
 
 	if (!company.checked && !freelance.checked && !other.checked) {
+		company.parentElement.classList.add(styles.error);
+		freelance.parentElement.classList.add(styles.error);
+		other.parentElement.classList.add(styles.error);
+		setTimeout(() => {
+			company.parentElement.classList.remove(styles.error);
+			freelance.parentElement.classList.remove(styles.error);
+			other.parentElement.classList.remove(styles.error);
+		}, 2000);
 		return false;
 	}
 
@@ -203,34 +206,40 @@ export const companyStepValidation = () => {
 
 	if (!regex.company.test(name.value)) {
 		name.classList.add(styles.error);
-		name.value = "";
-		name.setAttribute("placeholder", "Nom de l'entreprise invalide");
-		setTimeout(() => {
+		document.getElementById("company-name-error").innerHTML =
+			"Nom d'entreprise invalide";
+
+		name.addEventListener("input", function () {
 			name.classList.remove(styles.error);
-			name.setAttribute("placeholder", "Nom de l'entreprise");
-		}, 2000);
+			document.getElementById("company-name-error").innerHTML = "";
+		});
 		return false;
 	}
 
 	if (logo.files.length >= 1) {
 		if (!allowedMimetypes.includes(logo.files[0]?.type)) {
 			logo.parentElement.classList.add(styles.error);
-			logo.value = "";
-			document.getElementById("fileName").innerHTML = ".png / .jpg";
-			document.getElementById("fileName").style.color = "red";
-			setTimeout(() => {
+			document.getElementById("file-error").innerHTML =
+				"Ce type de fichier n'est pas accepté";
+
+			logo.addEventListener("change", function () {
 				logo.parentElement.classList.remove(styles.error);
-				document.getElementById("fileName").style.color = "grey";
-			}, 2000);
+				document.getElementById("file-error").innerHTML = "";
+			});
+
 			return false;
 		}
 	}
 
 	if (activity.value === "") {
 		activity.classList.add(styles.error);
-		setTimeout(() => {
+		document.getElementById("activity-error").innerHTML =
+			"L'activité choisie n'est pas valide";
+
+		activity.addEventListener("change", function () {
+			document.getElementById("activity-error").innerHTML = "";
 			activity.classList.remove(styles.error);
-		}, 2000);
+		});
 		return false;
 	}
 
@@ -258,35 +267,43 @@ export const freelanceStepValidation = () => {
 	if (cv.files.length >= 1) {
 		if (!allowedMimetypes.includes(cv.files[0]?.type)) {
 			cv.parentElement.classList.add(styles.error);
-			cv.value = "";
-			document.getElementById("fileName").innerHTML = ".pdf";
-			document.getElementById("fileName").style.color = "red";
-			setTimeout(() => {
+			document.getElementById("file-error").innerHTML =
+				"Ce type de fichier n'est pas accepté";
+
+			cv.addEventListener("change", function () {
 				cv.parentElement.classList.remove(styles.error);
-				document.getElementById("fileName").style.color = "grey";
-			}, 2000);
+				document.getElementById("file-error").innerHTML = "";
+			});
+
 			return false;
 		}
+		return false;
 	}
 
 	if (portfolio.value.length >= 1) {
 		if (!regex.link.test(portfolio)) {
 			portfolio.classList.add(styles.error);
-			portfolio.value = "";
-			portfolio.setAttribute("placeholder", "Ceci n'est pas un lien valide");
-			setTimeout(() => {
+			document.getElementById("portfolio-error").innerHTML =
+				"Ceci n'est pas un lien valide";
+
+			portfolio.addEventListener("input", function () {
 				portfolio.classList.remove(styles.error);
-				portfolio.setAttribute("placeholder", "https://portfolio.fr");
-			}, 2000);
+				document.getElementById("portfolio-error").innerHTML = "";
+			});
+
 			return false;
 		}
 	}
 
 	if (activity.value === "") {
 		activity.classList.add(styles.error);
-		setTimeout(() => {
+		document.getElementById("activity-error").innerHTML =
+			"L'activité choisie n'est pas valide";
+
+		activity.addEventListener("change", function () {
+			document.getElementById("activity-error").innerHTML = "";
 			activity.classList.remove(styles.error);
-		}, 2000);
+		});
 		return false;
 	}
 

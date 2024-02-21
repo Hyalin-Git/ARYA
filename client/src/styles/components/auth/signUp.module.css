@@ -2,6 +2,7 @@
 	margin: 0 70px 0 70px;
 	height: 100%;
 	display: flex;
+	align-items: center;
 }
 .tracker {
 	position: relative;
@@ -73,7 +74,6 @@
 	position: relative;
 	left: 5px;
 }
-
 
 /* bottom text  */
 

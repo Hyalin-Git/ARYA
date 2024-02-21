@@ -11,6 +11,11 @@
 	font-weight: 400;
 }
 
+.labels {
+	display: flex;
+	justify-content: space-between;
+}
+
 .form .fakeLabel {
 	position: relative;
 	right: inherit;
@@ -89,9 +94,13 @@
 	border: 1px solid red !important;
 }
 
-.error::placeholder {
-	transition: 150ms all linear;
+.errorMsg {
 	color: red;
+	font-weight: bold;
+	font-style: inherit;
+	font-size: 0.9rem;
+	position: relative;
+	top: -2px;
 }
 
 /* buttons  */

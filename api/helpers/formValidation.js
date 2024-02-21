@@ -8,18 +8,22 @@ exports.signUpValidation = (req) => {
 		case regex.names.test(req.body.lastName || req.body.firstName):
 			isValid = false;
 			// Names are invalid
-			message = "Votre nom ou prénom est invalide";
+			message = "Ce nom est invalide";
+			break;
+		case regex.names.test(req.body.firstName):
+			isValid = false;
+			// Names are invalid
+			message = "Ce prénom est invalide";
 			break;
 		case regex.userName.test(req.body.userName):
 			isValid = false;
-			// Email is invalid
-			message =
-				"Votre nom d'utilisateur ne peut pas contenir d'espaces, de symboles ou de caractères spéciaux autres que le tiret bas (_).";
+			// username is invalid
+			message = "Ce nom d'utilisateur est invalide.";
 			break;
 		case regex.email.test(req.body.email):
 			isValid = false;
 			// Email is invalid
-			message = "Votre adresse mail est invalide";
+			message = "Cette adresse mail est invalide";
 			break;
 		case regex.password.test(req.body.password):
 			isValid = false;
@@ -70,3 +74,4 @@ exports.signInValidation = (req) => {
 
 	return { isValid, message };
 };
+

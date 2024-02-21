@@ -25,6 +25,8 @@ export default function AccountType({
 		}
 
 		if (input.id === "other") {
+			setIsCompany(false);
+			setIsWorker(false);
 			document.getElementById("next").style.display = "none";
 			document.getElementById("end").style.display = "block";
 			// console.log("insane");

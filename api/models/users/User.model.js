@@ -44,18 +44,12 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			maxLength: 350,
 		},
-		phone: {
-			type: String,
-			minLength: 4,
-			maxLength: 20,
-			// required: "Un numéro de téléphone est requis",
-		},
+
 		picture: {
 			type: String,
 		},
 		dateOfBirth: {
 			type: String,
-			// required: "Date de naissance requise",
 		},
 		likes: {
 			type: [String],

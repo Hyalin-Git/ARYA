@@ -10,7 +10,11 @@ export default function SignUp({ setIsSignUp, setIsSignIn, step, setStep }) {
 		isSuccess: false,
 		isFailure: false,
 		status: "pending",
+		isLastname: false,
+		isFirstname: false,
+		isUsername: false,
 		isEmail: false,
+		isPassword: false,
 		message: "",
 	};
 	const [state, formAction] = useFormState(createUser, initialState);

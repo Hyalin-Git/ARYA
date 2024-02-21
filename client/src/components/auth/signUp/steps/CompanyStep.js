@@ -31,19 +31,36 @@ export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 				</h2>
 			</div>
 			<div className={styles.form}>
-				<label htmlFor="name">Nom</label>
-				<span>*</span>
-				<br />
+				<div className={styles.labels}>
+					<div>
+						<label htmlFor="name">Nom</label>
+						<span>*</span>
+					</div>
+					<div>
+						<i className={styles.errorMsg} id="company-name-error"></i>
+					</div>
+				</div>
 				<input
+					onChange={(e) => {
+						e.target.classList.remove(styles.error);
+					}}
 					type="text"
 					id="name"
 					name="name"
 					placeholder="Nom de l'entreprise"
+					required
 				/>
 				<br />
 				<br />
-				<span className={styles.fakeLabel}>Logo</span>
-				<br />
+				<div className={styles.labels}>
+					<div>
+						<span className={styles.fakeLabel}>Logo </span>
+						<span>*</span>
+					</div>
+					<div>
+						<i className={styles.errorMsg} id="file-error"></i>
+					</div>
+				</div>
 				<br />
 				<div className={styles.file}>
 					<input
@@ -62,9 +79,16 @@ export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 				</div>
 				<br />
 				<br />
-				<label htmlFor="activity">Secteur d'activité</label>
-				<span>*</span>
-				<br />
+				<div className={styles.labels}>
+					<div>
+						<label htmlFor="activity">Secteur d'activité</label>
+						<span>*</span>
+					</div>
+					<div>
+						<i className={styles.errorMsg} id="activity-error"></i>
+					</div>
+				</div>
+
 				<select name="activity" id="activity">
 					<option value="">Veuillez choisir votre activité</option>
 					<option value="Audio">Audio</option>

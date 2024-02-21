@@ -232,7 +232,7 @@ body::-webkit-scrollbar {
 	margin: 0;
 	padding: 0;
 	padding-left: 25px;
-	border-radius: 0 4px 4px 0;
+	border-radius: 0 8px 8px 0;
 	width: 45%;
 	font-weight: bold;
 	text-align: center;
@@ -242,4 +242,5 @@ body::-webkit-scrollbar {
 	background-repeat: no-repeat;
 	background-size: 18px;
 	background-position: 12px 15px;
+	box-sizing: content-box;
 }
