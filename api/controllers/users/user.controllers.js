@@ -255,7 +255,6 @@ exports.sendPasswordResetCode = async (req, res, next) => {
 	const userEmail = req.body.userEmail;
 
 	const user = await UserModel.findOne({
-		_id: req.params.id,
 		email: userEmail,
 	});
 
@@ -265,22 +264,11 @@ exports.sendPasswordResetCode = async (req, res, next) => {
 			.send({ error: true, message: "Aucun utilisateur trouvé" }); // No user has been found
 	}
 
-	if (userEmail !== user.email) {
-		return res.status(404).send({
-			error: true,
-			message:
-				"L'adresse mail renseigné ne correspond pas à l'adresse mail enregistré",
-		});
-	}
-
 	ResetPasswordModel.findOne({ userId: user._id, userEmail: user.email })
 		.then(async (data) => {
 			// If the reset code has been sent already
 			if (data) {
-				return res.status(400).send({
-					error: true,
-					message: "Un email a déjà été envoyé", // An email has already been sent
-				});
+				await ResetPasswordModel.findByIdAndDelete({ _id: data._id });
 			}
 			const generateResetCode = crypto.randomBytes(3).toString("hex");
 			const resetCode = generateResetCode;

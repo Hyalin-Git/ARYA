@@ -1,7 +1,9 @@
 const router = require("express").Router();
 const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
 const { isPrivate, isBlocked } = require("../../middlewares/user.middlewares");
-
+const {
+	passwordResetLimiter,
+} = require("../../middlewares/limiter.middlewares");
 const {
 	checkUserPassword,
 	checkIfUserVerified,
@@ -59,7 +61,8 @@ router.delete("/:id", authenticate, authorize, userController.deleteOneUser);
 
 // forgot passsword routes
 router.post(
-	"/forgot-password/reset-code/:id",
+	"/forgot-password",
+	passwordResetLimiter,
 	userController.sendPasswordResetCode
 );
 router.put("/forgot-password/:id", userController.updateForgotPassword); // If the reset code is verified, then update the password

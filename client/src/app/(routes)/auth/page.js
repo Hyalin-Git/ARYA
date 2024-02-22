@@ -1,14 +1,16 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import styles from "@/styles/pages/auth.module.css";
 import SignIn from "@/components/auth/signIn/SignIn";
 import SignUp from "@/components/auth/signUp/SignUp";
 import StepTracker from "@/components/auth/signUp/StepTracker";
+import ForgotPassword from "@/components/auth/forgotPassword/ForgotPassword";
 
 export default function Auth() {
 	const [isSignIn, setIsSignIn] = useState(true);
 	const [isSignUp, setIsSignUp] = useState(false);
+	const [isForgotPassword, setIsForgotPassword] = useState(false);
 	const [step, setStep] = useState(1);
 
 	return (
@@ -29,7 +31,11 @@ export default function Auth() {
 				</div>
 				<div className={styles.rightside}>
 					{isSignIn && (
-						<SignIn setIsSignIn={setIsSignIn} setIsSignUp={setIsSignUp} />
+						<SignIn
+							setIsSignIn={setIsSignIn}
+							setIsSignUp={setIsSignUp}
+							setIsForgotPassword={setIsForgotPassword}
+						/>
 					)}
 					{isSignUp && (
 						<SignUp
@@ -37,6 +43,12 @@ export default function Auth() {
 							setIsSignIn={setIsSignIn}
 							step={step}
 							setStep={setStep}
+						/>
+					)}
+					{isForgotPassword && (
+						<ForgotPassword
+							setIsSignIn={setIsSignIn}
+							setIsForgotPassword={setIsForgotPassword}
 						/>
 					)}
 				</div>

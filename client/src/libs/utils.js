@@ -18,44 +18,45 @@ export const signInValidation = () => {
 		}
 	}
 
+	// Email
 	if (!regex.email.test(email.value)) {
 		email.classList.add(styles.error);
-		email.value = "";
-		email.setAttribute("placeholder", "Adresse mail invalide");
-		setTimeout(() => {
+		document.getElementById("email-error").innerHTML =
+			"Cette adresse mail est invalide";
+
+		email.addEventListener("input", function () {
 			email.classList.remove(styles.error);
-			email.setAttribute("placeholder", "exemple@email.com");
-		}, 2000);
+			document.getElementById("email-error").innerHTML = "";
+		});
 		return false;
 	}
 
 	// passwords
 	if (!regex.password.pass.test(password.value)) {
 		password.classList.add(styles.error);
-
-		let placeHolderMsg = "";
-
+		let msg = "";
 		if (password.value.length < 8) {
-			placeHolderMsg = "Au moins 8 caractères";
+			msg = "Au moins 8 caractères";
 		} else if (password.value.search(regex.password.hasLowerCase)) {
-			placeHolderMsg = "Au moins une minuscule";
+			msg = "Au moins une minuscule";
 		} else if (password.value.search(regex.password.hasUpperCase)) {
-			placeHolderMsg = "Au moins une majuscule";
+			msg = "Au moins une majuscule";
 		} else if (password.value.search(regex.password.hasDigit)) {
-			placeHolderMsg = "Doit contenir un chiffre";
+			msg = "Doit contenir un chiffre";
 		} else if (password.value.search(regex.password.hasSymbol)) {
-			placeHolderMsg = "Doit contenir un symbol (!@#$)";
+			msg = "Doit contenir un symbol (!@#$)";
+		} else {
+			msg = "Mot de passe invalide";
 		}
 
-		password.value = "";
-		password.setAttribute("placeholder", placeHolderMsg);
-		setTimeout(() => {
+		document.getElementById("password-error").innerHTML = msg;
+		password.addEventListener("input", function () {
 			password.classList.remove(styles.error);
-			password.setAttribute("placeholder", "Au moins 8 caractères");
-		}, 2000);
+			document.getElementById("password-error").innerHTML = "";
+		});
+
 		return false;
 	}
-
 	return true;
 };
 

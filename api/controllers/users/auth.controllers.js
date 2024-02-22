@@ -151,7 +151,7 @@ exports.signIn = (req, res, next) => {
 						if (!match) {
 							return res
 								.status(401)
-								.send({ message: "Mot de passe incorrect !" }); // Password does not match
+								.send({ message: "Mot de passe incorrect" }); // Password does not match
 						} else {
 							const rememberMe = req.body.rememberMe;
 							// generate tokens

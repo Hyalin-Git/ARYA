@@ -300,3 +300,48 @@ export async function logout() {
 	cookies().delete("session");
 	cookies().delete("tempSession");
 }
+
+export async function forgotPassword(prevState, formData) {
+	try {
+		const response = await axios({
+			method: "POST",
+			url: "http://localhost:5000/api/users/forgot-password",
+			withCredentials: true,
+			data: {
+				userEmail: formData.get("email"),
+			},
+		});
+
+		if (response.status === 201) {
+			return {
+				isSuccess: true,
+				isFailure: false,
+				message:
+					"Le code de réinitialisation vient d'être envoyé à l'adresse mail correspondante",
+			};
+		} else {
+			throw new Error();
+		}
+	} catch (err) {
+		if (err?.response?.status === 429) {
+			return {
+				isFailure: true,
+				isSuccess: false,
+				message: "Veuillez attendre une minute avant de réessayer",
+			};
+		}
+		if (err?.response?.status === 404) {
+			return {
+				isFailure: true,
+				isSuccess: false,
+				message: "L'adresse mail fournit ne correspond à aucun utilisateur",
+			};
+		}
+		return {
+			isFailure: true,
+			isSuccess: false,
+			message:
+				"Quelque chose s'est mal passé de notre côté, veuillez réessayer",
+		};
+	}
+}
