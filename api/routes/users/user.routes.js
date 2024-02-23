@@ -60,12 +60,8 @@ router.put(
 router.delete("/:id", authenticate, authorize, userController.deleteOneUser);
 
 // forgot passsword routes
-router.post(
-	"/forgot-password",
-	passwordResetLimiter,
-	userController.sendPasswordResetCode
-);
-router.put("/forgot-password/:id", userController.updateForgotPassword); // If the reset code is verified, then update the password
+router.post("/forgot-password", userController.sendPasswordResetCode);
+router.put("/forgot-password", userController.updateForgotPassword); // If the reset code is verified, then update the password
 
 router.patch("/block/:id", authenticate, authorize, userController.blockAnUser);
 router.patch(

@@ -4,7 +4,10 @@
 	background: none !important;
 	border: 1px solid white;
 }
-
+.previous:hover {
+	background: rgb(var(--layer-color)) !important;
+	transition: all 250ms linear;
+}
 .previous,
 .next {
 	width: 120px;

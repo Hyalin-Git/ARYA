@@ -28,6 +28,7 @@ export default function Auth() {
 						</div>
 					</div>
 					{isSignUp && <StepTracker step={step} />}
+					{isForgotPassword && <StepTracker step={step} />}
 				</div>
 				<div className={styles.rightside}>
 					{isSignIn && (
@@ -49,6 +50,7 @@ export default function Auth() {
 						<ForgotPassword
 							setIsSignIn={setIsSignIn}
 							setIsForgotPassword={setIsForgotPassword}
+							setStep={setStep}
 						/>
 					)}
 				</div>

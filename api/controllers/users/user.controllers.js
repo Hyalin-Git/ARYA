@@ -18,6 +18,9 @@ const {
 const { uploadFile, destroyFile } = require("../../helpers/cloudinaryManager");
 const { filterUsers } = require("../../helpers/filterResponse");
 const FollowRequestModel = require("../../models/users/FollowRequest.model");
+const {
+	passwordResetLimiter,
+} = require("../../middlewares/limiter.middlewares");
 
 // Get all users
 exports.getUsers = (req, res, next) => {
@@ -264,7 +267,12 @@ exports.sendPasswordResetCode = async (req, res, next) => {
 			.send({ error: true, message: "Aucun utilisateur trouvé" }); // No user has been found
 	}
 
-	ResetPasswordModel.findOne({ userId: user._id, userEmail: user.email })
+	const remainingRequests = await passwordResetLimiter.removeTokens(1);
+
+	if (remainingRequests < 0) {
+		return res.status(429).send({ error: true, message: "Too many requests" });
+	}
+	ResetPasswordModel.findOne({ userEmail: user.email })
 		.then(async (data) => {
 			// If the reset code has been sent already
 			if (data) {
@@ -311,12 +319,10 @@ exports.sendPasswordResetCode = async (req, res, next) => {
 exports.updateForgotPassword = async (req, res, next) => {
 	// Getting the reset password ticket
 	ResetPasswordModel.findOne({
-		userId: req.params.id,
-		userEmail: req.body.userEmail,
+		resetCode: req.body.resetCode,
 	})
 		.then((data) => {
 			const newPassword = req.body.newPassword;
-			const confirmNewPassword = req.body.confirmNewPassword;
 
 			if (!data) {
 				return res.status(404).send({ message: "Votre code est expiré" }); // Reset code expired
@@ -335,18 +341,11 @@ exports.updateForgotPassword = async (req, res, next) => {
 				});
 			}
 
-			if (newPassword !== confirmNewPassword) {
-				return res.status(506).send({
-					error: true,
-					message: "Les mots de passe ne correspondent pas", // Passwords does not match
-				});
-			}
-
 			bcrypt
 				.hash(newPassword, 10) // Hash newPassword
 				.then((hash) => {
 					// Find the specified user by his email
-					UserModel.findOne({ _id: req.params.id, email: data.userEmail })
+					UserModel.findOne({ email: data.userEmail })
 						.then((user) => {
 							if (!user) {
 								return res

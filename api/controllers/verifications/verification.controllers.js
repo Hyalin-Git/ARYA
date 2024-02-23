@@ -197,18 +197,17 @@ exports.verifyResetCode = (req, res, next) => {
 	const resetCode = req.body.resetCode;
 
 	ResetPasswordModel.findOne({
-		userEmail: req.body.userEmail,
 		resetCode: resetCode,
 	})
 		.then((data) => {
 			if (!data) {
 				return res
-					.status(200)
+					.status(404)
 					.send({ message: "Le code fournit est expiré ou invalide !" });
 			}
 
 			ResetPasswordModel.findOneAndUpdate(
-				{ userEmail: req.body.userEmail },
+				{ resetCode: resetCode },
 				{
 					$set: {
 						verified: true,

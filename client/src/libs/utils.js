@@ -320,3 +320,61 @@ export const freelanceStepValidation = () => {
 
 	return true;
 };
+
+export const updatePasswordValidation = () => {
+	const newPassword = document.getElementById("newPassword");
+	const confirmNewPassword = document.getElementById("confirmNewPassword");
+	const inputs = [newPassword, confirmNewPassword];
+
+	for (const input of inputs) {
+		if (input.value.length <= 0) {
+			input.classList.add(styles.error);
+			setTimeout(() => {
+				input.classList.remove(styles.error);
+			}, 2000);
+			return false;
+		}
+	}
+
+	// passwords
+	if (!regex.password.pass.test(newPassword.value)) {
+		newPassword.classList.add(styles.error);
+		let msg = "";
+		if (newPassword.value.length < 8) {
+			msg = "Au moins 8 caractères";
+		} else if (newPassword.value.search(regex.password.hasLowerCase)) {
+			msg = "Au moins une minuscule";
+		} else if (newPassword.value.search(regex.password.hasUpperCase)) {
+			msg = "Au moins une majuscule";
+		} else if (newPassword.value.search(regex.password.hasDigit)) {
+			msg = "Doit contenir un chiffre";
+		} else if (newPassword.value.search(regex.password.hasSymbol)) {
+			msg = "Doit contenir un symbol (!@#$)";
+		} else {
+			msg = "Mot de passe invalide";
+		}
+
+		document.getElementById("newPassword-error").innerHTML = msg;
+		newPassword.addEventListener("input", function () {
+			newPassword.classList.remove(styles.error);
+			document.getElementById("newPassword-error").innerHTML = "";
+		});
+
+		return false;
+	}
+
+	// If password & newPassword aren't the same
+	if (newPassword.value !== confirmNewPassword.value) {
+		confirmNewPassword.classList.add(styles.error);
+		document.getElementById("confirmNewPassword-error").innerHTML =
+			"Mot de passe différent";
+
+		confirmNewPassword.addEventListener("input", function () {
+			confirmNewPassword.classList.remove(styles.error);
+			document.getElementById("confirmNewPassword-error").innerHTML = "";
+		});
+		return false;
+	}
+
+	return true;
+};

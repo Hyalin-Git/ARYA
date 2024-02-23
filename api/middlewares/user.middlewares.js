@@ -69,3 +69,8 @@ exports.isBlocked = async (req, res, next) => {
 		next();
 	}
 };
+
+// Email validation for password reset
+exports.checkIfMailExist = (req, res, next) => {
+
+}

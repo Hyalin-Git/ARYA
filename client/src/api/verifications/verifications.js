@@ -16,3 +16,4 @@ export async function verifyEmail(id, token) {
 		throw new Error(message || "Une erreur est survenue");
 	}
 }
+

@@ -225,7 +225,7 @@ export default function UserStep({ state, step, setStep }) {
 					type={isHide ? "text" : "password"}
 					name="password"
 					id="password"
-					placeholder=""
+					placeholder="Au moins 8 caratères"
 					required
 				/>
 				<div className={styles.visible} onClick={handleShowHidePassowrd}>

@@ -301,7 +301,7 @@ export async function logout() {
 	cookies().delete("tempSession");
 }
 
-export async function forgotPassword(prevState, formData) {
+export async function sendResetCode(prevState, formData) {
 	try {
 		const response = await axios({
 			method: "POST",
@@ -323,6 +323,7 @@ export async function forgotPassword(prevState, formData) {
 			throw new Error();
 		}
 	} catch (err) {
+		console.log(err);
 		if (err?.response?.status === 429) {
 			return {
 				isFailure: true,
