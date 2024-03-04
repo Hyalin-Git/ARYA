@@ -4,12 +4,15 @@ const UserVerificationModel = require("../../models/verifications/UserVerificati
 const ResetEmailModel = require("../../models/verifications/ResetEmail.model");
 const crypto = require("crypto");
 const { sendEmail } = require("../../utils/mail/nodeMailer");
+const {
+	passwordResetLimiter,
+} = require("../../middlewares/limiter.middlewares");
 
 // Email verification //
 
 exports.verifyEmailLink = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id })
-		.then((user) => {
+		.then(async (user) => {
 			if (!user) {
 				return res
 					.status(404)
@@ -20,6 +23,14 @@ exports.verifyEmailLink = (req, res, next) => {
 				return res
 					.status(400)
 					.send({ error: true, message: "Utilisateur déjà vérifié" }); // User's already verified
+			}
+
+			const remainingRequests = await passwordResetLimiter.removeTokens(1);
+
+			if (remainingRequests < 0) {
+				return res
+					.status(429)
+					.send({ error: true, message: "Too many requests" });
 			}
 
 			UserVerificationModel.findOne({
@@ -138,7 +149,7 @@ exports.verifyNewEmailLink = (req, res, next) => {
 
 // Send a new email if the user isn't verified
 exports.checkUserVerification = (req, res, next) => {
-	UserModel.findById({ _id: req.params.id })
+	UserModel.findOne({ userEmail: req.body.userEmail })
 		.then((user) => {
 			if (!user) {
 				return res.status(404).send("Cet utilisateur n'existe pas"); // This user does not exist
@@ -152,12 +163,11 @@ exports.checkUserVerification = (req, res, next) => {
 			}
 
 			// If the corresponding user isn't verified send an email
-			UserVerificationModel.findOne({ userId: user._id })
+			UserVerificationModel.findOne({ userEmail: req.body.userEmail })
 				.then(async (data) => {
 					if (data) {
-						return res.status(400).send({
-							error: true,
-							message: "Un email a déjà été envoyé", // An email has already been sent
+						await UserVerificationModel.findOneAndDelete({
+							userEmail: req.body.userEmail,
 						});
 					}
 					const generateToken = crypto.randomBytes(32).toString("hex");
@@ -173,7 +183,7 @@ exports.checkUserVerification = (req, res, next) => {
 						});
 					}
 					const token = new UserVerificationModel({
-						userId: user._id,
+						userEmail: req.body.userEmail,
 						uniqueToken: uniqueToken,
 					});
 					token

@@ -328,7 +328,7 @@ export async function sendResetCode(prevState, formData) {
 			return {
 				isFailure: true,
 				isSuccess: false,
-				message: "Veuillez attendre une minute avant de réessayer",
+				message: "Veuillez attendre 30 secondes avant de réessayer",
 			};
 		}
 		if (err?.response?.status === 404) {

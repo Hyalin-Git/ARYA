@@ -1,9 +1,24 @@
+"use client";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/auth/signUpSuccess.module.css";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useMemo } from "react";
 export default function SignUpSuccess({ state }) {
+	const [timer, setTimer] = useState(30);
+
+	useMemo(() => {
+		let interval;
+
+		interval = setTimeout(() => {
+			setTimer(timer - 1);
+		}, 1000);
+
+		if (timer === 0) {
+			clearInterval(interval);
+		}
+	}, [state, timer]);
 	return (
 		<div className={styles.container}>
 			<div>
@@ -30,7 +45,15 @@ export default function SignUpSuccess({ state }) {
 					<div className={styles.line}></div>
 				</div>
 				<div className={styles.button}>
-					<button className={clsx(montserrat.className)}>
+					<button
+						onClick={(e) => {
+							if (timer !== 0) {
+								e.preventDefault();
+							} else {
+								setTimer(30);
+							}
+						}}
+						className={clsx(montserrat.className)}>
 						Renvoyer un mail de vérification
 					</button>
 				</div>

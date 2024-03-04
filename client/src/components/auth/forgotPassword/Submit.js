@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import styles from "@/styles/components/auth/forgotPassword.module.css";
 
 export default function Submit({ state, isCodeSent, setStep }) {
-	const [timer, setTimer] = useState(60);
+	const [timer, setTimer] = useState(30);
 	const { pending } = useFormStatus();
 
 	function handleEnterCode(e) {
@@ -64,7 +64,7 @@ export default function Submit({ state, isCodeSent, setStep }) {
 								if (timer !== 0) {
 									e.preventDefault();
 								} else {
-									setTimer(60);
+									setTimer(30);
 								}
 							}}
 							className={clsx(

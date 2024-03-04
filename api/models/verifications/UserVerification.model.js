@@ -2,11 +2,10 @@ const mongoose = require("mongoose");
 
 const UserVerificationSchema = new mongoose.Schema(
 	{
-		userId: {
-			type: mongoose.Schema.Types.ObjectId,
+		userEmail: {
+			type: String,
 			unique: true,
 			required: true,
-			ref: "User",
 		},
 		uniqueToken: { type: String, required: true },
 		createdAt: {

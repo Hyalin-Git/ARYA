@@ -11,7 +11,7 @@ router.put(
 
 // send verification mail route
 router.post(
-	"/send-verification-mail/:id",
+	"/send-verification-mail",
 	verificationController.checkUserVerification
 );
 // Verify the reset code
