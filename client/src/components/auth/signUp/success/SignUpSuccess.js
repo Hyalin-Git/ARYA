@@ -1,10 +1,13 @@
 "use client";
+import { reSendVerifyEmail } from "@/actions/verifications";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/auth/signUpSuccess.module.css";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useMemo } from "react";
+import SignUpSuccessSubmit from "./SignUpSuccessSubmit";
+import PopUp from "@/components/popup/PopUp";
 export default function SignUpSuccess({ state }) {
 	const [timer, setTimer] = useState(30);
 
@@ -19,6 +22,7 @@ export default function SignUpSuccess({ state }) {
 			clearInterval(interval);
 		}
 	}, [state, timer]);
+
 	return (
 		<div className={styles.container}>
 			<div>
@@ -44,18 +48,11 @@ export default function SignUpSuccess({ state }) {
 					</div>
 					<div className={styles.line}></div>
 				</div>
-				<div className={styles.button}>
-					<button
-						onClick={(e) => {
-							if (timer !== 0) {
-								e.preventDefault();
-							} else {
-								setTimer(30);
-							}
-						}}
-						className={clsx(montserrat.className)}>
-						Renvoyer un mail de vérification
-					</button>
+				<div className={styles.form}>
+					<form action={reSendVerifyEmail}>
+						<input type="hidden" name="email" id="email" defaultValue="yas" />
+						<SignUpSuccessSubmit timer={timer} setTimer={setTimer} />
+					</form>
 				</div>
 			</div>
 			<div className={styles.help}>
@@ -63,6 +60,7 @@ export default function SignUpSuccess({ state }) {
 					Besoin d'aide ? <Link href={"/contact"}>Contactez-nous</Link>
 				</p>
 			</div>
+			<PopUp />
 		</div>
 	);
 }

@@ -4,6 +4,7 @@
 	justify-content: center;
 	height: 100%;
 	text-align: center;
+	overflow: hidden;
 }
 
 .titles {
@@ -64,12 +65,13 @@
 	background-color: color-mix(in srgb, var(--white-color), black 65%);
 }
 
-.button {
+.form {
 	text-align: center;
 	margin-top: 20px;
 	margin-bottom: 30px;
 }
 
+.form,
 .help {
 	text-align: center;
 }

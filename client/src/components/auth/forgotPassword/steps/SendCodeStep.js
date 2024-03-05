@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import Submit from "../Submit";
+import PopUp from "@/components/popup/PopUp";
 
 export default function SendCodeStep({
 	setIsSignIn,
@@ -12,6 +13,7 @@ export default function SendCodeStep({
 	setStep,
 }) {
 	const [isCodeSent, setIsCodeSent] = useState(false);
+	const [showPopUp, setShowPopUp] = useState(false);
 	const initialState = {
 		isFailure: false,
 		isSuccess: false,
@@ -27,6 +29,15 @@ export default function SendCodeStep({
 	useMemo(() => {
 		if (state.isSuccess) {
 			setIsCodeSent(true);
+		}
+		if (state?.isSuccess || state?.isFailure) {
+			setShowPopUp(true);
+			const interval = setTimeout(() => {
+				setShowPopUp(false);
+			}, 4000);
+			if (showPopUp) {
+				clearInterval(interval);
+			}
 		}
 	}, [state]);
 
@@ -64,6 +75,13 @@ export default function SendCodeStep({
 					<span onClick={handleSignIn}>Se connecter</span>
 				</p>
 			</div>
+			{showPopUp && (
+				<PopUp
+					status={state?.isSuccess ? "success" : "failure"}
+					title={state?.isSuccess ? "Code envoyé" : "Une erreur est survenu"}
+					message={state?.message}
+				/>
+			)}
 		</>
 	);
 }

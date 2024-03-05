@@ -2,8 +2,8 @@ import styles from "@/styles/components/auth/signUp.module.css";
 import { createUser } from "@/actions/auth";
 import { useFormState } from "react-dom";
 import Steps from "./steps/Steps";
-import SignUpSuccess from "./SignUpSuccess";
-import SignUpFailure from "./SignUpFailure";
+import SignUpSuccess from "./success/SignUpSuccess";
+import SignUpFailure from "./failure/SignUpFailure";
 
 export default function SignUp({ setIsSignUp, setIsSignIn, step, setStep }) {
 	const initialState = {

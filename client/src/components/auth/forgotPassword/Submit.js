@@ -1,7 +1,7 @@
 import { montserrat } from "@/libs/fonts";
 import clsx from "clsx";
 import { useFormStatus } from "react-dom";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "@/styles/components/auth/forgotPassword.module.css";
 
 export default function Submit({ state, isCodeSent, setStep }) {
@@ -15,12 +15,16 @@ export default function Submit({ state, isCodeSent, setStep }) {
 		setStep(2);
 	}
 
-	useMemo(() => {
+	useEffect(() => {
 		let interval;
 		if (state?.isSuccess) {
 			interval = setTimeout(() => {
 				setTimer(timer - 1);
 			}, 1000);
+		}
+		if (state?.isFailure) {
+			setTimer(0);
+			return;
 		}
 		if (timer === 0) {
 			clearInterval(interval);
@@ -29,24 +33,6 @@ export default function Submit({ state, isCodeSent, setStep }) {
 
 	return (
 		<>
-			{!pending && (
-				<>
-					{state?.isSuccess && (
-						<div className={styles.success}>
-							<i>{state?.message}</i>
-							<br />
-							<br />
-						</div>
-					)}
-					{state?.isFailure && (
-						<div className={styles.failure}>
-							<i>{state?.message}</i>
-							<br />
-							<br />
-						</div>
-					)}
-				</>
-			)}
 			{!isCodeSent ? (
 				<button
 					id="send-btn"
@@ -69,7 +55,7 @@ export default function Submit({ state, isCodeSent, setStep }) {
 							}}
 							className={clsx(
 								montserrat.className,
-								(pending || timer !== 0) && "loading"
+								(pending || (state.isSuccess && timer !== 0)) && "loading"
 							)}
 							disabled={pending}
 							type="submit">

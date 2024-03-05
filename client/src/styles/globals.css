@@ -200,6 +200,10 @@ body::-webkit-scrollbar {
 	/* display: none; */
 }
 
+#content {
+	overflow: hidden;
+}
+
 @media (max-width: 1024px) {
 	button {
 		font-size: 1rem;

@@ -1,6 +1,26 @@
 "use server";
 import axios from "axios";
 import { cookies } from "next/headers";
+
+export async function reSendVerifyEmail(prevState, formData) {
+	try {
+		const res = await axios({
+			method: "POST",
+			url: `http://localhost:5000/api/verification/send-verification-mail`,
+			withCredentials: true,
+			data: {
+				userEmail: "nicolas.tombal01@gmail.com",
+			},
+		});
+		console.log(res);
+		return res.data;
+	} catch (err) {
+		console.log(err);
+		// const message = err?.response?.data?.message;
+		// throw new Error(message || "Une erreur est survenue");
+	}
+}
+
 export async function verifyResetPasswordCode(prevState, formData) {
 	try {
 		const res = await axios({
