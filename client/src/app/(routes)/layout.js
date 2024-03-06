@@ -1,6 +1,4 @@
 "use client";
-import Header from "@/components/header/Header";
-import Footer from "@/components/footer/Footer";
 import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth";
 import { AuthContext } from "@/context/auth";
@@ -47,9 +45,7 @@ export default function AppLayout({ children }) {
 	return (
 		<>
 			<AuthContext.Provider value={{ uid, setUid, user, error }}>
-				<Header />
 				{children}
-				<Footer />
 			</AuthContext.Provider>
 		</>
 	);
