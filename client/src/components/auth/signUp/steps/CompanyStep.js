@@ -44,6 +44,11 @@ export default function CompanyStep({ step, setStep, isCompany, isWorker }) {
 					onChange={(e) => {
 						e.target.classList.remove(styles.error);
 					}}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							e.preventDefault();
+						}
+					}}
 					type="text"
 					id="name"
 					name="name"

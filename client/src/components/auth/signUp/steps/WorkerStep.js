@@ -66,6 +66,11 @@ export default function WorkerStep({ step, setStep, isCompany, isWorker }) {
 					type="text"
 					id="portfolio"
 					name="portfolio"
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							e.preventDefault();
+						}
+					}}
 					placeholder="https://portfolio.fr"
 				/>
 				<br />

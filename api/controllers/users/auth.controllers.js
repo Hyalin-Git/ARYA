@@ -113,8 +113,12 @@ exports.signUp = (req, res, next) => {
 						});
 					}
 
+					await UserVerificationModel.findOneAndDelete({
+						userEmail: user.email,
+					});
+
 					new UserVerificationModel({
-						userId: user._id,
+						userEmail: user.email,
 						uniqueToken: uniqueToken,
 					})
 						.save()

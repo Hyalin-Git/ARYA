@@ -1,4 +1,3 @@
-import styles from "@/styles/components/auth/forgotPassword.module.css";
 import { montserrat } from "@/libs/fonts";
 import clsx from "clsx";
 import { useFormStatus } from "react-dom";
@@ -13,17 +12,6 @@ export default function NewPassSubmit({ state }) {
 	}
 	return (
 		<>
-			{!pending && (
-				<>
-					{state?.isFailure && (
-						<div className={styles.failure}>
-							<i>{state?.message}</i>
-							<br />
-							<br />
-						</div>
-					)}
-				</>
-			)}
 			<button
 				onClick={handleBtn}
 				className={clsx(montserrat.className, pending && "loading")}>

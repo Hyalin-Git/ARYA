@@ -71,6 +71,10 @@
 	margin-bottom: 30px;
 }
 
+.form button {
+	min-width: 350px;
+}
+
 .form,
 .help {
 	text-align: center;

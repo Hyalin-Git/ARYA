@@ -1,27 +1,33 @@
 "use client";
 import { reSendVerifyEmail } from "@/actions/verifications";
-import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/auth/signUpSuccess.module.css";
-import clsx from "clsx";
-import Image from "next/image";
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import SignUpSuccessSubmit from "./SignUpSuccessSubmit";
 import PopUp from "@/components/popup/PopUp";
+import { useFormState } from "react-dom";
+
 export default function SignUpSuccess({ state }) {
-	const [timer, setTimer] = useState(30);
+	const initialState = {
+		isFailure: false,
+		isSuccess: false,
+		message: "",
+	};
+	const [newState, formAction] = useFormState(reSendVerifyEmail, initialState);
 
-	useMemo(() => {
-		let interval;
+	const [showPopUp, setShowPopUp] = useState(false);
 
-		interval = setTimeout(() => {
-			setTimer(timer - 1);
-		}, 1000);
-
-		if (timer === 0) {
-			clearInterval(interval);
+	useEffect(() => {
+		if (newState?.isSuccess || newState?.isFailure) {
+			setShowPopUp(true);
+			const interval = setTimeout(() => {
+				setShowPopUp(false);
+			}, 4000);
+			if (showPopUp) {
+				clearTimeout(interval);
+			}
 		}
-	}, [state, timer]);
+	}, [newState]);
 
 	return (
 		<div className={styles.container}>
@@ -49,9 +55,14 @@ export default function SignUpSuccess({ state }) {
 					<div className={styles.line}></div>
 				</div>
 				<div className={styles.form}>
-					<form action={reSendVerifyEmail}>
-						<input type="hidden" name="email" id="email" defaultValue="yas" />
-						<SignUpSuccessSubmit timer={timer} setTimer={setTimer} />
+					<form action={formAction}>
+						<input
+							type="hidden"
+							name="email"
+							id="email"
+							defaultValue={state?.message}
+						/>
+						<SignUpSuccessSubmit newState={newState} />
 					</form>
 				</div>
 			</div>
@@ -60,7 +71,17 @@ export default function SignUpSuccess({ state }) {
 					Besoin d'aide ? <Link href={"/contact"}>Contactez-nous</Link>
 				</p>
 			</div>
-			<PopUp />
+			{showPopUp && (
+				<PopUp
+					status={newState?.isSuccess ? "success" : "failure"}
+					title={
+						newState?.isSuccess
+							? "Un nouveau mail de confirmation a été envoyé"
+							: "Une erreur est survenu"
+					}
+					message={newState?.message}
+				/>
+			)}
 		</div>
 	);
 }

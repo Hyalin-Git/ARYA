@@ -6,9 +6,11 @@ import { useFormState } from "react-dom";
 import { updateForgotPassword } from "@/actions/user";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import PopUp from "@/components/popup/PopUp";
 
 export default function ModifyPasswordStep({ setStep }) {
 	const [isHide, setIsHide] = useState(false);
+	const [showPopUp, setShowPopUp] = useState(false);
 	const initialState = {
 		isFailure: false,
 		isSuccess: false,
@@ -28,6 +30,16 @@ export default function ModifyPasswordStep({ setStep }) {
 	useEffect(() => {
 		if (state?.isSuccess) {
 			setStep(4);
+		}
+
+		if (state?.isFailure) {
+			setShowPopUp(true);
+			const timeout = setTimeout(() => {
+				setShowPopUp(false);
+			}, 4000);
+			if (showPopUp) {
+				clearTimeout(timeout);
+			}
 		}
 	}, [state]);
 	return (
@@ -108,6 +120,13 @@ export default function ModifyPasswordStep({ setStep }) {
 							<NewPassSubmit state={state} />
 						</form>
 					</div>
+					{showPopUp && (
+						<PopUp
+							status={"failure"}
+							title={"Une erreur est survenu"}
+							message={state?.message}
+						/>
+					)}
 				</>
 			) : (
 				<>

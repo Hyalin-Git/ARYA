@@ -25,16 +25,8 @@ exports.verifyEmailLink = (req, res, next) => {
 					.send({ error: true, message: "Utilisateur déjà vérifié" }); // User's already verified
 			}
 
-			const remainingRequests = await passwordResetLimiter.removeTokens(1);
-
-			if (remainingRequests < 0) {
-				return res
-					.status(429)
-					.send({ error: true, message: "Too many requests" });
-			}
-
 			UserVerificationModel.findOne({
-				userId: user._id,
+				userEmail: user.email,
 				uniqueToken: req.params.token,
 			})
 				.then((token) => {
@@ -58,7 +50,7 @@ exports.verifyEmailLink = (req, res, next) => {
 					)
 						.then(() => {
 							// verified has been updated then delete the corresponding UserVerification model in the DB
-							UserVerificationModel.findOneAndDelete()
+							UserVerificationModel.findOneAndDelete({ userEmail: user.email })
 								.then(() =>
 									res.status(200).send({
 										error: false,
@@ -148,9 +140,9 @@ exports.verifyNewEmailLink = (req, res, next) => {
 };
 
 // Send a new email if the user isn't verified
-exports.checkUserVerification = (req, res, next) => {
-	UserModel.findOne({ userEmail: req.body.userEmail })
-		.then((user) => {
+exports.checkUserVerification = async (req, res, next) => {
+	UserModel.findOne({ email: req.body.userEmail })
+		.then(async (user) => {
 			if (!user) {
 				return res.status(404).send("Cet utilisateur n'existe pas"); // This user does not exist
 			}
@@ -160,6 +152,14 @@ exports.checkUserVerification = (req, res, next) => {
 					error: false,
 					message: "Votre compte est déjà vérifié", // Your account has already been verified
 				});
+			}
+
+			const remainingRequests = await passwordResetLimiter.removeTokens(1);
+
+			if (remainingRequests < 0) {
+				return res
+					.status(429)
+					.send({ error: true, message: "Too many requests" });
 			}
 
 			// If the corresponding user isn't verified send an email
@@ -172,7 +172,7 @@ exports.checkUserVerification = (req, res, next) => {
 					}
 					const generateToken = crypto.randomBytes(32).toString("hex");
 					const uniqueToken = generateToken;
-					const url = `${process.env.CLIENT_URL}/users/${user._id}/verify/${uniqueToken}`;
+					const url = `${process.env.CLIENT_URL}/verify/${user._id}/${uniqueToken}`;
 
 					const sent = await sendEmail(user.email, "Verify Email", url);
 

@@ -9,13 +9,38 @@ export async function reSendVerifyEmail(prevState, formData) {
 			url: `http://localhost:5000/api/verification/send-verification-mail`,
 			withCredentials: true,
 			data: {
-				userEmail: "nicolas.tombal01@gmail.com",
+				userEmail: formData.get("email"),
 			},
 		});
 		console.log(res);
-		return res.data;
+
+		return {
+			isSuccess: true,
+			isFailure: false,
+			message: "Un nouveau mail de confirmation vient d'être envoyé",
+		};
 	} catch (err) {
 		console.log(err);
+		if (err?.response?.status === 429) {
+			return {
+				isFailure: true,
+				isSuccess: false,
+				message: "Veuillez attendre 30 secondes avant de réessayer",
+			};
+		}
+		if (err?.response?.status === 404) {
+			return {
+				isFailure: true,
+				isSuccess: false,
+				message: "L'adresse mail fournit ne correspond à aucun utilisateur",
+			};
+		}
+		return {
+			isFailure: true,
+			isSuccess: false,
+			message:
+				"Quelque chose s'est mal passé de notre côté, veuillez réessayer",
+		};
 		// const message = err?.response?.data?.message;
 		// throw new Error(message || "Une erreur est survenue");
 	}
@@ -53,7 +78,7 @@ export async function verifyResetPasswordCode(prevState, formData) {
 			return {
 				isFailure: true,
 				isSuccess: false,
-				message: "Le code fournit est expiré ou invalide",
+				message: "Le code fourni est expiré ou invalide",
 			};
 		}
 		return {

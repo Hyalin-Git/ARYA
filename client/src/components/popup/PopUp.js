@@ -1,8 +1,7 @@
 import clsx from "clsx";
 import styles from "@/styles/components/popup/popUp.module.css";
 import { useEffect, useMemo, useState } from "react";
-export default function PopUp({ pending, status, title, message }) {
-	const [timer, setTimer] = useState(4);
+export default function PopUp({ status, title, message }) {
 	useEffect(() => {
 		const popup = document.getElementById("popup");
 		popup?.classList?.remove(styles.disapear);
@@ -14,22 +13,18 @@ export default function PopUp({ pending, status, title, message }) {
 		});
 	}, []);
 	return (
-		<>
-			{timer !== 0 && (
-				<div
-					className={clsx(
-						status === "success" ? styles.success : styles.failure,
-						styles.container
-					)}
-					id="popup">
-					<div>
-						<h3>{title}</h3>
-					</div>
-					<div>
-						<p>{message}</p>
-					</div>
-				</div>
+		<div
+			className={clsx(
+				status === "success" ? styles.success : styles.failure,
+				styles.container
 			)}
-		</>
+			id="popup">
+			<div>
+				<h3>{title}</h3>
+			</div>
+			<div>
+				<p>{message}</p>
+			</div>
+		</div>
 	);
 }

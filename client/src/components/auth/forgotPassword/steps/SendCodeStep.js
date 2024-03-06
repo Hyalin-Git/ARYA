@@ -36,7 +36,7 @@ export default function SendCodeStep({
 				setShowPopUp(false);
 			}, 4000);
 			if (showPopUp) {
-				clearInterval(interval);
+				clearTimeout(interval);
 			}
 		}
 	}, [state]);

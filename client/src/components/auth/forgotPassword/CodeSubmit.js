@@ -1,7 +1,6 @@
 import { montserrat } from "@/libs/fonts";
 import clsx from "clsx";
 import { useFormStatus } from "react-dom";
-import styles from "@/styles/components/auth/forgotPassword.module.css";
 import { useEffect } from "react";
 export default function CodeSubmit({ state, setStep }) {
 	const { pending } = useFormStatus();
@@ -15,21 +14,8 @@ export default function CodeSubmit({ state, setStep }) {
 	}, [state]);
 
 	return (
-		<>
-			{!pending && (
-				<>
-					{state?.isFailure && (
-						<div className={styles.failure}>
-							<i>{state?.message}</i>
-							<br />
-							<br />
-						</div>
-					)}
-				</>
-			)}
-			<button className={clsx(montserrat.className, pending && "loading")}>
-				{pending ? "Vérification en cours" : "Vérifier le code"}
-			</button>
-		</>
+		<button className={clsx(montserrat.className, pending && "loading")}>
+			{pending ? "Vérification en cours" : "Vérifier le code"}
+		</button>
 	);
 }

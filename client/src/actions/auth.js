@@ -54,7 +54,7 @@ export async function createUser(prevState, formData) {
 			message: `${formData.get("email")}`,
 		};
 	} catch (err) {
-		// console.log(err);
+		console.log(err);
 
 		const isInvalidLastName = err.response?.data?.message?.includes(
 			"Ce nom est invalide"

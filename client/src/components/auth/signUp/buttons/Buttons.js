@@ -71,7 +71,6 @@ export default function Buttons({ step, setStep, isCompany, isWorker }) {
 				className={clsx(montserrat.className, styles.next)}>
 				Suivant
 			</button>
-
 			<button
 				id="end"
 				onClick={handleForm}

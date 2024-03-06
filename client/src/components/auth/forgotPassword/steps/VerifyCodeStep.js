@@ -4,16 +4,32 @@ import styles from "@/styles/components/auth/forgotPassword.module.css";
 import clsx from "clsx";
 import { useFormState } from "react-dom";
 import CodeSubmit from "../CodeSubmit";
+import { useMemo, useState } from "react";
+import PopUp from "@/components/popup/PopUp";
 export default function VerifyCodeStep({ setStep }) {
 	const initialState = {
 		isFailure: false,
 		isSuccess: false,
 		message: "",
 	};
+	const [showPopUp, setShowPopUp] = useState(false);
 	const [state, formAction] = useFormState(
 		verifyResetPasswordCode,
 		initialState
 	);
+
+	useMemo(() => {
+		if (state?.isFailure) {
+			setShowPopUp(true);
+			const timeout = setTimeout(() => {
+				setShowPopUp(false);
+			}, 4000);
+
+			if (showPopUp) {
+				clearTimeout(timeout);
+			}
+		}
+	}, [state]);
 	return (
 		<>
 			<div className={styles.titles}>
@@ -42,6 +58,14 @@ export default function VerifyCodeStep({ setStep }) {
 					<CodeSubmit state={state} setStep={setStep} />
 				</form>
 			</div>
+			{/* Will display on failure only  */}
+			{showPopUp && (
+				<PopUp
+					status={"failure"}
+					title={"Une erreur est survenu"}
+					message={state?.message}
+				/>
+			)}
 		</>
 	);
 }

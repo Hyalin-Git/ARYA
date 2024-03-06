@@ -23,6 +23,8 @@ export default function SignUp({ setIsSignUp, setIsSignIn, step, setStep }) {
 		setIsSignIn(true);
 	}
 
+	console.log(state);
+
 	return (
 		<div className={styles.container}>
 			{state.status === "pending" ? (
