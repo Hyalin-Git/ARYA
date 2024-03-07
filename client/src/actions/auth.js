@@ -222,7 +222,6 @@ export async function logIn(prevState, formData) {
 			};
 		}
 	}
-
 	redirect("/portal");
 }
 
@@ -279,7 +278,7 @@ export async function updateSession(token) {
 			withCredentials: true,
 			data: {
 				refreshToken: token,
-				userId: "6576eb91261716e3bf05fdab",
+				userId: "65e84d8f5b4447f020ca2746",
 			},
 		});
 

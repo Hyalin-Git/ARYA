@@ -2,11 +2,13 @@
 import Image from "next/image";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/auth/signIn.module.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { logIn } from "@/actions/auth";
 import Submit from "./Submit";
 import clsx from "clsx";
+import { AuthContext } from "@/context/auth";
+import { redirect } from "next/navigation";
 
 export default function SignIn({
 	setIsSignIn,
@@ -17,11 +19,13 @@ export default function SignIn({
 	const [isPasswordError, setIsPasswordError] = useState(false);
 	const [isHide, setIsHide] = useState(false);
 	const initialState = {
+		isSuccess: false,
+		isFailure: false,
 		isEmail: false,
 		isPassword: false,
 		message: "",
 	};
-	const [state, formAction] = useFormState(logIn, initialState);
+	const [state, formAction] = useFormState(logIn, initialState)
 
 	useEffect(() => {
 		if (state?.isEmail === true) {

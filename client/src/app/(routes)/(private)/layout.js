@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth";
 import { AuthContext } from "@/context/auth";
 import { getUser } from "@/libs/users/user";
-export default function AppLayout({ children }) {
+export default function PrivateLayout({ children }) {
 	const [uid, setUid] = useState(null);
 	const [user, setUser] = useState({});
 	const [error, setError] = useState("");
@@ -25,6 +25,8 @@ export default function AppLayout({ children }) {
 				setError("Une erreur s'est produite lors de l'authentification");
 			}
 		}
+
+		console.log("played");
 
 		fetchSession();
 

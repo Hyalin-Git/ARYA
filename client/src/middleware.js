@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 export async function middleware(request) {
 	const privateRoutes = ["/portal"];
 	const cantAccessWhenLogged = ["/", "/auth"];
-
 	// If user is logged in
 	if (cookies().get("session")) {
 		if (cantAccessWhenLogged.includes(request.nextUrl.pathname)) {
