@@ -3,26 +3,43 @@ import { AuthContext } from "@/context/auth";
 import { useContext, useEffect, useState } from "react";
 import styles from "@/styles/pages/portal.module.css";
 import clsx from "clsx";
+import { useRouter } from "next/navigation";
 
 export default function Portal() {
+	const router = useRouter();
 	const { uid, setUid, user } = useContext(AuthContext);
 
 	function drag(e) {
 		e.preventDefault();
+		let isDown = true;
 		const element = e.currentTarget;
 		const rect = element.getBoundingClientRect();
+
 		console.log(element);
 
-		document.addEventListener("mousemove", function (e) {
-			const newXpos = Math.max(
-				Math.min(
-					e.clientX - rect.left, // New X position based on mouse X, preventing overflow
-					window.innerWidth - rect.width // Maximum X position (prevent going beyond the right edge)
-				)
-			);
+		document.addEventListener("mouseup", function (e) {
+			isDown = false;
 
-			element.style.transform = `translateX(${newXpos}px)`;
-			console.log(newXpos);
+			router.push("/arya-media");
+
+			element.style.transform = `translateX(0px)`;
+		});
+
+		document.addEventListener("mousemove", function (e) {
+			if (isDown) {
+				console.log(e.clientX);
+				const newXpos = Math.max(
+					-430,
+					Math.min(
+						565,
+						e.clientX - rect.left // New X position based on mouse X, preventing overflow
+					)
+				);
+
+				element.style.transform = `translateX(${Math.round(
+					newXpos - rect.width / 2
+				)}px)`;
+			}
 		});
 	}
 
