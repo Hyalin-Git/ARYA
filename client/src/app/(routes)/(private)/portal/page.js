@@ -19,15 +19,24 @@ export default function Portal() {
 
 		document.addEventListener("mouseup", function (e) {
 			isDown = false;
-
-			router.push("/arya-media");
+			const value = element.style.transform.split("(")[1].split("p")[0];
+			console.log(value);
+			if (Number(value) <= -430) {
+				router.push("/AryaMedia");
+			}
+			if (Number(value) >= 490) {
+				router.push("/Arya");
+			}
 
 			element.style.transform = `translateX(0px)`;
+			document.getElementById("aryaMedia").style.scale = "1";
+			document.getElementById("arya").style.scale = "1";
+			document.getElementById("background").style.backgroundPosition =
+				"50% 50%";
 		});
 
 		document.addEventListener("mousemove", function (e) {
 			if (isDown) {
-				console.log(e.clientX);
 				const newXpos = Math.max(
 					-430,
 					Math.min(
@@ -36,24 +45,69 @@ export default function Portal() {
 					)
 				);
 
-				element.style.transform = `translateX(${Math.round(
-					newXpos - rect.width / 2
-				)}px)`;
+				const position = newXpos - rect.width / 2;
+
+				element.style.transform = `translateX(${Math.round(position)}px)`;
+
+				console.log(position);
+				console.log(position >= 100);
+				if (position >= 0) {
+					if (position >= 100 && position < 200) {
+						document.getElementById("arya").style.scale = "1.05";
+						document.getElementById("background").style.backgroundPosition =
+							"70% 50%";
+					} else if (position >= 200 && position < 300) {
+						document.getElementById("arya").style.scale = "1.1";
+						document.getElementById("background").style.backgroundPosition =
+							"80% 50%";
+					} else if (position >= 300 && position < 400) {
+						document.getElementById("arya").style.scale = "1.15";
+						document.getElementById("background").style.backgroundPosition =
+							"90% 50%";
+					} else if (position >= 400) {
+						document.getElementById("arya").style.scale = "1.2";
+						document.getElementById("background").style.backgroundPosition =
+							"100% 50%";
+					} else {
+						document.getElementById("aryaMedia").style.scale = "1";
+						document.getElementById("arya").style.scale = "1";
+						document.getElementById("background").style.backgroundPosition =
+							"50% 50%";
+					}
+				} else {
+					if (position <= -100 && position > -200) {
+						document.getElementById("aryaMedia").style.scale = "1.05";
+						document.getElementById("background").style.backgroundPosition =
+							"30% 50%";
+					} else if (position <= -200 && position > -300) {
+						document.getElementById("aryaMedia").style.scale = "1.1";
+						document.getElementById("background").style.backgroundPosition =
+							"20% 50%";
+					} else if (position <= -300 && position > -400) {
+						document.getElementById("aryaMedia").style.scale = "1.15";
+						document.getElementById("background").style.backgroundPosition =
+							"10% 50%";
+					} else if (position <= -400) {
+						document.getElementById("aryaMedia").style.scale = "1.2";
+						document.getElementById("background").style.backgroundPosition =
+							"0% 50%";
+					}
+				}
 			}
 		});
 	}
 
 	return (
-		<div className={styles.container}>
-			<div className={styles.wrapper}>
+		<div className={styles.container} id="background">
+			<div className={styles.header}>
 				<div>
 					<div>
-						<h2>Arya Media</h2>
+						<h2 id="aryaMedia">Arya Media</h2>
 					</div>
 				</div>
 				<div>
 					<div>
-						<h2>Arya</h2>
+						<h2 id="arya">Arya</h2>
 					</div>
 				</div>
 			</div>

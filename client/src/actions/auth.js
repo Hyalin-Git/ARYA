@@ -201,7 +201,6 @@ export async function logIn(prevState, formData) {
 			secure: true,
 			httpOnly: true,
 			sameSite: "strict",
-			expires: Date.now() + 30 * 60 * 1000,
 			// Add domain
 		});
 	} catch (err) {
@@ -250,8 +249,9 @@ export async function decryptToken(token) {
 
 		if (differenceInMilliseconds <= twoMinutesInMilliseconds) {
 			console.log("played");
+			const uid = response.data.userId;
 			const refreshToken = cookies().get("tempSession")?.value;
-			await updateSession(refreshToken);
+			await updateSession(refreshToken, uid);
 		}
 
 		return response.data;
@@ -270,7 +270,7 @@ export async function decryptToken(token) {
 	}
 }
 
-export async function updateSession(token) {
+export async function updateSession(token, uid) {
 	try {
 		const response = await axios({
 			method: "POST",
@@ -278,7 +278,7 @@ export async function updateSession(token) {
 			withCredentials: true,
 			data: {
 				refreshToken: token,
-				userId: "65e84d8f5b4447f020ca2746",
+				userId: uid,
 			},
 		});
 

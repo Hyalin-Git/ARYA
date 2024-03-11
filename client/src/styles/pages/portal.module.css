@@ -4,11 +4,13 @@
 	justify-content: space-between;
 	background-image: linear-gradient(
 		to right,
-		var(--meteorite-color) 40%,
-		var(--lavender-color)
+		var(--meteorite-color) 37%,
+		var(--lavender-color) 70%
 	);
 	height: 100vh;
-	/* background-size: 200% 200%; */
+	background-size: 200% 200%;
+	background-position: 50% 50%;
+	transition: all 450ms linear;
 	/* animation: back forwards infinite 2s; */
 }
 
@@ -21,20 +23,24 @@
 	}
 } */
 
-.wrapper {
+.header {
 	display: flex;
 	justify-content: space-around;
 	height: 100%;
 	align-items: center;
 }
 
-.wrapper h2 {
+.header h2 {
 	position: relative;
 	top: 40px;
 	font-size: 5rem;
 	margin: 0;
 	padding: 0;
-	opacity: 1;
+	text-size-adjust: auto;
+	backface-visibility: hidden;
+	transform: translateZ(0);
+	will-change: transform;
+	transition: 450ms all linear;
 }
 .visible {
 	opacity: 1;
@@ -74,31 +80,11 @@
 	border-bottom: 2px solid rgba(var(--layer-color));
 }
 
+/* LEFT ARROWS  */
 .arrows {
 	display: flex;
 	flex-direction: row-reverse;
 	gap: 120px;
-}
-
-.arrows:nth-child(4) {
-	display: flex;
-	flex-direction: row !important;
-}
-
-.arrow {
-	opacity: 0;
-}
-.arrows .arrow:nth-child(1) {
-	animation: arrows 250ms forwards 250ms;
-}
-.arrows .arrow:nth-child(2) {
-	animation: arrows 250ms forwards 450ms;
-}
-.arrows .arrow:nth-child(3) {
-	animation: arrows 250ms forwards 650ms;
-}
-.arrows .arrow:nth-child(4) {
-	animation: arrows 250ms forwards 850ms;
 }
 
 .arrow div:first-child {
@@ -115,6 +101,46 @@
 	rotate: 21deg;
 	translate: 0 3px;
 	background-color: rgba(var(--layer-color));
+}
+
+/* RIGHT ARROWS  */
+.arrows:nth-child(4) {
+	display: flex;
+	flex-direction: row !important;
+}
+
+.arrows:nth-child(4) .arrow div:first-child {
+	width: 20px;
+	height: 2px;
+	rotate: 21deg;
+	translate: 0 -3px;
+	background-color: rgba(var(--layer-color));
+}
+
+.arrows:nth-child(4) .arrow div:last-child {
+	width: 20px;
+	height: 2px;
+	rotate: -21deg;
+	translate: 0 3px;
+	background-color: rgba(var(--layer-color));
+}
+
+/* EVERY ARROWS  */
+
+.arrow {
+	opacity: 0;
+}
+.arrows .arrow:nth-child(1) {
+	animation: arrows 250ms forwards 250ms;
+}
+.arrows .arrow:nth-child(2) {
+	animation: arrows 250ms forwards 450ms;
+}
+.arrows .arrow:nth-child(3) {
+	animation: arrows 250ms forwards 650ms;
+}
+.arrows .arrow:nth-child(4) {
+	animation: arrows 250ms forwards 850ms;
 }
 
 @keyframes arrows {
@@ -138,7 +164,7 @@
 	text-transform: uppercase;
 	font-weight: 500;
 	box-shadow: var(--passive-shadow);
-	transition: 100ms linear all;
+	transition: 50ms linear all;
 	user-select: none;
 }
 
