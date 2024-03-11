@@ -4,8 +4,8 @@
 	justify-content: space-between;
 	background-image: linear-gradient(
 		to right,
-		var(--meteorite-color) 37%,
-		var(--lavender-color) 70%
+		var(--meteorite-color),
+		var(--lavender-color)
 	);
 	height: 100vh;
 	background-size: 200% 200%;
