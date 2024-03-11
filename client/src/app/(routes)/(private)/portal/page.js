@@ -54,18 +54,22 @@ export default function Portal() {
 				if (position >= 0) {
 					if (position >= 100 && position < 200) {
 						document.getElementById("arya").style.scale = "1.05";
+						document.getElementById("aryaMedia").style.scale = "0.95";
 						document.getElementById("background").style.backgroundPosition =
 							"70% 50%";
 					} else if (position >= 200 && position < 300) {
 						document.getElementById("arya").style.scale = "1.1";
+						document.getElementById("aryaMedia").style.scale = "0.90";
 						document.getElementById("background").style.backgroundPosition =
 							"80% 50%";
 					} else if (position >= 300 && position < 400) {
 						document.getElementById("arya").style.scale = "1.15";
+						document.getElementById("aryaMedia").style.scale = "0.85";
 						document.getElementById("background").style.backgroundPosition =
 							"90% 50%";
 					} else if (position >= 400) {
 						document.getElementById("arya").style.scale = "1.2";
+						document.getElementById("aryaMedia").style.scale = "0.80";
 						document.getElementById("background").style.backgroundPosition =
 							"100% 50%";
 					} else {
@@ -77,18 +81,22 @@ export default function Portal() {
 				} else {
 					if (position <= -100 && position > -200) {
 						document.getElementById("aryaMedia").style.scale = "1.05";
+						document.getElementById("arya").style.scale = "0.95";
 						document.getElementById("background").style.backgroundPosition =
 							"30% 50%";
 					} else if (position <= -200 && position > -300) {
 						document.getElementById("aryaMedia").style.scale = "1.1";
+						document.getElementById("arya").style.scale = "0.90";
 						document.getElementById("background").style.backgroundPosition =
 							"20% 50%";
 					} else if (position <= -300 && position > -400) {
 						document.getElementById("aryaMedia").style.scale = "1.15";
+						document.getElementById("arya").style.scale = "0.85";
 						document.getElementById("background").style.backgroundPosition =
 							"10% 50%";
 					} else if (position <= -400) {
 						document.getElementById("aryaMedia").style.scale = "1.2";
+						document.getElementById("arya").style.scale = "0.80";
 						document.getElementById("background").style.backgroundPosition =
 							"0% 50%";
 					}

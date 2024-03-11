@@ -5,7 +5,7 @@
 	background-image: linear-gradient(
 		to right,
 		var(--meteorite-color),
-		var(--lavender-color)
+		var(--lavender-color) 90%
 	);
 	height: 100vh;
 	background-size: 200% 200%;
@@ -28,6 +28,7 @@
 	justify-content: space-around;
 	height: 100%;
 	align-items: center;
+	text-align: center;
 }
 
 .header h2 {
