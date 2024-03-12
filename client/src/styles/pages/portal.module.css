@@ -5,7 +5,7 @@
 	background-image: linear-gradient(
 		to right,
 		var(--meteorite-color),
-		var(--lavender-color) 90%
+		var(--lavender-color) 70%
 	);
 	height: 100vh;
 	background-size: 200% 200%;
@@ -66,6 +66,7 @@
 }
 
 .limiter:first-child {
+	display: none;
 	width: 15px;
 	height: 45px;
 	border-top: 2px solid rgba(var(--layer-color));
@@ -74,6 +75,7 @@
 }
 
 .limiter:last-child {
+	display: none;
 	width: 15px;
 	height: 45px;
 	border-top: 2px solid rgba(var(--layer-color));
@@ -87,19 +89,27 @@
 	flex-direction: row-reverse;
 	gap: 120px;
 }
-
+.active div {
+	background-color: white !important;
+	transition: 250ms all linear !important;
+}
+.arrow div {
+	transition: 450ms all linear;
+}
 .arrow div:first-child {
 	width: 20px;
 	height: 2px;
-	rotate: -21deg;
+	rotate: -22deg;
+	border-radius: 40px;
 	translate: 0 -3px;
 	background-color: rgba(var(--layer-color));
 }
 
 .arrow div:last-child {
+	border-radius: 40px;
 	width: 20px;
 	height: 2px;
-	rotate: 21deg;
+	rotate: 22deg;
 	translate: 0 3px;
 	background-color: rgba(var(--layer-color));
 }
@@ -113,16 +123,18 @@
 .arrows:nth-child(4) .arrow div:first-child {
 	width: 20px;
 	height: 2px;
-	rotate: 21deg;
+	rotate: 22deg;
 	translate: 0 -3px;
+	border-radius: 40px;
 	background-color: rgba(var(--layer-color));
 }
 
 .arrows:nth-child(4) .arrow div:last-child {
 	width: 20px;
 	height: 2px;
-	rotate: -21deg;
+	rotate: -22deg;
 	translate: 0 3px;
+	border-radius: 40px;
 	background-color: rgba(var(--layer-color));
 }
 
@@ -161,7 +173,7 @@
 	color: var(--meteorite-color);
 	padding: 10px;
 	background-color: white;
-	border-radius: 8px;
+	border-radius: 20px;
 	text-transform: uppercase;
 	font-weight: 500;
 	box-shadow: var(--passive-shadow);
@@ -178,4 +190,29 @@
 	cursor: grab;
 	box-shadow: var(--active-shadow);
 	color: var(--lavender-color);
+}
+
+/* MEDIA QUERIES  */
+
+@media (max-width: 1280px) {
+	.header h2 {
+		font-size: 4rem;
+	}
+}
+
+@media (max-width: 1024px) {
+	.container {
+		background-image: linear-gradient(
+			to bottom,
+			var(--meteorite-color),
+			var(--lavender-color) 60%
+		);
+	}
+	.header {
+		flex-direction: column;
+		justify-content: space-evenly;
+	}
+	.bottom {
+		display: none;
+	}
 }

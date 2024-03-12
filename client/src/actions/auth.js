@@ -282,6 +282,7 @@ export async function updateSession(token, uid) {
 			},
 		});
 
+		console.log(response.data);
 		const session = response.data.newAccessToken;
 		cookies().set("session", session, {
 			secure: true,
@@ -291,6 +292,7 @@ export async function updateSession(token, uid) {
 			// Add domain
 		});
 	} catch (err) {
+		console.log(err);
 		return redirect("/auth");
 	}
 }

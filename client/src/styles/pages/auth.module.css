@@ -33,3 +33,17 @@
 	min-width: 550px;
 	height: 100%;
 }
+
+@media (max-width: 1320px) {
+	.leftside {
+		display: none;
+	}
+	.rightside {
+		width: 100%;
+	}
+}
+@media (max-width: 500px) {
+	.rightside {
+		min-width: inherit;
+	}
+}

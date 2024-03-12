@@ -3,7 +3,6 @@
 	justify-content: center;
 	flex-direction: column;
 	margin: 0 70px 0 70px;
-
 	height: 100%;
 }
 
@@ -130,4 +129,24 @@
 	color: var(--lavender-color);
 	font-weight: bold;
 	cursor: pointer;
+}
+
+/* MEDIA QUERIES  */
+
+@media (max-width: 1000px) {
+	.form button {
+		font-size: 1.2rem;
+	}
+}
+
+@media (max-width: 500px) {
+	.container {
+		margin: 0 20px 0 20px;
+	}
+}
+
+@media (max-width: 480px) {
+	.form button {
+		font-size: 1.1rem;
+	}
 }
