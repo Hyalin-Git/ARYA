@@ -31,6 +31,9 @@ export default function Portal() {
 			}
 
 			element.style.transform = `translateX(0px)`;
+			for (const arrow of arrows) {
+				arrow.classList.remove(styles.active);
+			}
 			arya.current.style.scale = "1";
 			aryaMedia.current.style.scale = "1";
 			background.current.style.backgroundPosition = "50% 50%";

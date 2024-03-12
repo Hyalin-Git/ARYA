@@ -133,13 +133,13 @@
 
 /* MEDIA QUERIES  */
 
-@media (max-width: 1000px) {
+@media (max-width: 1025px) {
 	.form button {
 		font-size: 1.2rem;
 	}
 }
 
-@media (max-width: 500px) {
+@media (max-width: 580px) {
 	.container {
 		margin: 0 20px 0 20px;
 	}
