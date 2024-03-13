@@ -7,27 +7,40 @@ import { useRouter } from "next/navigation";
 
 export default function Portal() {
 	const router = useRouter();
+	const move = useRef(null);
 	const arya = useRef(null);
 	const aryaMedia = useRef(null);
 	const background = useRef(null);
+	const [isDrag, setIsDrag] = useState(false);
+
 	const { uid, setUid, user } = useContext(AuthContext);
 
-	function drag(e) {
-		e.preventDefault();
+	function handleDown(e) {
 		let isDown = true;
-		const element = e.currentTarget;
+		const element = move.current;
 		const arrows = document.getElementsByClassName(styles.arrow);
 		const rect = element.getBoundingClientRect();
+		setIsDrag(true);
 
-		document.addEventListener("mouseup", function (e) {
+		document.addEventListener("mouseup", handleUp);
+		document.addEventListener("mousemove", handleMove);
+
+		document.addEventListener("touchend", handleUp);
+		document.addEventListener("touchmove", handleMove);
+
+		function handleUp(e) {
 			isDown = false;
-			const value = element.style.transform.split("(")[1].split("p")[0];
-			console.log(value);
-			if (Number(value) <= -430) {
-				router.push("/AryaMedia");
-			}
-			if (Number(value) >= 490) {
-				router.push("/Arya");
+			setIsDrag(false);
+			const transformStyle = element.style.transform;
+			if (transformStyle) {
+				const value = transformStyle.split("(")[1].split("p")[0];
+				console.log(value);
+				if (Number(value) <= -430) {
+					router.push("/AryaMedia");
+				}
+				if (Number(value) >= 490) {
+					router.push("/Arya");
+				}
 			}
 
 			element.style.transform = `translateX(0px)`;
@@ -37,15 +50,22 @@ export default function Portal() {
 			arya.current.style.scale = "1";
 			aryaMedia.current.style.scale = "1";
 			background.current.style.backgroundPosition = "50% 50%";
-		});
 
-		document.addEventListener("mousemove", function (e) {
+			document.removeEventListener("mouseup", handleUp);
+			document.removeEventListener("mousemove", handleMove);
+			document.removeEventListener("touchend", handleMove);
+			document.removeEventListener("touchmove", handleMove);
+		}
+		function handleMove(e) {
 			if (isDown) {
+				console.log("move");
+				const clientX = e.clientX || e.touches[0].clientX; // Handling both mouse and touch events
+				console.log(clientX);
 				const newXpos = Math.max(
 					-430,
 					Math.min(
 						565,
-						e.clientX - rect.left // New X position based on mouse X, preventing overflow
+						clientX - rect.left // New X position based on mouse X, preventing overflow
 					)
 				);
 
@@ -54,8 +74,44 @@ export default function Portal() {
 
 				handleAnimations(position, arrows);
 			}
-		});
+		}
 	}
+
+	useEffect(() => {
+		// window.addEventListener("resize", function (e) {
+		// 	e.preventDefault();
+		// 	if (window.innerWidth <= 1120) {
+
+		// 	}
+		// });
+
+		move.current.addEventListener("mousedown", handleDown);
+		move.current.addEventListener("touchstart", handleDown);
+		const arrows = document.getElementsByClassName(styles.arrows);
+
+		function animateArrows() {
+			for (const arrow of arrows) {
+				let timeout1;
+
+				arrow.addEventListener("animationend", function (e) {
+					clearTimeout(timeout1);
+
+					// Set attribute to "false" after 2 seconds
+
+					timeout1 = setTimeout(() => {
+						arrow.setAttribute("data-anim", "false");
+						setTimeout(() => {
+							arrow.setAttribute("data-anim", "true");
+						}, 1200);
+					}, 1000);
+				});
+			}
+		}
+		if (isDrag) {
+			return;
+		}
+		animateArrows();
+	}, [isDrag]);
 
 	function handleAnimations(position, arrows) {
 		console.log(position);
@@ -141,7 +197,7 @@ export default function Portal() {
 				</div>
 				<div className={styles.bottomWrapper} id="bottom-wrapper">
 					<div className={styles.limiter}></div>
-					<div className={styles.arrows}>
+					<div className={styles.arrows} data-anim="true">
 						<div className={styles.arrow}>
 							<div></div>
 							<div></div>
@@ -159,10 +215,10 @@ export default function Portal() {
 							<div></div>
 						</div>
 					</div>
-					<div className={styles.move} onMouseDown={drag}>
+					<div className={styles.move} ref={move}>
 						<span>Déplace moi</span>
 					</div>
-					<div className={styles.arrows}>
+					<div className={styles.arrows} data-anim="true">
 						<div className={styles.arrow}>
 							<div></div>
 							<div></div>

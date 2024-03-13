@@ -41,7 +41,7 @@
 	backface-visibility: hidden;
 	transform: translateZ(0);
 	will-change: transform;
-	transition: 450ms all linear;
+	transition: 350ms all linear;
 }
 .visible {
 	opacity: 1;
@@ -94,7 +94,7 @@
 	transition: 250ms all linear !important;
 }
 .arrow div {
-	transition: 450ms all linear;
+	transition: 350ms all linear;
 }
 .arrow div:first-child {
 	width: 20px;
@@ -143,17 +143,33 @@
 .arrow {
 	opacity: 0;
 }
-.arrows .arrow:nth-child(1) {
+.arrows[data-anim="true"] .arrow:nth-child(1) {
 	animation: arrows 250ms forwards 250ms;
 }
-.arrows .arrow:nth-child(2) {
+.arrows[data-anim="true"] .arrow:nth-child(2) {
 	animation: arrows 250ms forwards 450ms;
 }
-.arrows .arrow:nth-child(3) {
+.arrows[data-anim="true"] .arrow:nth-child(3) {
 	animation: arrows 250ms forwards 650ms;
 }
-.arrows .arrow:nth-child(4) {
+.arrows[data-anim="true"] .arrow:nth-child(4) {
 	animation: arrows 250ms forwards 850ms;
+}
+.arrows[data-anim="false"] .arrow:nth-child(1) {
+	opacity: 1;
+	animation: disapearArrow 250ms forwards 850ms;
+}
+.arrows[data-anim="false"] .arrow:nth-child(2) {
+	opacity: 1;
+	animation: disapearArrow 250ms forwards 650ms;
+}
+.arrows[data-anim="false"] .arrow:nth-child(3) {
+	opacity: 1;
+	animation: disapearArrow 250ms forwards 450ms;
+}
+.arrows[data-anim="false"] .arrow:nth-child(4) {
+	opacity: 1;
+	animation: disapearArrow 250ms forwards 250ms;
 }
 
 @keyframes arrows {
@@ -162,6 +178,14 @@
 	}
 	to {
 		opacity: 1;
+	}
+}
+@keyframes disapearArrow {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
 	}
 }
 .move {
@@ -200,7 +224,7 @@
 	}
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1120px) {
 	.container {
 		background-image: linear-gradient(
 			to bottom,
