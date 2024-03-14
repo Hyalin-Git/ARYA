@@ -12,16 +12,16 @@ export default function Portal() {
 	const aryaMedia = useRef(null);
 	const background = useRef(null);
 	const [isDrag, setIsDrag] = useState(false);
-
 	const { uid, setUid, user } = useContext(AuthContext);
 
 	function handleDown(e) {
+		setIsDrag(true);
 		let isDown = true;
-		const element = move.current;
+		const element = e.currentTarget;
 		const arrows = document.getElementsByClassName(styles.arrow);
 		const rect = element.getBoundingClientRect();
-		setIsDrag(true);
 
+		console.log(isDrag);
 		document.addEventListener("mouseup", handleUp);
 		document.addEventListener("mousemove", handleMove);
 
@@ -58,7 +58,7 @@ export default function Portal() {
 		}
 		function handleMove(e) {
 			if (isDown) {
-				console.log("move");
+				console.log(isDrag);
 				const clientX = e.clientX || e.touches[0].clientX; // Handling both mouse and touch events
 				console.log(clientX);
 				const newXpos = Math.max(
@@ -76,48 +76,55 @@ export default function Portal() {
 			}
 		}
 	}
-
+	function hydrateOnClick() {
+		if (window.innerWidth <= 1120) {
+			document.getElementById("left").addEventListener("click", function (e) {
+				e.preventDefault();
+				router.push("/AryaMedia");
+			});
+			document.getElementById("right").addEventListener("click", function (e) {
+				e.preventDefault();
+				router.push("/Arya");
+			});
+		}
+	}
 	useEffect(() => {
-		// window.addEventListener("resize", function (e) {
-		// 	e.preventDefault();
-		// 	if (window.innerWidth <= 1120) {
+		window.addEventListener("resize", hydrateOnClick);
+		hydrateOnClick();
 
-		// 	}
-		// });
+		if (window.innerWidth >= 1120) {
+			const arrows = document.getElementsByClassName(styles.arrows);
+			let timeout1;
+			let int;
 
-		move.current.addEventListener("mousedown", handleDown);
-		move.current.addEventListener("touchstart", handleDown);
-		const arrows = document.getElementsByClassName(styles.arrows);
+			function animateArrows() {
+				clearTimeout(timeout1);
+				timeout1 = setTimeout(() => {
+					arrows[0]?.setAttribute("data-anim", "false");
+					arrows[1]?.setAttribute("data-anim", "false");
 
-		function animateArrows() {
-			for (const arrow of arrows) {
-				let timeout1;
-
-				arrow.addEventListener("animationend", function (e) {
-					clearTimeout(timeout1);
-
-					// Set attribute to "false" after 2 seconds
-
-					timeout1 = setTimeout(() => {
-						arrow.setAttribute("data-anim", "false");
-						setTimeout(() => {
-							arrow.setAttribute("data-anim", "true");
-						}, 1200);
-					}, 1000);
-				});
+					setTimeout(() => {
+						arrows[0]?.setAttribute("data-anim", "true");
+						arrows[1]?.setAttribute("data-anim", "true");
+					}, 1200);
+				}, 1000);
 			}
+
+			if (!isDrag) {
+				animateArrows(); // Appel initial
+				int = setInterval(animateArrows, 2000); // Activation de l'intervalle
+			} else {
+				clearInterval(int); // Arrête l'intervalle si isDrag est vrai
+				clearTimeout(timeout1);
+			}
+
+			return () => {
+				clearInterval(int); // Nettoie l'intervalle à la sortie du useEffect
+			};
 		}
-		if (isDrag) {
-			return;
-		}
-		animateArrows();
 	}, [isDrag]);
 
 	function handleAnimations(position, arrows) {
-		console.log(position);
-
-		console.log(arrows);
-
 		// Left arrows
 		arrows[0].classList.toggle(styles.active, position <= -100);
 		arrows[1].classList.toggle(styles.active, position <= -200);
@@ -174,14 +181,15 @@ export default function Portal() {
 	return (
 		<div className={styles.container} id="background" ref={background}>
 			<div className={styles.header}>
-				<div>
+				<div className={styles.left} id="left">
 					<div>
 						<h2 id="aryaMedia" ref={aryaMedia}>
 							Arya Media
 						</h2>
 					</div>
 				</div>
-				<div>
+				<div className={styles.mid}></div>
+				<div className={styles.right} id="right">
 					<div>
 						<h2 id="arya" ref={arya}>
 							Arya
@@ -215,7 +223,11 @@ export default function Portal() {
 							<div></div>
 						</div>
 					</div>
-					<div className={styles.move} ref={move}>
+					<div
+						className={styles.move}
+						ref={move}
+						onTouchStart={handleDown}
+						onMouseDown={handleDown}>
 						<span>Déplace moi</span>
 					</div>
 					<div className={styles.arrows} data-anim="true">
