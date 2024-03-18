@@ -1,0 +1,9 @@
+.main {
+	position: relative;
+	z-index: 2000;
+
+	display: flex;
+	align-items: center;
+	gap: 40px;
+	height: 95.2vh;
+}

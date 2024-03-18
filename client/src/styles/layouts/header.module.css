@@ -12,6 +12,7 @@
 	transition: 100ms all linear;
 	translate: 0 0px;
 	margin-bottom: -20px;
+	background-color: var(--meteorite-color);
 }
 
 .slide {

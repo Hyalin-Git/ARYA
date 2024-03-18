@@ -75,10 +75,8 @@ a {
 	--meteorite-color: #712fd9;
 	--black-color: #000000;
 	--white-color: #ffffff;
-
 	--primary-gradiant-color: #2d262d;
 	--secondary-gradiant-color: #3a323b;
-
 	--layer-color: 0, 0, 0, 0.15;
 
 	/* shadows  */
@@ -119,6 +117,7 @@ body::before {
 
 main {
 	color: white;
+	overflow: hidden;
 }
 
 a {

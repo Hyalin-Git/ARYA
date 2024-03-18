@@ -2,7 +2,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import styles from "@/styles/pages/home.module.css";
-import { josefinSans, montserrat } from "@/libs/fonts";
 import Hero from "@/components/home/Hero";
 import Service from "@/components/home/Services";
 import Features from "@/components/home/Features";

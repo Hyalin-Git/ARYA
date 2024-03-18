@@ -1,3 +1,10 @@
+import SideNav from "@/layouts/sideNav";
+import styles from "@/styles/pages/aryaMedia.module.css";
 export default function AryaMedia() {
-	return <h1>arya media</h1>;
+	return (
+		<main className={styles.main}>
+			<SideNav />
+			<div></div>
+		</main>
+	);
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth";
 import { AuthContext } from "@/context/auth";
 import { getUser } from "@/libs/users/user";
+import Header from "@/layouts/Header";
 export default function PrivateLayout({ children }) {
 	const [uid, setUid] = useState(null);
 	const [user, setUser] = useState({});
