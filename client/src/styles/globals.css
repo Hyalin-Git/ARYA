@@ -89,6 +89,7 @@ html {
 	scroll-behavior: smooth;
 }
 body {
+	min-height: 100vh;
 	position: relative;
 	color: white;
 	box-sizing: border-box;

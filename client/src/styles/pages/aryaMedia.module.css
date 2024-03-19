@@ -1,9 +1,8 @@
-.main {
+.container {
 	position: relative;
 	z-index: 2000;
-
+	margin: 40px 10px 40px 10px;
 	display: flex;
 	align-items: center;
 	gap: 40px;
-	height: 95.2vh;
 }

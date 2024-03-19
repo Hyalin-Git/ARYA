@@ -12,7 +12,9 @@
 	transition: 100ms all linear;
 	translate: 0 0px;
 	margin-bottom: -20px;
-	background-color: var(--meteorite-color);
+	padding-left: 20px;
+	padding-right: 30px;
+	max-height: 65px;
 }
 
 .slide {
@@ -26,6 +28,12 @@
 	transition: 180ms all linear;
 }
 
+.logo {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
 .logo a {
 	position: relative;
 	top: -5px;
@@ -37,8 +45,20 @@
 	margin: 10px 0 0 -10px;
 	font-size: 2rem;
 }
-
+.logo input {
+	background-color: rgba(var(--layer-color));
+	border: none;
+	border-radius: 8px;
+	padding: 8px;
+	outline: none;
+	width: 210px;
+	caret-color: white;
+}
+.logo input::placeholder {
+	font-weight: bold;
+}
 .menu ul {
+	/* margin-right: 20px; */
 	position: relative;
 	top: 0px;
 	padding: 0;
@@ -47,6 +67,40 @@
 	font-size: 1.2rem;
 	font-weight: 500;
 	list-style-type: none;
+}
+
+.menu img {
+	filter: invert(1);
+}
+
+.menu .connected {
+	border-radius: 8px;
+	align-items: center;
+}
+
+.menu .connected li:nth-child(2) {
+	background-color: rgba(var(--layer-color));
+	width: 1px;
+	height: 40px;
+}
+.menu .connected li:nth-child(3) {
+	font-size: 0.9rem;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	background-color: rgba(var(--layer-color));
+	width: 200px;
+	height: 40px;
+	border-radius: 12px;
+}
+
+.menu .connected li:nth-child(3) img {
+	border-radius: 50%;
+}
+
+.menu .connected span {
+	font-size: 0.8rem;
+	font-weight: 300;
 }
 
 @media (max-width: 800px) {

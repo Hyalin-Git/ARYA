@@ -1,6 +1,6 @@
 import Header from "@/layouts/Header";
-import SideNav from "@/layouts/sideNav";
 
+import styles from "@/styles/pages/aryaMedia.module.css";
 export default function AryaMediaLayout({ children }) {
-	return <>{children}</>;
+	return <div className={styles.container}>{children}</div>;
 }
