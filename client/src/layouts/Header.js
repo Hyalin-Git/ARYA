@@ -7,8 +7,7 @@ import Image from "next/image";
 import styles from "@/styles/layouts/header.module.css";
 import clsx from "clsx";
 import { montserrat } from "@/libs/fonts";
-import UsInfo from "../components/UsInfo";
-import { HeaderUser } from "@/libs/skeletons";
+import HeaderUserInfo from "@/components/header/HeaderUserInfo";
 
 export default function Header() {
 	const context = useContext(AuthContext);
@@ -93,6 +92,14 @@ export default function Header() {
 								<ul className={styles.connected}>
 									<li>
 										<Image
+											src="./images/icons/briefcase_icon.svg"
+											width={25}
+											height={25}
+											alt="icon"
+										/>
+									</li>
+									<li>
+										<Image
 											src="./images/icons/bell_icon.svg"
 											width={25}
 											height={25}
@@ -100,9 +107,7 @@ export default function Header() {
 										/>
 									</li>
 									<li></li>
-									<Suspense fallback={<HeaderUser />}>
-										<UsInfo />
-									</Suspense>
+									<HeaderUserInfo user={context?.user} />
 								</ul>
 							)}
 						</div>

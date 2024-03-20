@@ -13,6 +13,7 @@ export default function Portal() {
 	const background = useRef(null);
 	const [isDrag, setIsDrag] = useState(false);
 	const { uid, setUid, user } = useContext(AuthContext);
+	console.log(user);
 
 	function handleDown(e) {
 		setIsDrag(true);

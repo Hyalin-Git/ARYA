@@ -1,0 +1,106 @@
+.container {
+	position: relative;
+	background-color: rgba(var(--layer-color));
+	/* box-shadow: var(--passive-shadow); */
+	width: 100%;
+	max-width: 300px;
+	padding: 20px;
+	border-radius: 8px;
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+	align-items: center;
+	transition: 250ms all linear;
+}
+.container:hover {
+	background-color: rgba(0, 0, 0, 0.2);
+	transition: 250ms all linear;
+}
+.background {
+	position: absolute;
+	background-image: linear-gradient(
+		-165deg,
+		var(--meteorite-color),
+		var(--lavender-color)
+	);
+	height: 80px;
+	width: 100%;
+	top: 0;
+	border-radius: 8px 8px 0 0;
+}
+.container img {
+	margin-top: 20px;
+	margin-bottom: -5px;
+	position: relative;
+	z-index: 2000;
+	border-radius: 50%;
+}
+
+.names {
+	margin-top: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 5px;
+}
+.names span:nth-child(1) {
+	font-weight: 500;
+}
+.names span:nth-child(2) {
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: var(--lavender-color);
+}
+.bio {
+	text-align: center;
+	width: 100%;
+	border-bottom: 1px solid grey;
+}
+
+/* FOLLOWERS SECTION  */
+
+.follow {
+	width: 100%;
+	display: flex;
+	font-weight: 400;
+	gap: 20px;
+	align-items: center;
+	height: 100px;
+	justify-content: center;
+	color: white;
+	border-bottom: 1px solid grey;
+	margin-bottom: 20px;
+}
+
+.line {
+	background-color: grey;
+	width: 1px;
+	height: 50%;
+}
+
+.following,
+.followers {
+	text-align: center;
+	width: 50%;
+}
+
+.following span:nth-child(2),
+.followers span:nth-child(2) {
+	display: block;
+	margin-top: 5px;
+	color: var(--lavender-color);
+	font-weight: 500;
+}
+
+.container a {
+	color: var(--lavender-color);
+	font-weight: 500;
+}
+
+.link {
+	width: 100%;
+}
+.container button {
+	width: 100%;
+}

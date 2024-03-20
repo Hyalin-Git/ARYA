@@ -1,8 +1,17 @@
 .container {
 	position: relative;
 	z-index: 2000;
-	margin: 40px 10px 40px 10px;
+	margin: 40px 30px 40px 30px;
 	display: flex;
 	align-items: center;
 	gap: 40px;
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.userInfo {
 }

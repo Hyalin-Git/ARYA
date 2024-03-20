@@ -1,9 +1,5 @@
-import { AuthContext } from "@/context/auth";
-import { useContext } from "react";
 import Image from "next/image";
-export default async function UsInfo() {
-	const { user } = useContext(AuthContext);
-
+export default function HeaderUserInfo({ user }) {
 	return (
 		<li>
 			<Image
@@ -13,7 +9,9 @@ export default async function UsInfo() {
 				height={30}
 			/>
 			<div>
-				{user.firstName} {user.lastName}
+				<span>
+					{user.firstName} {user.lastName}
+				</span>
 				<br />
 				<span>{user.userName}</span>
 			</div>

@@ -1,24 +1,27 @@
 "use client";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth";
 import { AuthContext } from "@/context/auth";
 import { getUser } from "@/api/user/user";
-import Header from "@/layouts/Header";
-import Loading from "./loading";
-import { HeaderUser } from "@/libs/skeletons";
-export default function PrivateLayout({ children }) {
+import { usePathname } from "next/navigation";
+
+export default function Provider({ children }) {
 	const [uid, setUid] = useState(null);
 	const [user, setUser] = useState({});
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
+	const pathname = usePathname();
 
 	useEffect(() => {
 		async function fetchSession() {
 			try {
 				const session = await getSession();
-
+				console.log("played");
 				if (session?.userId) {
 					setUid(session?.userId);
+					console.log("yo");
+					const user = await getUser(session?.userId);
+					setUser({ ...user });
 					setIsLoading(false);
 					console.log("Mise à jour de l'UID");
 				} else {
@@ -32,34 +35,27 @@ export default function PrivateLayout({ children }) {
 			}
 		}
 
-		console.log("played");
-
 		fetchSession();
 
-		if (uid) {
-			// Fetch user
-			async function fetchUser() {
-				const user = await getUser(uid);
+		// if (uid) {
+		// 	// Fetch user
+		// 	async function fetchUser() {
+		// 		const user = await getUser(uid);
 
-				setUser({ ...user });
-			}
+		// 		setUser({ ...user });
+		// 	}
 
-			fetchUser();
-		}
+		// 	fetchUser();
+		// }
 
 		const interval = setInterval(fetchSession, 13 * 60 * 1000);
 
 		return () => clearInterval(interval);
-	}, [uid, error]);
-
-	if (isLoading) {
-		return <Loading />;
-	}
+	}, [uid, pathname, error]);
 
 	return (
 		<>
-			<AuthContext.Provider value={{ uid, setUid, user, error }}>
-				<Header />
+			<AuthContext.Provider value={{ isLoading, uid, setUid, user, error }}>
 				{children}
 			</AuthContext.Provider>
 		</>
