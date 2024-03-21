@@ -7,14 +7,14 @@
 .nav {
 	display: flex;
 	justify-content: space-around;
-	align-items: flex-end;
+	align-items: center;
 	background-color: transparent;
 	transition: 100ms all linear;
 	translate: 0 0px;
 	margin-bottom: -20px;
-	padding-left: 20px;
-	padding-right: 30px;
+
 	max-height: 65px;
+	width: 100%;
 }
 
 .slide {
@@ -32,6 +32,7 @@
 	display: flex;
 	align-items: center;
 	gap: 10px;
+	margin-left: 20px;
 }
 
 .logo a {
@@ -51,14 +52,17 @@
 	border-radius: 8px;
 	padding: 8px;
 	outline: none;
-	width: 280px;
+	width: 310px;
 	caret-color: white;
 }
 .logo input::placeholder {
 	font-weight: bold;
 }
+
+.menu {
+	margin-right: 20px;
+}
 .menu ul {
-	/* margin-right: 20px; */
 	position: relative;
 	top: 0px;
 	padding: 0;
@@ -72,6 +76,10 @@
 .menu .connected {
 	border-radius: 8px;
 	align-items: center;
+}
+
+.menu .connected img {
+	filter: invert(1);
 }
 
 .menu .connected li:nth-child(3) {
@@ -98,8 +106,9 @@
 	transition: 150ms all linear;
 }
 
-.menu .connected li:nth-child(4) img {
+.menu .connected li:nth-child(4) img:nth-child(1) {
 	border-radius: 50%;
+	filter: invert(0) !important;
 }
 
 .menu .connected span:nth-child(1) {

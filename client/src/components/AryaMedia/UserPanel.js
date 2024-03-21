@@ -22,23 +22,23 @@ export default function UserPanel() {
 			</div>
 			<div className={styles.names}>
 				<span>
-					{user.firstName} {user.lastName}
+					{user?.firstName} {user?.lastName}
 				</span>
 
-				<span> {user.userName}</span>
+				<span> {user?.userName}</span>
 			</div>
 			<div className={styles.bio}>
 				<p>Ma super biographie de la mort qui tue</p>
 			</div>
 			<div className={styles.follow}>
 				<div className={styles.following}>
-					<span>{user.following.length}</span>
+					<span>{user?.following?.length}</span>
 
 					<span>Following</span>
 				</div>
 				<div className={styles.line}></div>
 				<div className={styles.followers}>
-					<span>{user.followers.length}</span>
+					<span>{user?.followers?.length}</span>
 
 					<span>Followers</span>
 				</div>

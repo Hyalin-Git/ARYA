@@ -1,17 +1,16 @@
 .container {
-	position: relative;
-	z-index: 2000;
-	margin: 40px 30px 40px 30px;
-	display: flex;
-	align-items: center;
-	gap: 40px;
+	margin: 30px 30px 30px 30px;
 }
 
-.column {
+.main {
+	display: flex;
+}
+
+.column:nth-child(1) {
+	width: 20%;
+	max-height: 90vh;
+	min-width: 370px;
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
-}
-
-.userInfo {
 }

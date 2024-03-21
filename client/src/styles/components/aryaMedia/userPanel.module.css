@@ -3,7 +3,6 @@
 	background-color: rgba(var(--layer-color));
 	/* box-shadow: var(--passive-shadow); */
 	width: 100%;
-	max-width: 300px;
 	padding: 20px;
 	border-radius: 8px;
 	display: flex;

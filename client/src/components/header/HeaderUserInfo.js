@@ -7,6 +7,7 @@ export default function HeaderUserInfo({ user }) {
 				alt="profil"
 				width={30}
 				height={30}
+				id="user-picture"
 			/>
 			<div>
 				<span>

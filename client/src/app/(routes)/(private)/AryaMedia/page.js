@@ -1,3 +1,4 @@
+import FollowPanel from "@/components/AryaMedia/FollowPanel";
 import UserPanel from "@/components/AryaMedia/UserPanel";
 import styles from "@/styles/pages/aryaMedia.module.css";
 import { Suspense } from "react";
@@ -11,8 +12,15 @@ export default function AryaMedia() {
 						<UserPanel />
 					</Suspense>
 				</div>
-				<div>yas</div>
+
+				<div>
+					<Suspense fallback={<h2>yas</h2>}>
+						<FollowPanel />
+					</Suspense>
+				</div>
 			</div>
+			<div className={styles.column}></div>
+			<div className={styles.column}></div>
 		</main>
 	);
 }
