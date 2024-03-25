@@ -16,12 +16,12 @@ export default function HeaderUserInfo({ user }) {
 				<br />
 				<span>{user.userName}</span>
 			</div>
-			<Image
+			{/* <Image
 				src="./images/icons/ellipsis_icon.svg"
 				alt="icon"
 				width={20}
 				height={20}
-			/>
+			/> */}
 		</li>
 	);
 }

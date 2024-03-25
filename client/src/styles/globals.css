@@ -77,7 +77,7 @@ a {
 	--white-color: #ffffff;
 	--primary-gradiant-color: #2d262d;
 	--secondary-gradiant-color: #3a323b;
-	--layer-color: 0, 0, 0, 0.15;
+	--layer-color: 0, 0, 0, 0.25;
 
 	/* shadows  */
 	--passive-shadow: 0 1px 1px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.12);
@@ -100,11 +100,12 @@ body {
 	position: relative;
 	margin: 0;
 	padding: 0;
-	color: white;
-	background-image: linear-gradient(
+	color: black;
+	background-color: linear-gradient(#ffffff, #f5f5f5);
+	/* background-image: linear-gradient(
 		var(--primary-gradiant-color),
 		var(--secondary-gradiant-color)
-	);
+	); */
 }
 body::before {
 	content: "";
@@ -123,7 +124,7 @@ body::before {
 }
 
 main {
-	color: white;
+	color: black;
 	overflow: hidden;
 }
 

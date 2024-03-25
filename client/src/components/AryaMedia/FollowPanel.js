@@ -26,6 +26,7 @@ export default async function FollowPanel() {
 									alt="picture"
 									width={55}
 									height={55}
+									quality={100}
 								/>
 							</div>
 							<div>

@@ -18,6 +18,7 @@ export default function UserPanel() {
 					alt="profil"
 					width={70}
 					height={70}
+					quality={100}
 				/>
 			</div>
 			<div className={styles.names}>

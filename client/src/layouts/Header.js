@@ -41,7 +41,7 @@ export default function Header() {
 			}
 		});
 		if (pathname.includes("/AryaMedia")) {
-			document.getElementById("nav").style.justifyContent = "space-between";
+			document.getElementById("nav").style.color = "white";
 		}
 	}, [pathname, isScroll]);
 
@@ -61,25 +61,29 @@ export default function Header() {
 						<div className={styles.logo}>
 							<Link href="/">
 								<Image
-									src="/images/logo/Arya_Monochrome_White.png"
+									src={
+										isScroll
+											? "/images/logo/Arya_Monochrome_White.png"
+											: "/images/logo/Arya_Monochrome_black.png"
+									}
 									width={60}
 									height={60}
 									alt="logo"
 									loading="lazy"
+									id="logo"
 								/>
-								{!context?.uid && <h1>rya</h1>}
+								<h1>rya</h1>
 							</Link>
-							{context?.uid && (
-								<div>
-									<input
-										type="search"
-										placeholder="Recherche"
-										className={montserrat.className}
-									/>
-								</div>
-							)}
 						</div>
-
+						{context?.uid && (
+							<div className={styles.searchbar}>
+								<input
+									className={montserrat.className}
+									type="search"
+									placeholder="Recherche"
+								/>
+							</div>
+						)}
 						{/* Menu  */}
 						<div className={styles.menu}>
 							{!context?.uid ? (

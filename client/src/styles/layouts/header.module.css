@@ -12,13 +12,14 @@
 	transition: 100ms all linear;
 	translate: 0 0px;
 	margin-bottom: -20px;
-
+	background-color: var(--meteorite-color);
 	max-height: 65px;
 	width: 100%;
 }
 
 .slide {
 	background-color: var(--meteorite-color);
+	color: white;
 	box-shadow: var(--passive-shadow);
 	transition: 100ms all linear;
 }
@@ -32,7 +33,6 @@
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	margin-left: 20px;
 }
 
 .logo a {
@@ -46,21 +46,19 @@
 	margin: 10px 0 0 -10px;
 	font-size: 2rem;
 }
-.logo input {
-	background-color: rgba(var(--layer-color));
+
+.searchbar {
+	position: relative;
+	width: 20%;
+	left: 80px;
+}
+.searchbar input {
 	border: none;
 	border-radius: 8px;
 	padding: 8px;
 	outline: none;
-	width: 310px;
-	caret-color: white;
-}
-.logo input::placeholder {
-	font-weight: bold;
-}
-
-.menu {
-	margin-right: 20px;
+	width: 100%;
+	box-shadow: var(--passive-shadow);
 }
 .menu ul {
 	position: relative;
@@ -91,17 +89,20 @@
 .menu .connected li:nth-child(4) {
 	font-size: 0.9rem;
 	display: flex;
-	justify-content: space-evenly;
+	padding: 10px;
+	gap: 10px;
+	justify-content: flex-start;
 	align-items: center;
-	background-color: rgba(var(--layer-color));
-	width: 200px;
+	background-color: white;
+	box-shadow: var(--passive-shadow);
+	color: black;
 	height: 40px;
 	border-radius: 12px;
 	transition: 150ms all linear;
 }
 
 .menu .connected li:nth-child(4):hover {
-	background-color: var(--meteorite-color);
+	background-color: color-mix(in srgb, white 90%, black);
 	cursor: pointer;
 	transition: 150ms all linear;
 }
@@ -111,13 +112,18 @@
 	filter: invert(0) !important;
 }
 
+.menu .connected li:nth-child(4) img:nth-child(2) {
+	filter: invert(0) !important;
+}
+
 .menu .connected span:nth-child(1) {
 	margin-bottom: -20px;
 }
 
 .menu .connected span:nth-child(3) {
 	font-size: 0.8rem;
-	font-weight: 300;
+	font-weight: 600;
+	color: var(--meteorite-color);
 }
 
 @media (max-width: 800px) {

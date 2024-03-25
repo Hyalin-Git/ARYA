@@ -49,7 +49,7 @@
 	right: 30px;
 	display: flex;
 	align-items: center;
-	height: 65px;
+	height: 85px;
 	padding-left: 30px;
 	padding-top: 40px;
 	padding-right: 30px;
@@ -80,6 +80,7 @@
 	opacity: 0;
 	transition: 250ms all ease-in 200ms;
 	font-weight: 300;
+	color: white;
 }
 
 .content strong {
@@ -109,6 +110,7 @@
 	margin-top: 0;
 	transition: 250ms all ease-in;
 	transform: translateZ(0);
+	color: white;
 }
 
 .hover:hover .content {

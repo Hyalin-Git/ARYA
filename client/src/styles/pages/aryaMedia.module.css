@@ -1,14 +1,38 @@
-.container {
-	margin: 30px 30px 30px 30px;
-}
-
 .main {
-	display: flex;
+	margin-top: 40px;
+	min-height: 90vh;
 }
 
-.column:nth-child(1) {
+.container {
+	margin: 0px 30px 0px 30px;
+	display: flex;
+	justify-content: space-between;
+	align-self: center;
+	gap: 30px;
+	height: 100%;
+}
+
+.container aside:nth-child(1) {
 	width: 20%;
-	max-height: 90vh;
+
+	min-width: 370px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	width: 60%;
+	height: 100%;
+	min-height: 90vh;
+}
+
+.container aside:nth-child(3) {
+	width: 20%;
+
 	min-width: 370px;
 	display: flex;
 	flex-direction: column;
