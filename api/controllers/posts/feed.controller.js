@@ -1,7 +1,7 @@
 const UserModel = require("../../models/users/User.model");
 const PostModel = require("../../models/posts/Post.model");
 const RepostModel = require("../../models/posts/Repost.model");
-const { filterPosts, filterReposts } = require("../../helpers/filterResponse");
+const { filterElements } = require("../../helpers/filterResponse");
 
 exports.getAllFeed = async (req, res, next) => {
 	try {
@@ -30,8 +30,12 @@ exports.getAllFeed = async (req, res, next) => {
 			})
 			.exec();
 
-		const filteredPosts = await filterPosts(posts, authUser);
-		const filteredReposts = await filterReposts(reposts, authUser);
+		const filteredPosts = await filterElements(posts, "posterId", authUser);
+		const filteredReposts = await filterElements(
+			reposts,
+			"reposterId",
+			authUser
+		);
 
 		const feed = [...filteredPosts, ...filteredReposts];
 

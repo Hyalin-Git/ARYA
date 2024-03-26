@@ -74,6 +74,7 @@
 	align-items: flex-end;
 	font-size: 1.5rem;
 	height: 110px;
+	transition: 250ms all ease-in 250ms;
 }
 
 .content {
@@ -106,11 +107,14 @@
 }
 
 /* article body, content */
+.hover:hover .title {
+	color: white;
+	transition: 250ms all ease-in;
+}
 .hover:hover .body {
 	margin-top: 0;
 	transition: 250ms all ease-in;
 	transform: translateZ(0);
-	color: white;
 }
 
 .hover:hover .content {

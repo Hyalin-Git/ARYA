@@ -17,16 +17,22 @@ exports.filterUsers = (users, authUser) => {
 exports.filterElements = (elements, path, authUser) => {
 	const filteredElts = elements.filter((elt) => {
 		// Logic for blocked user
-		const isBlockedByAuthUser = authUser.blockedUsers.includes(elt[path]._id);
+		const isBlockedByAuthUser = authUser?.blockedUsers?.includes(
+			elt[path]?._id
+		);
 
-		const isBlockedByPoster = elt[path].blockedUsers.includes(authUser._id);
+		const isBlockedByPoster = elt[path]?.blockedUsers?.includes(authUser?._id);
 
 		// Logic for private account
-		const userIsPrivate = elt[path].isPrivate === true;
+		const userIsPrivate = elt[path]?.isPrivate === true;
 
-		const authUserIsFollowingUser = authUser.following.includes(elt[path]._id);
+		const authUserIsFollowingUser = authUser?.following?.includes(
+			elt[path]?._id
+		);
 
-		const userIsFollowedByAuthUser = elt[path].followers.includes(authUser._id);
+		const userIsFollowedByAuthUser = elt[path]?.followers?.includes(
+			authUser?._id
+		);
 
 		return (
 			!isBlockedByAuthUser &&
@@ -95,8 +101,10 @@ function generateResponse(filteredElts, path, authUser) {
 			generateRepostResponse(elt, authUser);
 		}
 
-		elt[path].blockedUsers = undefined;
-		elt[path].followers = undefined;
+		if (elt[path]?.blockedUsers !== null && elt[path]?.followers) {
+			elt[path].blockedUsers = undefined;
+			elt[path].followers = undefined;
+		}
 
 		return elt;
 	});
@@ -105,20 +113,19 @@ function generateResponse(filteredElts, path, authUser) {
 }
 
 function generateRepostResponse(elt, authUser) {
-	const isBlockedByAuthUser = authUser.blockedUsers.includes(
-		elt.postId?.posterId._id
+	const isBlockedByAuthUser = authUser?.blockedUsers?.includes(
+		elt?.postId?.posterId?._id
 	);
-	const isBlockedByPoster = elt.postId?.posterId.blockedUsers.includes(
-		authUser._id
+	const isBlockedByPoster = elt?.postId?.posterId?.blockedUsers?.includes(
+		authUser?._id
 	);
 
-	const isPrivate = elt.postId?.posterId.isPrivate === true;
-	const isAuthUserFollowingPoster = authUser.following.includes(
-		elt.postId?.posterId._id
+	const isPrivate = elt?.postId?.posterId?.isPrivate === true;
+	const isAuthUserFollowingPoster = authUser?.following?.includes(
+		elt?.postId?.posterId?._id
 	);
-	const isAuthUserInPosterFollowers = elt.postId?.posterId.followers.includes(
-		authUser._id
-	);
+	const isAuthUserInPosterFollowers =
+		elt?.postId?.posterId?.followers?.includes(authUser?._id);
 
 	function shouldHideContent() {
 		// If auth user blocked the posterId and vice versa then return true
@@ -148,7 +155,7 @@ function generateRepostResponse(elt, authUser) {
 		elt.postId.media = undefined;
 	}
 
-	if (elt.postId !== null) {
+	if (elt?.postId !== null) {
 		elt.postId.posterId.blockedUsers = undefined;
 		elt.postId.posterId.followers = undefined;
 	}

@@ -51,6 +51,9 @@ const UserSchema = new mongoose.Schema(
 		dateOfBirth: {
 			type: String,
 		},
+		interest: {
+			type: [String],
+		},
 		likes: {
 			type: [String],
 		},

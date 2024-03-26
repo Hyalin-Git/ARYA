@@ -3,7 +3,7 @@ import styles from "@/styles/components/aryaMedia/followPanel.module.css";
 import { getUsers } from "@/api/user/user";
 import Image from "next/image";
 export default async function FollowPanel() {
-	const users = await getUsers();
+	const users = await getUsers("", 3);
 
 	return (
 		<div className={styles.container}>

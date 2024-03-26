@@ -1,3 +1,4 @@
+import Feed from "@/components/AryaMedia/Feed";
 import FollowPanel from "@/components/AryaMedia/FollowPanel";
 import SendPostPanel from "@/components/AryaMedia/SendPostPanel";
 import UserPanel from "@/components/AryaMedia/UserPanel";
@@ -8,6 +9,7 @@ export default function AryaMedia() {
 	return (
 		<div className={styles.column}>
 			<SendPostPanel />
+			<Feed />
 		</div>
 	);
 }

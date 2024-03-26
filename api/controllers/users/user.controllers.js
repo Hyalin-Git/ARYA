@@ -25,10 +25,14 @@ const {
 // Get all users
 exports.getUsers = (req, res, next) => {
 	const authUser = res.locals.user;
-	const { userName, lookingForJob } = req.query;
+	const { userName, lookingForJob, interest, limit } = req.query;
 
 	function filter() {
 		const filter = {};
+
+		if (authUser) {
+			filter._id = { $ne: authUser._id };
+		}
 
 		if (userName) {
 			filter.userName = { $regex: userName, $options: "i" };
@@ -38,10 +42,15 @@ exports.getUsers = (req, res, next) => {
 			filter.lookingForJob = lookingForJob;
 		}
 
+		if (interest) {
+			filter.interest = { $in: interest };
+		}
+
 		return filter;
 	}
 	UserModel.find(filter())
 		.select("-password")
+		.limit(limit && limit)
 		.then(async (users) => {
 			const filteredUsers = await filterUsers(users, authUser);
 

@@ -42,6 +42,9 @@ export default function Header() {
 		});
 		if (pathname.includes("/AryaMedia")) {
 			document.getElementById("nav").style.color = "white";
+			document.getElementById("nav");
+
+			document.getElementById("nav").style.backgroundColor = "#712fd9";
 		}
 	}, [pathname, isScroll]);
 
@@ -62,7 +65,7 @@ export default function Header() {
 							<Link href="/">
 								<Image
 									src={
-										isScroll
+										isScroll || pathname.includes("/AryaMedia")
 											? "/images/logo/Arya_Monochrome_White.png"
 											: "/images/logo/Arya_Monochrome_black.png"
 									}
@@ -112,6 +115,14 @@ export default function Header() {
 									</li>
 									<li></li>
 									<HeaderUserInfo user={context?.user} />
+									<li>
+										<Image
+											src="./images/icons/nine_dots_icon.svg"
+											width={30}
+											height={30}
+											alt="icon"
+										/>
+									</li>
 								</ul>
 							)}
 						</div>

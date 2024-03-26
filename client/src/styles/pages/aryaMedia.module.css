@@ -7,7 +7,6 @@
 	margin: 0px 30px 0px 30px;
 	display: flex;
 	justify-content: space-between;
-	align-self: center;
 	gap: 30px;
 	height: 100%;
 }

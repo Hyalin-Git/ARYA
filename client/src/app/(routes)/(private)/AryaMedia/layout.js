@@ -13,6 +13,7 @@ export default function AryaMediaLayout({ children }) {
 						<UserPanel />
 						<FollowPanel />
 					</aside>
+
 					{children}
 					<aside>
 						<UserPanel />
