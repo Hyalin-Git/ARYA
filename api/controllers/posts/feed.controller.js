@@ -11,21 +11,21 @@ exports.getAllFeed = async (req, res, next) => {
 		const posts = await PostModel.find({ status: "sent" })
 			.populate(
 				"posterId",
-				"userName lastName firstName blockedUsers isPrivate followers"
+				"userName lastName firstName picture blockedUsers isPrivate followers"
 			)
 			.exec();
 
 		const reposts = await RepostModel.find()
 			.populate(
 				"reposterId",
-				"userName lastName firstName blockedUsers isPrivate followers"
+				"userName lastName firstName picture blockedUsers isPrivate followers"
 			)
 			.populate({
 				path: "postId",
 				select: "text media",
 				populate: {
 					path: "posterId",
-					select: "lastName firstName userName blockedUsers",
+					select: "lastName firstName picture userName blockedUsers",
 				},
 			})
 			.exec();
@@ -49,7 +49,7 @@ exports.getAllFeed = async (req, res, next) => {
 			(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
 		);
 
-		const feedSpliced = sortedFeed.slice(0, limit ?? 5);
+		const feedSpliced = sortedFeed.slice(0, limit ?? 10);
 
 		return res.status(200).send(feedSpliced);
 	} catch (err) {

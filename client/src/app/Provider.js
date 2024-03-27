@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth";
 import { AuthContext } from "@/context/auth";
 import { getUser } from "@/api/user/user";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Provider({ children }) {
 	const [uid, setUid] = useState(null);
@@ -11,6 +11,7 @@ export default function Provider({ children }) {
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	const pathname = usePathname();
+	const router = useRouter();
 
 	useEffect(() => {
 		async function fetchSession() {
@@ -23,6 +24,7 @@ export default function Provider({ children }) {
 					const user = await getUser(session?.userId);
 					setUser({ ...user });
 					setIsLoading(false);
+					// router.push("/");
 					console.log("Mise à jour de l'UID");
 				} else {
 					setUid(null);

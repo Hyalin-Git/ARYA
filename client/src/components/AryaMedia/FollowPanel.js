@@ -12,8 +12,6 @@ export default async function FollowPanel() {
 			</div>
 			<div className={styles.content}>
 				{users.map((user) => {
-					// if (user._id !== "65e84d8f5b4447f020ca2746") {
-					// }
 					return (
 						<div className={styles.users} key={user._id}>
 							<div>

@@ -13,11 +13,9 @@ export default function AryaMediaLayout({ children }) {
 						<UserPanel />
 						<FollowPanel />
 					</aside>
-
 					{children}
 					<aside>
 						<UserPanel />
-						<FollowPanel />
 					</aside>
 				</div>
 			</main>

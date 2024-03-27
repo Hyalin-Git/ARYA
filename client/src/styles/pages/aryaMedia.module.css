@@ -13,8 +13,7 @@
 
 .container aside:nth-child(1) {
 	width: 20%;
-
-	min-width: 370px;
+	min-width: 280px;
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
@@ -27,12 +26,23 @@
 	width: 60%;
 	height: 100%;
 	min-height: 90vh;
+	overflow-y: auto;
 }
 
+.filter {
+	margin-top: -20px;
+	position: relative;
+	display: flex;
+	justify-content: space-evenly;
+
+	background-color: white;
+	padding: 10px;
+	border-radius: 0 0 8px 8px;
+}
 .container aside:nth-child(3) {
 	width: 20%;
 
-	min-width: 370px;
+	min-width: 280px;
 	display: flex;
 	flex-direction: column;
 	gap: 20px;

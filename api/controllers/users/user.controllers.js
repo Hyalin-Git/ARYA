@@ -26,12 +26,13 @@ const {
 exports.getUsers = (req, res, next) => {
 	const authUser = res.locals.user;
 	const { userName, lookingForJob, interest, limit } = req.query;
+	const { usersId } = req.body;
 
 	function filter() {
 		const filter = {};
 
-		if (authUser) {
-			filter._id = { $ne: authUser._id };
+		if (usersId) {
+			filter._id = { $in: usersId };
 		}
 
 		if (userName) {
