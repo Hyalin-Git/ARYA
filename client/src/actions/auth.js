@@ -197,12 +197,6 @@ export async function logIn(prevState, formData) {
 			expires: Date.now() + 15 * 60 * 1000,
 			// Add domain
 		});
-		cookies().set("tempSession", refreshToken, {
-			secure: true,
-			httpOnly: true,
-			sameSite: "strict",
-			// Add domain
-		});
 	} catch (err) {
 		const reponse = err?.response;
 		const isEmail = reponse?.data.message.includes("Adresse mail");
@@ -222,84 +216,6 @@ export async function logIn(prevState, formData) {
 		}
 	}
 	redirect("/portal");
-}
-
-export async function getSession() {
-	const session = cookies().get("session")?.value;
-	if (!session) return null;
-	return await decryptToken(session);
-}
-
-export async function decryptToken(token) {
-	try {
-		const response = await axios({
-			method: "GET",
-			url: "http://localhost:5000/login/success",
-			withCredentials: true,
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
-		const date = new Date();
-		const convertedDate = new Date(0);
-		convertedDate.setUTCSeconds(response.data.exp);
-		const actualDate = date;
-		const differenceInMilliseconds = Math.abs(actualDate - convertedDate);
-		const twoMinutesInMilliseconds = 2 * 60 * 1000; // Une minute en millisecondes
-
-		if (differenceInMilliseconds <= twoMinutesInMilliseconds) {
-			console.log("played");
-			const uid = response.data.userId;
-			const refreshToken = cookies().get("tempSession")?.value;
-			await updateSession(refreshToken, uid);
-		}
-
-		return response.data;
-	} catch (err) {
-		const isNotValid = err.response.data.message.includes("aucun token reçu");
-
-		const hasExpired = err.response.data.message.includes("plus valide");
-		if (err.response.status === 403 && isNotValid) {
-			console.log("yas queen");
-			cookies().delete("session");
-			redirect("/");
-		}
-		if (err.response.status === 403 && hasExpired) {
-			cookies().delete("session");
-		}
-	}
-}
-
-export async function updateSession(token, uid) {
-	try {
-		const response = await axios({
-			method: "POST",
-			url: "http://localhost:5000/api/auth/refresh-token",
-			withCredentials: true,
-			data: {
-				refreshToken: token,
-				userId: uid,
-			},
-		});
-
-		console.log(response.data);
-		const session = response.data.newAccessToken;
-		cookies().set("session", session, {
-			secure: true,
-			httpOnly: true,
-			sameSite: "strict",
-			expires: Date.now() + 15 * 60 * 1000,
-			// Add domain
-		});
-	} catch (err) {
-		console.log(err);
-		return redirect("/auth");
-	}
-}
-
-export async function logout() {
-	cookies().delete("session");
-	cookies().delete("tempSession");
 }
 
 export async function sendResetCode(prevState, formData) {

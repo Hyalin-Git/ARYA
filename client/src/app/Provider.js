@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getSession } from "@/actions/auth";
+import { getSession } from "@/api/user/auth";
 import { AuthContext } from "@/context/auth";
 import { getUser } from "@/api/user/user";
 import { usePathname, useRouter } from "next/navigation";
@@ -50,7 +50,7 @@ export default function Provider({ children }) {
 		// 	fetchUser();
 		// }
 
-		const interval = setInterval(fetchSession, 13 * 60 * 1000);
+		const interval = setInterval(fetchSession, 10 * 60 * 1000);
 
 		return () => clearInterval(interval);
 	}, [uid, pathname, error]);

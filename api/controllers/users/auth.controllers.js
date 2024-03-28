@@ -238,7 +238,22 @@ exports.logout = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-// Refresh token controller
+// Refresh token controllers
+exports.getRefreshToken = (req, res, next) => {
+	RefreshTokenModel.findOne({ userId: req.query.userId })
+		.then((userToken) => {
+			if (!userToken) {
+				return res.status(404).send({
+					error: true,
+					message: "Aucun refresh token n'est lié à cet utilisateur",
+				});
+			}
+			return res
+				.status(200)
+				.send({ error: false, refreshToken: userToken.token });
+		})
+		.catch((err) => res.status(500).send(err));
+};
 exports.refreshToken = (req, res, next) => {
 	const refreshToken = req.body.refreshToken;
 	const userId = req.body.userId;

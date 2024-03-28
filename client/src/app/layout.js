@@ -1,6 +1,7 @@
 import { montserrat } from "@/libs/fonts";
 import "../styles/globals.css";
 import Provider from "./Provider";
+import DarkModeProvider from "./DarkModeProvider";
 
 export const metadata = {
 	title: {
@@ -13,9 +14,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
 	return (
 		<html lang="fr">
-			<body className={montserrat.className}>
-				<Provider>{children}</Provider>
-			</body>
+			<DarkModeProvider>
+				<body className={montserrat.className} data-dark={false}>
+					<Provider>{children}</Provider>
+				</body>
+			</DarkModeProvider>
 		</html>
 	);
 }

@@ -12,6 +12,9 @@ export async function getFeed(limit) {
 				//  "Content-Type": "application/json",
 				// "Content-Type": "application/x-www-form-urlencoded",
 			},
+			next: {
+				tags: ["feed"],
+			},
 		});
 		const data = await res.json();
 

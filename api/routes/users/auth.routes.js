@@ -24,6 +24,7 @@ router.post("/otp/validate", authController.validateOTP);
 router.post("/otp/disable", authController.disableOTP);
 router.post("/otp/delete", authController.deleteOTP);
 
+router.get("/refresh-token", authController.getRefreshToken);
 router.post("/refresh-token", authController.refreshToken);
 
 module.exports = router;

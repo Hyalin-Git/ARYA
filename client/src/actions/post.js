@@ -1,8 +1,7 @@
 "use server";
-import { getFeed } from "@/api/posts/feed";
 import axios from "axios";
 import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 export async function savePost(formData) {
 	try {
@@ -19,7 +18,7 @@ export async function savePost(formData) {
 			data: data,
 		});
 
-		revalidatePath("/AryaMedia");
+		revalidateTag("feed");
 
 		console.log(res.data);
 	} catch (err) {

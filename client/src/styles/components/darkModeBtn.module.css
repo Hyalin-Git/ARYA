@@ -1,0 +1,74 @@
+.container {
+	position: relative;
+}
+.container input {
+	position: relative;
+	z-index: 2000;
+	/* visibility: hidden; */
+	/* opacity: 0; */
+	background-color: blue;
+	padding: 200px;
+}
+
+.btn {
+	display: flex;
+	align-items: center;
+	background-color: white;
+	border-radius: 8px;
+	width: 30px;
+	height: 30px;
+	padding: 5px;
+	cursor: pointer;
+	overflow: hidden;
+	user-select: none;
+}
+
+.btn[data-dark="false"] img {
+	/* background-color: red; */
+	/* animation: forwards dotAnimDark 150ms ease-in; */
+}
+
+.dot {
+	margin-top: 0.7px;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background-color: var(--meteorite-color);
+	transition: 150ms all linear;
+}
+
+.dot[data-dark="true"] {
+	/* animation: forwards dotAnimDark 150ms ease-in; */
+}
+
+.dot[data-dark="false"] {
+	/* animation: forwards dotAnimLight 150ms ease-in; */
+}
+/* 
+@keyframes dotAnimDark {
+	from {
+		transform: translate(0px, 0);
+		width: 20px;
+	}
+	50% {
+		width: 30px;
+	}
+	to {
+		transform: translate(30px, 0);
+		width: 20px;
+	}
+}
+
+@keyframes dotAnimLight {
+	from {
+		transform: translate(30px, 0);
+		width: 20px;
+	}
+	50% {
+		width: 30px;
+	}
+	to {
+		transform: translate(0px, 0);
+		width: 20px;
+	}
+} */

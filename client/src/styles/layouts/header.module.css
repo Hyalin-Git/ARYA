@@ -6,7 +6,7 @@
 
 .nav {
 	display: flex;
-	justify-content: space-around;
+	justify-content: space-between;
 	align-items: center;
 	background-color: transparent;
 	transition: 100ms background-color linear;
@@ -30,6 +30,7 @@
 }
 
 .logo {
+	margin-left: 30px;
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -50,7 +51,7 @@
 .searchbar {
 	position: relative;
 	width: 20%;
-	left: 80px;
+	left: 120px;
 }
 .searchbar input {
 	border: none;
@@ -60,6 +61,22 @@
 	width: 100%;
 	box-shadow: var(--passive-shadow);
 }
+.menu {
+	display: flex;
+	align-items: center;
+	margin-right: 30px;
+	gap: 20px;
+}
+/* .menu {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+.menu .btn {
+	background-color: red;
+	position: absolute;
+	right: -120px;
+} */
 .menu ul {
 	position: relative;
 	top: 0px;
@@ -97,7 +114,7 @@
 	box-shadow: var(--passive-shadow);
 	color: black;
 	height: 40px;
-	border-radius: 12px;
+	border-radius: 8px;
 	transition: 150ms all linear;
 }
 
@@ -114,6 +131,11 @@
 
 .menu .connected li:nth-child(4) img:nth-child(2) {
 	filter: invert(0) !important;
+}
+
+.menu .connected li:nth-child(5) {
+	position: relative;
+	top: 2px;
 }
 
 .menu .connected span:nth-child(1) {

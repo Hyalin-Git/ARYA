@@ -8,6 +8,7 @@ import styles from "@/styles/layouts/header.module.css";
 import clsx from "clsx";
 import { montserrat } from "@/libs/fonts";
 import HeaderUserInfo from "@/components/header/HeaderUserInfo";
+import DarkModeBtn from "@/components/DarkModeBtn";
 
 export default function Header() {
 	const context = useContext(AuthContext);
@@ -125,6 +126,7 @@ export default function Header() {
 									</li>
 								</ul>
 							)}
+							<DarkModeBtn />
 						</div>
 					</nav>
 				</header>
