@@ -23,9 +23,8 @@
 	user-select: none;
 }
 
-.btn[data-dark="false"] img {
-	/* background-color: red; */
-	/* animation: forwards dotAnimDark 150ms ease-in; */
+.anim img {
+	animation: forwards moonAnimDark 450ms;
 }
 
 .dot {
@@ -34,7 +33,6 @@
 	height: 20px;
 	border-radius: 50%;
 	background-color: var(--meteorite-color);
-	transition: 150ms all linear;
 }
 
 .dot[data-dark="true"] {
@@ -44,31 +42,22 @@
 .dot[data-dark="false"] {
 	/* animation: forwards dotAnimLight 150ms ease-in; */
 }
-/* 
-@keyframes dotAnimDark {
-	from {
-		transform: translate(0px, 0);
-		width: 20px;
+@keyframes moonAnimDark {
+	0% {
+		transform: rotate(0) translate(0px, 0px);
 	}
-	50% {
-		width: 30px;
+	30% {
+		transform: rotate(0deg) translate(-30px, 30px);
+	}
+	60% {
+		transform: rotate(0deg) translate(30px, 30px);
 	}
 	to {
-		transform: translate(30px, 0);
-		width: 20px;
+		transform: rotate(0deg) translate(0px, 0px);
 	}
 }
+/* 
 
-@keyframes dotAnimLight {
-	from {
-		transform: translate(30px, 0);
-		width: 20px;
-	}
-	50% {
-		width: 30px;
-	}
-	to {
-		transform: translate(0px, 0);
-		width: 20px;
-	}
+
+
 } */
