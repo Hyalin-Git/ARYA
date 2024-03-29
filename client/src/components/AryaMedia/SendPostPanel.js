@@ -20,8 +20,8 @@ export default function SendPostPanel() {
 								user.picture ? user.picture : "/images/profil/default-pfp.jpg"
 							}
 							alt="profil"
-							width={60}
-							height={60}
+							width={50}
+							height={50}
 							quality={100}
 						/>
 					</div>
@@ -49,41 +49,37 @@ export default function SendPostPanel() {
 							<li>
 								<Image
 									src="/images/icons/img_icon.svg"
-									width={25}
-									height={25}
+									width={20}
+									height={20}
 									alt="icon"
 								/>
-								Photo
 							</li>
 							<li>
 								{" "}
 								<Image
 									src="/images/icons/video_icon.svg"
-									width={25}
-									height={25}
+									width={20}
+									height={20}
 									alt="icon"
 								/>
-								Vidéo
 							</li>
 							<li>
 								{" "}
 								<Image
 									src="/images/icons/gif_icon.svg"
-									width={25}
-									height={25}
+									width={20}
+									height={20}
 									alt="icon"
 								/>
-								GIF
 							</li>
 							<li>
 								{" "}
 								<Image
 									src="/images/icons/clock_icon.svg"
-									width={25}
-									height={25}
+									width={20}
+									height={20}
 									alt="icon"
 								/>
-								Programmer
 							</li>
 						</ul>
 					</div>

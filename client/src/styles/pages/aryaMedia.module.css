@@ -29,15 +29,19 @@
 	overflow-y: auto;
 }
 
-.filter {
-	margin-top: -20px;
+.filters {
+	margin-top: -10px;
+	border-radius: 8px;
+	padding: 10px;
 	position: relative;
 	display: flex;
-	justify-content: space-evenly;
-
-	background-color: white;
-	padding: 10px;
-	border-radius: 0 0 8px 8px;
+	justify-content: space-around;
+	background-color: var(--meteorite-color);
+}
+.filters span {
+	color: white !important;
+	font-weight: 500;
+	cursor: pointer;
 }
 .container aside:nth-child(3) {
 	width: 20%;

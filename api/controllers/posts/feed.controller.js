@@ -67,19 +67,19 @@ exports.getByFollowingFeed = async (req, res, next) => {
 		const posts = await PostModel.find({
 			posterId: { $in: authUser.following },
 		})
-			.populate("posterId", "userName lastName firstName")
+			.populate("posterId", "userName lastName picture firstName")
 			.exec();
 
 		const reposts = await RepostModel.find({
 			reposterId: { $in: authUser.following },
 		})
-			.populate("reposterId", "userName lastName firstName")
+			.populate("reposterId", "userName lastName picture firstName")
 			.populate({
 				path: "postId",
 				select: "text media",
 				populate: {
 					path: "posterId",
-					select: "lastName firstName userName",
+					select: "lastName firstName picture userName",
 				},
 			})
 			.exec();

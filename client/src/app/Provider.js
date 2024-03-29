@@ -11,7 +11,6 @@ export default function Provider({ children }) {
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	const pathname = usePathname();
-	const router = useRouter();
 
 	useEffect(() => {
 		async function fetchSession() {
@@ -20,9 +19,6 @@ export default function Provider({ children }) {
 				console.log("played");
 				if (session?.userId) {
 					setUid(session?.userId);
-					console.log("yo");
-					const user = await getUser(session?.userId);
-					setUser({ ...user });
 					setIsLoading(false);
 					// router.push("/");
 					console.log("Mise à jour de l'UID");
@@ -39,16 +35,16 @@ export default function Provider({ children }) {
 
 		fetchSession();
 
-		// if (uid) {
-		// 	// Fetch user
-		// 	async function fetchUser() {
-		// 		const user = await getUser(uid);
+		if (uid) {
+			// Fetch user
+			async function fetchUser() {
+				const user = await getUser(uid);
+				setUser({ ...user });
+				setIsLoading(false);
+			}
 
-		// 		setUser({ ...user });
-		// 	}
-
-		// 	fetchUser();
-		// }
+			fetchUser();
+		}
 
 		const interval = setInterval(fetchSession, 10 * 60 * 1000);
 
