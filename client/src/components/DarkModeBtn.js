@@ -38,10 +38,10 @@ export default function DarkModeBtn() {
 	}
 
 	return (
-		<div className={styles.container}>
+		<li className={styles.container}>
 			<div onClick={switchMode} className={styles.btn} id="switch">
 				<Image src={`/${image}`} alt="icon" width={20} height={20} />
 			</div>
-		</div>
+		</li>
 	);
 }

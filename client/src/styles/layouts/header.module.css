@@ -82,6 +82,7 @@
 	top: 0px;
 	padding: 0;
 	display: flex;
+	align-items: center;
 	gap: 20px;
 	font-size: 1.2rem;
 	font-weight: 500;
@@ -133,7 +134,11 @@
 	filter: invert(0) !important;
 }
 
-.menu .connected li:nth-child(5) {
+.menu .connected li:nth-child(5) img:nth-child(1) {
+	filter: invert(0) !important;
+}
+
+.menu .connected li:nth-child(6) {
 	position: relative;
 	top: 2px;
 }

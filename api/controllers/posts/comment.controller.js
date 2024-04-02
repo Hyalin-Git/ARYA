@@ -137,7 +137,7 @@ exports.getComments = async (req, res, next) => {
 	CommentModel.find({ postId: postId })
 		.populate(
 			"commenterId",
-			"userName lastName firstName blockedUsers isPrivate followers"
+			"userName lastName firstName picture blockedUsers isPrivate followers"
 		)
 		.exec()
 		.then(async (comments) => {
@@ -164,7 +164,7 @@ exports.getComment = (req, res, next) => {
 	CommentModel.findById({ _id: req.params.id })
 		.populate(
 			"commenterId",
-			"userName lastName firstName blockedUsers isPrivate followers"
+			"userName lastName firstName picture blockedUsers isPrivate followers"
 		)
 		.exec()
 		.then(async (comment) => {

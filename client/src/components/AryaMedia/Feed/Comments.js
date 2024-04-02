@@ -7,6 +7,7 @@ import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import Image from "next/image";
 import clsx from "clsx";
+import Card from "../Card";
 
 export default function Comments({ postId }) {
 	const { user } = useContext(AuthContext);
@@ -110,7 +111,7 @@ export default function Comments({ postId }) {
 				<>
 					{comments.length > 0 &&
 						comments?.map((comment) => {
-							return <span key={comment._id}>{comment.text}</span>;
+							return <Card comment={comment} key={comment._id} />;
 						})}
 				</>
 			)}

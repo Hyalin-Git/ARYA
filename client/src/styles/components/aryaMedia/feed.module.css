@@ -17,9 +17,12 @@
 	background-color: rgba(var(--layer-color));
 	transition: 150ms all linear;
 }
+.wrapper[data-type="comment"] {
+	/* background-color: inherit; */
+}
 .wrapper:hover {
-	background-color: rgba(0, 0, 0, 0.15);
-	transition: 150ms all linear;
+	/* background-color: rgba(0, 0, 0, 0.15);
+	transition: 150ms all linear; */
 }
 
 .header {
@@ -54,6 +57,8 @@
 	font-weight: 300;
 }
 
+.more img {
+}
 .content {
 	margin-top: 10px;
 	margin-left: 70px;
@@ -69,12 +74,50 @@
 }
 .reactions ul {
 	display: flex;
-	gap: 20px;
+	align-items: center;
+	gap: 0px;
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	font-weight: 300;
+	font-weight: 400;
 	font-size: 0.8rem;
+	/* background-color: red; */
+}
+.reactions ul li {
+	/* background-color: blue; */
+}
+
+.reactions ul li:nth-child(1) {
+	display: flex;
+	align-items: center;
+	gap: 0px;
+}
+
+.reactions ul li:nth-child(1) img:nth-child(1) {
+	position: relative;
+	z-index: 1000;
+}
+.reactions ul li:nth-child(1) img:nth-child(2) {
+	position: relative;
+	z-index: 999;
+	left: -5px;
+}
+.reactions ul li:nth-child(1) img:nth-child(3) {
+	position: relative;
+	z-index: 998;
+	left: -10px;
+}
+.reactions ul li:nth-child(1) span {
+	position: relative;
+	left: -12px;
+}
+.reactions ul li:nth-child(1) img:nth-child(4) {
+	position: relative;
+	left: -15px;
+}
+.reactions ul li:nth-child(2) {
+	display: flex;
+	align-items: center;
 }
 .reactions ul li:nth-child(3) {
 	width: 100%;

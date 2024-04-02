@@ -95,6 +95,7 @@ export default function Header() {
 									<li>
 										<Link href="/auth">Connexion </Link>
 									</li>
+									<DarkModeBtn />
 								</ul>
 							) : (
 								<ul className={styles.connected}>
@@ -116,6 +117,7 @@ export default function Header() {
 									</li>
 									<li></li>
 									<HeaderUserInfo user={context?.user} />
+									<DarkModeBtn />
 									<li>
 										<Image
 											src="./images/icons/nine_dots_icon.svg"
@@ -126,7 +128,6 @@ export default function Header() {
 									</li>
 								</ul>
 							)}
-							<DarkModeBtn />
 						</div>
 					</nav>
 				</header>

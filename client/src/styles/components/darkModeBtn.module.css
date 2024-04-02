@@ -1,23 +1,15 @@
 .container {
 	position: relative;
 }
-.container input {
-	position: relative;
-	z-index: 2000;
-	/* visibility: hidden; */
-	/* opacity: 0; */
-	background-color: blue;
-	padding: 200px;
-}
 
 .btn {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	background-color: white;
 	border-radius: 8px;
-	width: 30px;
-	height: 30px;
-	padding: 5px;
+	width: 40px;
+	height: 40px;
 	cursor: pointer;
 	overflow: hidden;
 	user-select: none;
@@ -27,21 +19,6 @@
 	animation: forwards moonAnimDark 450ms;
 }
 
-.dot {
-	margin-top: 0.7px;
-	width: 20px;
-	height: 20px;
-	border-radius: 50%;
-	background-color: var(--meteorite-color);
-}
-
-.dot[data-dark="true"] {
-	/* animation: forwards dotAnimDark 150ms ease-in; */
-}
-
-.dot[data-dark="false"] {
-	/* animation: forwards dotAnimLight 150ms ease-in; */
-}
 @keyframes moonAnimDark {
 	0% {
 		transform: rotate(0) translate(0px, 0px);
