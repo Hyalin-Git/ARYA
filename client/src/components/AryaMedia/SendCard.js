@@ -1,18 +1,23 @@
 "use client";
 import Image from "next/image";
-import styles from "@/styles/components/aryaMedia/sendPostPanel.module.css";
+import styles from "@/styles/components/aryaMedia/sendCard.module.css";
 import { useContext, useState } from "react";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import clsx from "clsx";
-import { savePost } from "@/actions/post";
+import { useFormState } from "react-dom";
 
-export default function SendPostPanel() {
+const initialState = {
+	status: "pending",
+	message: "",
+};
+export default function SendCard({ action, type, button }) {
 	const { user } = useContext(AuthContext);
 	const [isWriting, setIsWriting] = useState(false);
+	const [state, formAction] = useFormState(action, initialState);
 	return (
-		<div className={styles.container} data-writing={isWriting}>
-			<form action={savePost}>
+		<div className={styles.container} data-writing={isWriting} data-type={type}>
+			<form action={formAction}>
 				<div className={styles.form}>
 					<div>
 						<Image
@@ -38,7 +43,11 @@ export default function SendPostPanel() {
 							name="text"
 							id="text"
 							type="text"
-							placeholder={`Quelque chose à partager aujourd'hui ${user?.userName} ?`}
+							placeholder={
+								type === "post"
+									? `Quelque chose à partager aujourd'hui ${user?.userName} ?`
+									: "Ajouter un commentaire"
+							}
 							className={montserrat.className}
 						/>
 					</div>
@@ -85,7 +94,7 @@ export default function SendPostPanel() {
 					</div>
 					<div className={styles.button}>
 						<button type="submit" className={clsx(montserrat.className)}>
-							Poster
+							{button}
 						</button>
 					</div>
 				</div>

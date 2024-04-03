@@ -165,7 +165,7 @@ exports.getPost = (req, res, next) => {
 };
 
 exports.updatePost = async (req, res, next) => {
-	const {userId} = req.query
+	const { userId } = req.query;
 	const { text } = req.body;
 	const medias = req.files["media"];
 
@@ -256,14 +256,14 @@ function checkIfReacted(post, userId) {
 	let hasReacted;
 
 	// Set the variable hasReacted value where it returns true
-	if (post.reactions.like.includes(userId)) {
-		hasReacted = "like";
-	} else if (post.reactions.awesome.includes(userId)) {
-		hasReacted = "awesome";
-	} else if (post.reactions.love.includes(userId)) {
+	if (post.reactions.love.includes(userId)) {
 		hasReacted = "love";
 	} else if (post.reactions.funny.includes(userId)) {
 		hasReacted = "funny";
+	} else if (post.reactions.surprised.includes(userId)) {
+		hasReacted = "surprised";
+	} else if (post.reactions.sad.includes(userId)) {
+		hasReacted = "sad";
 	}
 
 	return hasReacted;
@@ -273,8 +273,8 @@ exports.addReaction = async (req, res, next) => {
 	try {
 		const { reaction } = req.body;
 		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
-		const allowedReactions = ["like", "awesome", "funny", "love"];
-
+		const allowedReactions = ["love", "surprised", "funny", "sad"];
+		console.log(reaction);
 		// Checks if the given reaction is in the allowedReactions array
 		if (!allowedReactions.includes(reaction)) {
 			return res

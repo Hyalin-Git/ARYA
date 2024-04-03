@@ -1,5 +1,6 @@
 import styles from "@/styles/components/auth/userStep.module.css";
 import { regex } from "./regex";
+import moment from "moment";
 
 // Form validation for sign in
 
@@ -378,3 +379,43 @@ export const updatePasswordValidation = () => {
 
 	return true;
 };
+
+// AryaMedia
+
+export function formattedDate(element) {
+	const date = moment
+		.utc(element?.createdAt, "YYYY-MM-DDTHH:mm:ss.SSSZ")
+		.locale("fr")
+		.fromNow();
+
+	if (date === "Invalid date") {
+		return null;
+	}
+
+	return date;
+}
+
+export function reactionLength(element) {
+	const length =
+		element?.reactions.love.length +
+		element?.reactions.funny.length +
+		element?.reactions.surprised.length +
+		element?.reactions.sad.length;
+
+	return length;
+}
+
+export function hasReacted(reactions, uid) {
+	return Object.values(reactions).some((reaction) => reaction.includes(uid));
+}
+
+export function findUidReaction(reactions, uid) {
+	let value;
+	for (const property in reactions) {
+		if (reactions[property].includes(uid)) {
+			value = property;
+			break;
+		}
+	}
+	return value;
+}

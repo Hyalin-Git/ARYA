@@ -23,10 +23,10 @@ const CommentSchema = mongoose.Schema(
 			type: [String],
 		},
 		reactions: {
-			like: { type: [String] },
-			awesome: { type: [String] },
 			love: { type: [String] },
 			funny: { type: [String] },
+			surprised: { type: [String] },
+			sad: { type: [String] },
 		},
 		answersLength: {
 			type: Number,

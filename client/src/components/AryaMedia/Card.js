@@ -1,39 +1,56 @@
 "use client";
 import styles from "@/styles/components/aryaMedia/feed.module.css";
-import moment from "moment";
 import Image from "next/image";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Comments from "./Feed/Comments";
+import { addReaction, deleteReaction } from "@/actions/post";
+import { AuthContext } from "@/context/auth";
+import {
+	findUidReaction,
+	formattedDate,
+	hasReacted,
+	reactionLength,
+} from "@/libs/utils";
 export default function Card({ post, comment, answer }) {
+	const { uid } = useContext(AuthContext);
+	const [moreModal, setMoreModal] = useState(false);
+	const [reactionModal, setReactionModal] = useState(false);
 	const [showComments, setShowComments] = useState(false);
 	const [showAnswers, setShowAnswers] = useState(false);
-	const postReactions =
-		post?.reactions.like.length +
-		post?.reactions.love.length +
-		post?.reactions.awesome.length +
-		post?.reactions.funny.length;
-	const commentReactions =
-		comment?.reactions.like.length +
-		comment?.reactions.love.length +
-		comment?.reactions.awesome.length +
-		comment?.reactions.funny.length;
-	console.log(postReactions);
+	const addReactionWithEltId = addReaction.bind(
+		null,
+		post?._id || comment?._id
+	);
+	const deleteReactionWithEltId = deleteReaction.bind(
+		null,
+		post?._id || comment?._id
+	);
 
-	const formattedPostDate = moment
-		.utc(post?.createdAt, "YYYY-MM-DDTHH:mm:ss.SSSZ")
-		.locale("fr")
-		.fromNow();
+	const userHasReacted = hasReacted(post.reactions || comment.reactions, uid);
+	const getUserReaction = findUidReaction(
+		post.reactions || comment.reactions,
+		uid
+	);
 
-	const formattedCommentDate = moment
-		.utc(comment?.createdAt, "YYYY-MM-DDTHH:mm:ss.SSSZ")
-		.locale("fr")
-		.fromNow();
+	function handleMoreModal(e) {
+		e.preventDefault();
+		setMoreModal(!moreModal);
+	}
+
+	function handleReaction(e) {
+		const reaction = e.currentTarget.getAttribute("data-reaction");
+		document.getElementById("reaction").value = reaction;
+		document.getElementById("formReaction").requestSubmit();
+	}
+
+	function handleDeleteReaction(e) {
+		const reaction = e.currentTarget.getAttribute("data-reaction");
+		document.getElementById("reaction").value = reaction;
+		document.getElementById("formDeleteReaction").requestSubmit();
+	}
 
 	const posterImg = post?.posterId.picture;
-
 	const commenterImg = comment?.commenterId.picture;
-
-	console.log(post);
 
 	return (
 		<article className={styles.wrapper} data-type={post ? "post" : "comment"}>
@@ -56,22 +73,35 @@ export default function Card({ post, comment, answer }) {
 						<span>
 							{post?.posterId?.userName || comment?.commenterId?.userName}
 						</span>
-						<span>
-							{formattedPostDate === "Invalid date"
-								? formattedCommentDate
-								: formattedPostDate}
-						</span>
+						<span>{formattedDate(post || comment)}</span>
 					</div>
 				</div>
-
-				<div className={styles.more}>
-					{" "}
-					<Image
-						src={"/images/icons/ellipsis_icon.svg"}
-						alt="icon"
-						width={20}
-						height={20}
-					/>
+				<div className={styles.more} onClick={handleMoreModal}>
+					{moreModal && (
+						<div className={styles.list}>
+							<ul>
+								<li>
+									Suivre{" "}
+									{post?.posterId?.userName || comment?.commenterId?.userName}
+								</li>
+								<li>
+									Bloquer{" "}
+									{post?.posterId?.userName || comment?.commenterId?.userName}
+								</li>
+								<li>Modifier la publication</li>
+								<li>Supprimer la publication</li>
+								<li>Signaler la publication</li>
+							</ul>
+						</div>
+					)}
+					<div>
+						<Image
+							src={"/images/icons/ellipsis_icon.svg"}
+							alt="icon"
+							width={20}
+							height={20}
+						/>
+					</div>
 				</div>
 			</div>
 			<div className={styles.content}>
@@ -80,13 +110,13 @@ export default function Card({ post, comment, answer }) {
 					<ul>
 						<li>
 							<Image
-								src={"/images/icons/heart_icon.svg"}
+								src={"/images/icons/love_icon.svg"}
 								alt="icon"
 								width={20}
 								height={20}
 							/>
 							<Image
-								src={"/images/icons/laugh_icon.svg"}
+								src={"/images/icons/funny_icon.svg"}
 								alt="icon"
 								width={20}
 								height={20}
@@ -103,7 +133,7 @@ export default function Card({ post, comment, answer }) {
 								width={20}
 								height={20}
 							/>
-							<span>{post ? postReactions : commentReactions}</span>
+							<span>{reactionLength(post || comment)}</span>
 						</li>
 						<li>
 							<Image
@@ -127,23 +157,101 @@ export default function Card({ post, comment, answer }) {
 			</div>
 			<div className={styles.footer}>
 				<div>
-					<button>
-						<Image
-							src={"/images/icons/addReaction_icon.svg"}
-							alt="icon"
-							width={20}
-							height={20}
-						/>
-					</button>
-					<button>
+					<div
+						className={styles.btn}
+						onMouseEnter={(e) => {
+							e.preventDefault();
+							let timeout;
+							clearTimeout(timeout);
+							timeout = setTimeout(() => {
+								setReactionModal(true);
+							}, 500);
+						}}>
+						{reactionModal && (
+							<div
+								className={styles.reactionModal}
+								onMouseLeave={(e) => {
+									e.preventDefault();
+									let timeout;
+									clearTimeout(timeout);
+									timeout = setTimeout(() => {
+										setReactionModal(false);
+									}, 500);
+								}}>
+								<form action={addReactionWithEltId} id="formReaction">
+									<input type="text" id="reaction" name="reaction" hidden />
+									<Image
+										src={"/images/icons/love_icon.svg"}
+										alt="icon"
+										width={25}
+										height={25}
+										data-reaction="love"
+										onClick={handleReaction}
+									/>
+									<Image
+										src={"/images/icons/funny_icon.svg"}
+										alt="icon"
+										width={25}
+										height={25}
+										data-reaction="funny"
+										onClick={handleReaction}
+									/>
+									<Image
+										src={"/images/icons/surprised_icon.svg"}
+										alt="icon"
+										width={25}
+										height={25}
+										data-reaction="surprised"
+										onClick={handleReaction}
+									/>
+									<Image
+										src={"/images/icons/sad_icon.svg"}
+										alt="icon"
+										width={25}
+										height={25}
+										data-reaction="sad"
+										onClick={handleReaction}
+									/>
+								</form>
+							</div>
+						)}
+						{userHasReacted ? (
+							<form action={deleteReactionWithEltId} id="formDeleteReaction">
+								<input
+									type="text"
+									id="reaction"
+									name="reaction"
+									hidden
+									value={getUserReaction}
+								/>
+								<Image
+									src={`/images/icons/${getUserReaction}_icon.svg`}
+									alt="icon"
+									width={25}
+									height={25}
+									data-reaction={getUserReaction}
+									onClick={handleDeleteReaction}
+								/>
+							</form>
+						) : (
+							<Image
+								src={"/images/icons/addReaction_icon.svg"}
+								alt="icon"
+								width={25}
+								height={25}
+							/>
+						)}
+					</div>
+					<div className={styles.btn}>
 						<Image
 							src={"/images/icons/repost_icon.svg"}
 							alt="icon"
-							width={20}
-							height={20}
+							width={25}
+							height={25}
 						/>
-					</button>
-					<button
+					</div>
+					<div
+						className={styles.btn}
 						onClick={(e) => {
 							e.preventDefault();
 							setShowComments(!showComments);
@@ -154,17 +262,15 @@ export default function Card({ post, comment, answer }) {
 							width={20}
 							height={20}
 						/>
-					</button>
+					</div>
 				</div>
-				<div>
-					<button>
-						<Image
-							src={"/images/icons/share_icon.svg"}
-							alt="icon"
-							width={20}
-							height={20}
-						/>
-					</button>
+				<div className={styles.btn}>
+					<Image
+						src={"/images/icons/share_icon.svg"}
+						alt="icon"
+						width={25}
+						height={25}
+					/>
 				</div>
 			</div>
 			{post && showComments && <Comments postId={post._id} />}

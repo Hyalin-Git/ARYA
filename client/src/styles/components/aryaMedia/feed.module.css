@@ -57,7 +57,32 @@
 	font-weight: 300;
 }
 
-.more img {
+.more {
+}
+
+.list {
+	position: fixed;
+
+	z-index: 2000;
+	background-color: white;
+	border-radius: 8px;
+	padding: 10px;
+}
+
+.list ul {
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+	display: flex;
+	gap: 10px;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+}
+
+.list li {
+	text-align: left;
+	list-style-type: none;
 }
 .content {
 	margin-top: 10px;
@@ -82,9 +107,6 @@
 	font-weight: 400;
 	font-size: 0.8rem;
 	/* background-color: red; */
-}
-.reactions ul li {
-	/* background-color: blue; */
 }
 
 .reactions ul li:nth-child(1) {
@@ -132,25 +154,51 @@
 	border-top: 1px solid var(--meteorite-color);
 }
 
-.footer button {
-	min-width: 150px;
-	background-image: inherit;
-	background-color: inherit;
-	color: white;
-	box-shadow: inherit;
-	letter-spacing: 0.1rem;
-	font-size: 0.8rem;
-	font-weight: 800;
-	transition: 150ms all linear;
-	color: var(--meteorite-color);
-}
-
-.footer div {
+.footer > div {
 	display: flex;
 	gap: 20px;
 }
 
-.footer button:hover {
+.btn {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 50px;
+	min-width: 150px;
+	gap: 10px;
+	color: white;
+	border-radius: 8px;
+	transition: 150ms all linear;
+	cursor: pointer;
+}
+
+.reactionModal {
+	padding: 5px;
+	position: absolute;
+	z-index: 2000;
+	top: -40px;
+	border-radius: 8px;
+	background-color: white;
+	width: 100%;
+}
+
+.reactionModal form {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
+/* .btn form {
+	display: flex;
+	gap: 10px;
+} */
+
+.btn:hover {
 	background-color: white;
 	transition: 150ms all linear;
+}
+
+.reactionModal img:hover {
+	scale: 1.2;
 }

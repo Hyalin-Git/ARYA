@@ -15,10 +15,10 @@ const PostSchema = mongoose.Schema(
 			type: [String],
 		},
 		reactions: {
-			like: { type: [String] },
-			awesome: { type: [String] },
 			love: { type: [String] },
+			surprised: { type: [String] },
 			funny: { type: [String] },
+			sad: { type: [String] },
 		},
 		commentsLength: {
 			type: Number,
