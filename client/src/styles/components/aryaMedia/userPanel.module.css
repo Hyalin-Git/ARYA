@@ -9,11 +9,6 @@
 	justify-content: flex-start;
 	flex-direction: column;
 	align-items: center;
-	transition: 250ms all linear;
-}
-.container:hover {
-	background-color: rgba(0, 0, 0, 0.2);
-	transition: 250ms all linear;
 }
 .background {
 	position: absolute;

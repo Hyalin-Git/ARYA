@@ -39,6 +39,8 @@ export default function SendCard({ action, type, button }) {
 								if (e.target.value.length <= 0) {
 									setIsWriting(false);
 								}
+								e.target.style.height = "";
+								e.target.style.height = e.target.scrollHeight + "px";
 							}}
 							name="text"
 							id="text"

@@ -3,7 +3,6 @@ import styles from "@/styles/components/aryaMedia/feed.module.css";
 import Image from "next/image";
 import { useContext, useState } from "react";
 import Comments from "./Feed/Comments";
-import { addReaction, deleteReaction } from "@/actions/post";
 import { AuthContext } from "@/context/auth";
 import {
 	findUidReaction,
@@ -11,42 +10,45 @@ import {
 	hasReacted,
 	reactionLength,
 } from "@/libs/utils";
+import deletePost, { addReaction, deleteReaction } from "@/api/posts/post";
+import UpdateCard from "./UpdateCard";
 export default function Card({ post, comment, answer }) {
 	const { uid } = useContext(AuthContext);
+	const [isUpdate, setIsUpdate] = useState(false);
 	const [moreModal, setMoreModal] = useState(false);
 	const [reactionModal, setReactionModal] = useState(false);
 	const [showComments, setShowComments] = useState(false);
 	const [showAnswers, setShowAnswers] = useState(false);
-	const addReactionWithEltId = addReaction.bind(
-		null,
-		post?._id || comment?._id
-	);
-	const deleteReactionWithEltId = deleteReaction.bind(
-		null,
-		post?._id || comment?._id
-	);
-
-	const userHasReacted = hasReacted(post.reactions || comment.reactions, uid);
+	const userHasReacted = hasReacted(post?.reactions || comment?.reactions, uid);
 	const getUserReaction = findUidReaction(
-		post.reactions || comment.reactions,
+		post?.reactions || comment?.reactions,
 		uid
 	);
+	const isAuthor = uid === post?.posterId._id || comment?.commenterId._id;
 
 	function handleMoreModal(e) {
 		e.preventDefault();
 		setMoreModal(!moreModal);
 	}
 
-	function handleReaction(e) {
-		const reaction = e.currentTarget.getAttribute("data-reaction");
-		document.getElementById("reaction").value = reaction;
-		document.getElementById("formReaction").requestSubmit();
+	function handleIsUpdate(e) {
+		e.preventDefault();
+		setIsUpdate(!isUpdate);
 	}
 
-	function handleDeleteReaction(e) {
-		const reaction = e.currentTarget.getAttribute("data-reaction");
-		document.getElementById("reaction").value = reaction;
-		document.getElementById("formDeleteReaction").requestSubmit();
+	async function handleReaction(e, reaction) {
+		e.preventDefault();
+		await addReaction(post?._id, uid, reaction);
+	}
+
+	async function handleDeleteReaction(e) {
+		e.preventDefault();
+		await deleteReaction(post?._id, uid);
+	}
+
+	async function handleDeletePost(e) {
+		e.preventDefault();
+		await deletePost(post._id, uid);
 	}
 
 	const posterImg = post?.posterId.picture;
@@ -78,21 +80,36 @@ export default function Card({ post, comment, answer }) {
 				</div>
 				<div className={styles.more} onClick={handleMoreModal}>
 					{moreModal && (
-						<div className={styles.list}>
-							<ul>
-								<li>
-									Suivre{" "}
-									{post?.posterId?.userName || comment?.commenterId?.userName}
-								</li>
-								<li>
-									Bloquer{" "}
-									{post?.posterId?.userName || comment?.commenterId?.userName}
-								</li>
-								<li>Modifier la publication</li>
-								<li>Supprimer la publication</li>
-								<li>Signaler la publication</li>
-							</ul>
-						</div>
+						<>
+							<div className={styles.list}>
+								<ul>
+									{!isAuthor && (
+										<>
+											<li>
+												Suivre{" "}
+												{post?.posterId?.userName ||
+													comment?.commenterId?.userName}
+											</li>
+											<li>
+												Bloquer{" "}
+												{post?.posterId?.userName ||
+													comment?.commenterId?.userName}
+											</li>
+										</>
+									)}
+									{isAuthor && (
+										<>
+											<li onClick={handleIsUpdate}>Modifier la publication</li>
+											<li onClick={handleDeletePost}>
+												Supprimer la publication
+											</li>
+										</>
+									)}
+									{!isAuthor && <li>Signaler la publication</li>}
+								</ul>
+							</div>
+							<div id="overlay"></div>
+						</>
 					)}
 					<div>
 						<Image
@@ -105,7 +122,11 @@ export default function Card({ post, comment, answer }) {
 				</div>
 			</div>
 			<div className={styles.content}>
-				<p>{post?.text || comment?.text}</p>
+				{isUpdate ? (
+					<UpdateCard post={post} uid={uid} setIsUpdate={setIsUpdate} />
+				) : (
+					<p>{post?.text || comment?.text}</p>
+				)}
 				<div className={styles.reactions}>
 					<ul>
 						<li>
@@ -166,73 +187,63 @@ export default function Card({ post, comment, answer }) {
 							timeout = setTimeout(() => {
 								setReactionModal(true);
 							}, 500);
+						}}
+						onMouseLeave={(e) => {
+							e.preventDefault();
+							let timeout;
+							clearTimeout(timeout);
+							timeout = setTimeout(() => {
+								setReactionModal(false);
+							}, 500);
 						}}>
 						{reactionModal && (
-							<div
-								className={styles.reactionModal}
-								onMouseLeave={(e) => {
-									e.preventDefault();
-									let timeout;
-									clearTimeout(timeout);
-									timeout = setTimeout(() => {
-										setReactionModal(false);
-									}, 500);
-								}}>
-								<form action={addReactionWithEltId} id="formReaction">
-									<input type="text" id="reaction" name="reaction" hidden />
-									<Image
-										src={"/images/icons/love_icon.svg"}
-										alt="icon"
-										width={25}
-										height={25}
-										data-reaction="love"
-										onClick={handleReaction}
-									/>
-									<Image
-										src={"/images/icons/funny_icon.svg"}
-										alt="icon"
-										width={25}
-										height={25}
-										data-reaction="funny"
-										onClick={handleReaction}
-									/>
-									<Image
-										src={"/images/icons/surprised_icon.svg"}
-										alt="icon"
-										width={25}
-										height={25}
-										data-reaction="surprised"
-										onClick={handleReaction}
-									/>
-									<Image
-										src={"/images/icons/sad_icon.svg"}
-										alt="icon"
-										width={25}
-										height={25}
-										data-reaction="sad"
-										onClick={handleReaction}
-									/>
-								</form>
-							</div>
-						)}
-						{userHasReacted ? (
-							<form action={deleteReactionWithEltId} id="formDeleteReaction">
-								<input
-									type="text"
-									id="reaction"
-									name="reaction"
-									hidden
-									value={getUserReaction}
-								/>
+							<div className={styles.reactionModal}>
 								<Image
-									src={`/images/icons/${getUserReaction}_icon.svg`}
+									src={"/images/icons/love_icon.svg"}
 									alt="icon"
 									width={25}
 									height={25}
-									data-reaction={getUserReaction}
-									onClick={handleDeleteReaction}
+									onClick={(e) => {
+										handleReaction(e, "love");
+									}}
 								/>
-							</form>
+								<Image
+									src={"/images/icons/funny_icon.svg"}
+									alt="icon"
+									width={25}
+									height={25}
+									onClick={(e) => {
+										handleReaction(e, "funny");
+									}}
+								/>
+								<Image
+									src={"/images/icons/surprised_icon.svg"}
+									alt="icon"
+									width={25}
+									height={25}
+									onClick={(e) => {
+										handleReaction(e, "surprised");
+									}}
+								/>
+								<Image
+									src={"/images/icons/sad_icon.svg"}
+									alt="icon"
+									width={25}
+									height={25}
+									onClick={(e) => {
+										handleReaction(e, "sad");
+									}}
+								/>
+							</div>
+						)}
+						{userHasReacted ? (
+							<Image
+								src={`/images/icons/${getUserReaction}_icon.svg`}
+								alt="icon"
+								width={25}
+								height={25}
+								onClick={handleDeleteReaction}
+							/>
 						) : (
 							<Image
 								src={"/images/icons/addReaction_icon.svg"}

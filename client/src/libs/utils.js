@@ -1,6 +1,7 @@
 import styles from "@/styles/components/auth/userStep.module.css";
 import { regex } from "./regex";
 import moment from "moment";
+import "moment/locale/fr"; // without this line it didn't work
 
 // Form validation for sign in
 
