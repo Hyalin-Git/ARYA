@@ -265,6 +265,30 @@ exports.deleteComment = (req, res, next) => {
 
 			// And then we deleted every nested answers
 			await AnswerModel.deleteMany({ commentId: req.params.id });
+			await PostModel.findOneAndUpdate(
+				{ _id: comment.postId },
+				{
+					$inc: {
+						commentsLength: -1,
+					},
+				},
+				{
+					setDefaultsOnInsert: true,
+					new: true,
+				}
+			);
+			await RepostModel.findOneAndUpdate(
+				{ _id: comment.repostId },
+				{
+					$inc: {
+						commentsLength: -1,
+					},
+				},
+				{
+					setDefaultsOnInsert: true,
+					new: true,
+				}
+			);
 
 			return res.status(200).send(comment);
 		})

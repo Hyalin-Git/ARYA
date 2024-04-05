@@ -2,6 +2,7 @@
 import axios from "axios";
 import { cookies } from "next/headers";
 import { revalidateTag } from "next/cache";
+import { mutate } from "swr";
 
 export async function saveComment(postId, prevState, formData) {
 	try {
@@ -20,6 +21,11 @@ export async function saveComment(postId, prevState, formData) {
 		});
 
 		revalidateTag("comments");
+
+		return {
+			status: "success",
+			message: "",
+		};
 
 		console.log(res.data);
 	} catch (err) {

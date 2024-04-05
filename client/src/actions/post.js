@@ -20,6 +20,10 @@ export async function savePost(prevState, formData) {
 
 		revalidateTag("feed");
 
+		return {
+			status: "success",
+			message: "",
+		};
 		console.log(res.data);
 	} catch (err) {
 		console.log(err);

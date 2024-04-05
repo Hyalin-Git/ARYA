@@ -7,8 +7,6 @@ import Link from "next/link";
 
 export default function UserPanel() {
 	const { user } = useContext(AuthContext);
-	console.log(user);
-
 	return (
 		<div className={styles.container}>
 			<div className={styles.background}></div>

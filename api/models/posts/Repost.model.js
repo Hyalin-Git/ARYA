@@ -20,10 +20,10 @@ const RepostSchema = mongoose.Schema(
 			required: true,
 		},
 		reactions: {
-			like: { type: [String] },
-			awesome: { type: [String] },
 			love: { type: [String] },
 			funny: { type: [String] },
+			surprised: { type: [String] },
+			sad: { type: [String] },
 		},
 		commentsLength: {
 			type: Number,

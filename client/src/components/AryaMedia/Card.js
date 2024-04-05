@@ -1,7 +1,8 @@
 "use client";
+import { mutate } from "swr";
 import styles from "@/styles/components/aryaMedia/feed.module.css";
 import Image from "next/image";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Comments from "./Feed/Comments";
 import { AuthContext } from "@/context/auth";
 import {
@@ -12,6 +13,14 @@ import {
 } from "@/libs/utils";
 import deletePost, { addReaction, deleteReaction } from "@/api/posts/post";
 import UpdateCard from "./UpdateCard";
+import deleteRepost, {
+	addRepostReaction,
+	deleteRepostReaction,
+} from "@/api/posts/repost";
+import deleteComment, {
+	addCommentReaction,
+	deleteCommentReaction,
+} from "@/api/comments/comments";
 export default function Card({ post, comment, answer }) {
 	const { uid } = useContext(AuthContext);
 	const [isUpdate, setIsUpdate] = useState(false);
@@ -24,7 +33,11 @@ export default function Card({ post, comment, answer }) {
 		post?.reactions || comment?.reactions,
 		uid
 	);
-	const isAuthor = uid === post?.posterId._id || comment?.commenterId._id;
+
+	const isAuthor =
+		uid === post?.posterId?._id ||
+		post?.reposterId?._id ||
+		comment?.commenterId._id;
 
 	function handleMoreModal(e) {
 		e.preventDefault();
@@ -38,21 +51,64 @@ export default function Card({ post, comment, answer }) {
 
 	async function handleReaction(e, reaction) {
 		e.preventDefault();
+		if (post?.reposterId) {
+			await addRepostReaction(post?._id, uid, reaction);
+			return;
+		}
+		if (comment) {
+			await addCommentReaction(comment?._id, uid, reaction);
+			mutate(`api/comments?postId=${comment.postId}`);
+			return;
+		}
 		await addReaction(post?._id, uid, reaction);
 	}
 
 	async function handleDeleteReaction(e) {
 		e.preventDefault();
+		if (post?.reposterId) {
+			await deleteRepostReaction(post?._id, uid);
+			return;
+		}
+		if (comment) {
+			await deleteCommentReaction(comment?._id, uid);
+			mutate(`api/comments?postId=${comment.postId}`);
+			return;
+		}
 		await deleteReaction(post?._id, uid);
 	}
 
 	async function handleDeletePost(e) {
 		e.preventDefault();
+		if (post?.reposterId) {
+			await deleteRepost(post?._id, uid);
+			return;
+		}
+		if (comment) {
+			await deleteComment(comment?._id, uid);
+			mutate(`api/comments?postId=${comment.postId}`);
+			return;
+		}
 		await deletePost(post._id, uid);
 	}
 
-	const posterImg = post?.posterId.picture;
-	const commenterImg = comment?.commenterId.picture;
+	const isRepost = post?.reposterId;
+
+	const firstName =
+		post?.posterId?.firstName ||
+		post?.reposterId.firstName ||
+		comment?.commenterId?.firstName;
+	const lastName =
+		post?.posterId?.lastName ||
+		post?.reposterId.lastName ||
+		comment?.commenterId?.lastName;
+	const userName =
+		post?.posterId?.userName ||
+		post?.reposterId.userName ||
+		comment?.commenterId?.userName;
+
+	const posterImg = post?.posterId?.picture;
+	const reposterImg = post?.reposterId?.picture;
+	const commenterImg = comment?.commenterId?.picture;
 
 	return (
 		<article className={styles.wrapper} data-type={post ? "post" : "comment"}>
@@ -60,7 +116,8 @@ export default function Card({ post, comment, answer }) {
 				<div className={styles.user}>
 					<Image
 						src={
-							(posterImg || commenterImg) ?? "/images/profil/default-pfp.jpg"
+							(posterImg || reposterImg || commenterImg) ??
+							"/images/profil/default-pfp.jpg"
 						}
 						alt="profil"
 						width={60}
@@ -69,12 +126,9 @@ export default function Card({ post, comment, answer }) {
 					/>
 					<div>
 						<span>
-							{post?.posterId?.firstName || comment?.commenterId?.firstName}{" "}
-							{post?.posterId?.lastName || comment?.commenterId?.lastName}
+							{firstName} {lastName}
 						</span>
-						<span>
-							{post?.posterId?.userName || comment?.commenterId?.userName}
-						</span>
+						<span>{userName}</span>
 						<span>{formattedDate(post || comment)}</span>
 					</div>
 				</div>
@@ -122,10 +176,43 @@ export default function Card({ post, comment, answer }) {
 				</div>
 			</div>
 			<div className={styles.content}>
-				{isUpdate ? (
-					<UpdateCard post={post} uid={uid} setIsUpdate={setIsUpdate} />
-				) : (
-					<p>{post?.text || comment?.text}</p>
+				<div>
+					{isUpdate ? (
+						<UpdateCard post={post} uid={uid} setIsUpdate={setIsUpdate} />
+					) : (
+						<p>{post?.text || comment?.text}</p>
+					)}
+				</div>
+				{isRepost && (
+					<div className={styles.repost}>
+						<div className={styles.header}>
+							<div className={styles.user}>
+								<Image
+									src={
+										post?.postId.posterId.picture ??
+										"/images/profil/default-pfp.jpg"
+									}
+									alt="profil"
+									width={60}
+									height={60}
+									quality={100}
+								/>
+								<div>
+									<span>
+										{post?.postId.posterId.firstName}{" "}
+										{post?.postId.posterId.lastName}
+									</span>
+									<span>{post?.postId.posterId.userName}</span>
+									<span>{formattedDate(post || comment)}</span>
+								</div>
+							</div>
+						</div>
+						<div className={styles.content}>
+							<div>
+								<p>{post?.postId.text}</p>
+							</div>
+						</div>
+					</div>
 				)}
 				<div className={styles.reactions}>
 					<ul>

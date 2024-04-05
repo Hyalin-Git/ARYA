@@ -1,7 +1,8 @@
 "use client";
+import { mutate } from "swr";
 import Image from "next/image";
 import styles from "@/styles/components/aryaMedia/sendCard.module.css";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import clsx from "clsx";
@@ -11,10 +12,20 @@ const initialState = {
 	status: "pending",
 	message: "",
 };
-export default function SendCard({ action, type, button }) {
+export default function SendCard({ action, type, button, postId }) {
 	const { user } = useContext(AuthContext);
+	const text = useRef(null);
 	const [isWriting, setIsWriting] = useState(false);
 	const [state, formAction] = useFormState(action, initialState);
+	console.log(state);
+
+	useEffect(() => {
+		if (state.status === "success") {
+			text.current.value = "";
+			setIsWriting(false);
+			mutate(`api/comments?postId=${postId}`);
+		}
+	}, [state]);
 	return (
 		<div className={styles.container} data-writing={isWriting} data-type={type}>
 			<form action={formAction}>
@@ -33,6 +44,7 @@ export default function SendCard({ action, type, button }) {
 
 					<div className={styles.text}>
 						<textarea
+							ref={text}
 							onChange={(e) => {
 								e.preventDefault();
 								setIsWriting(true);

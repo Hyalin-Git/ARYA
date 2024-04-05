@@ -112,6 +112,17 @@
 	margin: 0;
 }
 
+.repost {
+	margin-top: 10px;
+	/* border: 1px solid var(--white-color); */
+	background-color: rgba(var(--layer-color));
+	padding: 15px;
+	border-radius: 8px;
+}
+
+.repost p {
+	margin-bottom: -20px;
+}
 .reactions {
 	margin-top: 15px;
 }
