@@ -2,11 +2,12 @@
 import Image from "next/image";
 import styles from "@/styles/components/aryaMedia/userPanel.module.css";
 import { AuthContext } from "@/context/auth";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import Link from "next/link";
 
 export default function UserPanel() {
 	const { user } = useContext(AuthContext);
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.background}></div>

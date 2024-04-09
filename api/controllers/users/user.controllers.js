@@ -565,7 +565,6 @@ exports.getFollowers = (req, res, next) => {
 exports.follow = async (req, res, next) => {
 	try {
 		const { userId, idToFollow } = req.query;
-
 		if (!userId || !idToFollow) {
 			return res
 				.status(400)

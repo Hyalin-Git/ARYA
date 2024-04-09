@@ -1,8 +1,9 @@
-"use server";
 import styles from "@/styles/components/aryaMedia/followPanel.module.css";
 import { getUsers } from "@/api/user/user";
 import Image from "next/image";
+import FollowButton from "@/components/AryaMedia/FollowButton";
 export default async function FollowPanel() {
+	"use server";
 	const users = await getUsers("", 3);
 
 	return (
@@ -35,7 +36,7 @@ export default async function FollowPanel() {
 								<span className={styles.username}>{user.userName}</span>
 							</div>
 							<div>
-								<button>Suivre</button>
+								<FollowButton idToFollow={user._id} />
 							</div>
 						</div>
 					);

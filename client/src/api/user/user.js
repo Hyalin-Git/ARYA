@@ -1,5 +1,6 @@
 "use server";
 import axios from "axios";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 export async function getUsers(interest, limit) {
@@ -15,6 +16,9 @@ export async function getUsers(interest, limit) {
 					Authorization: `Bearer ${cookies().get("session")?.value}`,
 					"Content-Type": "application/json",
 					// "Content-Type": "application/x-www-form-urlencoded",
+				},
+				next: {
+					tags: ["users"],
 				},
 			}
 		);
@@ -35,10 +39,63 @@ export async function getUser(uid) {
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
 			},
+			next: {
+				tags: ["user"],
+			},
 		});
 
 		// console.log(res.data);
 		return res.data;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+// Follow logic
+
+export async function follow(uid, idToFollow) {
+	try {
+		console.log(uid, idToFollow);
+		const response = await fetch(
+			`http://localhost:5000/api/users/follow?userId=${uid}&idToFollow=${idToFollow}`,
+			{
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		const data = await response.json();
+		revalidateTag("user");
+		console.log(data);
+		return data;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+export async function unFollow(uid, idToUnfollow) {
+	try {
+		const response = await fetch(
+			`http://localhost:5000/api/users/unfollow?userId=${uid}&idToUnfollow=${idToUnfollow}`,
+			{
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		const data = await response.json();
+		revalidateTag("user");
+		revalidatePath("/AryaMedia");
+		console.log(data);
+		return data;
 	} catch (err) {
 		console.log(err);
 	}

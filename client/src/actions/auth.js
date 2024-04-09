@@ -188,6 +188,7 @@ export async function logIn(prevState, formData) {
 			},
 		});
 		const session = response.data.accessToken;
+		console.log(session);
 		const refreshToken = response.data.refreshToken;
 
 		cookies().set("session", session, {

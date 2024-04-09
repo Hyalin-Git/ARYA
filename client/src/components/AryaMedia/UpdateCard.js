@@ -3,17 +3,18 @@ import styles from "@/styles/components/aryaMedia/updateCard.module.css";
 import { useFormState } from "react-dom";
 import { updatePost } from "@/actions/post";
 import { useEffect } from "react";
+import { mutate } from "swr";
 const initialState = {
 	status: "pending",
 	message: "",
 };
-export default function UpdateCard({ post, uid, setIsUpdate }) {
-	const updatePostWithId = updatePost.bind(null, post._id, uid);
-	const [state, formAction] = useFormState(updatePostWithId, initialState);
+export default function UpdateCard({ element, action, setIsUpdate }) {
+	const [state, formAction] = useFormState(action, initialState);
 
 	useEffect(() => {
 		if (state.status === "success") {
 			setIsUpdate(false);
+			mutate(`api/comments?postId=${element.postId}`);
 		}
 	}, [state]);
 
@@ -30,7 +31,7 @@ export default function UpdateCard({ post, uid, setIsUpdate }) {
 						id="text"
 						cols="30"
 						rows="10"
-						defaultValue={post?.text}></textarea>
+						defaultValue={element?.text}></textarea>
 				</div>
 				<div className={styles.footer}>
 					<ul>

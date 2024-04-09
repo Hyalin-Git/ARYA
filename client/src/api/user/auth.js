@@ -34,15 +34,15 @@ export async function decryptToken(token) {
 
 		return response.data;
 	} catch (err) {
-		const isNotValid = err.response.data.message.includes("aucun token reçu");
+		const isNotValid = err.response?.data?.message.includes("aucun token reçu");
 
-		const hasExpired = err.response.data.message.includes("plus valide");
-		if (err.response.status === 403 && isNotValid) {
+		const hasExpired = err.response?.data?.message.includes("plus valide");
+		if (err.response?.status === 403 && isNotValid) {
 			console.log("yas queen");
 			cookies().delete("session");
 			redirect("/");
 		}
-		if (err.response.status === 403 && hasExpired) {
+		if (err.response?.status === 403 && hasExpired) {
 			cookies().delete("session");
 		}
 	}

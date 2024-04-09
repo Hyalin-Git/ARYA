@@ -26,20 +26,20 @@
 .users {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-start;
+	gap: 10px;
 	/* max-width: 350px; */
 	/* background-color: red; */
 }
 
 .users img {
-	position: relative;
-	top: 2px;
 	border-radius: 50%;
 }
 
 .users div:nth-child(2) {
 	align-self: center;
-	width: 150px;
+	width: 50%;
+	/* background-color: red; */
 }
 
 .users .names {
@@ -50,12 +50,6 @@
 	font-size: 0.8rem;
 	font-weight: 600;
 	color: var(--lavender-color);
-}
-
-.users button {
-	padding-bottom: 8px;
-
-	padding-top: 8px;
 }
 
 .footer span {

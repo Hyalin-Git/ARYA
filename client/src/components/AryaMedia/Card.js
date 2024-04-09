@@ -21,6 +21,8 @@ import deleteComment, {
 	addCommentReaction,
 	deleteCommentReaction,
 } from "@/api/comments/comments";
+import { updatePost } from "@/actions/post";
+import { updateComment } from "@/actions/comment";
 export default function Card({ post, comment, answer }) {
 	const { uid } = useContext(AuthContext);
 	const [isUpdate, setIsUpdate] = useState(false);
@@ -28,6 +30,8 @@ export default function Card({ post, comment, answer }) {
 	const [reactionModal, setReactionModal] = useState(false);
 	const [showComments, setShowComments] = useState(false);
 	const [showAnswers, setShowAnswers] = useState(false);
+	const updatePostWithId = updatePost.bind(null, post?._id, uid);
+	const updateCommentWithId = updateComment.bind(null, comment?._id, uid);
 	const userHasReacted = hasReacted(post?.reactions || comment?.reactions, uid);
 	const getUserReaction = findUidReaction(
 		post?.reactions || comment?.reactions,
@@ -153,13 +157,22 @@ export default function Card({ post, comment, answer }) {
 									)}
 									{isAuthor && (
 										<>
-											<li onClick={handleIsUpdate}>Modifier la publication</li>
+											<li onClick={handleIsUpdate}>
+												Modifier {post && "la publication"}
+												{comment && "le commentaire"}
+											</li>
 											<li onClick={handleDeletePost}>
-												Supprimer la publication
+												Supprimer {post && "la publication"}
+												{comment && "le commentaire"}
 											</li>
 										</>
 									)}
-									{!isAuthor && <li>Signaler la publication</li>}
+									{!isAuthor && (
+										<li>
+											Signaler {post && "la publication"}
+											{comment && "le commentaire"}
+										</li>
+									)}
 								</ul>
 							</div>
 							<div id="overlay"></div>
@@ -178,7 +191,11 @@ export default function Card({ post, comment, answer }) {
 			<div className={styles.content}>
 				<div>
 					{isUpdate ? (
-						<UpdateCard post={post} uid={uid} setIsUpdate={setIsUpdate} />
+						<UpdateCard
+							element={post ? post : comment}
+							action={post ? updatePostWithId : updateCommentWithId}
+							setIsUpdate={setIsUpdate}
+						/>
 					) : (
 						<p>{post?.text || comment?.text}</p>
 					)}
@@ -258,7 +275,8 @@ export default function Card({ post, comment, answer }) {
 								setShowComments(!showComments);
 							}}>
 							{post ? post?.commentsLength : comment?.answersLength}{" "}
-							Commentaires
+							{post && "Commentaires"}
+							{comment && "Réponses"}
 						</li>
 					</ul>
 				</div>
