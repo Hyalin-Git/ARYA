@@ -126,15 +126,18 @@ exports.saveComment = async (req, res, next) => {
 
 exports.getComments = async (req, res, next) => {
 	const authUser = res.locals.user;
-	const { postId } = req.query;
+	const { postId, repostId } = req.query;
 
-	if (!postId) {
+	console.log(postId);
+	console.log(repostId);
+
+	if (!postId && !repostId) {
 		return res
 			.status(400)
 			.send({ error: true, message: "Paramètres manquants" });
 	}
 
-	CommentModel.find({ postId: postId })
+	CommentModel.find({ postId: postId } || { repostId: repostId })
 		.populate(
 			"commenterId",
 			"userName lastName firstName picture blockedUsers isPrivate followers"

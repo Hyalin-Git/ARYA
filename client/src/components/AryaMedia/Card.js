@@ -23,14 +23,20 @@ import deleteComment, {
 } from "@/api/comments/comments";
 import { updatePost } from "@/actions/post";
 import { updateComment } from "@/actions/comment";
+import SendCard from "./SendCard";
+import { montserrat } from "@/libs/fonts";
+import CreateRepost from "./CreateRepost";
+import { updateRepost } from "@/actions/repost";
 export default function Card({ post, comment, answer }) {
 	const { uid } = useContext(AuthContext);
+	const [repostModal, setRepostModal] = useState(false);
 	const [isUpdate, setIsUpdate] = useState(false);
 	const [moreModal, setMoreModal] = useState(false);
 	const [reactionModal, setReactionModal] = useState(false);
 	const [showComments, setShowComments] = useState(false);
 	const [showAnswers, setShowAnswers] = useState(false);
 	const updatePostWithId = updatePost.bind(null, post?._id, uid);
+	const updateRepostWithId = updateRepost.bind(null, post?._id, uid);
 	const updateCommentWithId = updateComment.bind(null, comment?._id, uid);
 	const userHasReacted = hasReacted(post?.reactions || comment?.reactions, uid);
 	const getUserReaction = findUidReaction(
@@ -61,7 +67,7 @@ export default function Card({ post, comment, answer }) {
 		}
 		if (comment) {
 			await addCommentReaction(comment?._id, uid, reaction);
-			mutate(`api/comments?postId=${comment.postId}`);
+			mutate(`api/comments?postId=${comment.postId || comment.repostId}`);
 			return;
 		}
 		await addReaction(post?._id, uid, reaction);
@@ -75,7 +81,7 @@ export default function Card({ post, comment, answer }) {
 		}
 		if (comment) {
 			await deleteCommentReaction(comment?._id, uid);
-			mutate(`api/comments?postId=${comment.postId}`);
+			mutate(`api/comments?postId=${comment.postId || comment.repostId}`);
 			return;
 		}
 		await deleteReaction(post?._id, uid);
@@ -89,13 +95,15 @@ export default function Card({ post, comment, answer }) {
 		}
 		if (comment) {
 			await deleteComment(comment?._id, uid);
-			mutate(`api/comments?postId=${comment.postId}`);
+			mutate(`api/comments?postId=${comment.postId || comment.repostId}`);
 			return;
 		}
 		await deletePost(post._id, uid);
 	}
 
 	const isRepost = post?.reposterId;
+
+	console.log(post);
 
 	const firstName =
 		post?.posterId?.firstName ||
@@ -113,283 +121,346 @@ export default function Card({ post, comment, answer }) {
 	const posterImg = post?.posterId?.picture;
 	const reposterImg = post?.reposterId?.picture;
 	const commenterImg = comment?.commenterId?.picture;
-
+	console.log(post);
 	return (
-		<article className={styles.wrapper} data-type={post ? "post" : "comment"}>
-			<div className={styles.header}>
-				<div className={styles.user}>
-					<Image
-						src={
-							(posterImg || reposterImg || commenterImg) ??
-							"/images/profil/default-pfp.jpg"
-						}
-						alt="profil"
-						width={60}
-						height={60}
-						quality={100}
-					/>
-					<div>
-						<span>
-							{firstName} {lastName}
-						</span>
-						<span>{userName}</span>
-						<span>{formattedDate(post || comment)}</span>
-					</div>
-				</div>
-				<div className={styles.more} onClick={handleMoreModal}>
-					{moreModal && (
-						<>
-							<div className={styles.list}>
-								<ul>
-									{!isAuthor && (
-										<>
-											<li>
-												Suivre{" "}
-												{post?.posterId?.userName ||
-													comment?.commenterId?.userName}
-											</li>
-											<li>
-												Bloquer{" "}
-												{post?.posterId?.userName ||
-													comment?.commenterId?.userName}
-											</li>
-										</>
-									)}
-									{isAuthor && (
-										<>
-											<li onClick={handleIsUpdate}>
-												Modifier {post && "la publication"}
-												{comment && "le commentaire"}
-											</li>
-											<li onClick={handleDeletePost}>
-												Supprimer {post && "la publication"}
-												{comment && "le commentaire"}
-											</li>
-										</>
-									)}
-									{!isAuthor && (
-										<li>
-											Signaler {post && "la publication"}
-											{comment && "le commentaire"}
-										</li>
-									)}
-								</ul>
-							</div>
-							<div id="overlay"></div>
-						</>
-					)}
-					<div>
+		<>
+			<article
+				className={styles.wrapper}
+				data-type={post ? "post" : "comment"}
+				id="background">
+				<div className={styles.header}>
+					<div className={styles.user}>
 						<Image
-							src={"/images/icons/ellipsis_icon.svg"}
-							alt="icon"
-							width={20}
-							height={20}
+							src={
+								(posterImg || reposterImg || commenterImg) ??
+								"/images/profil/default-pfp.jpg"
+							}
+							alt="profil"
+							width={50}
+							height={50}
+							quality={100}
 						/>
+						<div>
+							<span>
+								{firstName} {lastName}
+							</span>
+							<span>{userName}</span>
+							<span>{formattedDate(post || comment)}</span>
+						</div>
+					</div>
+					<div className={styles.more} onClick={handleMoreModal}>
+						{moreModal && (
+							<>
+								<div className={styles.list}>
+									<ul>
+										{!isAuthor && (
+											<>
+												<li>
+													Suivre{" "}
+													{post?.posterId?.userName ||
+														comment?.commenterId?.userName}
+												</li>
+												<li>
+													Bloquer{" "}
+													{post?.posterId?.userName ||
+														comment?.commenterId?.userName}
+												</li>
+											</>
+										)}
+										{isAuthor && (
+											<>
+												<li onClick={handleIsUpdate}>
+													Modifier {post && "la publication"}
+													{comment && "le commentaire"}
+												</li>
+												<li onClick={handleDeletePost}>
+													Supprimer {post && "la publication"}
+													{comment && "le commentaire"}
+												</li>
+											</>
+										)}
+										{!isAuthor && (
+											<li>
+												Signaler {post && "la publication"}
+												{comment && "le commentaire"}
+											</li>
+										)}
+									</ul>
+								</div>
+								<div id="overlay"></div>
+							</>
+						)}
+						<div>
+							<Image
+								src={"/images/icons/ellipsis_icon.svg"}
+								alt="icon"
+								width={20}
+								height={20}
+								id="icon"
+							/>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div className={styles.content}>
-				<div>
-					{isUpdate ? (
-						<UpdateCard
-							element={post ? post : comment}
-							action={post ? updatePostWithId : updateCommentWithId}
-							setIsUpdate={setIsUpdate}
-						/>
-					) : (
-						<p>{post?.text || comment?.text}</p>
-					)}
-				</div>
-				{isRepost && (
-					<div className={styles.repost}>
-						<div className={styles.header}>
-							<div className={styles.user}>
+				<div className={styles.content}>
+					<div>
+						{isUpdate ? (
+							<UpdateCard
+								element={post ? post : comment}
+								action={
+									isRepost
+										? updateRepostWithId
+										: (post && updatePostWithId) ||
+										  (comment && updateCommentWithId)
+								}
+								setIsUpdate={setIsUpdate}
+							/>
+						) : (
+							<p>{post?.text || comment?.text}</p>
+						)}
+					</div>
+
+					<div className={styles.media}>
+						{post?.media?.map((img) => {
+							return (
 								<Image
-									src={
-										post?.postId.posterId.picture ??
-										"/images/profil/default-pfp.jpg"
-									}
-									alt="profil"
-									width={60}
-									height={60}
+									src={img}
+									alt="media"
+									width={0}
+									height={0}
+									sizes="100vw"
 									quality={100}
 								/>
-								<div>
-									<span>
-										{post?.postId.posterId.firstName}{" "}
-										{post?.postId.posterId.lastName}
-									</span>
-									<span>{post?.postId.posterId.userName}</span>
-									<span>{formattedDate(post || comment)}</span>
-								</div>
-							</div>
-						</div>
-						<div className={styles.content}>
-							<div>
-								<p>{post?.postId.text}</p>
-							</div>
-						</div>
+							);
+						})}
 					</div>
-				)}
-				<div className={styles.reactions}>
-					<ul>
-						<li>
-							<Image
-								src={"/images/icons/love_icon.svg"}
-								alt="icon"
-								width={20}
-								height={20}
-							/>
-							<Image
-								src={"/images/icons/funny_icon.svg"}
-								alt="icon"
-								width={20}
-								height={20}
-							/>
-							<Image
-								src={"/images/icons/surprised_icon.svg"}
-								alt="icon"
-								width={20}
-								height={20}
-							/>
-							<Image
-								src={"/images/icons/sad_icon.svg"}
-								alt="icon"
-								width={20}
-								height={20}
-							/>
-							<span>{reactionLength(post || comment)}</span>
-						</li>
-						<li>
-							<Image
-								src={"/images/icons/repost_icon.svg"}
-								alt="icon"
-								width={20}
-								height={20}
-							/>
-							<span>0</span>
-						</li>
-						<li
-							onClick={(e) => {
-								e.preventDefault();
-								setShowComments(!showComments);
-							}}>
-							{post ? post?.commentsLength : comment?.answersLength}{" "}
-							{post && "Commentaires"}
-							{comment && "Réponses"}
-						</li>
-					</ul>
-				</div>
-			</div>
-			<div className={styles.footer}>
-				<div>
-					<div
-						className={styles.btn}
-						onMouseEnter={(e) => {
-							e.preventDefault();
-							let timeout;
-							clearTimeout(timeout);
-							timeout = setTimeout(() => {
-								setReactionModal(true);
-							}, 500);
-						}}
-						onMouseLeave={(e) => {
-							e.preventDefault();
-							let timeout;
-							clearTimeout(timeout);
-							timeout = setTimeout(() => {
-								setReactionModal(false);
-							}, 500);
-						}}>
-						{reactionModal && (
-							<div className={styles.reactionModal}>
+					{isRepost && (
+						<div className={styles.repost}>
+							{!post?.postId?.text && !post?.postId?.media ? (
+								<div>
+									<p>Publication supprimé</p>
+								</div>
+							) : (
+								<>
+									<div className={styles.header}>
+										<div className={styles.user}>
+											<Image
+												src={
+													post?.postId?.posterId?.picture ??
+													"/images/profil/default-pfp.jpg"
+												}
+												alt="profil"
+												width={40}
+												height={40}
+												quality={100}
+											/>
+											<div>
+												<span>
+													{post?.postId?.posterId?.firstName}{" "}
+													{post?.postId?.posterId?.lastName}
+												</span>
+												<span>{post?.postId?.posterId?.userName}</span>
+												<span>{formattedDate(post?.postId || comment)}</span>
+											</div>
+										</div>
+									</div>
+									<div className={styles.content}>
+										<div>
+											<p>{post?.postId?.text}</p>
+										</div>
+										<div className={styles.media}>
+											{post?.postId?.media?.map((img) => {
+												return (
+													<Image
+														src={img}
+														alt="media"
+														width={0}
+														height={0}
+														sizes="100vw"
+														quality={100}
+													/>
+												);
+											})}
+										</div>
+									</div>
+								</>
+							)}
+						</div>
+					)}
+					<div className={styles.reactions}>
+						<ul>
+							<li>
 								<Image
 									src={"/images/icons/love_icon.svg"}
 									alt="icon"
-									width={25}
-									height={25}
-									onClick={(e) => {
-										handleReaction(e, "love");
-									}}
+									width={20}
+									height={20}
 								/>
 								<Image
 									src={"/images/icons/funny_icon.svg"}
 									alt="icon"
-									width={25}
-									height={25}
-									onClick={(e) => {
-										handleReaction(e, "funny");
-									}}
+									width={20}
+									height={20}
 								/>
 								<Image
 									src={"/images/icons/surprised_icon.svg"}
 									alt="icon"
-									width={25}
-									height={25}
-									onClick={(e) => {
-										handleReaction(e, "surprised");
-									}}
+									width={20}
+									height={20}
 								/>
 								<Image
 									src={"/images/icons/sad_icon.svg"}
 									alt="icon"
+									width={20}
+									height={20}
+								/>
+								<span>{reactionLength(post || comment)}</span>
+							</li>
+							<li>
+								<Image
+									src={"/images/icons/repost_icon.svg"}
+									alt="icon"
+									width={20}
+									height={20}
+									id="icon"
+								/>
+								<span>
+									{post && post.repostsLength}
+									{comment && comment.repostsLength}
+								</span>
+							</li>
+							<li
+								onClick={(e) => {
+									e.preventDefault();
+									setShowComments(!showComments);
+								}}>
+								{post ? post?.commentsLength : comment?.answersLength}{" "}
+								{post && "Commentaires"}
+								{comment && "Réponses"}
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div className={styles.footer}>
+					<div>
+						<div
+							className={styles.btn}
+							onMouseEnter={(e) => {
+								e.preventDefault();
+								let timeout;
+								clearTimeout(timeout);
+								timeout = setTimeout(() => {
+									setReactionModal(true);
+								}, 500);
+							}}
+							onMouseLeave={(e) => {
+								e.preventDefault();
+								let timeout;
+								clearTimeout(timeout);
+								timeout = setTimeout(() => {
+									setReactionModal(false);
+								}, 500);
+							}}>
+							{reactionModal && (
+								<div className={styles.reactionModal}>
+									<Image
+										src={"/images/icons/love_icon.svg"}
+										alt="icon"
+										width={25}
+										height={25}
+										onClick={(e) => {
+											handleReaction(e, "love");
+										}}
+									/>
+									<Image
+										src={"/images/icons/funny_icon.svg"}
+										alt="icon"
+										width={25}
+										height={25}
+										onClick={(e) => {
+											handleReaction(e, "funny");
+										}}
+									/>
+									<Image
+										src={"/images/icons/surprised_icon.svg"}
+										alt="icon"
+										width={25}
+										height={25}
+										onClick={(e) => {
+											handleReaction(e, "surprised");
+										}}
+									/>
+									<Image
+										src={"/images/icons/sad_icon.svg"}
+										alt="icon"
+										width={25}
+										height={25}
+										onClick={(e) => {
+											handleReaction(e, "sad");
+										}}
+									/>
+								</div>
+							)}
+							{userHasReacted ? (
+								<Image
+									src={`/images/icons/${getUserReaction}_icon.svg`}
+									alt="icon"
 									width={25}
 									height={25}
-									onClick={(e) => {
-										handleReaction(e, "sad");
-									}}
+									onClick={handleDeleteReaction}
 								/>
-							</div>
-						)}
-						{userHasReacted ? (
+							) : (
+								<Image
+									src={"/images/icons/addReaction_icon.svg"}
+									alt="icon"
+									width={25}
+									height={25}
+									id="icon"
+								/>
+							)}
+						</div>
+						<div
+							className={styles.btn}
+							onClick={(e) => setRepostModal(!repostModal)}>
 							<Image
-								src={`/images/icons/${getUserReaction}_icon.svg`}
+								src={"/images/icons/repost_icon.svg"}
 								alt="icon"
 								width={25}
 								height={25}
-								onClick={handleDeleteReaction}
+								id="icon"
 							/>
-						) : (
+						</div>
+						<div
+							className={styles.btn}
+							onClick={(e) => {
+								e.preventDefault();
+								setShowComments(!showComments);
+							}}>
 							<Image
-								src={"/images/icons/addReaction_icon.svg"}
+								src={"/images/icons/comment_icon.svg"}
 								alt="icon"
-								width={25}
-								height={25}
+								width={20}
+								height={20}
+								id="icon"
 							/>
-						)}
+						</div>
 					</div>
 					<div className={styles.btn}>
 						<Image
-							src={"/images/icons/repost_icon.svg"}
+							src={"/images/icons/share_icon.svg"}
 							alt="icon"
 							width={25}
 							height={25}
-						/>
-					</div>
-					<div
-						className={styles.btn}
-						onClick={(e) => {
-							e.preventDefault();
-							setShowComments(!showComments);
-						}}>
-						<Image
-							src={"/images/icons/comment_icon.svg"}
-							alt="icon"
-							width={20}
-							height={20}
+							id="icon"
 						/>
 					</div>
 				</div>
-				<div className={styles.btn}>
-					<Image
-						src={"/images/icons/share_icon.svg"}
-						alt="icon"
-						width={25}
-						height={25}
-					/>
-				</div>
-			</div>
-			{post && showComments && <Comments postId={post._id} />}
-		</article>
+				{post && showComments && (
+					<Comments postId={post._id} type={isRepost ? "repost" : "post"} />
+				)}
+			</article>
+			{repostModal && (
+				<CreateRepost post={post} setRepostModal={setRepostModal} />
+			)}
+		</>
 	);
 }

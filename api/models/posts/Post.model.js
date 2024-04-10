@@ -24,6 +24,10 @@ const PostSchema = mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
+		repostsLength: {
+			type: Number,
+			default: 0,
+		},
 		scheduledSendTime: {
 			type: Date,
 		},

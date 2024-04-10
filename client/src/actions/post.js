@@ -7,6 +7,10 @@ export async function savePost(prevState, formData) {
 	try {
 		const data = new FormData();
 		data.append("text", formData.get("text"));
+		if (formData.get("media").name !== "undefined") {
+			data.append("media", formData.get("media"));
+		}
+
 		const res = await axios({
 			method: "POST",
 			url: "http://localhost:5000/api/posts?userId=65e84d8f5b4447f020ca2746",

@@ -32,6 +32,10 @@ const CommentSchema = mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
+		repostsLength: {
+			type: Number,
+			default: 0,
+		},
 	},
 	{
 		timestamps: true,

@@ -3,10 +3,11 @@ import axios from "axios";
 import { cookies } from "next/headers";
 import { revalidateTag } from "next/cache";
 
-export async function saveComment(postId, prevState, formData) {
+export async function saveComment(postId, type, prevState, formData) {
 	try {
 		const data = new FormData();
-		data.append("postId", postId);
+
+		data.append(type === "post" ? "postId" : "repostId", postId);
 		data.append("text", formData.get("text"));
 		const res = await axios({
 			method: "POST",

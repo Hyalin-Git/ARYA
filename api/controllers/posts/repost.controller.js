@@ -38,7 +38,22 @@ exports.saveRepost = async (req, res, next) => {
 		});
 		repost
 			.save()
-			.then((repost) => res.status(201).send(repost))
+			.then(async (repost) => {
+				await PostModel.findByIdAndUpdate(
+					{ _id: postId },
+					{
+						$inc: {
+							repostsLength: 1,
+						},
+					},
+					{
+						setDefaultsOnInsert: true,
+						new: true,
+					}
+				);
+
+				return res.status(201).send(repost);
+			})
 			.catch((err) => res.status(500).send(err));
 	} catch (err) {
 		return res.status(500).send({
@@ -276,6 +291,18 @@ exports.deleteRepost = (req, res, next) => {
 			// Then delete every nested elements such as comments and answers
 			await CommentModel.deleteMany({ repostId: req.params.id });
 			await AnswerModel.deleteMany({ repostId: req.params.id });
+			await PostModel.findByIdAndUpdate(
+				{ _id: repost.postId },
+				{
+					$inc: {
+						repostsLength: -1,
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
 
 			return res.status(200).send(repost);
 		})

@@ -6,9 +6,9 @@ import SendCard from "../SendCard";
 import { saveComment } from "@/actions/comment";
 import useSWR from "swr";
 
-export default function Comments({ postId }) {
-	const saveCommentWithId = saveComment.bind(null, postId);
-	const fetchComments = getComments.bind(null, postId);
+export default function Comments({ postId, type }) {
+	const saveCommentWithId = saveComment.bind(null, postId, type);
+	const fetchComments = getComments.bind(null, postId, type);
 	const { data, error, isLoading } = useSWR(
 		`api/comments?postId=${postId}`,
 		fetchComments

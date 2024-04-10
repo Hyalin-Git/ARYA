@@ -10,21 +10,13 @@
 .container[data-type="post"] {
 	background-color: rgba(var(--layer-color));
 	border-radius: 8px;
+	/* border: 1px solid rgba(0, 0, 0, 0.1); */
 }
 .container[data-type="comment"] {
 	padding: 10px;
 	border-radius: 8px;
 }
 
-.container[data-writing="true"] {
-	/* background-image: linear-gradient(
-		-165deg,
-		var(--meteorite-color),
-		var(--lavender-color)
-	); */
-	background-color: var(--meteorite-color);
-	transition: all 150ms linear;
-}
 .form {
 	display: flex;
 	align-items: center;
@@ -66,7 +58,6 @@
 }
 .list ul {
 	display: flex;
-
 	gap: 20px;
 	padding: 0;
 	margin: 0;
@@ -76,46 +67,26 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	/* border: 1px solid var(--meteorite-color); */
 	padding: 8px;
 	border-radius: 8px;
 	transition: all linear 150ms;
 	cursor: pointer;
-	background-color: white;
-	font-size: 0.8rem;
+}
+
+.list li img {
+	filter: invert(19%) sepia(87%) saturate(3620%) hue-rotate(259deg)
+		brightness(87%) contrast(95%);
+}
+.button {
+	margin-right: 10px;
+}
+.button button {
+	padding: 5px 5px 5px 5px;
+	background-image: inherit;
+
+	background-color: var(--meteorite-color);
+
+	color: white;
 	font-weight: 500;
-}
-
-.list li:hover {
-	/* background-color: ; */
-	transition: all linear 150ms;
-}
-
-.button button {
-	padding: 8px;
-	background-image: inherit;
-
-	background-color: white;
-	color: black;
-	opacity: 0.5;
-	transition: 150ms all linear;
-	cursor: default;
-}
-
-.button button {
-	padding: 8px;
-	background-image: inherit;
-
-	background-color: white;
-	color: black;
-	opacity: 0.5;
-	transition: 150ms all linear;
-	cursor: default;
-}
-
-.container[data-writing="true"] .button button {
-	opacity: 1;
-
-	transition: 150ms all linear;
-	cursor: pointer;
+	font-size: 1rem;
 }

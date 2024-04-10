@@ -17,7 +17,10 @@ const RepostSchema = mongoose.Schema(
 		postId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Post",
-			required: true,
+		},
+		repostId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Repost",
 		},
 		reactions: {
 			love: { type: [String] },
@@ -26,6 +29,10 @@ const RepostSchema = mongoose.Schema(
 			sad: { type: [String] },
 		},
 		commentsLength: {
+			type: Number,
+			default: 0,
+		},
+		repostsLength: {
 			type: Number,
 			default: 0,
 		},

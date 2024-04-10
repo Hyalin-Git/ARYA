@@ -22,7 +22,7 @@ exports.getAllFeed = async (req, res, next) => {
 			)
 			.populate({
 				path: "postId",
-				select: "text media",
+				select: "text media createdAt",
 				populate: {
 					path: "posterId",
 					select: "lastName firstName picture userName blockedUsers",

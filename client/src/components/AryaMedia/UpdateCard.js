@@ -14,7 +14,7 @@ export default function UpdateCard({ element, action, setIsUpdate }) {
 	useEffect(() => {
 		if (state.status === "success") {
 			setIsUpdate(false);
-			mutate(`api/comments?postId=${element.postId}`);
+			mutate(`api/comments?postId=${element.postId || element.repostId}`);
 		}
 	}, [state]);
 

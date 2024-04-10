@@ -2,10 +2,13 @@
 import { cookies } from "next/headers";
 import { revalidateTag } from "next/cache";
 
-export async function getComments(postId) {
+export async function getComments(postId, type) {
 	try {
+		console.log(type);
 		const res = await fetch(
-			`http://localhost:5000/api/comments?postId=${postId}`,
+			`http://localhost:5000/api/comments?${
+				type === "post" ? "postId" : "repostId"
+			}=${postId}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -20,7 +23,7 @@ export async function getComments(postId) {
 			}
 		);
 		const data = await res.json();
-
+		console.log(data);
 		return data;
 	} catch (err) {
 		console.log(err);

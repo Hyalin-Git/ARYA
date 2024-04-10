@@ -13,22 +13,21 @@ const initialState = {
 	message: "",
 };
 export default function SendCard({ action, type, button, postId }) {
+	const [isWriting, setIsWriting] = useState(false);
 	const { user } = useContext(AuthContext);
 	const text = useRef(null);
-	const [isWriting, setIsWriting] = useState(false);
 	const [state, formAction] = useFormState(action, initialState);
 	console.log(state);
 
 	useEffect(() => {
-		if (state.status === "success") {
+		if (state?.status === "success") {
 			text.current.value = "";
-			setIsWriting(false);
 			mutate(`api/comments?postId=${postId}`);
 		}
 	}, [state]);
 	return (
-		<div className={styles.container} data-writing={isWriting} data-type={type}>
-			<form action={formAction}>
+		<div className={styles.container} data-type={type}>
+			<form action={formAction} id={type === "repost" && "repost"}>
 				<div className={styles.form}>
 					<div>
 						<Image
@@ -41,14 +40,14 @@ export default function SendCard({ action, type, button, postId }) {
 							quality={100}
 						/>
 					</div>
-
 					<div className={styles.text}>
 						<textarea
 							ref={text}
 							onChange={(e) => {
 								e.preventDefault();
-								setIsWriting(true);
-								if (e.target.value.length <= 0) {
+								if (e.target.value.length > 0) {
+									setIsWriting(true);
+								} else {
 									setIsWriting(false);
 								}
 								e.target.style.height = "";
@@ -64,54 +63,70 @@ export default function SendCard({ action, type, button, postId }) {
 							}
 							className={montserrat.className}
 						/>
+						{type === "repost" && (
+							<input
+								type="text"
+								name="postId"
+								id="postId"
+								defaultValue={postId}
+								hidden
+							/>
+						)}
 					</div>
 				</div>
-				<div className={styles.footer}>
-					<div className={styles.list}>
-						<ul>
-							<li>
-								<Image
-									src="/images/icons/img_icon.svg"
-									width={20}
-									height={20}
-									alt="icon"
-								/>
-							</li>
-							<li>
-								{" "}
-								<Image
-									src="/images/icons/video_icon.svg"
-									width={20}
-									height={20}
-									alt="icon"
-								/>
-							</li>
-							<li>
-								{" "}
-								<Image
-									src="/images/icons/gif_icon.svg"
-									width={20}
-									height={20}
-									alt="icon"
-								/>
-							</li>
-							<li>
-								{" "}
-								<Image
-									src="/images/icons/clock_icon.svg"
-									width={20}
-									height={20}
-									alt="icon"
-								/>
-							</li>
-						</ul>
+				{(type === "post" || type === "comment") && (
+					<div className={styles.footer}>
+						<div className={styles.list}>
+							<ul>
+								<li>
+									<input type="file" name="media" id="media" />
+									<Image
+										src="/images/icons/img_icon.svg"
+										width={20}
+										height={20}
+										alt="icon"
+									/>
+								</li>
+								<li>
+									{" "}
+									<Image
+										src="/images/icons/video_icon.svg"
+										width={20}
+										height={20}
+										alt="icon"
+									/>
+								</li>
+								<li>
+									{" "}
+									<Image
+										src="/images/icons/gif_icon.svg"
+										width={20}
+										height={20}
+										alt="icon"
+									/>
+								</li>
+								{type === "post" && (
+									<li>
+										{" "}
+										<Image
+											src="/images/icons/clock_icon.svg"
+											width={20}
+											height={20}
+											alt="icon"
+										/>
+									</li>
+								)}
+							</ul>
+						</div>
+						{isWriting && (
+							<div className={styles.button}>
+								<button type="submit" className={clsx(montserrat.className)}>
+									{button}
+								</button>
+							</div>
+						)}
 					</div>
-					<div className={styles.button}>
-						<button type="submit" className={clsx(montserrat.className)}>
-							{button}
-						</button>
-					</div>
-				</div>
+				)}
 			</form>
 		</div>
 	);
