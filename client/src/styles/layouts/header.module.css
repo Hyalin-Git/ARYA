@@ -30,7 +30,7 @@
 }
 
 .logo {
-	margin-left: 30px;
+	margin-left: 20px;
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -141,6 +141,7 @@
 .menu .connected li:nth-child(6) {
 	position: relative;
 	top: 2px;
+	left: -4px;
 }
 
 .menu .connected span:nth-child(1) {

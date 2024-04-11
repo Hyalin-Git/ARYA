@@ -9,6 +9,13 @@ export async function saveComment(postId, type, prevState, formData) {
 
 		data.append(type === "post" ? "postId" : "repostId", postId);
 		data.append("text", formData.get("text"));
+		console.log(formData.getAll("media"));
+		if (formData.get("media").name !== "undefined") {
+			const mediaFiles = formData.getAll("media");
+			mediaFiles.forEach((file) => {
+				data.append("media", file);
+			});
+		}
 		const res = await axios({
 			method: "POST",
 			url: "http://localhost:5000/api/comments?userId=65e84d8f5b4447f020ca2746",

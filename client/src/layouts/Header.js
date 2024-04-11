@@ -16,7 +16,7 @@ export default function Header() {
 	const [isScrollEnd, setIsScrollEnd] = useState(false);
 	const pathname = usePathname();
 
-	const showHeaderRoutes = ["/", "/AryaMedia", "/Arya"];
+	const showHeaderRoutes = ["/", "/social", "/Arya"];
 
 	useEffect(() => {
 		const header = document.getElementById("header");
@@ -41,7 +41,7 @@ export default function Header() {
 				setIsScrollEnd(false);
 			}
 		});
-		if (pathname.includes("/AryaMedia")) {
+		if (pathname.includes("/social")) {
 			document.getElementById("nav").style.color = "white";
 			document.getElementById("nav");
 
@@ -66,7 +66,7 @@ export default function Header() {
 							<Link href="/">
 								<Image
 									src={
-										isScroll || pathname.includes("/AryaMedia")
+										isScroll || pathname.includes("/social")
 											? "/images/logo/Arya_Monochrome_White.png"
 											: "/images/logo/Arya_Monochrome_black.png"
 									}

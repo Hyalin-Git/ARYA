@@ -3,12 +3,12 @@ import { getSession } from "./actions/auth";
 import { cookies } from "next/headers";
 
 export async function middleware(request) {
-	const privateRoutes = ["/portal", "/AryaMedia"];
+	const privateRoutes = ["", "/AryaMedia"];
 	const cantAccessWhenLogged = ["/", "/auth"];
 	// If user is logged in
 	if (cookies().get("session")) {
 		if (cantAccessWhenLogged.includes(request.nextUrl.pathname)) {
-			return NextResponse.redirect(new URL("/portal", request.url));
+			return NextResponse.redirect(new URL("/social", request.url));
 		} else {
 			return NextResponse.next();
 		}

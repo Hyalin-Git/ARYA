@@ -103,8 +103,6 @@ export default function Card({ post, comment, answer }) {
 
 	const isRepost = post?.reposterId;
 
-	console.log(post);
-
 	const firstName =
 		post?.posterId?.firstName ||
 		post?.reposterId.firstName ||
@@ -121,7 +119,7 @@ export default function Card({ post, comment, answer }) {
 	const posterImg = post?.posterId?.picture;
 	const reposterImg = post?.reposterId?.picture;
 	const commenterImg = comment?.commenterId?.picture;
-	console.log(post);
+
 	return (
 		<>
 			<article
@@ -220,18 +218,39 @@ export default function Card({ post, comment, answer }) {
 					</div>
 
 					<div className={styles.media}>
-						{post?.media?.map((img) => {
-							return (
-								<Image
-									src={img}
-									alt="media"
-									width={0}
-									height={0}
-									sizes="100vw"
-									quality={100}
-								/>
-							);
-						})}
+						{post ? (
+							<>
+								{post?.media?.map((img, idx) => {
+									return (
+										<Image
+											src={img}
+											alt="media"
+											width={0}
+											height={0}
+											sizes="100vw"
+											quality={100}
+											key={idx}
+										/>
+									);
+								})}
+							</>
+						) : (
+							<>
+								{comment?.media?.map((img, idx) => {
+									return (
+										<Image
+											src={img}
+											alt="media"
+											width={0}
+											height={0}
+											sizes="100vw"
+											quality={100}
+											key={idx}
+										/>
+									);
+								})}
+							</>
+						)}
 					</div>
 					{isRepost && (
 						<div className={styles.repost}>

@@ -216,7 +216,7 @@ export async function logIn(prevState, formData) {
 			};
 		}
 	}
-	redirect("/portal");
+	redirect("/social");
 }
 
 export async function sendResetCode(prevState, formData) {

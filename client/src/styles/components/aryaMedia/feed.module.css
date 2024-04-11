@@ -16,7 +16,6 @@
 	position: relative;
 	padding: 15px;
 	border-radius: 8px;
-	/* background-color: rgba(var(--layer-color)); */
 	border: 1px solid rgba(0, 0, 0, 0.1);
 
 	transition: 150ms all linear;
@@ -82,7 +81,7 @@
 	margin: 0;
 	list-style-type: none;
 	display: flex;
-	gap: 10px;
+
 	flex-direction: column;
 	align-items: flex-start;
 	justify-content: center;
@@ -119,13 +118,21 @@
 }
 
 .media {
-	margin-top: 10px;
+	display: flex;
+	width: 100%;
+	overflow: hidden;
+	flex-wrap: wrap;
+	gap: 2px;
+	height: fit-content;
+	margin-bottom: 10px;
+	border-radius: 8px;
 }
 .media img {
 	border-radius: 8px;
-	width: fit-content;
-	max-width: 100%;
-	height: auto;
+	width: 100%;
+	max-width: fit-content;
+	height: 200px;
+	object-fit: cover;
 	border: 1px solid rgba(0, 0, 0, 0.1);
 }
 

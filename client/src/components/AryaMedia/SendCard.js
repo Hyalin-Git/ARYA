@@ -17,7 +17,20 @@ export default function SendCard({ action, type, button, postId }) {
 	const { user } = useContext(AuthContext);
 	const text = useRef(null);
 	const [state, formAction] = useFormState(action, initialState);
-	console.log(state);
+
+	function handleImage(e) {
+		e.preventDefault();
+		const files = e.target.files;
+
+		const preview = document.querySelectorAll(`[data-type="${type}"]`)[1];
+		if (files) {
+			for (const file of files) {
+				const img = document.createElement("img");
+				preview.appendChild(img);
+				img.src = URL.createObjectURL(file);
+			}
+		}
+	}
 
 	useEffect(() => {
 		if (state?.status === "success") {
@@ -27,64 +40,77 @@ export default function SendCard({ action, type, button, postId }) {
 	}, [state]);
 	return (
 		<div className={styles.container} data-type={type}>
-			<form action={formAction} id={type === "repost" && "repost"}>
+			<form action={formAction} id={type === "repost" ? "repost" : ""}>
 				<div className={styles.form}>
-					<div>
-						<Image
-							src={
-								user.picture ? user.picture : "/images/profil/default-pfp.jpg"
-							}
-							alt="profil"
-							width={50}
-							height={50}
-							quality={100}
-						/>
-					</div>
-					<div className={styles.text}>
-						<textarea
-							ref={text}
-							onChange={(e) => {
-								e.preventDefault();
-								if (e.target.value.length > 0) {
-									setIsWriting(true);
-								} else {
-									setIsWriting(false);
+					<div className={styles.top}>
+						<div>
+							<Image
+								src={
+									user.picture ? user.picture : "/images/profil/default-pfp.jpg"
 								}
-								e.target.style.height = "";
-								e.target.style.height = e.target.scrollHeight + "px";
-							}}
-							name="text"
-							id="text"
-							type="text"
-							placeholder={
-								type === "post"
-									? `Quelque chose à partager aujourd'hui ${user?.userName} ?`
-									: "Ajouter un commentaire"
-							}
-							className={montserrat.className}
-						/>
-						{type === "repost" && (
-							<input
-								type="text"
-								name="postId"
-								id="postId"
-								defaultValue={postId}
-								hidden
+								alt="profil"
+								width={50}
+								height={50}
+								quality={100}
 							/>
-						)}
+						</div>
+						<div className={styles.text}>
+							<textarea
+								ref={text}
+								onChange={(e) => {
+									e.preventDefault();
+									if (e.target.value.length > 0) {
+										setIsWriting(true);
+									} else {
+										setIsWriting(false);
+									}
+									e.target.style.height = "";
+									e.target.style.height = e.target.scrollHeight + "px";
+								}}
+								name="text"
+								id="text"
+								type="text"
+								placeholder={
+									type === "post"
+										? `Quelque chose à partager aujourd'hui ${user?.userName} ?`
+										: "Ajouter un commentaire"
+								}
+								className={montserrat.className}
+							/>
+							{type === "repost" && (
+								<input
+									type="text"
+									name="postId"
+									id="postId"
+									defaultValue={postId}
+									hidden
+								/>
+							)}
+						</div>
 					</div>
+					<div className={styles.preview} data-type={type}></div>
 				</div>
 				{(type === "post" || type === "comment") && (
 					<div className={styles.footer}>
 						<div className={styles.list}>
 							<ul>
 								<li>
-									<input type="file" name="media" id="media" />
-									<Image
-										src="/images/icons/img_icon.svg"
-										width={20}
-										height={20}
-										alt="icon"
+									<label htmlFor="media">
+										<Image
+											src="/images/icons/img_icon.svg"
+											width={20}
+											height={20}
+											alt="icon"
+										/>
+									</label>
+									<input
+										onChange={handleImage}
+										type="file"
+										name="media"
+										id="media"
+										multiple
+										hidden
+										max={4}
 									/>
 								</li>
 								<li>
