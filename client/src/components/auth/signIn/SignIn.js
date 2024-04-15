@@ -2,13 +2,11 @@
 import Image from "next/image";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/auth/signIn.module.css";
-import { useContext, useEffect, useState } from "react";
-import { useFormState } from "react-dom";
+import { useEffect, useState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import { logIn } from "@/actions/auth";
-import Submit from "./Submit";
 import clsx from "clsx";
-import { AuthContext } from "@/context/auth";
-import { redirect } from "next/navigation";
+import { signInValidation } from "@/libs/utils";
 
 export default function SignIn({
 	setIsSignIn,
@@ -25,7 +23,7 @@ export default function SignIn({
 		isPassword: false,
 		message: "",
 	};
-	const [state, formAction] = useFormState(logIn, initialState)
+	const [state, formAction] = useFormState(logIn, initialState);
 
 	useEffect(() => {
 		if (state?.isEmail === true) {
@@ -134,7 +132,7 @@ export default function SignIn({
 					</div>
 					<br />
 					<br />
-					<Submit />
+					<SignInSubmit />
 				</form>
 			</div>
 			<div className={styles.text}>
@@ -144,5 +142,26 @@ export default function SignIn({
 				</p>
 			</div>
 		</div>
+	);
+}
+
+export function SignInSubmit() {
+	const { pending } = useFormStatus();
+
+	function handleLogin(e) {
+		const isValidate = signInValidation();
+		if (!isValidate) {
+			e.preventDefault();
+			return;
+		}
+	}
+	return (
+		<button
+			type="submit"
+			onClick={handleLogin}
+			className={clsx(montserrat.className, pending && "loading")}
+			disabled={pending}>
+			{pending ? "Connexion en cours..." : "Accéder à mon compte"}
+		</button>
 	);
 }

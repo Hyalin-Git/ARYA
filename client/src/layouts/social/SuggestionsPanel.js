@@ -1,10 +1,10 @@
+"use server";
 import styles from "@/styles/components/aryaMedia/followPanel.module.css";
-import { getUsers } from "@/api/user/user";
+import { getFollowSuggestions } from "@/api/user/user";
 import Image from "next/image";
-import FollowButton from "@/components/AryaMedia/FollowButton";
+import FollowButton from "@/components/social/FollowButton";
 export default async function FollowPanel() {
-	"use server";
-	const users = await getUsers("", 3);
+	const suggestions = await getFollowSuggestions();
 
 	return (
 		<div className={styles.container}>
@@ -12,14 +12,14 @@ export default async function FollowPanel() {
 				<span>Personnes ayant les mêmes centres d'intérêt</span>
 			</div>
 			<div className={styles.content}>
-				{users.map((user) => {
+				{suggestions?.map((suggestion) => {
 					return (
-						<div className={styles.users} key={user._id}>
+						<div className={styles.users} key={suggestion._id}>
 							<div>
 								<Image
 									src={
-										user.picture
-											? user.picture
+										suggestion.picture
+											? suggestion.picture
 											: "/images/profil/default-pfp.jpg"
 									}
 									alt="picture"
@@ -30,13 +30,13 @@ export default async function FollowPanel() {
 							</div>
 							<div>
 								<span className={styles.names}>
-									{user.firstName} {user.lastName}
+									{suggestion.firstName} {suggestion.lastName}
 								</span>
 								<br />
-								<span className={styles.username}>{user.userName}</span>
+								<span className={styles.username}>{suggestion.userName}</span>
 							</div>
 							<div>
-								<FollowButton idToFollow={user._id} />
+								<FollowButton idToFollow={suggestion._id} />
 							</div>
 						</div>
 					);

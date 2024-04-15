@@ -23,11 +23,13 @@ import deleteComment, {
 } from "@/api/comments/comments";
 import { updatePost } from "@/actions/post";
 import { updateComment } from "@/actions/comment";
-import SendCard from "./SendCard";
 import { montserrat } from "@/libs/fonts";
 import CreateRepost from "./CreateRepost";
 import { updateRepost } from "@/actions/repost";
-export default function Card({ post, comment, answer }) {
+import { useRouter } from "next/navigation";
+
+export default function Card({ post, comment, answer, setPosts }) {
+	const router = useRouter();
 	const { uid } = useContext(AuthContext);
 	const [repostModal, setRepostModal] = useState(false);
 	const [isUpdate, setIsUpdate] = useState(false);
@@ -71,6 +73,7 @@ export default function Card({ post, comment, answer }) {
 			return;
 		}
 		await addReaction(post?._id, uid, reaction);
+		mutate("/api/feed");
 	}
 
 	async function handleDeleteReaction(e) {
@@ -85,6 +88,7 @@ export default function Card({ post, comment, answer }) {
 			return;
 		}
 		await deleteReaction(post?._id, uid);
+		mutate("/api/feed");
 	}
 
 	async function handleDeletePost(e) {

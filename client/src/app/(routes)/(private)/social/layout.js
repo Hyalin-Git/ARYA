@@ -1,9 +1,11 @@
+"use server";
 import styles from "@/styles/pages/aryaMedia.module.css";
 import Header from "@/layouts/Header";
-import UserPanel from "@/layouts/AryaMedia/UserPanel";
-import FollowPanel from "@/layouts/AryaMedia/FollowPanel";
+import UserPanel from "@/layouts/social/UserPanel";
+import SuggestionsPanel from "@/layouts/social/SuggestionsPanel";
+import ConversationPanel from "@/layouts/social/ConversationPanel";
 
-export default function AryaMediaLayout({ children }) {
+export default async function AryaMediaLayout({ children }) {
 	return (
 		<>
 			<Header />
@@ -11,11 +13,11 @@ export default function AryaMediaLayout({ children }) {
 				<div className={styles.container}>
 					<aside>
 						<UserPanel />
-						<FollowPanel />
+						<SuggestionsPanel />
 					</aside>
 					{children}
 					<aside>
-						<UserPanel />
+						<ConversationPanel />
 					</aside>
 				</div>
 			</main>

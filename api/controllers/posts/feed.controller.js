@@ -6,7 +6,7 @@ const { filterElements } = require("../../helpers/filterResponse");
 exports.getAllFeed = async (req, res, next) => {
 	try {
 		const authUser = res.locals.user;
-		const { limit } = req.query;
+		const { offset, limit } = req.query;
 
 		const posts = await PostModel.find({ status: "sent" })
 			.populate(
@@ -49,7 +49,7 @@ exports.getAllFeed = async (req, res, next) => {
 			(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
 		);
 
-		const feedSpliced = sortedFeed.slice(0, limit ?? 10);
+		const feedSpliced = sortedFeed.slice(offset ?? 0, limit ?? 10);
 
 		return res.status(200).send(feedSpliced);
 	} catch (err) {

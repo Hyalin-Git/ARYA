@@ -2,10 +2,10 @@ import { verifyResetPasswordCode } from "@/actions/verifications";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/auth/forgotPassword.module.css";
 import clsx from "clsx";
-import { useFormState } from "react-dom";
-import CodeSubmit from "../CodeSubmit";
-import { useMemo, useState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
+import { useEffect, useMemo, useState } from "react";
 import PopUp from "@/components/popup/PopUp";
+
 export default function VerifyCodeStep({ setStep }) {
 	const initialState = {
 		isFailure: false,
@@ -55,7 +55,7 @@ export default function VerifyCodeStep({ setStep }) {
 					/>
 					<br />
 					<br />
-					<CodeSubmit state={state} setStep={setStep} />
+					<VerifyCodeSubmit state={state} setStep={setStep} />
 				</form>
 			</div>
 			{/* Will display on failure only  */}
@@ -67,5 +67,23 @@ export default function VerifyCodeStep({ setStep }) {
 				/>
 			)}
 		</>
+	);
+}
+
+export function VerifyCodeSubmit({ state, setStep }) {
+	const { pending } = useFormStatus();
+
+	useEffect(() => {
+		if (state?.isSuccess) {
+			document.getElementById("step-2").style.display = "none";
+			document.getElementById("step-3").style.display = "block";
+			setStep(3);
+		}
+	}, [state]);
+
+	return (
+		<button className={clsx(montserrat.className, pending && "loading")}>
+			{pending ? "Vérification en cours" : "Vérifier le code"}
+		</button>
 	);
 }

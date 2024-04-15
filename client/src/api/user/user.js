@@ -53,6 +53,30 @@ export async function getUser(uid) {
 
 // Follow logic
 
+export async function getFollowSuggestions(limit) {
+	try {
+		const response = await fetch(
+			`http://localhost:5000/api/users/suggestion/${"65e84d8f5b4447f020ca2746"}?limit=${
+				limit || 3
+			}`,
+			{
+				method: "GET",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+				},
+				next: { tags: ["suggestion"] },
+			}
+		);
+
+		const data = await response.json();
+
+		return data;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 export async function follow(uid, idToFollow) {
 	try {
 		console.log(uid, idToFollow);
@@ -69,7 +93,7 @@ export async function follow(uid, idToFollow) {
 		);
 
 		const data = await response.json();
-		revalidateTag("user");
+		revalidateTag("suggestion");
 		console.log(data);
 		return data;
 	} catch (err) {
@@ -92,8 +116,8 @@ export async function unFollow(uid, idToUnfollow) {
 		);
 
 		const data = await response.json();
-		revalidateTag("user");
-		revalidatePath("/AryaMedia");
+
+		revalidateTag("suggestion");
 		console.log(data);
 		return data;
 	} catch (err) {

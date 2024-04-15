@@ -75,6 +75,12 @@ router.patch(
 
 router.get("/follow/:id", authenticate, userController.getFollow);
 router.get("/followers/:id", authenticate, userController.getFollowers);
+router.get(
+	"/suggestion/:id",
+	authenticate,
+	authorize,
+	userController.followSuggestion
+);
 
 router.patch("/follow", authenticate, authorize, userController.follow);
 router.patch("/unfollow", authenticate, authorize, userController.unfollow);

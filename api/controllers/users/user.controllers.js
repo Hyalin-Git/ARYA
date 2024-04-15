@@ -658,3 +658,21 @@ exports.unfollow = (req, res, next) => {
 		.then((unfollowUpdate) => res.status(200).send(unfollowUpdate))
 		.catch((err) => res.status(500).send(err));
 };
+
+exports.followSuggestion = async (req, res, next) => {
+	try {
+		const authUser = res.locals.user;
+		const { limit } = req.query;
+
+		const users = await UserModel.find({
+			$and: [
+				{ _id: { $ne: req.params.id } },
+				{ _id: { $nin: authUser.following } },
+			],
+		}).limit(limit);
+
+		return res.status(200).send(users);
+	} catch (err) {
+		return res.status(500).send({ error: true, message: err });
+	}
+};

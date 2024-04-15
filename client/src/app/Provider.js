@@ -25,7 +25,6 @@ export default function Provider({ children }) {
 	useEffect(() => {
 		mutate("/login/success");
 	}, [pathname]);
-	console.log(user);
 
 	return (
 		<>

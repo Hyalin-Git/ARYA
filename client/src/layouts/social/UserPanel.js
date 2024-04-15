@@ -2,11 +2,11 @@
 import Image from "next/image";
 import styles from "@/styles/components/aryaMedia/userPanel.module.css";
 import { AuthContext } from "@/context/auth";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import Link from "next/link";
 
 export default function UserPanel() {
-	const { user } = useContext(AuthContext);
+	const { user, uid } = useContext(AuthContext);
 
 	return (
 		<div className={styles.container}>
@@ -44,7 +44,7 @@ export default function UserPanel() {
 				</div>
 			</div>
 			<div className={styles.link}>
-				<Link href="/">
+				<Link href="/profil">
 					<button>Mon profil</button>
 				</Link>
 			</div>

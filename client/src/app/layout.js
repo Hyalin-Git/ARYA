@@ -1,6 +1,5 @@
 import { montserrat } from "@/libs/fonts";
 import "../styles/globals.css";
-import Provider from "./Provider";
 import DarkModeProvider from "./DarkModeProvider";
 
 export const metadata = {
@@ -16,7 +15,7 @@ export default function RootLayout({ children }) {
 		<html lang="fr">
 			<DarkModeProvider>
 				<body className={montserrat.className} data-dark={false}>
-					<Provider>{children}</Provider>
+					{children}
 				</body>
 			</DarkModeProvider>
 		</html>

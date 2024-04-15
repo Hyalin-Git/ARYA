@@ -28,7 +28,6 @@ exports.authenticate = (req, res, next) => {
 				});
 			} else {
 				if (decoded) {
-					console.log(decoded);
 					const user = await UserModel.findById(decoded.userId);
 
 					if (!user) {
@@ -40,11 +39,11 @@ exports.authenticate = (req, res, next) => {
 
 					res.locals.user = user;
 					res.locals.decodedToken = decoded;
-					console.log(decoded);
+					// console.log(decoded);
 
-					console.log(
-						"---------- " + user.email + " est connecté" + "----------"
-					);
+					// console.log(
+					// 	"---------- " + user.email + " est connecté" + "----------"
+					// );
 					next();
 				}
 			}

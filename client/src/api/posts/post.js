@@ -20,7 +20,7 @@ export default async function deletePost(postId, uid) {
 
 		revalidateTag("feed");
 
-		console.log(data);
+		// console.log(data);
 	} catch (err) {
 		console.log(err);
 	}
@@ -45,8 +45,6 @@ export async function addReaction(postId, uid, reaction) {
 		);
 		const data = await res.json();
 
-		console.log(data);
-
 		revalidateTag("feed");
 	} catch (err) {
 		console.log(err);
@@ -67,8 +65,7 @@ export async function deleteReaction(postId, uid) {
 			}
 		);
 		revalidateTag("feed");
-
-		console.log(res.data);
+		const data = await res.json();
 	} catch (err) {
 		console.log(err);
 	}

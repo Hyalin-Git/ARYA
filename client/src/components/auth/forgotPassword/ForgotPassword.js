@@ -1,8 +1,7 @@
 import styles from "@/styles/components/auth/forgotPassword.module.css";
-
-import VerifyCodeStep from "./steps/VerifyCodeStep";
-import SendCodeStep from "./steps/SendCodeStep";
-import ModifyPasswordStep from "./steps/ModifyPasswordStep";
+import VerifyCodeStep from "./VerifyCodeStep";
+import SendCodeStep from "./SendCodeStep";
+import ModifyPasswordStep from "./ModifyPasswordStep";
 
 export default function ForgotPassword({
 	setIsSignIn,

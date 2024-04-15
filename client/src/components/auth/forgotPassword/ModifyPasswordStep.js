@@ -1,11 +1,11 @@
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/auth/forgotPassword.module.css";
 import clsx from "clsx";
-import NewPassSubmit from "../NewPassSubmit";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { updateForgotPassword } from "@/actions/user";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { updatePasswordValidation } from "@/libs/utils";
 import PopUp from "@/components/popup/PopUp";
 
 export default function ModifyPasswordStep({ setStep }) {
@@ -117,7 +117,7 @@ export default function ModifyPasswordStep({ setStep }) {
 							</div>
 							<br />
 							<br />
-							<NewPassSubmit state={state} />
+							<ModifyPasswordSubmit />
 						</form>
 					</div>
 					{showPopUp && (
@@ -147,6 +147,27 @@ export default function ModifyPasswordStep({ setStep }) {
 					)}
 				</>
 			)}
+		</>
+	);
+}
+
+export function ModifyPasswordSubmit() {
+	const { pending } = useFormStatus();
+	function handleBtn(e) {
+		const isValidate = updatePasswordValidation();
+		if (!isValidate) {
+			e.preventDefault();
+		}
+	}
+	return (
+		<>
+			<button
+				onClick={handleBtn}
+				className={clsx(montserrat.className, pending && "loading")}>
+				{pending
+					? "Réinitialisation en cours"
+					: "Réinitialiser mon mot de passe"}
+			</button>
 		</>
 	);
 }

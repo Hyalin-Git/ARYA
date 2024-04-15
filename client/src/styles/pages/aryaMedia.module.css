@@ -29,18 +29,18 @@
 }
 
 .filters {
-	margin-top: -10px;
-	border-radius: 8px;
-	padding: 10px;
+	padding: 8px;
 	position: relative;
+	margin: -10px 0 -10px 0;
 	display: flex;
-	justify-content: space-around;
+	justify-content: space-evenly;
 	background-color: var(--meteorite-color);
+	border-radius: 8px;
 }
 .filters span {
 	color: white !important;
-	font-weight: 500;
 	cursor: pointer;
+	font-weight: 500;
 }
 .container aside:nth-child(3) {
 	width: 20%;
