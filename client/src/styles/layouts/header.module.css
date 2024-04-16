@@ -2,6 +2,8 @@
 	position: sticky;
 	top: 0;
 	z-index: 2500;
+	height: 60px;
+	/* opacity: 0; */
 }
 
 .nav {

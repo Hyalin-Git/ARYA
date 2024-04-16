@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
 		<html lang="fr">
 			<DarkModeProvider>
 				<body className={montserrat.className} data-dark={false}>
-					{children}
+					<div id="container">{children}</div>
 				</body>
 			</DarkModeProvider>
 		</html>

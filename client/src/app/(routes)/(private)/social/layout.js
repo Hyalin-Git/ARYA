@@ -1,5 +1,5 @@
 "use server";
-import styles from "@/styles/pages/aryaMedia.module.css";
+import styles from "@/styles/layouts/social/social.module.css";
 import Header from "@/layouts/Header";
 import UserPanel from "@/layouts/social/UserPanel";
 import SuggestionsPanel from "@/layouts/social/SuggestionsPanel";
@@ -15,7 +15,7 @@ export default async function AryaMediaLayout({ children }) {
 						<UserPanel />
 						<SuggestionsPanel />
 					</aside>
-					{children}
+					<div className={styles.column}>{children}</div>
 					<aside>
 						<ConversationPanel />
 					</aside>

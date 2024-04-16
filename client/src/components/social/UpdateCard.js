@@ -8,13 +8,21 @@ const initialState = {
 	status: "pending",
 	message: "",
 };
-export default function UpdateCard({ element, action, setIsUpdate }) {
+export default function UpdateCard({
+	element,
+	action,
+	setIsUpdate,
+	mutatePost,
+}) {
 	const [state, formAction] = useFormState(action, initialState);
 
 	useEffect(() => {
 		if (state.status === "success") {
 			setIsUpdate(false);
-			mutate(`api/comments?postId=${element.postId || element.repostId}`);
+			// mutate(`api/comments?postId=${element.postId || element.repostId}`);
+
+			mutate(element, true);
+			mutatePost();
 		}
 	}, [state]);
 

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import styles from "@/styles/components/aryaMedia/userPanel.module.css";
+import styles from "@/styles/layouts/social/userPanel.module.css";
 import { AuthContext } from "@/context/auth";
 import { useContext } from "react";
 import Link from "next/link";
@@ -24,22 +24,22 @@ export default function UserPanel() {
 				<span>
 					{user?.firstName} {user?.lastName}
 				</span>
-
 				<span> {user?.userName}</span>
 			</div>
 			<div className={styles.bio}>
-				<p>Ma super biographie de la mort qui tue</p>
+				<p>
+					Ma super biographie de la mort qui tue qdzqdz qzod qzkozd koqz kdozq
+					kdoqzd
+				</p>
 			</div>
 			<div className={styles.follow}>
 				<div className={styles.following}>
 					<span>{user?.following?.length}</span>
-
 					<span>Following</span>
 				</div>
 				<div className={styles.line}></div>
 				<div className={styles.followers}>
 					<span>{user?.followers?.length}</span>
-
 					<span>Followers</span>
 				</div>
 			</div>

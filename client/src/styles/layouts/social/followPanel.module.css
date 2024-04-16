@@ -2,11 +2,12 @@
 	position: relative;
 	background-color: rgba(var(--layer-color));
 	width: 100%;
-	height: fit-content;
+
 	border-radius: 8px;
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
+
 	justify-content: space-between;
 }
 

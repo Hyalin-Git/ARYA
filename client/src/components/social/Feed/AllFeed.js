@@ -1,30 +1,38 @@
 "use client";
-import styles from "@/styles/components/aryaMedia/feed.module.css";
+import styles from "@/styles/components/social/allFeed/allFeed.module.css";
 import { getAllFeed } from "@/api/posts/feed";
-import Card from "../Card";
+import Card from "../cards/Card";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
-import useSWR, { mutate } from "swr";
-
-const POSTS_TO_FETCH = 5;
+import useSWRInfinite from "swr/infinite";
+import SendCard from "../SendCard";
+import { savePost } from "@/actions/post";
 
 export default function AllFeed({ initialPosts }) {
-	const [offset, setOffset] = useState(POSTS_TO_FETCH);
-	const [posts, setPosts] = useState(initialPosts);
-	// const [isLoading, setIsLoading] = useState(false);
+	const [limit, setLimit] = useState(3);
 	const { ref, inView } = useInView();
-	const fetchPosts = getAllFeed.bind(null, offset, offset + POSTS_TO_FETCH);
-	const { data, isLoading } = useSWR("/api/feed", fetchPosts);
+	const getKey = (pageIndex, previousPageData) => {
+		if (previousPageData && !previousPageData.length) return null; // reached the end
+		return `/api/feed?offset=${0}&limit=${limit}`; // SWR key
+	};
+
+	const fetchPosts = getAllFeed.bind(null, 0, limit);
+	const { data, size, setSize, mutate, isValidating, error, isLoading } =
+		useSWRInfinite(getKey, fetchPosts, {
+			initialSize: 1,
+			fallbackData: [initialPosts],
+			keepPreviousData: true,
+			revalidateIfStale: true,
+			revalidateFirstPage: true,
+			revalidateOnMount: true,
+			revalidateAll: true,
+		});
 
 	async function loadMorePosts() {
-		// setIsLoading(true);
-		// const getPosts = await getAllFeed(offset, offset + POSTS_TO_FETCH);
-
-		setPosts((prevPosts) => [...prevPosts, ...data]);
-		setOffset(offset + POSTS_TO_FETCH);
-		// mutate("/api/feed");
-		// setIsLoading(false);
+		setSize(size + 1);
+		setLimit(limit + 2);
 	}
+
 	useEffect(() => {
 		if (inView) {
 			loadMorePosts();
@@ -33,11 +41,24 @@ export default function AllFeed({ initialPosts }) {
 
 	return (
 		<div className={styles.container}>
-			{posts.length > 0 &&
-				posts.map((post) => {
-					return <Card post={post} key={post._id} />;
-				})}
-			<div ref={ref}>{isLoading && <div>loading</div>}</div>
+			<div className={styles.filters}>
+				<span>Pour toi</span>
+				<span>Abonnements</span>
+			</div>
+			<SendCard action={savePost} type={"post"} button={"Poster"} />
+			<div className={styles.cards}>
+				{data[0]?.length > 0 &&
+					data[0]?.map((post) => {
+						return <Card post={post} key={post._id} mutatePost={mutate} />;
+					})}
+			</div>
+			<div className={styles.loader} ref={ref}>
+				{isLoading && (
+					<>
+						<div></div> <div></div>
+					</>
+				)}
+			</div>
 		</div>
 	);
 }

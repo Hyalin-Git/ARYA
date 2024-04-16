@@ -1,7 +1,6 @@
 .container {
 	position: relative;
 	background-color: rgba(var(--layer-color));
-	/* box-shadow: var(--passive-shadow); */
 	width: 100%;
 	padding: 20px;
 	border-radius: 8px;
@@ -51,7 +50,13 @@
 	width: 100%;
 	border-bottom: 1px solid grey;
 }
-
+.bio p {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	width: 100%;
+	display: block;
+	overflow: hidden;
+}
 /* FOLLOWERS SECTION  */
 
 .follow {

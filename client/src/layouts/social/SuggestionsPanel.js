@@ -1,5 +1,5 @@
 "use server";
-import styles from "@/styles/components/aryaMedia/followPanel.module.css";
+import styles from "@/styles/layouts/social/followPanel.module.css";
 import { getFollowSuggestions } from "@/api/user/user";
 import Image from "next/image";
 import FollowButton from "@/components/social/FollowButton";

@@ -381,7 +381,7 @@ export const updatePasswordValidation = () => {
 	return true;
 };
 
-// AryaMedia
+// S O C I A L //
 
 export function formattedDate(element) {
 	const date = moment
@@ -419,4 +419,45 @@ export function findUidReaction(reactions, uid) {
 		}
 	}
 	return value;
+}
+
+// Functions to get informations of the post/comment author
+export function getAuthor(element, query) {
+	let response;
+	if (query === "firstname") {
+		response =
+			element?.posterId?.firstName ||
+			element?.reposterId.firstName ||
+			element?.commenterId?.firstName;
+		return response;
+	}
+	if (query === "lastname") {
+		response =
+			element?.posterId?.lastName ||
+			element?.reposterId.lastName ||
+			element?.commenterId?.lastName;
+		return response;
+	}
+	if (query === "username") {
+		response =
+			element?.posterId?.userName ||
+			element?.reposterId.userName ||
+			element?.commenterId?.userName;
+		return response;
+	}
+}
+
+export function authorCheck(uid, element) {
+	if (
+		uid === element?.posterId?._id ||
+		element?.reposterId?._id ||
+		element?.commenterId._id
+	) {
+		return true;
+	}
+	return false;
+}
+
+export function handleAddReaction()  {
+	
 }

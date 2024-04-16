@@ -1,0 +1,77 @@
+.container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.user {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+.user img {
+	border-radius: 50%;
+}
+.user div {
+	display: flex;
+	flex-direction: column;
+}
+.user span:nth-child(1) {
+	font-weight: 600;
+	font-size: 0.9rem;
+}
+.user span:nth-child(2) {
+	color: var(--meteorite-color);
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+.user span:nth-child(3) {
+	margin-top: 2px;
+	font-size: 0.7rem;
+	font-weight: 300;
+}
+
+.more {
+	position: relative;
+	cursor: pointer;
+}
+
+.modal {
+	position: absolute;
+	z-index: 9999; /* Au-dessus du reste du contenu */
+	background-color: white;
+	border-radius: 8px;
+	width: max-content;
+	right: 0px;
+	box-shadow: var(--active-shadow);
+}
+
+.modal ul {
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+	display: flex;
+
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+}
+
+.modal li {
+	text-align: left;
+	list-style-type: none;
+	width: 100%;
+	padding: 10px;
+	font-weight: 500;
+	font-size: 0.9rem;
+}
+.modal li:first-child {
+	border-radius: 8px 8px 0 0;
+}
+.modal li:last-child {
+	border-radius: 0 0 8px 8px;
+}
+.modal li:hover {
+	color: var(--meteorite-color);
+	background-color: color-mix(in srgb, white, black 2%);
+}
