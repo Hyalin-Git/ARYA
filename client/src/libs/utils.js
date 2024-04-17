@@ -427,21 +427,21 @@ export function getAuthor(element, query) {
 	if (query === "firstname") {
 		response =
 			element?.posterId?.firstName ||
-			element?.reposterId.firstName ||
+			element?.reposterId?.firstName ||
 			element?.commenterId?.firstName;
 		return response;
 	}
 	if (query === "lastname") {
 		response =
 			element?.posterId?.lastName ||
-			element?.reposterId.lastName ||
+			element?.reposterId?.lastName ||
 			element?.commenterId?.lastName;
 		return response;
 	}
 	if (query === "username") {
 		response =
 			element?.posterId?.userName ||
-			element?.reposterId.userName ||
+			element?.reposterId?.userName ||
 			element?.commenterId?.userName;
 		return response;
 	}
@@ -451,13 +451,11 @@ export function authorCheck(uid, element) {
 	if (
 		uid === element?.posterId?._id ||
 		element?.reposterId?._id ||
-		element?.commenterId._id
+		element?.commenterId?._id
 	) {
 		return true;
 	}
 	return false;
 }
 
-export function handleAddReaction()  {
-	
-}
+export function handleAddReaction() {}

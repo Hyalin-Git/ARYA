@@ -1,0 +1,14 @@
+.container {
+	position: relative;
+	background-color: rgba(var(--layer-color));
+	width: 100%;
+
+	height: 90.4svh;
+	border-radius: 8px 0 0 0;
+}
+
+.header {
+	text-align: left;
+	padding: 6px;
+	border-bottom: 2px solid var(--meteorite-color);
+}

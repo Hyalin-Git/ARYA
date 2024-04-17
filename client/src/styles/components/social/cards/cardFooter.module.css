@@ -2,7 +2,10 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding-top: 20px;
+
+	margin-bottom: 0px;
+
+	height: 100%;
 	border-top: 1px solid var(--meteorite-color);
 }
 
@@ -39,8 +42,8 @@
 }
 
 .btn:hover {
-	background-color: white;
-	transition: 150ms all linear;
+	/* background-color: white;
+	transition: 150ms all linear; */
 }
 
 .reactionModal img:hover {

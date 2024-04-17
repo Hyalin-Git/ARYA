@@ -11,7 +11,16 @@ import Image from "next/image";
 import { useState } from "react";
 import { mutate } from "swr";
 
-export default function CardFooter({ uid, post, comment, mutatePost }) {
+export default function CardFooter({
+	uid,
+	post,
+	comment,
+	mutatePost,
+	repostModal,
+	setRepostModal,
+	showComments,
+	setShowComments,
+}) {
 	const [reactionModal, setReactionModal] = useState(false);
 	const userHasReacted = hasReacted(post?.reactions || comment?.reactions, uid);
 	const getUserReaction = findUidReaction(
@@ -39,7 +48,6 @@ export default function CardFooter({ uid, post, comment, mutatePost }) {
 		e.preventDefault();
 		if (post?.reposterId) {
 			await addRepostReaction(post?._id, uid, reaction);
-			mutate(post, true);
 			mutatePost();
 			return;
 		}
@@ -49,7 +57,6 @@ export default function CardFooter({ uid, post, comment, mutatePost }) {
 			return;
 		}
 		await addReaction(post?._id, uid, reaction);
-		mutate(post, true);
 		mutatePost();
 	}
 
@@ -57,7 +64,6 @@ export default function CardFooter({ uid, post, comment, mutatePost }) {
 		e.preventDefault();
 		if (post?.reposterId) {
 			await deleteRepostReaction(post?._id, uid);
-			mutate(post, true);
 			mutatePost();
 			return;
 		}
@@ -67,7 +73,6 @@ export default function CardFooter({ uid, post, comment, mutatePost }) {
 			return;
 		}
 		await deleteReaction(post?._id, uid);
-		mutate(post, true);
 		mutatePost();
 	}
 

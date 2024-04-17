@@ -45,7 +45,12 @@ export default function AllFeed({ initialPosts }) {
 				<span>Pour toi</span>
 				<span>Abonnements</span>
 			</div>
-			<SendCard action={savePost} type={"post"} button={"Poster"} />
+			<SendCard
+				action={savePost}
+				type={"post"}
+				button={"Poster"}
+				mutatePost={mutate}
+			/>
 			<div className={styles.cards}>
 				{data[0]?.length > 0 &&
 					data[0]?.map((post) => {
@@ -55,7 +60,8 @@ export default function AllFeed({ initialPosts }) {
 			<div className={styles.loader} ref={ref}>
 				{isLoading && (
 					<>
-						<div></div> <div></div>
+						<div></div>
+						<div></div>
 					</>
 				)}
 			</div>

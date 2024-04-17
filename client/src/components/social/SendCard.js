@@ -12,7 +12,14 @@ const initialState = {
 	status: "pending",
 	message: "",
 };
-export default function SendCard({ action, type, button, postId }) {
+export default function SendCard({
+	action,
+	type,
+	button,
+	postId,
+	setRepostModal,
+	mutatePost,
+}) {
 	const [isWriting, setIsWriting] = useState(false);
 	const { user } = useContext(AuthContext);
 	const text = useRef(null);
@@ -35,7 +42,14 @@ export default function SendCard({ action, type, button, postId }) {
 	useEffect(() => {
 		if (state?.status === "success") {
 			text.current.value = "";
-			mutate(`api/comments?postId=${postId}`);
+			if (type === "repost") {
+				setRepostModal(false);
+			}
+			if (type === "comment") {
+				mutate(`api/comments?postId=${postId}`);
+				return;
+			}
+			mutatePost();
 		}
 	}, [state]);
 	return (

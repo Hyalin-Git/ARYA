@@ -1,9 +1,8 @@
 import Image from "next/image";
 import styles from "@/styles/components/aryaMedia/updateCard.module.css";
 import { useFormState } from "react-dom";
-import { updatePost } from "@/actions/post";
 import { useEffect } from "react";
-import { mutate } from "swr";
+
 const initialState = {
 	status: "pending",
 	message: "",
@@ -20,8 +19,6 @@ export default function UpdateCard({
 		if (state.status === "success") {
 			setIsUpdate(false);
 			// mutate(`api/comments?postId=${element.postId || element.repostId}`);
-
-			mutate(element, true);
 			mutatePost();
 		}
 	}, [state]);

@@ -38,6 +38,7 @@ export default function CardHeader({
 		e.preventDefault();
 		if (post?.reposterId) {
 			await deleteRepost(post?._id, uid);
+			mutatePost();
 			return;
 		}
 		if (comment) {
@@ -46,7 +47,6 @@ export default function CardHeader({
 			return;
 		}
 		await deletePost(post._id, uid);
-		mutate(post, true);
 		mutatePost();
 	}
 

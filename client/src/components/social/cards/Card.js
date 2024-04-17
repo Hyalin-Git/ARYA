@@ -1,5 +1,5 @@
 "use client";
-import styles from "@/styles/components/aryaMedia/feed.module.css";
+import styles from "@/styles/components/social/cards/card.module.css";
 import { useContext, useState } from "react";
 import Comments from "../Feed/Comments";
 import { AuthContext } from "@/context/auth";
@@ -47,13 +47,21 @@ export default function Card({ post, comment, answer, mutatePost }) {
 					post={post}
 					comment={comment}
 					mutatePost={mutatePost}
+					repostModal={repostModal}
+					setRepostModal={setRepostModal}
+					showComments={showComments}
+					setShowComments={setShowComments}
 				/>
 				{post && showComments && (
 					<Comments postId={post._id} type={isRepost ? "repost" : "post"} />
 				)}
 			</article>
 			{repostModal && (
-				<CreateRepost post={post} setRepostModal={setRepostModal} />
+				<CreateRepost
+					post={post}
+					setRepostModal={setRepostModal}
+					mutatePost={mutatePost}
+				/>
 			)}
 		</div>
 	);

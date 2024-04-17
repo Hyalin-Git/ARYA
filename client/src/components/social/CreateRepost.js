@@ -5,7 +5,7 @@ import { montserrat } from "@/libs/fonts";
 import Image from "next/image";
 import { saveRepost } from "@/actions/repost";
 
-export default function CreateRepost({ post, setRepostModal }) {
+export default function CreateRepost({ post, setRepostModal, mutatePost }) {
 	return (
 		<>
 			<div className={styles.container}>
@@ -24,6 +24,8 @@ export default function CreateRepost({ post, setRepostModal }) {
 						type={"repost"}
 						button={"Poster"}
 						postId={post._id}
+						setRepostModal={setRepostModal}
+						mutatePost={mutatePost}
 					/>
 				</div>
 				<div className={styles.repost}>
