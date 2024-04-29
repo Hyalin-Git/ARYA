@@ -3,7 +3,7 @@ import axios from "axios";
 import { cookies } from "next/headers";
 import { revalidateTag } from "next/cache";
 
-export async function savePost(prevState, formData) {
+export async function savePost(uid, prevState, formData) {
 	try {
 		const data = new FormData();
 		data.append("text", formData.get("text"));
@@ -17,7 +17,7 @@ export async function savePost(prevState, formData) {
 
 		const res = await axios({
 			method: "POST",
-			url: "http://localhost:5000/api/posts?userId=65e84d8f5b4447f020ca2746",
+			url: `http://localhost:5000/api/posts?userId=${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
@@ -25,8 +25,6 @@ export async function savePost(prevState, formData) {
 			},
 			data: data,
 		});
-
-		revalidateTag("feed");
 
 		return {
 			status: "success",
@@ -52,8 +50,6 @@ export async function updatePost(postId, uid, prevState, formData) {
 			},
 			data: data,
 		});
-
-		revalidateTag("feed");
 
 		return {
 			status: "success",

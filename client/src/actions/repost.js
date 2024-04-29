@@ -4,14 +4,15 @@ import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import axios from "axios";
 
-export async function saveRepost(prevState, formData) {
+export async function saveRepost(uid, prevState, formData) {
 	try {
 		const dataToSend = new FormData();
 		dataToSend.append("text", formData.get("text"));
 		dataToSend.append("postId", formData.get("postId"));
+		// dataToSend.append("repostId", formData.get("repostId"));
 
 		const response = await fetch(
-			`http://localhost:5000/api/reposts?userId=65e84d8f5b4447f020ca2746`,
+			`http://localhost:5000/api/reposts?userId=${uid}`,
 			{
 				method: "POST",
 				credentials: "include",
@@ -24,7 +25,6 @@ export async function saveRepost(prevState, formData) {
 
 		const data = await response.json();
 
-		revalidateTag("feed");
 		console.log(data);
 		return {
 			status: "success",
@@ -50,7 +50,6 @@ export async function updateRepost(repostId, uid, prevState, formData) {
 			data: data,
 		});
 
-		revalidateTag("feed");
 		console.log(res.data);
 		return {
 			status: "success",

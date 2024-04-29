@@ -15,13 +15,33 @@ const UserModel = require("../../models/users/User.model");
 
 exports.saveRepost = async (req, res, next) => {
 	try {
-		const { text, postId } = req.body;
+		const { text, postId, repostId } = req.body;
 		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user repost)
 		const medias = req.files["media"];
+		let postModel;
+		let repostModel;
 
-		const post = await PostModel.findById({ _id: postId });
+		if (!postId && !repostId) {
+			return res.status(400).send({
+				error: true,
+				message: "Paramètres manquants",
+			});
+		}
+		if (postId && repostId) {
+			return res.status(400).send({
+				error: true,
+				message: "Paramètres invalides",
+			});
+		}
 
-		if (!post) {
+		if (postId) {
+			postModel = await PostModel.findById({ _id: postId });
+		}
+		if (repostId) {
+			repostModel = await RepostModel.findById({ _id: repostId });
+		}
+
+		if (!postModel && !repostModel) {
 			return res.status(404).send({
 				error: true,
 				message: "Impossible de repost une publication inexistante",
@@ -35,22 +55,39 @@ exports.saveRepost = async (req, res, next) => {
 			text: text,
 			media: medias ? uploadResponse : [],
 			postId: postId,
+			repostId: repostId,
 		});
 		repost
 			.save()
 			.then(async (repost) => {
-				await PostModel.findByIdAndUpdate(
-					{ _id: postId },
-					{
-						$inc: {
-							repostsLength: 1,
+				if (postModel) {
+					await PostModel.findByIdAndUpdate(
+						{ _id: postId },
+						{
+							$inc: {
+								repostsLength: 1,
+							},
 						},
-					},
-					{
-						setDefaultsOnInsert: true,
-						new: true,
-					}
-				);
+						{
+							setDefaultsOnInsert: true,
+							new: true,
+						}
+					);
+				}
+				if (repostModel) {
+					await RepostModel.findByIdAndUpdate(
+						{ _id: repostId },
+						{
+							$inc: {
+								repostsLength: 1,
+							},
+						},
+						{
+							setDefaultsOnInsert: true,
+							new: true,
+						}
+					);
+				}
 
 				return res.status(201).send(repost);
 			})

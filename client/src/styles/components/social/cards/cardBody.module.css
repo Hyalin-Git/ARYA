@@ -10,6 +10,7 @@
 }
 
 .media {
+	margin-top: 10px;
 	display: flex;
 	width: 100%;
 	overflow: hidden;
@@ -37,6 +38,33 @@
 }
 .repost .content {
 	margin-left: 5px;
+}
+
+.user {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+.user img {
+	border-radius: 50%;
+}
+.user div {
+	display: flex;
+	flex-direction: column;
+}
+.user span:nth-child(1) {
+	font-weight: 600;
+	font-size: 0.9rem;
+}
+.user span:nth-child(2) {
+	color: var(--meteorite-color);
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+.user span:nth-child(3) {
+	margin-top: 2px;
+	font-size: 0.7rem;
+	font-weight: 300;
 }
 
 .reactions {

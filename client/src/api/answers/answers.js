@@ -1,13 +1,11 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { decryptToken, getUserId } from "../user/auth";
 
-export async function getConversations() {
+export default async function getAnswers(commentId) {
 	try {
-		const uid = await getUserId();
 		const response = await fetch(
-			`http://localhost:5000/api/conversations?userId=${uid}`,
+			`http://localhost:5000/api/answers?commentId=${commentId}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -20,6 +18,7 @@ export async function getConversations() {
 		const data = await response.json();
 
 		return data;
+		console.log(data);
 	} catch (err) {
 		console.log(err);
 	}

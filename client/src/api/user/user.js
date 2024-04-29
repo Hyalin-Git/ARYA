@@ -2,6 +2,7 @@
 import axios from "axios";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
+import { decryptToken, getUserId } from "./auth";
 
 export async function getUsers(interest, limit) {
 	try {
@@ -55,10 +56,9 @@ export async function getUser(uid) {
 
 export async function getFollowSuggestions(limit) {
 	try {
+		const uid = await getUserId();
 		const response = await fetch(
-			`http://localhost:5000/api/users/suggestion/${"65e84d8f5b4447f020ca2746"}?limit=${
-				limit || 3
-			}`,
+			`http://localhost:5000/api/users/suggestion/${uid}?limit=${limit || 3}`,
 			{
 				method: "GET",
 				credentials: "include",

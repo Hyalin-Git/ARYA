@@ -3,6 +3,32 @@ import axios from "axios";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
+export async function getUserId() {
+	try {
+		const response = await axios({
+			method: "GET",
+			url: "http://localhost:5000/login/success",
+			withCredentials: true,
+			headers: {
+				Authorization: `Bearer ${cookies().get("session")?.value}`,
+			},
+		});
+
+		return response?.data?.userId;
+	} catch (err) {
+		const isNotValid = err.response?.data?.message.includes("aucun token reçu");
+
+		const hasExpired = err.response?.data?.message.includes("plus valide");
+		if (err.response?.status === 403 && isNotValid) {
+			console.log("yas queen");
+			cookies().delete("session");
+			redirect("/");
+		}
+		if (err.response?.status === 403 && hasExpired) {
+			cookies().delete("session");
+		}
+	}
+}
 export async function getSession() {
 	const session = cookies().get("session")?.value;
 	if (!session) return null;
@@ -32,7 +58,7 @@ export async function decryptToken(token) {
 			await getRefreshToken(token, uid);
 		}
 
-		return response.data;
+		return response?.data?.userId;
 	} catch (err) {
 		const isNotValid = err.response?.data?.message.includes("aucun token reçu");
 

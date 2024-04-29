@@ -1,11 +1,24 @@
 import styles from "@/styles/components/aryaMedia/createRepost.module.css";
 import SendCard from "./SendCard";
-import { formattedDate } from "@/libs/utils";
+import { formattedDate, getAuthor } from "@/libs/utils";
 import { montserrat } from "@/libs/fonts";
 import Image from "next/image";
 import { saveRepost } from "@/actions/repost";
 
-export default function CreateRepost({ post, setRepostModal, mutatePost }) {
+export default function CreateRepost({
+	uid,
+	post,
+	comment,
+	setRepostModal,
+	mutatePost,
+}) {
+	const saveRepostWithUid = saveRepost.bind(null, uid);
+	const lastname = getAuthor(post, "lastname");
+	const firstname = getAuthor(post, "firstname");
+	const username = getAuthor(post, "username");
+	const posterImg = post?.posterId?.picture;
+	const reposterImg = post?.reposterId?.picture;
+	const commenterImg = comment?.commenterId?.picture;
 	return (
 		<>
 			<div className={styles.container}>
@@ -20,7 +33,7 @@ export default function CreateRepost({ post, setRepostModal, mutatePost }) {
 				</div>
 				<div className={styles.sender}>
 					<SendCard
-						action={saveRepost}
+						action={saveRepostWithUid}
 						type={"repost"}
 						button={"Poster"}
 						postId={post._id}
@@ -32,7 +45,10 @@ export default function CreateRepost({ post, setRepostModal, mutatePost }) {
 					<div className={styles.header}>
 						<div className={styles.user}>
 							<Image
-								src={post?.posterId.picture ?? "/images/profil/default-pfp.jpg"}
+								src={
+									(posterImg || reposterImg || commenterImg) ??
+									"/images/profil/default-pfp.jpg"
+								}
 								alt="profil"
 								width={50}
 								height={50}
@@ -40,9 +56,9 @@ export default function CreateRepost({ post, setRepostModal, mutatePost }) {
 							/>
 							<div>
 								<span>
-									{post?.posterId.firstName} {post?.posterId.lastName}
+									{firstname} {lastname}
 								</span>
-								<span>{post?.posterId.userName}</span>
+								<span>{username}</span>
 								<span>{formattedDate(post || comment)}</span>
 							</div>
 						</div>

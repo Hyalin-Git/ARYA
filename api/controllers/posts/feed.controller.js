@@ -28,16 +28,24 @@ exports.getAllFeed = async (req, res, next) => {
 					select: "lastName firstName picture userName blockedUsers",
 				},
 			})
+			.populate({
+				path: "repostId",
+				select: "text media createdAt",
+				populate: {
+					path: "reposterId",
+					select: "lastName firstName picture userName blockedUsers",
+				},
+			})
 			.exec();
 
-		const filteredPosts = await filterElements(posts, "posterId", authUser);
-		const filteredReposts = await filterElements(
-			reposts,
-			"reposterId",
-			authUser
-		);
+		// const filteredPosts = await filterElements(posts, "posterId", authUser);
+		// const filteredReposts = await filterElements(
+		// 	reposts,
+		// 	"reposterId",
+		// 	authUser
+		// );
 
-		const feed = [...filteredPosts, ...filteredReposts];
+		const feed = [...posts, ...reposts];
 
 		if (feed.length <= 0) {
 			return res

@@ -32,10 +32,14 @@ const AnswerSchema = mongoose.Schema(
 			type: [String],
 		},
 		reactions: {
-			like: { type: [String] },
-			awesome: { type: [String] },
 			love: { type: [String] },
 			funny: { type: [String] },
+			surprised: { type: [String] },
+			sad: { type: [String] },
+		},
+		repostsLength: {
+			type: Number,
+			default: 0,
 		},
 		answersLength: {
 			type: Number,

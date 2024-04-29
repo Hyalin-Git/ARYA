@@ -15,19 +15,26 @@ export default function CardFooter({
 	uid,
 	post,
 	comment,
+	answer,
 	mutatePost,
+	mutateComment,
 	repostModal,
 	setRepostModal,
 	showComments,
 	setShowComments,
+	showAnswers,
+	setShowAnswers,
 }) {
 	const [reactionModal, setReactionModal] = useState(false);
-	const userHasReacted = hasReacted(post?.reactions || comment?.reactions, uid);
-	const getUserReaction = findUidReaction(
-		post?.reactions || comment?.reactions,
+	const userHasReacted = hasReacted(
+		post?.reactions || comment?.reactions || answer?.reactions,
 		uid
 	);
-	function handleMouseEnter(e) {
+	const getUserReaction = findUidReaction(
+		post?.reactions || comment?.reactions || answer?.reactions,
+		uid
+	);
+	function handleMouseClick(e) {
 		e.preventDefault();
 		let timeout;
 		clearTimeout(timeout);
@@ -53,7 +60,7 @@ export default function CardFooter({
 		}
 		if (comment) {
 			await addCommentReaction(comment?._id, uid, reaction);
-			mutate(`api/comments?postId=${comment.postId || comment.repostId}`);
+			mutateComment();
 			return;
 		}
 		await addReaction(post?._id, uid, reaction);
@@ -69,7 +76,7 @@ export default function CardFooter({
 		}
 		if (comment) {
 			await deleteCommentReaction(comment?._id, uid);
-			mutate(`api/comments?postId=${comment.postId || comment.repostId}`);
+			mutateComment();
 			return;
 		}
 		await deleteReaction(post?._id, uid);
@@ -81,10 +88,11 @@ export default function CardFooter({
 			<div>
 				<div
 					className={styles.btn}
-					onMouseEnter={handleMouseEnter}
-					onMouseLeave={handleMouseLeave}>
+					onClick={!userHasReacted ? handleMouseClick : null}>
 					{reactionModal && (
-						<div className={styles.reactionModal}>
+						<div
+							className={styles.reactionModal}
+							onMouseLeave={handleMouseLeave}>
 							<Image
 								src={"/images/icons/love_icon.svg"}
 								alt="icon"
@@ -156,7 +164,14 @@ export default function CardFooter({
 					className={styles.btn}
 					onClick={(e) => {
 						e.preventDefault();
-						setShowComments(!showComments);
+						if (post) {
+							setShowComments(!showComments);
+							return;
+						}
+						if (comment) {
+							setShowAnswers(!showAnswers);
+							return;
+						}
 					}}>
 					<Image
 						src={"/images/icons/comment_icon.svg"}

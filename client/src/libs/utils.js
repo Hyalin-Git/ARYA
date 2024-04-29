@@ -428,31 +428,39 @@ export function getAuthor(element, query) {
 		response =
 			element?.posterId?.firstName ||
 			element?.reposterId?.firstName ||
-			element?.commenterId?.firstName;
+			element?.commenterId?.firstName ||
+			element?.answererId?.firstName;
 		return response;
 	}
 	if (query === "lastname") {
 		response =
 			element?.posterId?.lastName ||
 			element?.reposterId?.lastName ||
-			element?.commenterId?.lastName;
+			element?.commenterId?.lastName ||
+			element?.answererId?.lastName;
 		return response;
 	}
 	if (query === "username") {
 		response =
 			element?.posterId?.userName ||
 			element?.reposterId?.userName ||
-			element?.commenterId?.userName;
+			element?.commenterId?.userName ||
+			element?.answererId?.userName;
 		return response;
 	}
 }
 
 export function authorCheck(uid, element) {
-	if (
-		uid === element?.posterId?._id ||
-		element?.reposterId?._id ||
-		element?.commenterId?._id
-	) {
+	if (uid === element?.posterId?._id) {
+		return true;
+	}
+	if (uid === element?.reposterId?._id) {
+		return true;
+	}
+	if (uid === element?.commenterId?._id) {
+		return true;
+	}
+	if (uid === element?.answererId?._id) {
 		return true;
 	}
 	return false;

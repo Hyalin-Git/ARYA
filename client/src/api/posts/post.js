@@ -1,8 +1,26 @@
 "use server";
 import { cookies } from "next/headers";
-import { revalidateTag } from "next/cache";
 
-export default async function deletePost(postId, uid) {
+export async function getPost(postId) {
+	try {
+		const res = await fetch(`http://localhost:5000/api/posts/${postId}`, {
+			method: "GET",
+			credentials: "include",
+			headers: {
+				Authorization: `Bearer ${cookies().get("session")?.value}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+		const data = await res.json();
+
+		return data;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+export async function deletePost(postId, uid) {
 	try {
 		const res = await fetch(
 			`http://localhost:5000/api/posts/${postId}?userId=${uid}`,

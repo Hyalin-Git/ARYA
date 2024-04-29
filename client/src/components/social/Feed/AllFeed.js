@@ -2,14 +2,17 @@
 import styles from "@/styles/components/social/allFeed/allFeed.module.css";
 import { getAllFeed } from "@/api/posts/feed";
 import Card from "../cards/Card";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import useSWRInfinite from "swr/infinite";
 import SendCard from "../SendCard";
 import { savePost } from "@/actions/post";
+import { AuthContext } from "@/context/auth";
 
 export default function AllFeed({ initialPosts }) {
+	const { uid } = useContext(AuthContext);
 	const [limit, setLimit] = useState(3);
+	const savePostWithUid = savePost.bind(null, uid);
 	const { ref, inView } = useInView();
 	const getKey = (pageIndex, previousPageData) => {
 		if (previousPageData && !previousPageData.length) return null; // reached the end
@@ -46,7 +49,7 @@ export default function AllFeed({ initialPosts }) {
 				<span>Abonnements</span>
 			</div>
 			<SendCard
-				action={savePost}
+				action={savePostWithUid}
 				type={"post"}
 				button={"Poster"}
 				mutatePost={mutate}

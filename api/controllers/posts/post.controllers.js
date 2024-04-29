@@ -129,7 +129,7 @@ exports.getPost = (req, res, next) => {
 	PostModel.findById({ _id: req.params.id })
 		.populate(
 			"posterId",
-			`userName lastName firstName isPrivate ${
+			`userName lastName firstName picture isPrivate ${
 				authUser && "blockedUsers  followers"
 			}`
 		)

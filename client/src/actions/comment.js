@@ -3,7 +3,7 @@ import axios from "axios";
 import { cookies } from "next/headers";
 import { revalidateTag } from "next/cache";
 
-export async function saveComment(postId, type, prevState, formData) {
+export async function saveComment(uid, postId, type, prevState, formData) {
 	try {
 		const data = new FormData();
 
@@ -18,7 +18,7 @@ export async function saveComment(postId, type, prevState, formData) {
 		}
 		const res = await axios({
 			method: "POST",
-			url: "http://localhost:5000/api/comments?userId=65e84d8f5b4447f020ca2746",
+			url: `http://localhost:5000/api/comments?userId=${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
@@ -26,8 +26,6 @@ export async function saveComment(postId, type, prevState, formData) {
 			},
 			data: data,
 		});
-
-		revalidateTag("comments");
 
 		return {
 			status: "success",
@@ -54,8 +52,6 @@ export async function updateComment(commentId, uid, prevState, formData) {
 			},
 			data: data,
 		});
-
-		revalidateTag("comments");
 
 		return {
 			status: "success",

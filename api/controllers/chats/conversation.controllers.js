@@ -58,7 +58,7 @@ exports.getConversations = (req, res, next) => {
 
 	ConversationModel.find({ users: userId, isDeletedFor: { $ne: userId } })
 		.sort({ updatedAt: "desc" })
-		.populate("users", "lastName firstName userName")
+		.populate("users", "lastName firstName userName picture")
 		.populate({
 			path: "latestMessage",
 			populate: {

@@ -27,10 +27,7 @@ export default function UserPanel() {
 				<span> {user?.userName}</span>
 			</div>
 			<div className={styles.bio}>
-				<p>
-					Ma super biographie de la mort qui tue qdzqdz qzod qzkozd koqz kdozq
-					kdoqzd
-				</p>
+				<p>{user?.biographie || "Hello ! Je suis nouveau sur Arya"}</p>
 			</div>
 			<div className={styles.follow}>
 				<div className={styles.following}>

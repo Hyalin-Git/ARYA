@@ -9,8 +9,8 @@ export default async function ConversationPanel() {
 
 	return (
 		<div className={styles.container}>
-			<div className={styles.header}>Collapse</div>
-			<div>
+			<div className={styles.header}>Messagerie</div>
+			<div className={styles.body}>
 				{conversations.map((conversation) => {
 					return (
 						<Conversation conversation={conversation} key={conversation._id} />

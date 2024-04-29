@@ -12,17 +12,20 @@ export default function CardHeader({
 	uid,
 	post,
 	comment,
+	answer,
 	setIsUpdate,
 	mutatePost,
+	mutateComment,
 }) {
 	const [moreModal, setMoreModal] = useState(false);
-	const firstname = getAuthor(post || comment, "firstname");
-	const lastname = getAuthor(post || comment, "lastname");
-	const username = getAuthor(post || comment, "username");
-	const isAuthor = authorCheck(uid, post || comment);
+	const firstname = getAuthor(post || comment || answer, "firstname");
+	const lastname = getAuthor(post || comment || answer, "lastname");
+	const username = getAuthor(post || comment || answer, "username");
+	const isAuthor = authorCheck(uid, post || comment || answer);
 	const posterImg = post?.posterId?.picture;
 	const reposterImg = post?.reposterId?.picture;
 	const commenterImg = comment?.commenterId?.picture;
+	const answererImg = answer?.answererId?.picture;
 
 	function handleMoreModal(e) {
 		e.preventDefault();
@@ -43,7 +46,7 @@ export default function CardHeader({
 		}
 		if (comment) {
 			await deleteComment(comment?._id, uid);
-			mutate(`api/comments?postId=${comment.postId || comment.repostId}`);
+			mutateComment();
 			return;
 		}
 		await deletePost(post._id, uid);
@@ -55,7 +58,7 @@ export default function CardHeader({
 			<div className={styles.user}>
 				<Image
 					src={
-						(posterImg || reposterImg || commenterImg) ??
+						(posterImg || reposterImg || commenterImg || answererImg) ??
 						"/images/profil/default-pfp.jpg"
 					}
 					alt="profil"
@@ -78,16 +81,8 @@ export default function CardHeader({
 							<ul>
 								{!isAuthor && (
 									<>
-										<li>
-											Suivre{" "}
-											{post?.posterId?.userName ||
-												comment?.commenterId?.userName}
-										</li>
-										<li>
-											Bloquer{" "}
-											{post?.posterId?.userName ||
-												comment?.commenterId?.userName}
-										</li>
+										<li>Suivre {username}</li>
+										<li>Bloquer {username}</li>
 									</>
 								)}
 								{isAuthor && (
@@ -95,17 +90,19 @@ export default function CardHeader({
 										<li onClick={handleIsUpdate}>
 											Modifier {post && "la publication"}
 											{comment && "le commentaire"}
+											{answer && "La réponse"}
 										</li>
 										<li onClick={handleDeletePost}>
 											Supprimer {post && "la publication"}
 											{comment && "le commentaire"}
+											{answer && "La réponse"}
 										</li>
 									</>
 								)}
 								{!isAuthor && (
 									<li>
 										Signaler {post && "la publication"}
-										{comment && "le commentaire"}
+										{comment && "le commentaire"} {answer && "La réponse"}
 									</li>
 								)}
 							</ul>

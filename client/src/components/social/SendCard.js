@@ -1,5 +1,4 @@
 "use client";
-import { mutate } from "swr";
 import Image from "next/image";
 import styles from "@/styles/components/aryaMedia/sendCard.module.css";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -17,8 +16,11 @@ export default function SendCard({
 	type,
 	button,
 	postId,
+	commentId,
 	setRepostModal,
 	mutatePost,
+	mutateComment,
+	mutateAnswer,
 }) {
 	const [isWriting, setIsWriting] = useState(false);
 	const { user } = useContext(AuthContext);
@@ -36,6 +38,7 @@ export default function SendCard({
 				preview.appendChild(img);
 				img.src = URL.createObjectURL(file);
 			}
+			setIsWriting(true);
 		}
 	}
 
@@ -46,7 +49,11 @@ export default function SendCard({
 				setRepostModal(false);
 			}
 			if (type === "comment") {
-				mutate(`api/comments?postId=${postId}`);
+				mutateComment();
+				return;
+			}
+			if (type === "answer") {
+				mutateAnswer();
 				return;
 			}
 			mutatePost();
@@ -100,11 +107,20 @@ export default function SendCard({
 									hidden
 								/>
 							)}
+							{type === "answer" && (
+								<input
+									type="text"
+									name="commentId"
+									id="commentId"
+									defaultValue={commentId}
+									hidden
+								/>
+							)}
 						</div>
 					</div>
 					<div className={styles.preview} data-type={type}></div>
 				</div>
-				{(type === "post" || type === "comment") && (
+				{(type === "post" || type === "comment" || type === "answer") && (
 					<div className={styles.footer}>
 						<div className={styles.list}>
 							<ul>
@@ -147,7 +163,6 @@ export default function SendCard({
 								</li>
 								{type === "post" && (
 									<li>
-										{" "}
 										<Image
 											src="/images/icons/clock_icon.svg"
 											width={20}

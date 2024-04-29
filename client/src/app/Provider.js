@@ -6,7 +6,7 @@ import { getUser } from "@/api/user/user";
 import { usePathname, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { mutate } from "swr";
-
+import Image from "next/image";
 export default function Provider({ children }) {
 	const [uid, setUid] = useState(null);
 	const [user, setUser] = useState({});
@@ -14,12 +14,13 @@ export default function Provider({ children }) {
 
 	const { data, error, isLoading } = useSWR("/login/success", getSession, {
 		onSuccess: async (data, key, config) => {
-			setUid(data?.userId);
-			const user = await getUser(data?.userId);
+			setUid(data);
+			const user = await getUser(data);
 			setUser({ ...user });
 		},
 		refreshInterval: 10 * 60 * 1000,
 		revalidateOnMount: true,
+		revalidateOnFocus: true,
 	});
 
 	useEffect(() => {
@@ -29,7 +30,25 @@ export default function Provider({ children }) {
 	return (
 		<>
 			<AuthContext.Provider value={{ uid, setUid, user, setUser, error }}>
-				{isLoading ? <div>loading</div> : <>{children}</>}
+				{isLoading ? (
+					<div
+						style={{
+							position: "relative",
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+							height: "100vh",
+						}}>
+						<Image
+							src={"/images/logo/Arya_Monochrome_Meteorite.png"}
+							width={120}
+							height={120}
+							alt="icon"
+						/>
+					</div>
+				) : (
+					<>{children}</>
+				)}
 			</AuthContext.Provider>
 		</>
 	);

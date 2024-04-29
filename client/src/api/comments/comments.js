@@ -23,7 +23,6 @@ export async function getComments(postId, type) {
 			}
 		);
 		const data = await res.json();
-		console.log(data);
 		return data;
 	} catch (err) {
 		console.log(err);
@@ -46,7 +45,6 @@ export default async function deleteComment(commentId, uid) {
 
 		const data = await res.json();
 
-		revalidateTag("feed");
 
 		console.log(data);
 	} catch (err) {
@@ -74,7 +72,6 @@ export async function addCommentReaction(commentId, uid, reaction) {
 		);
 		const data = await res.json();
 
-		revalidateTag("comments");
 
 		console.log(data);
 	} catch (err) {
@@ -97,8 +94,6 @@ export async function deleteCommentReaction(commentId, uid) {
 			}
 		);
 		const data = await res.json();
-
-		revalidateTag("comments");
 
 		console.log(data);
 	} catch (err) {

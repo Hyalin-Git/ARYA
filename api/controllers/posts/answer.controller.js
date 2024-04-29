@@ -109,6 +109,7 @@ exports.saveAnswer = async (req, res, next) => {
 };
 
 exports.getAnswers = (req, res, next) => {
+	console.log("played");
 	const { commentId, parentAnswerId } = req.query;
 	const authUser = res.locals.user;
 
@@ -125,7 +126,7 @@ exports.getAnswers = (req, res, next) => {
 	})
 		.populate(
 			"answererId",
-			"lastName firstName userName blockedUsers isPrivate followers"
+			"lastName firstName userName picture blockedUsers isPrivate followers"
 		)
 		.exec()
 		.then(async (answers) => {
@@ -285,14 +286,14 @@ function checkIfReacted(answer, userId) {
 	let hasReacted;
 
 	// Set the variable hasReacted value where it returns true
-	if (answer.reactions.like.includes(userId)) {
-		hasReacted = "like";
-	} else if (answer.reactions.awesome.includes(userId)) {
-		hasReacted = "awesome";
-	} else if (answer.reactions.love.includes(userId)) {
+	if (answer.reactions.love.includes(userId)) {
 		hasReacted = "love";
 	} else if (answer.reactions.funny.includes(userId)) {
 		hasReacted = "funny";
+	} else if (answer.reactions.surprised.includes(userId)) {
+		hasReacted = "surprised";
+	} else if (answer.reactions.sad.includes(userId)) {
+		hasReacted = "sad";
 	}
 
 	return hasReacted;
@@ -302,7 +303,7 @@ exports.addReaction = async (req, res, next) => {
 	try {
 		const { reaction } = req.body;
 		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
-		const allowedReactions = ["like", "awesome", "funny", "love"];
+		const allowedReactions = ["love", "funny", "surprised", "sad"];
 
 		// Checks if the given reaction is in the allowedReactions array
 		if (!allowedReactions.includes(reaction)) {
@@ -323,7 +324,7 @@ exports.addReaction = async (req, res, next) => {
 			});
 		}
 
-		const lastUserReact = await checkIfReacted(answer, userId);
+		const lastUserReact = checkIfReacted(answer, userId);
 
 		// If the user already reacted
 		if (lastUserReact) {
@@ -406,7 +407,7 @@ exports.deleteReaction = async (req, res, next) => {
 			});
 		}
 
-		const lastUserReact = await checkIfReacted(answer, userId);
+		const lastUserReact = checkIfReacted(answer, userId);
 
 		if (!lastUserReact) {
 			return res.status(400).send({

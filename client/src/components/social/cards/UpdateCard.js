@@ -9,16 +9,22 @@ const initialState = {
 };
 export default function UpdateCard({
 	element,
+	type,
 	action,
 	setIsUpdate,
 	mutatePost,
+	mutateComment,
 }) {
 	const [state, formAction] = useFormState(action, initialState);
-
+	console.log(element);
 	useEffect(() => {
 		if (state.status === "success") {
 			setIsUpdate(false);
-			// mutate(`api/comments?postId=${element.postId || element.repostId}`);
+			if (type === "comment") {
+				mutateComment();
+				return;
+			}
+
 			mutatePost();
 		}
 	}, [state]);

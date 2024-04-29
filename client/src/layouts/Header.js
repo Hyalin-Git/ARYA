@@ -16,8 +16,6 @@ export default function Header() {
 	const [isScrollEnd, setIsScrollEnd] = useState(false);
 	const pathname = usePathname();
 
-	const showHeaderRoutes = ["/", "/social", "/Arya"];
-
 	useEffect(() => {
 		const header = document.getElementById("header");
 		document.addEventListener("scroll", (e) => {
@@ -50,88 +48,84 @@ export default function Header() {
 	}, [pathname, isScroll]);
 
 	return (
-		<>
-			{showHeaderRoutes.includes(pathname) && (
-				<header className={styles.header} id="header">
-					<nav
-						className={clsx(
-							styles.nav,
-							isScroll && styles.slide,
-							isScrollEnd && styles.disapear,
-							context?.uid && styles.connected
-						)}
-						id="nav">
-						{/* Logo  */}
-						<div className={styles.logo}>
-							<Link href="/">
+		<header className={styles.header} id="header">
+			<nav
+				className={clsx(
+					styles.nav,
+					isScroll && styles.slide,
+					isScrollEnd && styles.disapear,
+					context?.uid && styles.connected
+				)}
+				id="nav">
+				{/* Logo  */}
+				<div className={styles.logo}>
+					<Link href="/">
+						<Image
+							src={
+								isScroll || pathname.includes("/social")
+									? "/images/logo/Arya_Monochrome_White.png"
+									: "/images/logo/Arya_Monochrome_black.png"
+							}
+							width={60}
+							height={60}
+							alt="logo"
+							loading="lazy"
+							id="logo"
+						/>
+						<h1>rya</h1>
+					</Link>
+				</div>
+				{context?.uid && (
+					<div className={styles.searchbar}>
+						<input
+							className={montserrat.className}
+							type="search"
+							placeholder="Recherche"
+						/>
+					</div>
+				)}
+				{/* Menu  */}
+				<div className={styles.menu}>
+					{!context?.uid ? (
+						<ul>
+							<li>
+								<Link href="/auth">Connexion </Link>
+							</li>
+							<DarkModeBtn />
+						</ul>
+					) : (
+						<ul className={styles.connected}>
+							<li>
 								<Image
-									src={
-										isScroll || pathname.includes("/social")
-											? "/images/logo/Arya_Monochrome_White.png"
-											: "/images/logo/Arya_Monochrome_black.png"
-									}
-									width={60}
-									height={60}
-									alt="logo"
-									loading="lazy"
-									id="logo"
+									src="./images/icons/briefcase_icon.svg"
+									width={25}
+									height={25}
+									alt="icon"
 								/>
-								<h1>rya</h1>
-							</Link>
-						</div>
-						{context?.uid && (
-							<div className={styles.searchbar}>
-								<input
-									className={montserrat.className}
-									type="search"
-									placeholder="Recherche"
+							</li>
+							<li>
+								<Image
+									src="./images/icons/bell_icon.svg"
+									width={25}
+									height={25}
+									alt="icon"
 								/>
-							</div>
-						)}
-						{/* Menu  */}
-						<div className={styles.menu}>
-							{!context?.uid ? (
-								<ul>
-									<li>
-										<Link href="/auth">Connexion </Link>
-									</li>
-									<DarkModeBtn />
-								</ul>
-							) : (
-								<ul className={styles.connected}>
-									<li>
-										<Image
-											src="./images/icons/briefcase_icon.svg"
-											width={25}
-											height={25}
-											alt="icon"
-										/>
-									</li>
-									<li>
-										<Image
-											src="./images/icons/bell_icon.svg"
-											width={25}
-											height={25}
-											alt="icon"
-										/>
-									</li>
-									<li></li>
-									<HeaderUserInfo user={context?.user} />
-									<DarkModeBtn />
-									<li>
-										<Image
-											src="./images/icons/nine_dots_icon.svg"
-											width={30}
-											height={30}
-											alt="icon"
-										/>
-									</li>
-								</ul>
-							)}
-						</div>
-					</nav>
-				</header>
-			)}
-		</>
+							</li>
+							<li></li>
+							<HeaderUserInfo user={context?.user} />
+							<DarkModeBtn />
+							<li>
+								<Image
+									src="./images/icons/nine_dots_icon.svg"
+									width={30}
+									height={30}
+									alt="icon"
+								/>
+							</li>
+						</ul>
+					)}
+				</div>
+			</nav>
+		</header>
 	);
 }

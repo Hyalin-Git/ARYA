@@ -347,7 +347,7 @@ exports.addReaction = async (req, res, next) => {
 			});
 		}
 
-		const lastUserReact = await checkIfReacted(comment, userId);
+		const lastUserReact = checkIfReacted(comment, userId);
 
 		// If the user already reacted
 		if (lastUserReact) {
@@ -430,7 +430,7 @@ exports.deleteReaction = async (req, res, next) => {
 			});
 		}
 
-		const lastUserReact = await checkIfReacted(comment, userId);
+		const lastUserReact = checkIfReacted(comment, userId);
 
 		if (!lastUserReact) {
 			return res.status(400).send({

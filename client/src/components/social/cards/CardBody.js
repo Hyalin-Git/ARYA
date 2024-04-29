@@ -1,6 +1,6 @@
 import styles from "@/styles/components/social/cards/cardBody.module.css";
 import Image from "next/image";
-import UpdateCard from "../UpdateCard";
+import UpdateCard from "./UpdateCard";
 import { formattedDate, reactionLength } from "@/libs/utils";
 import { updatePost } from "@/actions/post";
 import { updateRepost } from "@/actions/repost";
@@ -10,23 +10,27 @@ export default function CardBody({
 	uid,
 	post,
 	comment,
+	answer,
 	isRepost,
 	isUpdate,
 	setIsUpdate,
 	showComments,
 	setShowComments,
 	mutatePost,
+	mutateComment,
 }) {
 	const updatePostWithId = updatePost.bind(null, post?._id, uid);
 	const updateRepostWithId = updateRepost.bind(null, post?._id, uid);
 	const updateCommentWithId = updateComment.bind(null, comment?._id, uid);
-	const reactLength = reactionLength(post || comment);
+	// const updateCommentWithId = updateComment.bind(null, comment?._id, uid);
+	const reactLength = reactionLength(post || comment || answer);
 	return (
 		<div className={styles.container}>
 			<div>
 				{isUpdate ? (
 					<UpdateCard
 						element={post ? post : comment}
+						type={post ? "post" : "comment"}
 						action={
 							isRepost
 								? updateRepostWithId
@@ -34,9 +38,10 @@ export default function CardBody({
 						}
 						setIsUpdate={setIsUpdate}
 						mutatePost={mutatePost}
+						mutateComment={mutateComment}
 					/>
 				) : (
-					<p>{post?.text || comment?.text}</p>
+					<p>{post?.text || comment?.text || answer?.text}</p>
 				)}
 			</div>
 			<div className={styles.media}>
@@ -167,6 +172,7 @@ export default function CardBody({
 						<span>
 							{post && post.repostsLength}
 							{comment && comment.repostsLength}
+							{answer && answer.answersLength}
 						</span>
 					</li>
 					<li
@@ -174,9 +180,11 @@ export default function CardBody({
 							e.preventDefault();
 							setShowComments(!showComments);
 						}}>
-						{post ? post?.commentsLength : comment?.answersLength}{" "}
-						{post && "Commentaires"}
+						{post && post?.commentsLength}
+						{comment && comment?.answersLength}
+						{answer && answer?.answersLength} {post && "Commentaires"}
 						{comment && "Réponses"}
+						{answer && "Réponses"}
 					</li>
 				</ul>
 			</div>

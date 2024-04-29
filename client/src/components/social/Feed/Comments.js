@@ -6,12 +6,15 @@ import SendCard from "../SendCard";
 import { saveComment } from "@/actions/comment";
 import useSWR from "swr";
 
-export default function Comments({ postId, type }) {
-	const saveCommentWithId = saveComment.bind(null, postId, type);
+export default function Comments({ uid, postId, type }) {
+	const saveCommentWithId = saveComment.bind(null, uid, postId, type);
 	const fetchComments = getComments.bind(null, postId, type);
-	const { data, error, isLoading } = useSWR(
+	const { data, mutate, error, isLoading } = useSWR(
 		`api/comments?postId=${postId}`,
-		fetchComments
+		fetchComments,
+		{
+			keepPreviousData: true,
+		}
 	);
 	return (
 		<div className={styles.container}>
@@ -20,6 +23,7 @@ export default function Comments({ postId, type }) {
 				type={"comment"}
 				button={"Commenter"}
 				postId={postId}
+				mutateComment={mutate}
 			/>
 			{isLoading ? (
 				<div className={styles.loading}>loading</div>
@@ -27,7 +31,13 @@ export default function Comments({ postId, type }) {
 				<>
 					{data?.length > 0 &&
 						data?.map((comment) => {
-							return <Card comment={comment} key={comment._id} />;
+							return (
+								<Card
+									comment={comment}
+									key={comment._id}
+									mutateComment={mutate}
+								/>
+							);
 						})}
 				</>
 			)}

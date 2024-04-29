@@ -62,3 +62,41 @@
 	text-decoration: underline;
 	cursor: pointer;
 }
+
+@media (max-width: 1450px) {
+	.header span {
+		font-size: 1rem;
+	}
+
+	.users .names {
+		font-weight: 500;
+		font-size: 0.9rem;
+	}
+	/* .users .username {
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: var(--lavender-color);
+	} */
+}
+
+@media (max-height: 880px) {
+	.header span {
+		font-size: 1rem;
+	}
+
+	.users .names {
+		font-weight: 500;
+		font-size: 0.8rem;
+	}
+	.users .username {
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: var(--lavender-color);
+	}
+}
+
+@media (max-height: 850px) {
+	.container {
+		display: none;
+	}
+}
