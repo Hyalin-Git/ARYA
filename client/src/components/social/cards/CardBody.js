@@ -8,10 +8,8 @@ import { updateComment } from "@/actions/comment";
 
 export default function CardBody({
 	uid,
-	post,
-	comment,
-	answer,
-	isRepost,
+	element,
+	type,
 	isUpdate,
 	setIsUpdate,
 	showComments,
@@ -19,69 +17,49 @@ export default function CardBody({
 	mutatePost,
 	mutateComment,
 }) {
-	const updatePostWithId = updatePost.bind(null, post?._id, uid);
-	const updateRepostWithId = updateRepost.bind(null, post?._id, uid);
-	const updateCommentWithId = updateComment.bind(null, comment?._id, uid);
+	const updatePostWithId = updatePost.bind(null, element?._id, uid);
+	const updateRepostWithId = updateRepost.bind(null, element?._id, uid);
+	const updateCommentWithId = updateComment.bind(null, element?._id, uid);
 	// const updateCommentWithId = updateComment.bind(null, comment?._id, uid);
-	const reactLength = reactionLength(post || comment || answer);
+	const reactLength = reactionLength(element);
 	return (
 		<div className={styles.container}>
 			<div>
 				{isUpdate ? (
 					<UpdateCard
-						element={post ? post : comment}
-						type={post ? "post" : "comment"}
+						element={element}
+						type={type}
 						action={
-							isRepost
-								? updateRepostWithId
-								: (post && updatePostWithId) || (comment && updateCommentWithId)
+							(type === "post" && updatePostWithId) ||
+							(type === "repost" && updateRepostWithId) ||
+							(type === "comment" && updateCommentWithId)
 						}
 						setIsUpdate={setIsUpdate}
 						mutatePost={mutatePost}
 						mutateComment={mutateComment}
 					/>
 				) : (
-					<p>{post?.text || comment?.text || answer?.text}</p>
+					<p>{element?.text}</p>
 				)}
 			</div>
 			<div className={styles.media}>
-				{post ? (
-					<>
-						{post?.media?.map((img, idx) => {
-							return (
-								<Image
-									src={img}
-									alt="media"
-									width={0}
-									height={0}
-									sizes="100vw"
-									quality={100}
-									key={idx}
-								/>
-							);
-						})}
-					</>
-				) : (
-					<>
-						{comment?.media?.map((img, idx) => {
-							return (
-								<Image
-									src={img}
-									alt="media"
-									width={0}
-									height={0}
-									sizes="100vw"
-									quality={100}
-									key={idx}
-								/>
-							);
-						})}
-					</>
-				)}
+				{element?.media?.map((img, idx) => {
+					return (
+						<Image
+							src={img}
+							alt="media"
+							width={0}
+							height={0}
+							sizes="100vw"
+							quality={100}
+							key={idx}
+						/>
+					);
+				})}
 			</div>
-			{isRepost && (
+			{type === "repost" && (
 				<div className={styles.repost}>
-					{!post?.postId?.text && !post?.postId?.media ? (
+					{!element?.postId?.text && !element?.postId?.media ? (
 						<div>
 							<p>Publication supprimé</p>
 						</div>
@@ -91,7 +69,7 @@ export default function CardBody({
 								<div className={styles.user}>
 									<Image
 										src={
-											post?.postId?.posterId?.picture ??
+											element?.postId?.posterId?.picture ??
 											"/images/profil/default-pfp.jpg"
 										}
 										alt="profil"
@@ -101,20 +79,20 @@ export default function CardBody({
 									/>
 									<div>
 										<span>
-											{post?.postId?.posterId?.firstName}{" "}
-											{post?.postId?.posterId?.lastName}
+											{element?.postId?.posterId?.firstName}{" "}
+											{element?.postId?.posterId?.lastName}
 										</span>
-										<span>{post?.postId?.posterId?.userName}</span>
-										<span>{formattedDate(post?.postId || comment)}</span>
+										<span>{element?.postId?.posterId?.userName}</span>
+										<span>{formattedDate(element?.postId)}</span>
 									</div>
 								</div>
 							</div>
 							<div className={styles.content}>
 								<div>
-									<p>{post?.postId?.text}</p>
+									<p>{element?.postId?.text}</p>
 								</div>
 								<div className={styles.media}>
-									{post?.postId?.media?.map((img) => {
+									{element?.postId?.media?.map((img) => {
 										return (
 											<Image
 												src={img}
@@ -170,9 +148,9 @@ export default function CardBody({
 							id="icon"
 						/>
 						<span>
-							{post && post.repostsLength}
-							{comment && comment.repostsLength}
-							{answer && answer.answersLength}
+							{type === "post" && element.repostsLength}
+							{type === "comment" && element.repostsLength}
+							{type === "post" && element.answersLength}
 						</span>
 					</li>
 					<li
@@ -180,11 +158,11 @@ export default function CardBody({
 							e.preventDefault();
 							setShowComments(!showComments);
 						}}>
-						{post && post?.commentsLength}
-						{comment && comment?.answersLength}
-						{answer && answer?.answersLength} {post && "Commentaires"}
-						{comment && "Réponses"}
-						{answer && "Réponses"}
+						{(type === "post" || type === "repost") && element?.commentsLength}
+						{(type === "comment" || type === "answer") &&
+							element?.answersLength}{" "}
+						{(type === "post" || type === "repost") && "Commentaires"}
+						{(type === "comment" || type === "answer") && "Réponses"}
 					</li>
 				</ul>
 			</div>

@@ -7,18 +7,20 @@ import { saveRepost } from "@/actions/repost";
 
 export default function CreateRepost({
 	uid,
-	post,
-	comment,
+	element,
 	setRepostModal,
 	mutatePost,
 }) {
 	const saveRepostWithUid = saveRepost.bind(null, uid);
-	const lastname = getAuthor(post, "lastname");
-	const firstname = getAuthor(post, "firstname");
-	const username = getAuthor(post, "username");
-	const posterImg = post?.posterId?.picture;
-	const reposterImg = post?.reposterId?.picture;
-	const commenterImg = comment?.commenterId?.picture;
+	const lastname = getAuthor(element, "lastname");
+	const firstname = getAuthor(element, "firstname");
+	const username = getAuthor(element, "username");
+	const posterImg = element?.posterId?.picture;
+	const reposterImg = element?.reposterId?.picture;
+	const commenterImg = element?.commenterId?.picture;
+	const answererImg = element?.answererId?.picture;
+	const picture = posterImg || reposterImg || commenterImg || answererImg;
+	
 	return (
 		<>
 			<div className={styles.container}>
@@ -36,7 +38,7 @@ export default function CreateRepost({
 						action={saveRepostWithUid}
 						type={"repost"}
 						button={"Poster"}
-						postId={post._id}
+						postId={element?._id}
 						setRepostModal={setRepostModal}
 						mutatePost={mutatePost}
 					/>
@@ -45,10 +47,7 @@ export default function CreateRepost({
 					<div className={styles.header}>
 						<div className={styles.user}>
 							<Image
-								src={
-									(posterImg || reposterImg || commenterImg) ??
-									"/images/profil/default-pfp.jpg"
-								}
+								src={picture ?? "/images/profil/default-pfp.jpg"}
 								alt="profil"
 								width={50}
 								height={50}
@@ -59,16 +58,16 @@ export default function CreateRepost({
 									{firstname} {lastname}
 								</span>
 								<span>{username}</span>
-								<span>{formattedDate(post || comment)}</span>
+								<span>{formattedDate(element)}</span>
 							</div>
 						</div>
 					</div>
 					<div className={styles.content}>
 						<div>
-							<p>{post?.text}</p>
+							<p>{element?.text}</p>
 						</div>
 						<div className={styles.media}>
-							{post?.media?.map((img) => {
+							{element?.media?.map((img) => {
 								return (
 									<Image
 										src={img}

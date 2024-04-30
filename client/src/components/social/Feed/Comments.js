@@ -33,7 +33,7 @@ export default function Comments({ uid, postId, type }) {
 						data?.map((comment) => {
 							return (
 								<Card
-									comment={comment}
+									element={comment}
 									key={comment._id}
 									mutateComment={mutate}
 								/>

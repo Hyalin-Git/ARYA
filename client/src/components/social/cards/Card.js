@@ -11,9 +11,7 @@ import CardFooter from "./CardFooter";
 import Answers from "../Feed/Answers";
 
 export default function Card({
-	post,
-	comment,
-	answer,
+	element,
 	mutatePost,
 	mutateComment,
 	mutateAnswer,
@@ -25,30 +23,40 @@ export default function Card({
 	const [showComments, setShowComments] = useState(false);
 	const [showAnswers, setShowAnswers] = useState(false);
 
-	const isRepost = post?.reposterId;
+	const isPost = element?.posterId;
+	const isRepost = element?.reposterId;
+	const isComment = element?.commenterId;
+	const isAnswer = element?.answererId;
 
 	return (
 		<div className={styles.container}>
-			<Link href={`/social/${post._id}`}>
-				<article
-					className={styles.wrapper}
-					data-type={post ? "post" : "comment"}
-					id="background">
+			<article
+				className={styles.wrapper}
+				data-type={isPost ? "post" : "comment"}
+				id="background">
+				<Link href={`/social/${element?._id}`}>
 					<CardHeader
 						uid={uid}
-						post={post}
-						comment={comment}
-						answer={answer}
+						element={element}
+						type={
+							(isPost && "post") ||
+							(isRepost && "repost") ||
+							(isComment && "comment") ||
+							(isAnswer && "answer")
+						}
 						setIsUpdate={setIsUpdate}
 						mutatePost={mutatePost}
 						mutateComment={mutateComment}
 					/>
 					<CardBody
 						uid={uid}
-						post={post}
-						comment={comment}
-						answer={answer}
-						isRepost={isRepost}
+						element={element}
+						type={
+							(isPost && "post") ||
+							(isRepost && "repost") ||
+							(isComment && "comment") ||
+							(isAnswer && "answer")
+						}
 						isUpdate={isUpdate}
 						setIsUpdate={setIsUpdate}
 						showComments={showComments}
@@ -56,11 +64,16 @@ export default function Card({
 						mutatePost={mutatePost}
 						mutateComment={mutateComment}
 					/>
+
 					<CardFooter
 						uid={uid}
-						post={post}
-						comment={comment}
-						answer={answer}
+						element={element}
+						type={
+							(isPost && "post") ||
+							(isRepost && "repost") ||
+							(isComment && "comment") ||
+							(isAnswer && "answer")
+						}
 						mutatePost={mutatePost}
 						repostModal={repostModal}
 						setRepostModal={setRepostModal}
@@ -70,22 +83,22 @@ export default function Card({
 						setShowAnswers={setShowAnswers}
 						mutateComment={mutateComment}
 					/>
-					{post && showComments && (
-						<Comments
-							uid={uid}
-							postId={post._id}
-							type={isRepost ? "repost" : "post"}
-						/>
-					)}
-					{comment && showAnswers && (
-						<Answers uid={uid} commentId={comment._id} />
-					)}
-				</article>
-			</Link>
+				</Link>
+				{(isPost || isRepost) && showComments && (
+					<Comments
+						uid={uid}
+						postId={element._id}
+						type={(isPost && "post") || (isRepost && "repost")}
+					/>
+				)}
+				{isComment && showAnswers && (
+					<Answers uid={uid} commentId={element._id} />
+				)}
+			</article>
 			{repostModal && (
 				<CreateRepost
 					uid={uid}
-					post={post}
+					element={element}
 					setRepostModal={setRepostModal}
 					mutatePost={mutatePost}
 				/>

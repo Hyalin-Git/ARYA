@@ -57,7 +57,7 @@ export default function AllFeed({ initialPosts }) {
 			<div className={styles.cards}>
 				{data[0]?.length > 0 &&
 					data[0]?.map((post) => {
-						return <Card post={post} key={post._id} mutatePost={mutate} />;
+						return <Card element={post} key={post._id} mutatePost={mutate} />;
 					})}
 			</div>
 			<div className={styles.loader} ref={ref}>

@@ -33,7 +33,7 @@ export default function Answers({ uid, commentId }) {
 					{data?.length > 0 &&
 						data?.map((answer) => {
 							return (
-								<Card answer={answer} key={answer._id} mutateAnswer={mutate} />
+								<Card element={answer} key={answer._id} mutateAnswer={mutate} />
 							);
 						})}
 				</>

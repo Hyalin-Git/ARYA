@@ -1,4 +1,5 @@
 "use server";
+import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 export async function getPost(postId) {
@@ -9,6 +10,9 @@ export async function getPost(postId) {
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
 				"Content-Type": "application/json",
+			},
+			next: {
+				tags: ["post"],
 			},
 		});
 
@@ -35,6 +39,8 @@ export async function deletePost(postId, uid) {
 		);
 
 		const data = await res.json();
+
+		revalidateTag("post");
 	} catch (err) {
 		console.log(err);
 	}
@@ -58,6 +64,8 @@ export async function addReaction(postId, uid, reaction) {
 			}
 		);
 		const data = await res.json();
+
+		revalidateTag("post");
 	} catch (err) {
 		console.log(err);
 	}
@@ -78,6 +86,7 @@ export async function deleteReaction(postId, uid) {
 		);
 
 		const data = await res.json();
+		revalidateTag("post");
 	} catch (err) {
 		console.log(err);
 	}

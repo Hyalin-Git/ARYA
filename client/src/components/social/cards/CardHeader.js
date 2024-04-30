@@ -1,31 +1,31 @@
 "use client";
 import deleteComment from "@/api/comments/comments";
-import deletePost from "@/api/posts/post";
+import { deletePost } from "@/api/posts/post";
 import deleteRepost from "@/api/posts/repost";
 import { formattedDate, getAuthor, authorCheck } from "@/libs/utils";
 import styles from "@/styles/components/social/cards/cardHeader.module.css";
 import Image from "next/image";
 import { useState } from "react";
-import { mutate } from "swr";
 
 export default function CardHeader({
 	uid,
-	post,
-	comment,
-	answer,
+	element,
+	type,
 	setIsUpdate,
 	mutatePost,
 	mutateComment,
 }) {
 	const [moreModal, setMoreModal] = useState(false);
-	const firstname = getAuthor(post || comment || answer, "firstname");
-	const lastname = getAuthor(post || comment || answer, "lastname");
-	const username = getAuthor(post || comment || answer, "username");
-	const isAuthor = authorCheck(uid, post || comment || answer);
-	const posterImg = post?.posterId?.picture;
-	const reposterImg = post?.reposterId?.picture;
-	const commenterImg = comment?.commenterId?.picture;
-	const answererImg = answer?.answererId?.picture;
+	const firstname = getAuthor(element, "firstname");
+	const lastname = getAuthor(element, "lastname");
+	const username = getAuthor(element, "username");
+	const isAuthor = authorCheck(uid, element);
+	const posterImg = element?.posterId?.picture;
+	const reposterImg = element?.reposterId?.picture;
+	const commenterImg = element?.commenterId?.picture;
+	const answererImg = element?.answererId?.picture;
+	const picture = posterImg || reposterImg || commenterImg || answererImg;
+	console.log("type of element:", type);
 
 	function handleMoreModal(e) {
 		e.preventDefault();
@@ -37,30 +37,29 @@ export default function CardHeader({
 		setIsUpdate(true);
 	}
 
-	async function handleDeletePost(e) {
+	async function handleDeleteElt(e) {
 		e.preventDefault();
-		if (post?.reposterId) {
-			await deleteRepost(post?._id, uid);
+		if (type === "repost") {
+			await deleteRepost(element?._id, uid);
 			mutatePost();
 			return;
 		}
-		if (comment) {
-			await deleteComment(comment?._id, uid);
+		if (type === "comment") {
+			await deleteComment(element?._id, uid);
 			mutateComment();
 			return;
 		}
-		await deletePost(post._id, uid);
-		mutatePost();
+		if (type === "post") {
+			await deletePost(element?._id, uid);
+			mutatePost();
+		}
 	}
 
 	return (
 		<div className={styles.container}>
 			<div className={styles.user}>
 				<Image
-					src={
-						(posterImg || reposterImg || commenterImg || answererImg) ??
-						"/images/profil/default-pfp.jpg"
-					}
+					src={picture ?? "/images/profil/default-pfp.jpg"}
 					alt="profil"
 					width={50}
 					height={50}
@@ -71,7 +70,7 @@ export default function CardHeader({
 						{firstname} {lastname}
 					</span>
 					<span>{username}</span>
-					<span>{formattedDate(post || comment)}</span>
+					<span>{formattedDate(element)}</span>
 				</div>
 			</div>
 			<div className={styles.more} onClick={handleMoreModal}>
@@ -88,21 +87,27 @@ export default function CardHeader({
 								{isAuthor && (
 									<>
 										<li onClick={handleIsUpdate}>
-											Modifier {post && "la publication"}
-											{comment && "le commentaire"}
-											{answer && "La réponse"}
+											Modifier{" "}
+											{(type === "post" || type === "repost") &&
+												"la publication"}
+											{type === "comment" && "le commentaire"}
+											{type === "answer" && "La réponse"}
 										</li>
-										<li onClick={handleDeletePost}>
-											Supprimer {post && "la publication"}
-											{comment && "le commentaire"}
-											{answer && "La réponse"}
+										<li onClick={handleDeleteElt}>
+											Supprimer{" "}
+											{(type === "post" || type === "repost") &&
+												"la publication"}
+											{type === "comment" && "le commentaire"}
+											{type === "answer" && "La réponse"}
 										</li>
 									</>
 								)}
 								{!isAuthor && (
 									<li>
-										Signaler {post && "la publication"}
-										{comment && "le commentaire"} {answer && "La réponse"}
+										Signaler{" "}
+										{(type === "post" || type === "repost") && "la publication"}
+										{type === "comment" && "le commentaire"}
+										{type === "answer" && "La réponse"}
 									</li>
 								)}
 							</ul>

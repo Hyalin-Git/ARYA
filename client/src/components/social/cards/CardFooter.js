@@ -13,9 +13,8 @@ import { mutate } from "swr";
 
 export default function CardFooter({
 	uid,
-	post,
-	comment,
-	answer,
+	element,
+	type,
 	mutatePost,
 	mutateComment,
 	repostModal,
@@ -26,14 +25,8 @@ export default function CardFooter({
 	setShowAnswers,
 }) {
 	const [reactionModal, setReactionModal] = useState(false);
-	const userHasReacted = hasReacted(
-		post?.reactions || comment?.reactions || answer?.reactions,
-		uid
-	);
-	const getUserReaction = findUidReaction(
-		post?.reactions || comment?.reactions || answer?.reactions,
-		uid
-	);
+	const userHasReacted = hasReacted(element.reactions, uid);
+	const getUserReaction = findUidReaction(element.reactions, uid);
 	function handleMouseClick(e) {
 		e.preventDefault();
 		let timeout;
@@ -53,34 +46,38 @@ export default function CardFooter({
 
 	async function handleReaction(e, reaction) {
 		e.preventDefault();
-		if (post?.reposterId) {
-			await addRepostReaction(post?._id, uid, reaction);
+		if (type === "repost") {
+			await addRepostReaction(element?._id, uid, reaction);
 			mutatePost();
 			return;
 		}
-		if (comment) {
-			await addCommentReaction(comment?._id, uid, reaction);
+		if (type === "comment") {
+			await addCommentReaction(element?._id, uid, reaction);
 			mutateComment();
 			return;
 		}
-		await addReaction(post?._id, uid, reaction);
-		mutatePost();
+		await addReaction(element?._id, uid, reaction);
+		if (mutatePost) {
+			mutatePost();
+		}
 	}
 
 	async function handleDeleteReaction(e) {
 		e.preventDefault();
-		if (post?.reposterId) {
-			await deleteRepostReaction(post?._id, uid);
+		if (type === "repost") {
+			await deleteRepostReaction(element?._id, uid);
 			mutatePost();
 			return;
 		}
-		if (comment) {
-			await deleteCommentReaction(comment?._id, uid);
+		if (type === "comment") {
+			await deleteCommentReaction(element?._id, uid);
 			mutateComment();
 			return;
 		}
-		await deleteReaction(post?._id, uid);
-		mutatePost();
+		await deleteReaction(element?._id, uid);
+		if (mutatePost) {
+			mutatePost();
+		}
 	}
 
 	return (
@@ -151,7 +148,10 @@ export default function CardFooter({
 				</div>
 				<div
 					className={styles.btn}
-					onClick={(e) => setRepostModal(!repostModal)}>
+					onClick={(e) => {
+						e.preventDefault();
+						setRepostModal(!repostModal);
+					}}>
 					<Image
 						src={"/images/icons/repost_icon.svg"}
 						alt="icon"
@@ -164,11 +164,11 @@ export default function CardFooter({
 					className={styles.btn}
 					onClick={(e) => {
 						e.preventDefault();
-						if (post) {
+						if (type === "post" || type === "repost") {
 							setShowComments(!showComments);
 							return;
 						}
-						if (comment) {
+						if (type === "comment") {
 							setShowAnswers(!showAnswers);
 							return;
 						}
