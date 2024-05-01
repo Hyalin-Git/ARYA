@@ -56,7 +56,9 @@ export default function SendCard({
 				mutateAnswer();
 				return;
 			}
-			mutatePost();
+			if (mutatePost) {
+				mutatePost();
+			}
 		}
 	}, [state]);
 	return (

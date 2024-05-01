@@ -24,7 +24,7 @@ export default function CardBody({
 	const reactLength = reactionLength(element);
 	return (
 		<div className={styles.container}>
-			<div>
+			<div >
 				{isUpdate ? (
 					<UpdateCard
 						element={element}

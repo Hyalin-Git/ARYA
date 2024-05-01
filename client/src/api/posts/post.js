@@ -1,6 +1,7 @@
 "use server";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function getPost(postId) {
 	try {
@@ -44,6 +45,8 @@ export async function deletePost(postId, uid) {
 	} catch (err) {
 		console.log(err);
 	}
+
+	redirect("/social");
 }
 
 export async function addReaction(postId, uid, reaction) {

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import styles from "@/styles/components/social/cards/card.module.css";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Comments from "../Feed/Comments";
 import { AuthContext } from "@/context/auth";
 import CreateRepost from "../CreateRepost";
@@ -9,14 +9,17 @@ import CardHeader from "./CardHeader";
 import CardBody from "./CardBody";
 import CardFooter from "./CardFooter";
 import Answers from "../Feed/Answers";
+import { usePathname } from "next/navigation";
 
 export default function Card({
 	element,
+	hasParams,
 	mutatePost,
 	mutateComment,
 	mutateAnswer,
 }) {
 	const { uid } = useContext(AuthContext);
+
 	const [repostModal, setRepostModal] = useState(false);
 	const [isUpdate, setIsUpdate] = useState(false);
 
@@ -28,62 +31,125 @@ export default function Card({
 	const isComment = element?.commenterId;
 	const isAnswer = element?.answererId;
 
+	useEffect(() => {
+		setShowComments(hasParams);
+		setShowAnswers(hasParams);
+	}, [hasParams]);
+
+	console.log(element);
+
 	return (
 		<div className={styles.container}>
 			<article
 				className={styles.wrapper}
 				data-type={isPost ? "post" : "comment"}
 				id="background">
-				<Link href={`/social/${element?._id}`}>
-					<CardHeader
-						uid={uid}
-						element={element}
-						type={
-							(isPost && "post") ||
-							(isRepost && "repost") ||
-							(isComment && "comment") ||
-							(isAnswer && "answer")
-						}
-						setIsUpdate={setIsUpdate}
-						mutatePost={mutatePost}
-						mutateComment={mutateComment}
-					/>
-					<CardBody
-						uid={uid}
-						element={element}
-						type={
-							(isPost && "post") ||
-							(isRepost && "repost") ||
-							(isComment && "comment") ||
-							(isAnswer && "answer")
-						}
-						isUpdate={isUpdate}
-						setIsUpdate={setIsUpdate}
-						showComments={showComments}
-						setShowComments={setShowComments}
-						mutatePost={mutatePost}
-						mutateComment={mutateComment}
-					/>
+				{isUpdate ? (
+					<>
+						<CardHeader
+							uid={uid}
+							element={element}
+							type={
+								(isPost && "post") ||
+								(isRepost && "repost") ||
+								(isComment && "comment") ||
+								(isAnswer && "answer")
+							}
+							setIsUpdate={setIsUpdate}
+							mutatePost={mutatePost}
+							mutateComment={mutateComment}
+						/>
+						<CardBody
+							uid={uid}
+							element={element}
+							type={
+								(isPost && "post") ||
+								(isRepost && "repost") ||
+								(isComment && "comment") ||
+								(isAnswer && "answer")
+							}
+							isUpdate={isUpdate}
+							setIsUpdate={setIsUpdate}
+							showComments={showComments}
+							setShowComments={setShowComments}
+							mutatePost={mutatePost}
+							mutateComment={mutateComment}
+						/>
+						<CardFooter
+							uid={uid}
+							element={element}
+							type={
+								(isPost && "post") ||
+								(isRepost && "repost") ||
+								(isComment && "comment") ||
+								(isAnswer && "answer")
+							}
+							mutatePost={mutatePost}
+							repostModal={repostModal}
+							setRepostModal={setRepostModal}
+							showComments={showComments}
+							setShowComments={setShowComments}
+							showAnswers={showAnswers}
+							setShowAnswers={setShowAnswers}
+							mutateComment={mutateComment}
+						/>
+					</>
+				) : (
+					<Link
+						href={`/social/${element?._id}`}
+						className={styles.link}
+						data-disabled={isUpdate}
+						aria-disabled={isUpdate}>
+						<CardHeader
+							uid={uid}
+							element={element}
+							type={
+								(isPost && "post") ||
+								(isRepost && "repost") ||
+								(isComment && "comment") ||
+								(isAnswer && "answer")
+							}
+							setIsUpdate={setIsUpdate}
+							mutatePost={mutatePost}
+							mutateComment={mutateComment}
+						/>
+						<CardBody
+							uid={uid}
+							element={element}
+							type={
+								(isPost && "post") ||
+								(isRepost && "repost") ||
+								(isComment && "comment") ||
+								(isAnswer && "answer")
+							}
+							isUpdate={isUpdate}
+							setIsUpdate={setIsUpdate}
+							showComments={showComments}
+							setShowComments={setShowComments}
+							mutatePost={mutatePost}
+							mutateComment={mutateComment}
+						/>
+						<CardFooter
+							uid={uid}
+							element={element}
+							type={
+								(isPost && "post") ||
+								(isRepost && "repost") ||
+								(isComment && "comment") ||
+								(isAnswer && "answer")
+							}
+							mutatePost={mutatePost}
+							repostModal={repostModal}
+							setRepostModal={setRepostModal}
+							showComments={showComments}
+							setShowComments={setShowComments}
+							showAnswers={showAnswers}
+							setShowAnswers={setShowAnswers}
+							mutateComment={mutateComment}
+						/>
+					</Link>
+				)}
 
-					<CardFooter
-						uid={uid}
-						element={element}
-						type={
-							(isPost && "post") ||
-							(isRepost && "repost") ||
-							(isComment && "comment") ||
-							(isAnswer && "answer")
-						}
-						mutatePost={mutatePost}
-						repostModal={repostModal}
-						setRepostModal={setRepostModal}
-						showComments={showComments}
-						setShowComments={setShowComments}
-						showAnswers={showAnswers}
-						setShowAnswers={setShowAnswers}
-						mutateComment={mutateComment}
-					/>
-				</Link>
 				{(isPost || isRepost) && showComments && (
 					<Comments
 						uid={uid}

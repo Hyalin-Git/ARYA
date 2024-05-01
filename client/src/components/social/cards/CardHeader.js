@@ -41,7 +41,9 @@ export default function CardHeader({
 		e.preventDefault();
 		if (type === "repost") {
 			await deleteRepost(element?._id, uid);
-			mutatePost();
+			if (mutatePost) {
+				mutatePost();
+			}
 			return;
 		}
 		if (type === "comment") {
@@ -51,7 +53,9 @@ export default function CardHeader({
 		}
 		if (type === "post") {
 			await deletePost(element?._id, uid);
-			mutatePost();
+			if (mutatePost) {
+				mutatePost();
+			}
 		}
 	}
 

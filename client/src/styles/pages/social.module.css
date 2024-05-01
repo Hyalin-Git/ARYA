@@ -1,2 +1,12 @@
 .container {
+	display: flex;
+	flex-direction: column;
+	overflow-y: scroll;
+	gap: 20px;
+	height: 90vh;
+	border-radius: 8px 8px 0 0;
+}
+
+.container::-webkit-scrollbar {
+	display: none;
 }

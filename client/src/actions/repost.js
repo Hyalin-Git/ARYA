@@ -51,6 +51,7 @@ export async function updateRepost(repostId, uid, prevState, formData) {
 		});
 
 		console.log(res.data);
+		revalidateTag("repost");
 		return {
 			status: "success",
 			message: "",

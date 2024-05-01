@@ -25,8 +25,8 @@ export default function CardFooter({
 	setShowAnswers,
 }) {
 	const [reactionModal, setReactionModal] = useState(false);
-	const userHasReacted = hasReacted(element.reactions, uid);
-	const getUserReaction = findUidReaction(element.reactions, uid);
+	const userHasReacted = hasReacted(element?.reactions, uid);
+	const getUserReaction = findUidReaction(element?.reactions, uid);
 	function handleMouseClick(e) {
 		e.preventDefault();
 		let timeout;
@@ -48,7 +48,9 @@ export default function CardFooter({
 		e.preventDefault();
 		if (type === "repost") {
 			await addRepostReaction(element?._id, uid, reaction);
-			mutatePost();
+			if (mutatePost) {
+				mutatePost();
+			}
 			return;
 		}
 		if (type === "comment") {
@@ -66,7 +68,9 @@ export default function CardFooter({
 		e.preventDefault();
 		if (type === "repost") {
 			await deleteRepostReaction(element?._id, uid);
-			mutatePost();
+			if (mutatePost) {
+				mutatePost();
+			}
 			return;
 		}
 		if (type === "comment") {

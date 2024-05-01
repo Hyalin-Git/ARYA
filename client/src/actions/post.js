@@ -50,11 +50,12 @@ export async function updatePost(postId, uid, prevState, formData) {
 			},
 			data: data,
 		});
-
+		revalidateTag("post");
 		return {
 			status: "success",
 			message: "",
 		};
+
 		console.log(res.data);
 	} catch (err) {
 		console.log(err);

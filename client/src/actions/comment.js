@@ -52,7 +52,7 @@ export async function updateComment(commentId, uid, prevState, formData) {
 			},
 			data: data,
 		});
-
+		revalidateTag("comment");
 		return {
 			status: "success",
 			message: "",

@@ -398,10 +398,10 @@ export function formattedDate(element) {
 
 export function reactionLength(element) {
 	const length =
-		element?.reactions.love.length +
-		element?.reactions.funny.length +
-		element?.reactions.surprised.length +
-		element?.reactions.sad.length;
+		element?.reactions?.love.length +
+		element?.reactions?.funny.length +
+		element?.reactions?.surprised.length +
+		element?.reactions?.sad.length;
 
 	return length;
 }

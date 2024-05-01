@@ -16,16 +16,18 @@ export default function UpdateCard({
 	mutateComment,
 }) {
 	const [state, formAction] = useFormState(action, initialState);
-	console.log(element);
 	useEffect(() => {
 		if (state.status === "success") {
 			setIsUpdate(false);
 			if (type === "comment") {
-				mutateComment();
+				if (mutateComment) {
+					mutateComment();
+				}
 				return;
 			}
-
-			mutatePost();
+			if (mutatePost) {
+				mutatePost();
+			}
 		}
 	}, [state]);
 
@@ -34,7 +36,7 @@ export default function UpdateCard({
 		setIsUpdate(false);
 	}
 	return (
-		<div className={styles.container}>
+		<div className={styles.container} id="update">
 			<form action={formAction}>
 				<div className={styles.text}>
 					<textarea
