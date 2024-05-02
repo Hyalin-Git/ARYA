@@ -9,7 +9,6 @@ const RefreshTokenSchema = new mongoose.Schema(
 		},
 		sessionId: {
 			type: String,
-			unique: true,
 		},
 		token: { type: String, required: true },
 		createdAt: {

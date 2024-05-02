@@ -70,8 +70,9 @@ exports.getAllFeed = async (req, res, next) => {
 
 exports.getByFollowingFeed = async (req, res, next) => {
 	try {
-		const authUser = req.locals.user;
+		const authUser = res.locals.user;
 
+		const { offset, limit } = req.query;
 		const posts = await PostModel.find({
 			posterId: { $in: authUser.following },
 		})
@@ -104,7 +105,7 @@ exports.getByFollowingFeed = async (req, res, next) => {
 			(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
 		);
 
-		const feedSpliced = sortedFeed.splice(0, limit ?? 5);
+		const feedSpliced = sortedFeed.slice(offset ?? 0, limit ?? 10);
 
 		return res.status(200).send(feedSpliced);
 	} catch (err) {

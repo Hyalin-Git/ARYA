@@ -39,6 +39,7 @@ exports.authenticate = (req, res, next) => {
 
 					res.locals.user = user;
 					res.locals.decodedToken = decoded;
+
 					// console.log(decoded);
 
 					// console.log(

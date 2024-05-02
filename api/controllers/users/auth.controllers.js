@@ -151,7 +151,7 @@ exports.signIn = (req, res, next) => {
 
 				bcrypt
 					.compare(req.body.password, user.password)
-					.then((match) => {
+					.then(async (match) => {
 						if (!match) {
 							return res
 								.status(401)
@@ -162,46 +162,45 @@ exports.signIn = (req, res, next) => {
 							const accessToken = generateAccessToken(user);
 							const refreshToken = generateRefreshToken(user, rememberMe);
 
-							// Saving a new RefreshToken in the DB
-							new RefreshTokenModel({
+							const getToken = await RefreshTokenModel.findOne({
 								userId: user._id,
-								token: refreshToken,
-							})
-								.save()
-								.then(() => {
-									res.status(201).send({
-										userId: user._id,
-										isAdmin: user.admin,
-										accessToken: accessToken,
-										refreshToken: refreshToken,
-									});
-								})
-								.catch((err) => {
-									// If the user already has a registered token then update it
-									// err.code 11000 = duplicate entry
-									if (err.code === 11000) {
-										RefreshTokenModel.findOneAndUpdate(
-											{ userId: user._id },
-											{
-												$set: {
-													token: refreshToken,
-												},
-											},
-											{ setDefaultsOnInsert: true, new: true }
-										)
-											.then(() => {
-												res.status(200).send({
-													userId: user._id,
-													isAdmin: user.admin,
-													accessToken: accessToken,
-													refreshToken: refreshToken,
-												});
-											})
-											.catch((err) => res.status(500).send(err));
-									} else {
-										res.status(500).send(err);
-									}
+							});
+
+							if (!getToken) {
+								const saveRefreshToken = new RefreshTokenModel({
+									userId: user._id,
+									token: refreshToken,
 								});
+
+								await saveRefreshToken.save();
+
+								return res.status(201).send({
+									userId: user._id,
+									isAdmin: user.admin,
+									accessToken: accessToken,
+									refreshToken: refreshToken,
+								});
+							}
+
+							await RefreshTokenModel.findOneAndUpdate(
+								{ userId: user._id },
+								{
+									$set: {
+										token: refreshToken,
+									},
+								},
+								{
+									setDefaultsOnInsert: true,
+									new: true,
+								}
+							);
+
+							return res.status(201).send({
+								userId: user._id,
+								isAdmin: user.admin,
+								accessToken: accessToken,
+								refreshToken: refreshToken,
+							});
 						}
 					})
 					.catch((err) => res.status(506).send(err));
