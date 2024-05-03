@@ -4,8 +4,10 @@ import Header from "@/layouts/Header";
 import UserPanel from "@/layouts/social/UserPanel";
 import SuggestionsPanel from "@/layouts/social/SuggestionsPanel";
 import ConversationPanel from "@/layouts/social/ConversationPanel";
+import { getFollowSuggestions } from "@/api/user/user";
 
 export default async function AryaMediaLayout({ children }) {
+	const suggestions = await getFollowSuggestions();
 	return (
 		<>
 			<Header />
@@ -13,7 +15,7 @@ export default async function AryaMediaLayout({ children }) {
 				<div className={styles.container}>
 					<aside>
 						<UserPanel />
-						<SuggestionsPanel />
+						<SuggestionsPanel suggestions={suggestions} />
 					</aside>
 					<div className={styles.column}>{children}</div>
 					<aside>

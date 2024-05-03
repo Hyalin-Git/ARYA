@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { getSession } from "@/api/user/auth";
 import { AuthContext } from "@/context/auth";
 import { getUser } from "@/api/user/user";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import useSWR from "swr";
 import { mutate } from "swr";
 import Image from "next/image";

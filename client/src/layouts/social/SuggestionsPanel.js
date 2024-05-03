@@ -1,11 +1,11 @@
-"use server";
+"use client";
 import styles from "@/styles/layouts/social/followPanel.module.css";
-import { getFollowSuggestions } from "@/api/user/user";
 import Image from "next/image";
 import FollowButton from "@/components/social/FollowButton";
-export default async function FollowPanel() {
-	const suggestions = await getFollowSuggestions();
-
+import { useState } from "react";
+import MoreSuggestions from "./MoreSuggestions";
+export default function FollowPanel({ suggestions }) {
+	const [more, setMore] = useState(false);
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
@@ -43,8 +43,15 @@ export default async function FollowPanel() {
 				})}
 			</div>
 			<div className={styles.footer}>
-				<span>Voir plus</span>
+				<span
+					onClick={(e) => {
+						e.preventDefault();
+						setMore(true);
+					}}>
+					Voir plus
+				</span>
 			</div>
+			{more && <MoreSuggestions setMore={setMore} />}
 		</div>
 	);
 }

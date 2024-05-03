@@ -43,6 +43,7 @@ const UserSchema = new mongoose.Schema(
 		biographie: {
 			type: String,
 			maxLength: 350,
+			default: "Salut ! Je suis nouveau ici sur Arya",
 		},
 
 		picture: {

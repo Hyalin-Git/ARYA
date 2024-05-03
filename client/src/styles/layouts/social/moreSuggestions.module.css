@@ -1,0 +1,62 @@
+.container {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 9999;
+	background-color: white;
+
+	border-radius: 8px;
+}
+.header {
+	padding: 20px;
+}
+.header span {
+	font-weight: 600;
+	font-size: 1.2rem;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+}
+.users {
+	padding: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.users:nth-child(1) {
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.users:hover {
+	cursor: pointer;
+	background-color: color-mix(in srgb, white, #f5f5f5 20%);
+	transition: 50ms all linear;
+}
+
+.left {
+	display: flex;
+	gap: 5px;
+	align-items: center;
+	max-width: 150px;
+	min-width: 150px;
+	overflow: hidden;
+}
+.users img {
+	border-radius: 50%;
+}
+.usernames {
+	text-wrap: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* BIOGRAPHIE  */
+.bio {
+	max-width: 200px;
+	text-wrap: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

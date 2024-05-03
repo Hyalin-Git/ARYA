@@ -52,6 +52,34 @@ export async function getUser(uid) {
 	}
 }
 
+// Block logic
+
+export async function blockUser(uid, uidToBlock) {
+	try {
+		const dataToSend = {
+			idToBlock: uidToBlock,
+		};
+		const response = await fetch(
+			`http://localhost:5000/api/users/block/${uid}`,
+			{
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(dataToSend),
+			}
+		);
+
+		const data = await response.json();
+
+		console.log(data);
+	} catch (err) {
+		console.log("block user error:", err);
+	}
+}
+
 // Follow logic
 
 export async function getFollowSuggestions(limit) {

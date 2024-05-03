@@ -462,6 +462,9 @@ exports.deleteOneUser = (req, res, next) => {
 
 exports.blockAnUser = async (req, res, next) => {
 	try {
+		console.log("block user is played");
+		console.log(req.body.idToBlock);
+		console.log(req.params.id);
 		const targetUser = await UserModel.findById({ _id: req.body.idToBlock });
 
 		if (targetUser.admin === true) {

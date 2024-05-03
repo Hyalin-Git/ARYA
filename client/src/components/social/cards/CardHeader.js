@@ -2,6 +2,7 @@
 import deleteComment from "@/api/comments/comments";
 import { deletePost } from "@/api/posts/post";
 import deleteRepost from "@/api/posts/repost";
+import { blockUser } from "@/api/user/user";
 import { formattedDate, getAuthor, authorCheck } from "@/libs/utils";
 import styles from "@/styles/components/social/cards/cardHeader.module.css";
 import Image from "next/image";
@@ -35,6 +36,17 @@ export default function CardHeader({
 	function handleIsUpdate(e) {
 		e.preventDefault();
 		setIsUpdate(true);
+	}
+
+	async function handleBlockUser(e) {
+		e.preventDefault();
+		const uidToBlock =
+			element?.posterId?._id ||
+			element?.reposterId?._id ||
+			element?.commenterId?._id ||
+			element?.answererId?._id;
+
+		await blockUser(uid, uidToBlock);
 	}
 
 	async function handleDeleteElt(e) {
@@ -85,7 +97,7 @@ export default function CardHeader({
 								{!isAuthor && (
 									<>
 										<li>Suivre {username}</li>
-										<li>Bloquer {username}</li>
+										<li onClick={handleBlockUser}>Bloquer {username}</li>
 									</>
 								)}
 								{isAuthor && (
