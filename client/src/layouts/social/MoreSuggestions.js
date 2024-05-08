@@ -3,35 +3,64 @@ import { getFollowSuggestions } from "@/api/user/user";
 import useSWR from "swr";
 import Image from "next/image";
 import FollowButton from "@/components/social/FollowButton";
+import { useInView } from "react-intersection-observer";
+import { useEffect, useMemo, useState } from "react";
+import useSWRInfinite from "swr/infinite";
 
 export default function MoreSuggestions({ setMore }) {
-	const getSuggestionsWithLimit = getFollowSuggestions.bind(null, 10);
-	const { data, error, isLoading } = useSWR(
-		`users/suggestion/`,
-		getSuggestionsWithLimit
-	);
+	const [loadedOnce, setLoadedOnce] = useState(false);
+	const { ref, inView } = useInView();
+	const [limit, setLimit] = useState(10);
+	const getSuggestionsWithLimit = getFollowSuggestions.bind(null, limit);
+
+	const getKey = (pageIndex, previousPageData) => {
+		if (previousPageData && !previousPageData.length) return null; // reached the end
+		return `users/suggestion?limit=${limit}`; // SWR key
+	};
+
+	const { data, size, setSize, mutate, isValidating, error, isLoading } =
+		useSWRInfinite(getKey, getSuggestionsWithLimit, {
+			initialSize: 1,
+			keepPreviousData: true,
+			revalidateIfStale: true,
+			revalidateFirstPage: true,
+			revalidateOnMount: true,
+			revalidateAll: true,
+		});
+
 	console.log(data);
+
+	async function loadMorePosts() {
+		setSize(size + 1);
+		setLimit(limit + 10);
+	}
+
+	useEffect(() => {
+		if (inView) {
+			loadMorePosts();
+		}
+	}, [inView]);
+
+	useMemo(() => {
+		if (data) {
+			setLoadedOnce(true);
+		}
+	}, [data]);
+
+	console.log(loadedOnce);
+
 	return (
 		<>
 			<div className={styles.container}>
-				<div>
-					<Image
-						src={"/images/icons/uncheck_icon.svg"}
-						alt="icon"
-						width={25}
-						height={25}
-						onClick={(e) => setMore(false)}
-					/>
-				</div>
 				<div className={styles.header}>
 					<span>Personnes ayant les mêmes centres d'intérêt</span>
 				</div>
 				<div className={styles.content}>
-					{isLoading ? (
+					{!loadedOnce ? (
 						<div>loader</div>
 					) : (
 						<>
-							{data?.map((suggestion) => {
+							{data[0]?.map((suggestion) => {
 								return (
 									<div className={styles.users} key={suggestion._id}>
 										<div className={styles.left}>
@@ -50,6 +79,8 @@ export default function MoreSuggestions({ setMore }) {
 												<span>
 													{suggestion.firstName} {suggestion.lastName}
 												</span>
+												<br />
+												<span>{suggestion.userName}</span>
 											</div>
 										</div>
 										<div className={styles.middle}>
@@ -63,6 +94,16 @@ export default function MoreSuggestions({ setMore }) {
 									</div>
 								);
 							})}
+							<div className={styles.load}>
+								<div id="loader" ref={ref}>
+									{isLoading && (
+										<>
+											<div></div>
+											<div></div>
+										</>
+									)}
+								</div>
+							</div>
 						</>
 					)}
 				</div>

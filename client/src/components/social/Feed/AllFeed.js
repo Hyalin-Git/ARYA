@@ -73,7 +73,7 @@ export default function AllFeed({ initialPosts, key, notFound }) {
 								);
 							})}
 					</div>
-					<div className={styles.loader} ref={ref}>
+					<div id="loader" ref={ref}>
 						{isLoading && (
 							<>
 								<div></div>
