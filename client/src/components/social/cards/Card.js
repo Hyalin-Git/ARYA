@@ -10,6 +10,7 @@ import CardBody from "./CardBody";
 import CardFooter from "./CardFooter";
 import Answers from "../Feed/Answers";
 import { usePathname } from "next/navigation";
+import CreateReport from "../CreateReport";
 
 export default function Card({
 	element,
@@ -22,9 +23,9 @@ export default function Card({
 
 	const [repostModal, setRepostModal] = useState(false);
 	const [isUpdate, setIsUpdate] = useState(false);
-
 	const [showComments, setShowComments] = useState(false);
 	const [showAnswers, setShowAnswers] = useState(false);
+	const [reportModal, setReportModal] = useState(false);
 
 	const isPost = element?.posterId;
 	const isRepost = element?.reposterId;
@@ -56,6 +57,7 @@ export default function Card({
 								(isAnswer && "answer")
 							}
 							setIsUpdate={setIsUpdate}
+							setReportModal={setReportModal}
 							mutatePost={mutatePost}
 							mutateComment={mutateComment}
 						/>
@@ -112,6 +114,7 @@ export default function Card({
 							setIsUpdate={setIsUpdate}
 							mutatePost={mutatePost}
 							mutateComment={mutateComment}
+							setReportModal={setReportModal}
 						/>
 						<CardBody
 							uid={uid}
@@ -169,6 +172,7 @@ export default function Card({
 					mutatePost={mutatePost}
 				/>
 			)}
+			{reportModal && <CreateReport setReportModal={setReportModal} />}
 		</div>
 	);
 }

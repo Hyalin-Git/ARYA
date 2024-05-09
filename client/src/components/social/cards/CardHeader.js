@@ -15,6 +15,7 @@ export default function CardHeader({
 	setIsUpdate,
 	mutatePost,
 	mutateComment,
+	setReportModal,
 }) {
 	const [moreModal, setMoreModal] = useState(false);
 	const firstname = getAuthor(element, "firstname");
@@ -119,7 +120,7 @@ export default function CardHeader({
 									</>
 								)}
 								{!isAuthor && (
-									<li>
+									<li onClick={(e) => setReportModal(true)}>
 										Signaler{" "}
 										{(type === "post" || type === "repost") && "la publication"}
 										{type === "comment" && "le commentaire"}

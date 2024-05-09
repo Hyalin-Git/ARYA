@@ -1,0 +1,57 @@
+.header {
+	background-color: var(--meteorite-color);
+	padding: 15px;
+	border-radius: 6px 6px 0 0;
+}
+.header span {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: white !important;
+}
+.content {
+	padding: 15px 0 15px 15px;
+	max-height: 60vh;
+	overflow-y: auto;
+}
+.content form {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.reason {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: 50ms all linear;
+	/* box-shadow: var(--passive-shadow); */
+}
+.reason:hover {
+	background-color: color-mix(in srgb, white, #f5f5f5 20%);
+	transition: 50ms all linear;
+}
+
+.reason div:nth-child(1) {
+	font-size: 1.2rem;
+	font-weight: 500;
+}
+
+.reason div:nth-child(2) {
+	font-size: 0.8rem;
+	font-weight: 300;
+}
+.checked {
+	border: 1px solid var(--meteorite-color);
+}
+.button {
+	margin-top: 20px;
+}
+.button button {
+	width: 100%;
+}
