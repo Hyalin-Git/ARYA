@@ -7,7 +7,7 @@ const {
 } = require("../../middlewares/jwt.middleware");
 const reportController = require("../../controllers/posts/reportPost.controller");
 
-router.post("/", reportController.saveReport);
+router.post("/", authenticate, authorize, reportController.saveReport);
 
 router.get("/", reportController.getReports);
 router.get("/:id", reportController.getReport);

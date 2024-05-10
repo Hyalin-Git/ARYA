@@ -28,7 +28,7 @@ const ReportPostSchema = mongoose.Schema(
 				message: "{VALUE} n'est pas une raison valable !",
 			},
 		},
-		note: {
+		message: {
 			type: String,
 			maxLength: 500,
 		},

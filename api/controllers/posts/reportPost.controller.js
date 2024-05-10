@@ -2,7 +2,8 @@ const ReportPostModel = require("../../models/posts/ReportPost.model");
 const PostModel = require("../../models/posts/Post.model");
 
 exports.saveReport = (req, res, next) => {
-	const { reporterId, reportedPostId, reason, note } = req.body;
+	const { userId } = req.query;
+	const { reportedPostId, reason, message } = req.body;
 
 	PostModel.findById({ _id: reportedPostId })
 		.then((post) => {
@@ -13,10 +14,10 @@ exports.saveReport = (req, res, next) => {
 			}
 
 			const report = new ReportPostModel({
-				reporterId: reporterId,
+				reporterId: userId,
 				reportedPostId: reportedPostId,
 				reason: reason,
-				note: note,
+				message: message,
 			});
 
 			report

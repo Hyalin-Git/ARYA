@@ -46,8 +46,16 @@
 	font-size: 0.8rem;
 	font-weight: 300;
 }
+.message {
+	margin-top: 20px;
+}
+.message textarea {
+	width: 100%;
+	resize: none;
+}
 .checked {
 	border: 1px solid var(--meteorite-color);
+	background-color: color-mix(in srgb, white, #f5f5f5 20%);
 }
 .button {
 	margin-top: 20px;

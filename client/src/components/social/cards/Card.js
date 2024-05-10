@@ -9,8 +9,15 @@ import CardHeader from "./CardHeader";
 import CardBody from "./CardBody";
 import CardFooter from "./CardFooter";
 import Answers from "../Feed/Answers";
-import { usePathname } from "next/navigation";
 import CreateReport from "../CreateReport";
+import { useFormState } from "react-dom";
+import { saveReportPost } from "@/actions/report";
+import PopUp from "@/components/popup/PopUp";
+
+const initialState = {
+	status: "",
+	message: "",
+};
 
 export default function Card({
 	element,
@@ -20,6 +27,9 @@ export default function Card({
 	mutateAnswer,
 }) {
 	const { uid } = useContext(AuthContext);
+
+	const saveReportWithUid = saveReportPost.bind(null, uid);
+	const [state, formAction] = useFormState(saveReportWithUid, initialState);
 
 	const [repostModal, setRepostModal] = useState(false);
 	const [isUpdate, setIsUpdate] = useState(false);
@@ -35,7 +45,10 @@ export default function Card({
 	useEffect(() => {
 		setShowComments(hasParams);
 		setShowAnswers(hasParams);
-	}, [hasParams]);
+		if (state.status === "success") {
+			setReportModal(false);
+		}
+	}, [hasParams, state]);
 
 	console.log(element);
 
@@ -172,7 +185,16 @@ export default function Card({
 					mutatePost={mutatePost}
 				/>
 			)}
-			{reportModal && <CreateReport setReportModal={setReportModal} />}
+			{reportModal && (
+				<CreateReport
+					elementId={element._id}
+					setReportModal={setReportModal}
+					formAction={formAction}
+				/>
+			)}
+			{state.status === "success" && (
+				<PopUp status={"success"} title={"envoyé"} message={state.message} />
+			)}
 		</div>
 	);
 }

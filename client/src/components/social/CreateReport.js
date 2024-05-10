@@ -1,8 +1,23 @@
+"use client";
+import { saveReportPost } from "@/actions/report";
+import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/social/createReport.module.css";
 import clsx from "clsx";
-export default function CreateReport({ element, setReportModal }) {
+import { useContext, useEffect, useState } from "react";
+
+import PopUp from "../popup/PopUp";
+
+export default function CreateReport({
+	element,
+	elementId,
+	setReportModal,
+	formAction,
+}) {
+	const { uid } = useContext(AuthContext);
+
 	// const type = element === "post" ? "post" : "user";
+	const [message, setMessage] = useState(false);
 	const reasons = [
 		{
 			id: 1,
@@ -42,6 +57,11 @@ export default function CreateReport({ element, setReportModal }) {
 		},
 	];
 
+	// useEffect(() => {
+	// 	if (state.status === "success") {
+	// 		// setReportModal(false);
+	// 	}
+	// }, [state]);
 	function handleChoice(e) {
 		e.preventDefault();
 		const target = e.currentTarget;
@@ -53,7 +73,13 @@ export default function CreateReport({ element, setReportModal }) {
 		input.checked = true;
 		target.classList.add(styles.checked);
 
-		// console.log(input);
+		if (input.id === "Autre") {
+			setMessage(true);
+		} else {
+			setMessage(false);
+		}
+
+		// console.log(input.id);
 	}
 	return (
 		<>
@@ -65,7 +91,7 @@ export default function CreateReport({ element, setReportModal }) {
 				</div>
 
 				<div className={styles.content}>
-					<form action="">
+					<form action={formAction}>
 						{reasons.map((reason) => {
 							return (
 								<div
@@ -88,13 +114,30 @@ export default function CreateReport({ element, setReportModal }) {
 								</div>
 							);
 						})}
-
+						{message && (
+							<div className={styles.message}>
+								<textarea
+									name="message"
+									id="message"
+									cols="30"
+									rows="10"
+									placeholder="Partager plus de détails"></textarea>
+							</div>
+						)}
+						<input
+							type="text"
+							id="elementId"
+							name="elementId"
+							value={elementId}
+							hidden
+						/>
 						<div className={clsx(styles.button, montserrat.className)}>
 							<button type="submit">Envoyer</button>
 						</div>
 					</form>
 				</div>
 			</div>
+
 			<div id="overlay" onClick={(e) => setReportModal(false)}></div>
 		</>
 	);
