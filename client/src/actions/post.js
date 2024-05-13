@@ -7,6 +7,11 @@ export async function savePost(uid, prevState, formData) {
 	try {
 		const data = new FormData();
 		data.append("text", formData.get("text"));
+		console.log(formData.get("sendingTime"));
+		data.append("date", formData.get("sendingTime").replace("T", " "));
+
+		console.log(formData.get("sendingTime").replace("T", " "));
+
 		console.log(formData.getAll("media"));
 		if (formData.get("media").name !== "undefined") {
 			const mediaFiles = formData.getAll("media");

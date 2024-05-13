@@ -18,22 +18,25 @@ exports.savePost = async (req, res, next) => {
 	const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user post)
 	const medias = req.files["media"];
 	let scheduledSendTime = moment();
-	const { hour, minute, day, month, year } = req.body; // Getting filled dates
-
+	const { date, hour, minute, day, month, year } = req.body; // Getting filled dates
+	const shecul = moment(date, "YYYY-MM-DD hh:mm").format();
+	console.log(shecul);
 	if (!text && !medias) {
 		return res
 			.status(400)
 			.send({ error: true, message: "Une publication ne peut pas être vide" });
 	}
 
-	const sendingDateFormat = await getFormattedDates(
-		scheduledSendTime,
-		hour,
-		minute,
-		day,
-		month,
-		year
-	);
+	// const sendingDateFormat = await getFormattedDates(
+	// 	scheduledSendTime,
+	// 	hour,
+	// 	minute,
+	// 	day,
+	// 	month,
+	// 	year
+	// );
+
+	// console.log(sendingDateFormat);
 
 	const isScheduled = hour || minute || day || month || year;
 
@@ -43,8 +46,8 @@ exports.savePost = async (req, res, next) => {
 		posterId: userId,
 		text: text,
 		media: medias ? uploadResponse : [],
-		scheduledSendTime: sendingDateFormat,
-		status: isScheduled ? "scheduled" : "sent",
+		scheduledSendTime: shecul,
+		status: date ? "scheduled" : "sent",
 	});
 	post
 		.save()

@@ -73,6 +73,7 @@
 	list-style-type: none;
 }
 .list li {
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -88,10 +89,11 @@
 	cursor: pointer;
 }
 
-.list li img {
+.list li .icon {
 	filter: invert(19%) sepia(87%) saturate(3620%) hue-rotate(259deg)
 		brightness(87%) contrast(95%);
 }
+
 .button {
 	margin-right: 10px;
 }

@@ -62,27 +62,29 @@ new CronJob(
 		PostModel.find()
 			.then((posts) => {
 				posts.map((post) => {
-					const scheduledSendTime = moment(post.scheduledSendTime); // Getting the scheduledSendTime
+					const scheduledSendTime = moment(post?.scheduledSendTime); // Getting the scheduledSendTime
 					const currentMoment = moment(); // Getting the current time
 
-					if (
-						currentMoment.isSameOrAfter(scheduledSendTime) &&
-						post.status === "scheduled"
-					) {
-						PostModel.findOneAndUpdate(
-							{ posterId: post.posterId },
-							{
-								$set: {
-									status: "sent",
+					if (post.scheduledSendTime) {
+						if (
+							currentMoment.isSameOrAfter(scheduledSendTime) &&
+							post.status === "scheduled"
+						) {
+							PostModel.findOneAndUpdate(
+								{ _id: post._id },
+								{
+									$set: {
+										status: "sent",
+									},
 								},
-							},
-							{
-								new: true,
-								setDefaultsOnInsert: true,
-							}
-						)
-							.then(() => console.log("Message envoyé"))
-							.catch((err) => console.log(err));
+								{
+									new: true,
+									setDefaultsOnInsert: true,
+								}
+							)
+								.then(() => console.log("Message envoyé"))
+								.catch((err) => console.log(err));
+						}
 					}
 				});
 			})

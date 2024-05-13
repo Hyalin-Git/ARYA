@@ -6,6 +6,8 @@ import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import clsx from "clsx";
 import { useFormState } from "react-dom";
+import moment from "moment";
+import Gif from "./Gif";
 
 const initialState = {
 	status: "pending",
@@ -24,6 +26,8 @@ export default function SendCard({
 }) {
 	const [isWriting, setIsWriting] = useState(false);
 	const { user } = useContext(AuthContext);
+	const [openGif, setOpenGif] = useState(false);
+
 	const text = useRef(null);
 	const [state, formAction] = useFormState(action, initialState);
 
@@ -61,6 +65,7 @@ export default function SendCard({
 			}
 		}
 	}, [state]);
+	console.log(moment().format());
 	return (
 		<div className={styles.container} data-type={type}>
 			<form action={formAction} id={type === "repost" ? "repost" : ""}>
@@ -133,6 +138,7 @@ export default function SendCard({
 											width={20}
 											height={20}
 											alt="icon"
+											className={styles.icon}
 										/>
 									</label>
 									<input
@@ -152,16 +158,19 @@ export default function SendCard({
 										width={20}
 										height={20}
 										alt="icon"
+										className={styles.icon}
 									/>
 								</li>
-								<li>
+								<li onClick={(e) => setOpenGif(!openGif)}>
 									{" "}
 									<Image
 										src="/images/icons/gif_icon.svg"
 										width={20}
 										height={20}
 										alt="icon"
+										className={styles.icon}
 									/>
+									{openGif && <Gif />}
 								</li>
 								{type === "post" && (
 									<li>
@@ -170,6 +179,13 @@ export default function SendCard({
 											width={20}
 											height={20}
 											alt="icon"
+											className={styles.icon}
+										/>
+										<input
+											type="datetime-local"
+											name="sendingTime"
+											id="sendingTime"
+											min={"2024-05-13T13:00"}
 										/>
 									</li>
 								)}
