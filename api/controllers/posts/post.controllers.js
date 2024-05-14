@@ -14,13 +14,16 @@ const {
 } = require("../../helpers/filterResponse");
 
 exports.savePost = async (req, res, next) => {
-	const { text } = req.body;
+	const { text, gif } = req.body;
 	const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user post)
 	const medias = req.files["media"];
-	let scheduledSendTime = moment();
+	// let scheduledSendTime = moment();
 	const { date, hour, minute, day, month, year } = req.body; // Getting filled dates
-	const shecul = moment(date, "YYYY-MM-DD hh:mm").format();
-	console.log(shecul);
+	let scheduledSendTime;
+	if (date) {
+		scheduledSendTime = moment(date, "YYYY-MM-DD hh:mm").format();
+	}
+
 	if (!text && !medias) {
 		return res
 			.status(400)
@@ -38,7 +41,7 @@ exports.savePost = async (req, res, next) => {
 
 	// console.log(sendingDateFormat);
 
-	const isScheduled = hour || minute || day || month || year;
+	// const isScheduled = hour || minute || day || month || year;
 
 	const uploadResponse = await uploadFiles(medias, "post");
 
@@ -46,7 +49,8 @@ exports.savePost = async (req, res, next) => {
 		posterId: userId,
 		text: text,
 		media: medias ? uploadResponse : [],
-		scheduledSendTime: shecul,
+		gif: gif ?? [],
+		scheduledSendTime: scheduledSendTime,
 		status: date ? "scheduled" : "sent",
 	});
 	post

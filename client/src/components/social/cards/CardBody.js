@@ -24,7 +24,7 @@ export default function CardBody({
 	const reactLength = reactionLength(element);
 	return (
 		<div className={styles.container}>
-			<div >
+			<div>
 				{isUpdate ? (
 					<UpdateCard
 						element={element}
@@ -44,6 +44,19 @@ export default function CardBody({
 			</div>
 			<div className={styles.media}>
 				{element?.media?.map((img, idx) => {
+					return (
+						<Image
+							src={img}
+							alt="media"
+							width={0}
+							height={0}
+							sizes="100vw"
+							quality={100}
+							key={idx}
+						/>
+					);
+				})}
+				{element?.gif?.map((img, idx) => {
 					return (
 						<Image
 							src={img}

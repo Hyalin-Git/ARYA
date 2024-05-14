@@ -14,6 +14,9 @@ const PostSchema = mongoose.Schema(
 		media: {
 			type: [String],
 		},
+		gif: {
+			type: [String],
+		},
 		reactions: {
 			love: { type: [String] },
 			surprised: { type: [String] },

@@ -13,10 +13,17 @@ export async function savePost(uid, prevState, formData) {
 		console.log(formData.get("sendingTime").replace("T", " "));
 
 		console.log(formData.getAll("media"));
+		console.log(formData.getAll("gif"));
 		if (formData.get("media").name !== "undefined") {
 			const mediaFiles = formData.getAll("media");
 			mediaFiles.forEach((file) => {
 				data.append("media", file);
+			});
+		}
+		if (formData.get("gif") !== "undefined") {
+			const gifs = formData.getAll("gif");
+			gifs.forEach((file) => {
+				data.append("gif", file);
 			});
 		}
 

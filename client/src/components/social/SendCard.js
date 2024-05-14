@@ -69,7 +69,7 @@ export default function SendCard({
 	return (
 		<div className={styles.container} data-type={type}>
 			<form action={formAction} id={type === "repost" ? "repost" : ""}>
-				<div className={styles.form}>
+				<div className={styles.form} id="form">
 					<div className={styles.top}>
 						<div>
 							<Image
@@ -125,7 +125,7 @@ export default function SendCard({
 							)}
 						</div>
 					</div>
-					<div className={styles.preview} data-type={type}></div>
+					<div className={styles.preview} data-type={type} id="preview"></div>
 				</div>
 				{(type === "post" || type === "comment" || type === "answer") && (
 					<div className={styles.footer}>
@@ -161,7 +161,7 @@ export default function SendCard({
 										className={styles.icon}
 									/>
 								</li>
-								<li onClick={(e) => setOpenGif(!openGif)}>
+								<li onClick={(e) => setOpenGif(true)}>
 									{" "}
 									<Image
 										src="/images/icons/gif_icon.svg"
