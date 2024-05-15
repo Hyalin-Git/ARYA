@@ -351,6 +351,17 @@ ul {
 	cursor: default;
 }
 
+#hiddenOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0); /* Couleur transparente */
+	z-index: 9998; /* Au-dessus du reste du contenu */
+	cursor: default;
+}
+
 #modal {
 	position: fixed;
 	top: 50%;

@@ -32,6 +32,7 @@ export default function AllFeed({ initialPosts, key, notFound }) {
 			revalidateFirstPage: true,
 			revalidateOnMount: true,
 			revalidateAll: true,
+			refreshInterval: 60000,
 		});
 
 	async function loadMorePosts() {

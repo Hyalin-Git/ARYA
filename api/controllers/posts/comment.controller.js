@@ -14,11 +14,17 @@ const {
 
 exports.saveComment = async (req, res, next) => {
 	try {
-		const { postId, repostId, text } = req.body;
+		const { postId, repostId, text, gif } = req.body;
 		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user answer)
 		const medias = req.files["media"];
 
-		if (!text || !userId) {
+		if (!text && !medias && !gif) {
+			return res.status(400).send({
+				error: true,
+				message: "Un commentaire ne peut pas être vide",
+			});
+		}
+		if (!userId) {
 			return res
 				.status(400)
 				.send({ error: true, message: "Paramètres manquants" });
@@ -78,6 +84,7 @@ exports.saveComment = async (req, res, next) => {
 			commenterId: userId, // Use the userId query as commenterId
 			text: text,
 			media: medias ? uploadResponse : [],
+			gif: gif ?? [],
 		});
 
 		comment

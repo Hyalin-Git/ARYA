@@ -17,9 +17,11 @@ const CommentSchema = mongoose.Schema(
 		},
 		text: {
 			type: String,
-			required: true,
 		},
 		media: {
+			type: [String],
+		},
+		gif: {
 			type: [String],
 		},
 		reactions: {

@@ -129,7 +129,7 @@ export default function CardHeader({
 								)}
 							</ul>
 						</div>
-						<div id="overlay"></div>
+						<div id="hiddenOverlay"></div>
 					</>
 				)}
 				<div>

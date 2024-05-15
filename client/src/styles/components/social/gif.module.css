@@ -1,5 +1,6 @@
 .container {
 	position: absolute;
+	z-index: 99999;
 	background-color: white;
 	padding: 12px;
 	padding-right: 0px;

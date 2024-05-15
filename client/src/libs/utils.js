@@ -385,7 +385,10 @@ export const updatePasswordValidation = () => {
 
 export function formattedDate(element) {
 	const date = moment
-		.utc(element?.createdAt, "YYYY-MM-DDTHH:mm:ss.SSSZ")
+		.utc(
+			element?.scheduledSendTime ?? element?.createdAt,
+			"YYYY-MM-DDTHH:mm:ss.SSSZ"
+		)
 		.locale("fr")
 		.fromNow();
 

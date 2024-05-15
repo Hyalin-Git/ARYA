@@ -24,7 +24,7 @@ exports.savePost = async (req, res, next) => {
 		scheduledSendTime = moment(date, "YYYY-MM-DD hh:mm").format();
 	}
 
-	if (!text && !medias) {
+	if (!text && !medias && !gif) {
 		return res
 			.status(400)
 			.send({ error: true, message: "Une publication ne peut pas être vide" });

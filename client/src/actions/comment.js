@@ -16,6 +16,12 @@ export async function saveComment(uid, postId, type, prevState, formData) {
 				data.append("media", file);
 			});
 		}
+		if (formData.get("gif") !== "undefined") {
+			const gifs = formData.getAll("gif");
+			gifs.forEach((file) => {
+				data.append("gif", file);
+			});
+		}
 		const res = await axios({
 			method: "POST",
 			url: `http://localhost:5000/api/comments?userId=${uid}`,

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { montserrat } from "@/libs/fonts";
 import Image from "next/image";
 
-export default function Gif() {
+export default function Gif({ formRef, previewRef, setOpenGif, setIsWriting }) {
 	const [searchTerms, setSearchTerms] = useState("");
 
 	const [categories, setCategories] = useState([]);
@@ -33,8 +33,8 @@ export default function Gif() {
 
 	function handleClickGif(e) {
 		const url = e.images.preview_webp.url;
-		const preview = document.getElementById("preview");
-		const form = document.getElementById("form");
+		const preview = previewRef.current;
+		const form = formRef.current;
 		const input = document.createElement("input");
 		const img = document.createElement("img");
 		preview.appendChild(img);
@@ -46,6 +46,15 @@ export default function Gif() {
 		input.id = "gif";
 		input.value = url;
 		input.hidden = true;
+		setIsWriting(true);
+		console.log(e.target);
+		// addGif(e);
+	}
+
+	function addGif(e) {
+		// const preview = document.getElementById("preview");
+		// const parent = preview.parentElement;
+		console.log(e.currentTarget);
 	}
 	return (
 		<>
@@ -108,7 +117,12 @@ export default function Gif() {
 					)}
 				</div>
 			</div>
-			{/* <div id="overlay"></div> */}
+			<div
+				id="hiddenOverlay"
+				onClick={(e) => {
+					e.stopPropagation();
+					setOpenGif(false);
+				}}></div>
 		</>
 	);
 }

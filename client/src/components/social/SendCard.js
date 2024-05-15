@@ -27,19 +27,20 @@ export default function SendCard({
 	const [isWriting, setIsWriting] = useState(false);
 	const { user } = useContext(AuthContext);
 	const [openGif, setOpenGif] = useState(false);
+	const previewRef = useRef(null);
+	const formRef = useRef(null);
 
 	const text = useRef(null);
 	const [state, formAction] = useFormState(action, initialState);
 
 	function handleImage(e) {
-		e.preventDefault();
 		const files = e.target.files;
+		const preview = previewRef.current;
 
-		const preview = document.querySelectorAll(`[data-type="${type}"]`)[1];
 		if (files) {
 			for (const file of files) {
 				const img = document.createElement("img");
-				preview.appendChild(img);
+				preview?.appendChild(img);
 				img.src = URL.createObjectURL(file);
 			}
 			setIsWriting(true);
@@ -49,6 +50,17 @@ export default function SendCard({
 	useEffect(() => {
 		if (state?.status === "success") {
 			text.current.value = "";
+			const preview = previewRef.current;
+			const gifs = document.getElementsByName("gif");
+
+			for (let i = gifs.length - 1; i >= 0; i--) {
+				gifs[i].remove();
+			}
+
+			while (preview.firstChild) {
+				preview.removeChild(preview.firstChild);
+			}
+
 			if (type === "repost") {
 				setRepostModal(false);
 			}
@@ -69,7 +81,7 @@ export default function SendCard({
 	return (
 		<div className={styles.container} data-type={type}>
 			<form action={formAction} id={type === "repost" ? "repost" : ""}>
-				<div className={styles.form} id="form">
+				<div className={styles.form} ref={formRef}>
 					<div className={styles.top}>
 						<div>
 							<Image
@@ -125,14 +137,14 @@ export default function SendCard({
 							)}
 						</div>
 					</div>
-					<div className={styles.preview} data-type={type} id="preview"></div>
+					<div className={styles.preview} ref={previewRef}></div>
 				</div>
 				{(type === "post" || type === "comment" || type === "answer") && (
 					<div className={styles.footer}>
 						<div className={styles.list}>
 							<ul>
 								<li>
-									<label htmlFor="media">
+									<label htmlFor={postId || commentId || "media"}>
 										<Image
 											src="/images/icons/img_icon.svg"
 											width={20}
@@ -145,7 +157,7 @@ export default function SendCard({
 										onChange={handleImage}
 										type="file"
 										name="media"
-										id="media"
+										id={postId || commentId || "media"}
 										multiple
 										hidden
 										max={4}
@@ -170,7 +182,14 @@ export default function SendCard({
 										alt="icon"
 										className={styles.icon}
 									/>
-									{openGif && <Gif />}
+									{openGif && (
+										<Gif
+											formRef={formRef}
+											previewRef={previewRef}
+											setOpenGif={setOpenGif}
+											setIsWriting={setIsWriting}
+										/>
+									)}
 								</li>
 								{type === "post" && (
 									<li>
