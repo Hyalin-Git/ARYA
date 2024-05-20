@@ -156,7 +156,7 @@ exports.getReposts = async (req, res, next) => {
 		)
 		.populate({
 			path: "postId",
-			select: "text media",
+			select: "text gif media",
 			populate: {
 				path: "posterId",
 				select: "lastName firstName userName blockedUsers isPrivate followers",

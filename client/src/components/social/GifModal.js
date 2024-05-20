@@ -5,7 +5,12 @@ import { useEffect, useState } from "react";
 import { montserrat } from "@/libs/fonts";
 import Image from "next/image";
 
-export default function Gif({ formRef, previewRef, setOpenGif, setIsWriting }) {
+export default function GifModal({
+	formRef,
+	previewRef,
+	setOpenGif,
+	setIsWriting,
+}) {
 	const [searchTerms, setSearchTerms] = useState("");
 
 	const [categories, setCategories] = useState([]);

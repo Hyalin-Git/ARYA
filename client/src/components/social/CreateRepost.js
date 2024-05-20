@@ -20,7 +20,7 @@ export default function CreateRepost({
 	const commenterImg = element?.commenterId?.picture;
 	const answererImg = element?.answererId?.picture;
 	const picture = posterImg || reposterImg || commenterImg || answererImg;
-	
+
 	return (
 		<>
 			<div className={styles.container}>
@@ -67,7 +67,7 @@ export default function CreateRepost({
 							<p>{element?.text}</p>
 						</div>
 						<div className={styles.media}>
-							{element?.media?.map((img) => {
+							{element?.media?.map((img, idx) => {
 								return (
 									<Image
 										src={img}
@@ -76,6 +76,20 @@ export default function CreateRepost({
 										height={0}
 										sizes="100vw"
 										quality={100}
+										key={idx}
+									/>
+								);
+							})}
+							{element?.gif?.map((img, idx) => {
+								return (
+									<Image
+										src={img}
+										alt="media"
+										width={0}
+										height={0}
+										sizes="100vw"
+										quality={100}
+										key={idx}
 									/>
 								);
 							})}

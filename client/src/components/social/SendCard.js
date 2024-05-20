@@ -7,7 +7,8 @@ import { montserrat } from "@/libs/fonts";
 import clsx from "clsx";
 import { useFormState } from "react-dom";
 import moment from "moment";
-import Gif from "./Gif";
+import GifModal from "./GifModal";
+import ScheduleModal from "./ScheduleModal";
 
 const initialState = {
 	status: "pending",
@@ -26,6 +27,7 @@ export default function SendCard({
 }) {
 	const [isWriting, setIsWriting] = useState(false);
 	const { user } = useContext(AuthContext);
+	const [openSchedule, setOpenSchedule] = useState(false);
 	const [openGif, setOpenGif] = useState(false);
 	const previewRef = useRef(null);
 	const formRef = useRef(null);
@@ -78,9 +80,10 @@ export default function SendCard({
 		}
 	}, [state]);
 	console.log(moment().format());
+	const formId = (type === "repost" && "repost") || (type === "post" && "post");
 	return (
 		<div className={styles.container} data-type={type}>
-			<form action={formAction} id={type === "repost" ? "repost" : ""}>
+			<form action={formAction} id={formId}>
 				<div className={styles.form} ref={formRef}>
 					<div className={styles.top}>
 						<div>
@@ -183,7 +186,7 @@ export default function SendCard({
 										className={styles.icon}
 									/>
 									{openGif && (
-										<Gif
+										<GifModal
 											formRef={formRef}
 											previewRef={previewRef}
 											setOpenGif={setOpenGif}
@@ -199,13 +202,17 @@ export default function SendCard({
 											height={20}
 											alt="icon"
 											className={styles.icon}
+											onClick={(e) => setOpenSchedule(!openSchedule)}
 										/>
-										<input
+										{/* <input
 											type="datetime-local"
 											name="sendingTime"
 											id="sendingTime"
 											min={"2024-05-13T13:00"}
-										/>
+										/> */}
+										{openSchedule && (
+											<ScheduleModal setOpenSchedule={setOpenSchedule} />
+										)}
 									</li>
 								)}
 							</ul>

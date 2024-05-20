@@ -117,6 +117,19 @@ export default function CardBody({
 											/>
 										);
 									})}
+									{element?.postId?.gif?.map((img, idx) => {
+										return (
+											<Image
+												src={img}
+												alt="media"
+												width={0}
+												height={0}
+												sizes="100vw"
+												quality={100}
+												key={idx}
+											/>
+										);
+									})}
 								</div>
 							</div>
 						</>
