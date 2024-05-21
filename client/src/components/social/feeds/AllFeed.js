@@ -1,27 +1,28 @@
 "use client";
-import styles from "@/styles/components/social/allFeed/allFeed.module.css";
-import { getFollowingFeed } from "@/api/posts/feed";
+import styles from "@/styles/components/social/feeds/feeds.module.css";
+import { getAllFeed, getFollowingFeed } from "@/api/posts/feed";
 import Card from "../cards/Card";
 import { useContext, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import useSWRInfinite from "swr/infinite";
-import SendCard from "../SendCard";
+import SendCard from "../cards/SendCard";
 import { savePost } from "@/actions/post";
 import { AuthContext } from "@/context/auth";
 import Link from "next/link";
 
-export default function FollowingFeed({ initialPosts, notFound }) {
+export default function AllFeed({ initialPosts, key, notFound }) {
 	const { uid } = useContext(AuthContext);
 	const [limit, setLimit] = useState(3);
-	const savePostWithUid = savePost.bind(null, uid);
+	const [scheduledTime, setScheduledTime] = useState(""); // The choosen send time by the user
+	const savePostWithUid = savePost.bind(null, uid, scheduledTime);
 	const { ref, inView } = useInView();
 
 	const getKey = (pageIndex, previousPageData) => {
 		if (previousPageData && !previousPageData.length) return null; // reached the end
-		return `/api/feed/for-me?offset=${0}&limit=${limit}`; // SWR key
+		return `${key}?offset=${0}&limit=${limit}`; // SWR key
 	};
 
-	const fetchPosts = getFollowingFeed.bind(null, 0, limit);
+	const fetchPosts = getAllFeed.bind(null, 0, limit);
 
 	const { data, size, setSize, mutate, isValidating, error, isLoading } =
 		useSWRInfinite(getKey, fetchPosts, {
@@ -32,6 +33,7 @@ export default function FollowingFeed({ initialPosts, notFound }) {
 			revalidateFirstPage: true,
 			revalidateOnMount: true,
 			revalidateAll: true,
+			refreshInterval: 60000,
 		});
 
 	async function loadMorePosts() {
@@ -64,6 +66,8 @@ export default function FollowingFeed({ initialPosts, notFound }) {
 						type={"post"}
 						button={"Poster"}
 						mutatePost={mutate}
+						scheduledTime={scheduledTime}
+						setScheduledTime={setScheduledTime}
 					/>
 					<div className={styles.cards}>
 						{data[0]?.length > 0 &&
@@ -73,7 +77,7 @@ export default function FollowingFeed({ initialPosts, notFound }) {
 								);
 							})}
 					</div>
-					<div className={styles.loader} ref={ref}>
+					<div id="loader" ref={ref}>
 						{isLoading && (
 							<>
 								<div></div>

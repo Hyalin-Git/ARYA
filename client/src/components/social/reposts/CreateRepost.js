@@ -1,5 +1,5 @@
-import styles from "@/styles/components/aryaMedia/createRepost.module.css";
-import SendCard from "./SendCard";
+import styles from "@/styles/components/social/reposts/createRepost.module.css";
+import SendCard from "../cards/SendCard";
 import { formattedDate, getAuthor } from "@/libs/utils";
 import { montserrat } from "@/libs/fonts";
 import Image from "next/image";

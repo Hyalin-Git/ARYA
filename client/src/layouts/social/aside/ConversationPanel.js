@@ -1,8 +1,7 @@
 "use server";
 import { getConversations } from "@/api/conversations/conversations";
-
-import Conversation from "@/components/social/Feed/Conversation";
-import styles from "@/styles/layouts/social/conversationPanel.module.css";
+import Conversations from "@/components/social/conversations/Conversations";
+import styles from "@/styles/layouts/social/aside/conversationPanel.module.css";
 
 export default async function ConversationPanel() {
 	const conversations = await getConversations();
@@ -21,7 +20,7 @@ export default async function ConversationPanel() {
 					<>
 						{conversations?.map((conversation) => {
 							return (
-								<Conversation
+								<Conversations
 									conversation={conversation}
 									key={conversation._id}
 								/>

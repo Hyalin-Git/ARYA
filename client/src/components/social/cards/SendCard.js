@@ -1,14 +1,14 @@
 "use client";
 import Image from "next/image";
-import styles from "@/styles/components/aryaMedia/sendCard.module.css";
+import styles from "@/styles/components/social/cards/sendCard.module.css";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import clsx from "clsx";
 import { useFormState } from "react-dom";
 import moment from "moment";
-import GifModal from "./GifModal";
-import ScheduleModal from "./ScheduleModal";
+import GifModal from "../modals/GifModal";
+import ScheduleModal from "../modals/ScheduleModal";
 
 const initialState = {
 	status: "pending",
@@ -24,10 +24,13 @@ export default function SendCard({
 	mutatePost,
 	mutateComment,
 	mutateAnswer,
+	scheduledTime,
+	setScheduledTime,
 }) {
 	const [isWriting, setIsWriting] = useState(false);
 	const { user } = useContext(AuthContext);
 	const [openSchedule, setOpenSchedule] = useState(false);
+
 	const [openGif, setOpenGif] = useState(false);
 	const previewRef = useRef(null);
 	const formRef = useRef(null);
@@ -76,10 +79,11 @@ export default function SendCard({
 			}
 			if (mutatePost) {
 				mutatePost();
+				setScheduledTime("");
 			}
 		}
 	}, [state]);
-	console.log(moment().format());
+
 	const formId = (type === "repost" && "repost") || (type === "post" && "post");
 	return (
 		<div className={styles.container} data-type={type}>
@@ -211,8 +215,17 @@ export default function SendCard({
 											min={"2024-05-13T13:00"}
 										/> */}
 										{openSchedule && (
-											<ScheduleModal setOpenSchedule={setOpenSchedule} />
+											<ScheduleModal
+												setOpenSchedule={setOpenSchedule}
+												setScheduledTime={setScheduledTime}
+											/>
 										)}
+									</li>
+								)}
+								{scheduledTime && (
+									<li className={styles.scheduled}>
+										Publication programmée pour le :{" "}
+										{moment().locale("fr").format(scheduledTime)}
 									</li>
 								)}
 							</ul>

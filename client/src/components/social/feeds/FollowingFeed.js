@@ -1,16 +1,16 @@
 "use client";
-import styles from "@/styles/components/social/allFeed/allFeed.module.css";
-import { getAllFeed, getFollowingFeed } from "@/api/posts/feed";
+import styles from "@/styles/components/social/feeds/feeds.module.css";
+import { getFollowingFeed } from "@/api/posts/feed";
 import Card from "../cards/Card";
 import { useContext, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import useSWRInfinite from "swr/infinite";
-import SendCard from "../SendCard";
+import SendCard from "../cards/SendCard";
 import { savePost } from "@/actions/post";
 import { AuthContext } from "@/context/auth";
 import Link from "next/link";
 
-export default function AllFeed({ initialPosts, key, notFound }) {
+export default function FollowingFeed({ initialPosts, notFound }) {
 	const { uid } = useContext(AuthContext);
 	const [limit, setLimit] = useState(3);
 	const savePostWithUid = savePost.bind(null, uid);
@@ -18,10 +18,10 @@ export default function AllFeed({ initialPosts, key, notFound }) {
 
 	const getKey = (pageIndex, previousPageData) => {
 		if (previousPageData && !previousPageData.length) return null; // reached the end
-		return `${key}?offset=${0}&limit=${limit}`; // SWR key
+		return `/api/feed/for-me?offset=${0}&limit=${limit}`; // SWR key
 	};
 
-	const fetchPosts = getAllFeed.bind(null, 0, limit);
+	const fetchPosts = getFollowingFeed.bind(null, 0, limit);
 
 	const { data, size, setSize, mutate, isValidating, error, isLoading } =
 		useSWRInfinite(getKey, fetchPosts, {
@@ -32,7 +32,6 @@ export default function AllFeed({ initialPosts, key, notFound }) {
 			revalidateFirstPage: true,
 			revalidateOnMount: true,
 			revalidateAll: true,
-			refreshInterval: 60000,
 		});
 
 	async function loadMorePosts() {
@@ -74,7 +73,7 @@ export default function AllFeed({ initialPosts, key, notFound }) {
 								);
 							})}
 					</div>
-					<div id="loader" ref={ref}>
+					<div className={styles.loader} ref={ref}>
 						{isLoading && (
 							<>
 								<div></div>

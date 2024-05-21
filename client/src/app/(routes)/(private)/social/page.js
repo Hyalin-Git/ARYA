@@ -1,5 +1,5 @@
 "use server";
-import AllFeed from "@/components/social/Feed/AllFeed";
+import AllFeed from "@/components/social/feeds/AllFeed";
 import styles from "@/styles/pages/social.module.css";
 import { getAllFeed } from "@/api/posts/feed";
 

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from "@/styles/components/aryaMedia/updateCard.module.css";
+import styles from "@/styles/components/social/cards/updateCard.module.css";
 import { useFormState } from "react-dom";
 import { useEffect } from "react";
 

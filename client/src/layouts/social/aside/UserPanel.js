@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import styles from "@/styles/layouts/social/userPanel.module.css";
+import styles from "@/styles/layouts/social/aside/userPanel.module.css";
 import { AuthContext } from "@/context/auth";
 import { useContext } from "react";
 import Link from "next/link";

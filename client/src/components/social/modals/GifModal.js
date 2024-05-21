@@ -1,4 +1,4 @@
-import styles from "@/styles/components/social/gif.module.css";
+import styles from "@/styles/components/social/modals/gifModal.module.css";
 import { Grid } from "@giphy/react-components";
 import { GiphyFetch } from "@giphy/js-fetch-api";
 import { useEffect, useState } from "react";

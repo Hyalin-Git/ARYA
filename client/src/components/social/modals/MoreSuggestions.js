@@ -1,6 +1,5 @@
-import styles from "@/styles/layouts/social/moreSuggestions.module.css";
+import styles from "@/styles/components/social/modals/moreSuggestions.module.css";
 import { getFollowSuggestions } from "@/api/user/user";
-import useSWR from "swr";
 import Image from "next/image";
 import FollowButton from "@/components/social/FollowButton";
 import { useInView } from "react-intersection-observer";

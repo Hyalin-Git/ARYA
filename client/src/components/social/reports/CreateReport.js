@@ -2,11 +2,11 @@
 import { saveReportPost } from "@/actions/report";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
-import styles from "@/styles/components/social/createReport.module.css";
+import styles from "@/styles/components/social/reports/createReport.module.css";
 import clsx from "clsx";
 import { useContext, useEffect, useState } from "react";
 
-import PopUp from "../popup/PopUp";
+import PopUp from "../../popup/PopUp";
 
 export default function CreateReport({
 	element,

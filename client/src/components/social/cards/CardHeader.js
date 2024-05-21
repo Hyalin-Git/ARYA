@@ -27,7 +27,6 @@ export default function CardHeader({
 	const commenterImg = element?.commenterId?.picture;
 	const answererImg = element?.answererId?.picture;
 	const picture = posterImg || reposterImg || commenterImg || answererImg;
-	console.log("type of element:", type);
 
 	function handleMoreModal(e) {
 		e.preventDefault();

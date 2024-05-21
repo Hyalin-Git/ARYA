@@ -1,9 +1,9 @@
 "use server";
 import styles from "@/styles/layouts/social/social.module.css";
 import Header from "@/layouts/Header";
-import UserPanel from "@/layouts/social/UserPanel";
-import SuggestionsPanel from "@/layouts/social/SuggestionsPanel";
-import ConversationPanel from "@/layouts/social/ConversationPanel";
+import UserPanel from "@/layouts/social/aside/UserPanel";
+import SuggestionsPanel from "@/layouts/social/aside/SuggestionsPanel";
+import ConversationPanel from "@/layouts/social/aside/ConversationPanel";
 import { getFollowSuggestions } from "@/api/user/user";
 
 export default async function AryaMediaLayout({ children }) {

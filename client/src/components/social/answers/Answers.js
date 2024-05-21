@@ -1,7 +1,7 @@
 "use client";
-import styles from "@/styles/components/aryaMedia/comments.module.css";
+import styles from "@/styles/components/social/comments/comments.module.css";
 import Card from "../cards/Card";
-import SendCard from "../SendCard";
+import SendCard from "../cards/SendCard";
 import useSWR from "swr";
 import saveAnswer from "@/actions/answer";
 import getAnswers from "@/api/answers/answers";

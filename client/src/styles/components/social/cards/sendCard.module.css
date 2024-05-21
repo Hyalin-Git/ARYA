@@ -96,6 +96,11 @@
 		brightness(87%) contrast(95%);
 }
 
+.scheduled {
+	font-weight: 200;
+	font-size: 0.9rem;
+}
+
 .button {
 	margin-right: 10px;
 }

@@ -3,14 +3,15 @@ import axios from "axios";
 import { cookies } from "next/headers";
 import { revalidateTag } from "next/cache";
 
-export async function savePost(uid, prevState, formData) {
+export async function savePost(uid, scheduledTime, prevState, formData) {
 	try {
+		console.log(scheduledTime);
 		const data = new FormData();
 		data.append("text", formData.get("text"));
 		console.log(formData.get("sendingTime"));
-		data.append("date", formData.get("sendingTime").replace("T", " "));
+		data.append("date", scheduledTime);
 
-		console.log(formData.get("sendingTime").replace("T", " "));
+		// console.log(formData.get("sendingTime").replace("T", " "));
 
 		console.log(formData.getAll("media"));
 		console.log(formData.getAll("gif"));

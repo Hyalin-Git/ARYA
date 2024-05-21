@@ -1,9 +1,9 @@
 "use client";
-import styles from "@/styles/layouts/social/followPanel.module.css";
+import styles from "@/styles/layouts/social/aside/followPanel.module.css";
 import Image from "next/image";
 import FollowButton from "@/components/social/FollowButton";
 import { useState } from "react";
-import MoreSuggestions from "./MoreSuggestions";
+import MoreSuggestions from "../../../components/social/modals/MoreSuggestions";
 export default function FollowPanel({ suggestions }) {
 	const [more, setMore] = useState(false);
 	return (

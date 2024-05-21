@@ -2,14 +2,14 @@
 import Link from "next/link";
 import styles from "@/styles/components/social/cards/card.module.css";
 import { useContext, useEffect, useState } from "react";
-import Comments from "../Feed/Comments";
+import Comments from "../comments/Comments";
 import { AuthContext } from "@/context/auth";
-import CreateRepost from "../CreateRepost";
+import CreateRepost from "../reposts/CreateRepost";
 import CardHeader from "./CardHeader";
 import CardBody from "./CardBody";
 import CardFooter from "./CardFooter";
-import Answers from "../Feed/Answers";
-import CreateReport from "../CreateReport";
+import Answers from "../answers/Answers";
+import CreateReport from "../reports/CreateReport";
 import { useFormState } from "react-dom";
 import { saveReportPost } from "@/actions/report";
 import PopUp from "@/components/popup/PopUp";
@@ -49,8 +49,6 @@ export default function Card({
 			setReportModal(false);
 		}
 	}, [hasParams, state]);
-
-	console.log(element);
 
 	return (
 		<div className={styles.container}>

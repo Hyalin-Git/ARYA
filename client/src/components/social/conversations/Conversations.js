@@ -1,11 +1,11 @@
 "use client";
 import { AuthContext } from "@/context/auth";
 
-import styles from "@/styles/components/social/conversation.module.css";
+import styles from "@/styles/components/social/conversations/conversations.module.css";
 import Image from "next/image";
 import { useContext } from "react";
 
-export default function Conversation({ conversation }) {
+export default function Conversations({ conversation }) {
 	const { uid } = useContext(AuthContext);
 	const getOtherUser = conversation.users.find((user) => user._id !== uid);
 
