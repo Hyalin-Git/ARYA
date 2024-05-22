@@ -8,9 +8,9 @@ import { getFollowSuggestions } from "@/api/user/user";
 
 export default async function AryaMediaLayout({ children }) {
 	const suggestions = await getFollowSuggestions();
+
 	return (
 		<>
-			<Header />
 			<main className={styles.main}>
 				<div className={styles.container}>
 					<aside>

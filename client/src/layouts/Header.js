@@ -39,7 +39,7 @@ export default function Header() {
 				setIsScrollEnd(false);
 			}
 		});
-		if (pathname.includes("/social")) {
+		if (pathname.includes("/social") || pathname.includes("/user")) {
 			document.getElementById("nav").style.color = "white";
 			document.getElementById("nav");
 

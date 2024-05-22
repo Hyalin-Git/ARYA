@@ -52,6 +52,32 @@ export async function getUser(uid) {
 	}
 }
 
+// Get user by username
+export async function getUserByUsername(username) {
+	try {
+		const res = await fetch(
+			`http://localhost:5000/api/users/username/${username}`,
+			{
+				method: "GET",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				next: {
+					tags: ["user"],
+				},
+			}
+		);
+
+		const data = await res.json();
+
+		return data;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 // Block logic
 
 export async function blockUser(uid, uidToBlock) {

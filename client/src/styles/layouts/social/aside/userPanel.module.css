@@ -9,6 +9,8 @@
 	flex-direction: column;
 	align-items: center;
 }
+.link {
+}
 .background {
 	position: absolute;
 	background-image: linear-gradient(
@@ -48,7 +50,6 @@
 .bio {
 	text-align: center;
 	width: 100%;
-	border-bottom: 1px solid grey;
 }
 .bio p {
 	white-space: nowrap;
@@ -56,9 +57,13 @@
 	width: 100%;
 	display: block;
 	overflow: hidden;
+	color: color-mix(in srgb, white, black 70%) !important;
 }
 /* FOLLOWERS SECTION  */
-
+.horizontal {
+	width: 100%;
+	border: 0.5px solid grey;
+}
 .follow {
 	width: 100%;
 	display: flex;
@@ -68,13 +73,11 @@
 	height: 100px;
 	justify-content: center;
 	color: white;
-	border-bottom: 1px solid grey;
-	margin-bottom: 20px;
 }
 
 .line {
 	background-color: grey;
-	width: 1px;
+	width: 2px;
 	height: 50%;
 }
 
@@ -97,9 +100,47 @@
 	font-weight: 500;
 }
 
+.createdAt {
+}
+.createdAt span {
+}
+
+.footer {
+	margin-top: 20px;
+	width: 100%;
+	text-align: center;
+}
+
+.footer span {
+	color: color-mix(in srgb, white, black 50%) !important;
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 11px;
+}
+
 .link {
 	width: 100%;
 }
 .container button {
 	width: 100%;
+}
+
+/* IF USER PAGE AND NOT AUTHOR */
+
+.buttons {
+	width: 100%;
+	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+.buttons button {
+	padding: 8px;
+	width: 100%;
+	border-radius: 20px;
+}
+.buttons button:last-child {
+	background-image: inherit !important;
+	background-color: color-mix(in srgb, white, var(--meteorite-color) 10%);
+	color: var(--meteorite-color);
 }

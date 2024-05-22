@@ -68,7 +68,21 @@ exports.getUsers = (req, res, next) => {
 
 // Get one user
 exports.getUser = (req, res, next) => {
-	UserModel.findById({ _id: req.params.id })
+	UserModel.findOne({ _id: req.params.id })
+		.select("-password")
+		.then((user) => {
+			if (!user) {
+				return res
+					.status(404)
+					.send({ error: true, message: "Cet utilisateur n'existe pas" }); // This user does not exist
+			}
+			res.status(200).send(user);
+		})
+		.catch((err) => res.status(500).send(err));
+};
+// Get user by name
+exports.getUserByUsername = (req, res, next) => {
+	UserModel.findOne({ userName: req.params.id })
 		.select("-password")
 		.then((user) => {
 			if (!user) {

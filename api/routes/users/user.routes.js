@@ -14,6 +14,12 @@ const userController = require("../../controllers/users/user.controllers");
 
 router.get("/", authenticate, userController.getUsers);
 router.get("/:id", authenticate, isBlocked, isPrivate, userController.getUser);
+router.get(
+	"/username/:id",
+	authenticate,
+
+	userController.getUserByUsername
+);
 
 // Update user picture
 router.put(

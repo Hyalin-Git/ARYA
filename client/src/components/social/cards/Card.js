@@ -109,7 +109,7 @@ export default function Card({
 					</>
 				) : (
 					<Link
-						href={`/social/${element?._id}`}
+						href={`/social/post/${element?._id}`}
 						className={styles.link}
 						data-disabled={isUpdate}
 						aria-disabled={isUpdate}>

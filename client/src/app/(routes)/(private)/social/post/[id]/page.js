@@ -10,6 +10,7 @@ export default async function Post({ params }) {
 	const post = await getPost(params.id);
 	const comment = await getComment(params.id);
 	const repost = await getRepost(params.id);
+
 	const value =
 		post?.error !== true
 			? post
@@ -21,10 +22,11 @@ export default async function Post({ params }) {
 	// element will take the first value who is not null, so post, or comment or repost
 	const element = value;
 
-	console.log(element);
+	// console.log(element);
 	return (
 		<div className={styles.container}>
 			{/* Return card component and take the element as props */}
+
 			{element ? (
 				<Card element={element} hasParams={params.id ? true : false} />
 			) : (
