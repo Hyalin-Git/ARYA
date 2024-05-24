@@ -102,7 +102,7 @@ exports.saveRepost = async (req, res, next) => {
 
 exports.getReposts = async (req, res, next) => {
 	const authUser = res.locals.user;
-	const { posterId, search, userLikes, sortByReact, sortByDate } = req.query;
+	const { reposterId, search, userLikes, sortByReact, sortByDate } = req.query;
 	let user;
 
 	if (userLikes) {
@@ -112,8 +112,8 @@ exports.getReposts = async (req, res, next) => {
 	function filter() {
 		const filter = {};
 
-		if (posterId) {
-			filter.posterId = posterId;
+		if (reposterId) {
+			filter.reposterId = reposterId;
 		}
 
 		if (search) {
@@ -141,7 +141,7 @@ exports.getReposts = async (req, res, next) => {
 	}
 
 	const params = {
-		posterId: posterId,
+		reposterId: reposterId,
 		search: search,
 		sortByReact: sortByReact,
 		sortByDate: sortByDate,
@@ -152,14 +152,15 @@ exports.getReposts = async (req, res, next) => {
 		.sort(sorting())
 		.populate(
 			"reposterId",
-			"userName lastName firstName blockedUsers isPrivate followers"
+			"userName lastName firstName picture blockedUsers isPrivate followers"
 		)
 		.populate({
 			path: "postId",
 			select: "text gif media",
 			populate: {
 				path: "posterId",
-				select: "lastName firstName userName blockedUsers isPrivate followers",
+				select:
+					"lastName firstName userName picture blockedUsers isPrivate followers",
 			},
 		})
 		.exec()
@@ -176,7 +177,7 @@ exports.getReposts = async (req, res, next) => {
 					.send({ error: true, message: "Aucune publication trouvée" });
 			}
 
-			return res.status(200).send({ reposts: filteredReposts, params: params });
+			return res.status(200).send({ data: filteredReposts, params: params });
 		})
 		.catch((err) => res.status(500).send(err.message));
 };

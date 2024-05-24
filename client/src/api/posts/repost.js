@@ -25,6 +25,31 @@ export async function getRepost(repostId) {
 	}
 }
 
+export async function getReposts(reposterId, sortByDate) {
+	try {
+		const res = await fetch(
+			`http://localhost:5000/api/reposts?reposterId=${reposterId}`,
+			{
+				method: "GET",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				next: {
+					tags: ["post"],
+				},
+			}
+		);
+
+		const data = await res.json();
+
+		return data;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 export default async function deleteRepost(repostId, uid) {
 	try {
 		const res = await fetch(

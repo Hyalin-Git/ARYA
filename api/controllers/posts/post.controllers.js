@@ -112,7 +112,7 @@ exports.getPosts = async (req, res, next) => {
 		.sort(sorting())
 		.populate(
 			"posterId",
-			"userName lastName firstName blockedUsers isPrivate followers"
+			"userName lastName firstName picture blockedUsers isPrivate followers"
 		)
 		.exec()
 		.then(async (posts) => {

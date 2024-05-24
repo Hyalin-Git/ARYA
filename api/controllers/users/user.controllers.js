@@ -21,6 +21,7 @@ const FollowRequestModel = require("../../models/users/FollowRequest.model");
 const {
 	passwordResetLimiter,
 } = require("../../middlewares/limiter.middlewares");
+const AnswerModel = require("../../models/posts/Answer.model");
 
 // Get all users
 exports.getUsers = (req, res, next) => {
@@ -93,6 +94,56 @@ exports.getUserByUsername = (req, res, next) => {
 			res.status(200).send(user);
 		})
 		.catch((err) => res.status(500).send(err));
+};
+// Get user likes
+exports.getUserLikes = async (req, res, next) => {
+	try {
+		const user = await UserModel.findById({ _id: req.params.id });
+
+		const posts = await PostModel.find({ _id: { $in: user.likes } }).populate(
+			"posterId",
+			"userName lastName firstName picture blockedUsers isPrivate followers"
+		);
+		const reposts = await RepostModel.find({ _id: { $in: user.likes } })
+			.populate(
+				"reposterId",
+				"userName lastName firstName picture blockedUsers isPrivate followers"
+			)
+			.populate({
+				path: "postId",
+				select: "text gif media",
+				populate: {
+					path: "posterId",
+					select:
+						"lastName firstName userName picture blockedUsers isPrivate followers",
+				},
+			});
+		const comments = await CommentModel.find({
+			_id: { $in: user.likes },
+		}).populate(
+			"commenterId",
+			"userName lastName firstName picture blockedUsers isPrivate followers"
+		);
+		const answers = await AnswerModel.find({
+			_id: { $in: user.likes },
+		}).populate(
+			"answererId",
+			"userName lastName firstName picture blockedUsers isPrivate followers"
+		);
+
+		const data = [...posts, ...reposts, ...comments, ...answers];
+
+		if (data.length <= 0) {
+			return res.status(404).send({
+				error: true,
+				message: "Cet utilisateur n'a aimé aucune publication pour le moment",
+			});
+		}
+
+		return res.status(200).send(data);
+	} catch (err) {
+		return res.status(500).send(err);
+	}
 };
 
 // Update user profil picture

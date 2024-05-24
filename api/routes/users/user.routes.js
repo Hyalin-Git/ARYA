@@ -20,6 +20,7 @@ router.get(
 
 	userController.getUserByUsername
 );
+router.get("/likes/:id", authenticate, userController.getUserLikes);
 
 // Update user picture
 router.put(

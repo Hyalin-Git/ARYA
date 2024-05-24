@@ -4,6 +4,9 @@ import { getUserByUsername } from "@/api/user/user";
 import Link from "next/link";
 import ConversationPanel from "@/layouts/social/aside/ConversationPanel";
 import UserPanel from "@/layouts/social/aside/UserPanel";
+import Posts from "@/components/user/posts/Posts";
+import Reposts from "@/components/user/reposts/Reposts";
+import Likes from "@/components/user/likes/Likes";
 
 export default async function User({ params }) {
 	const user = await getUserByUsername(params.slug[0]);
@@ -23,14 +26,14 @@ export default async function User({ params }) {
 						<Link href={`/user/${user.userName}/posts`}>
 							<li data-active={isActive("posts")}>Posts</li>
 						</Link>
-						<Link href={`/user/${user.userName}/reposts`}>
-							<li data-active={isActive("reposts")}>Reposts</li>
+						<Link href={`/user/${user.userName}/dick`}>
+							<li data-active={isActive("dick")}>Reposts</li>
 						</Link>
 						<Link href={`/user/${user.userName}/commentaires`}>
 							<li data-active={isActive("commentaires")}>Commentaires</li>
 						</Link>
-						<Link href={`/user/${user.userName}/aime`}>
-							<li data-active={isActive("aime")}>J'aime</li>
+						<Link href={`/user/${user.userName}/reactions`}>
+							<li data-active={isActive("reactions")}>Réactions</li>
 						</Link>
 						<li>/</li>
 						<Link href={`/user/${user.userName}/cv`}>
@@ -45,10 +48,10 @@ export default async function User({ params }) {
 					</ul>
 				</div>
 				<div className={styles.feed}>
-					{isActive("posts") && <div>posts</div>}
-					{isActive("reposts") && <div>reposts</div>}
+					{isActive("posts") && <Posts user={user} />}
+					{isActive("dick") && <Reposts user={user} />}
 					{isActive("commentaires") && <div>commentaires</div>}
-					{isActive("aime") && <div>j'aime</div>}
+					{isActive("reactions") && <Likes user={user} />}
 					{isActive("cv") && <div>cv</div>}
 					{isActive("planning") && <div>planning</div>}
 				</div>
