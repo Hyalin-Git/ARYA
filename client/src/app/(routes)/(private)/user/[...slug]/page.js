@@ -35,9 +35,12 @@ export default async function User({ params }) {
 						<Link href={`/user/${user.userName}/reactions`}>
 							<li data-active={isActive("reactions")}>Réactions</li>
 						</Link>
+						<Link href={`/user/${user.userName}/images`}>
+							<li data-active={isActive("images")}>Images</li>
+						</Link>
 						<li>/</li>
-						<Link href={`/user/${user.userName}/cv`}>
-							<li data-active={isActive("cv")}>CV</li>
+						<Link href={`/user/${user.userName}/projects`}>
+							<li data-active={isActive("projects")}>Projets</li>
 						</Link>
 						<Link href={`/user/${user.userName}/services`}>
 							<li data-active={isActive("services")}>Services</li>
@@ -52,7 +55,8 @@ export default async function User({ params }) {
 					{isActive("dick") && <Reposts user={user} />}
 					{isActive("commentaires") && <div>commentaires</div>}
 					{isActive("reactions") && <Likes user={user} />}
-					{isActive("cv") && <div>cv</div>}
+					{isActive("images") && <div>img</div>}
+					{isActive("projects") && <div>Projets</div>}
 					{isActive("planning") && <div>planning</div>}
 				</div>
 			</div>

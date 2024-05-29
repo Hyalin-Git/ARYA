@@ -26,6 +26,7 @@ const UserSchema = new mongoose.Schema(
 			minLength: 1,
 			maxLength: 35,
 			required: "Un nom d'utilisateur est requis",
+			trim: true,
 		},
 		email: {
 			type: String,
@@ -33,6 +34,7 @@ const UserSchema = new mongoose.Schema(
 			lowercase: true,
 			required: "Une adresse mail est requise",
 			validate: [validateEmail, "Veuillez entrer une adresse mail valide"],
+			trim: true,
 		},
 		password: {
 			type: String,
@@ -73,6 +75,10 @@ const UserSchema = new mongoose.Schema(
 		freelance: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Freelance",
+		},
+		job: {
+			type: String,
+			trim: true,
 		},
 		lookingForJob: {
 			type: Boolean,

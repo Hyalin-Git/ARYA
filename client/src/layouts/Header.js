@@ -11,7 +11,7 @@ import HeaderUserInfo from "@/components/header/HeaderUserInfo";
 import DarkModeBtn from "@/components/DarkModeBtn";
 
 export default function Header() {
-	const context = useContext(AuthContext);
+	const { uid, user } = useContext(AuthContext);
 	const [isScroll, setIsScroll] = useState(false);
 	const [isScrollEnd, setIsScrollEnd] = useState(false);
 	const pathname = usePathname();
@@ -54,7 +54,7 @@ export default function Header() {
 					styles.nav,
 					isScroll && styles.slide,
 					isScrollEnd && styles.disapear,
-					context?.uid && styles.connected
+					uid && styles.connected
 				)}
 				id="nav">
 				{/* Logo  */}
@@ -75,18 +75,23 @@ export default function Header() {
 						<h1>rya</h1>
 					</Link>
 				</div>
-				{context?.uid && (
-					<div className={styles.searchbar}>
-						<input
-							className={montserrat.className}
-							type="search"
-							placeholder="Recherche"
-						/>
-					</div>
+				{uid && (
+					<>
+						<div>
+							<span>Trouver des indépendants</span>
+						</div>
+						<div className={styles.searchbar}>
+							<input
+								className={montserrat.className}
+								type="search"
+								placeholder="Recherche"
+							/>
+						</div>
+					</>
 				)}
 				{/* Menu  */}
 				<div className={styles.menu}>
-					{!context?.uid ? (
+					{!uid ? (
 						<ul>
 							<li>
 								<Link href="/auth">Connexion </Link>
@@ -112,7 +117,7 @@ export default function Header() {
 								/>
 							</li>
 							<li></li>
-							<HeaderUserInfo user={context?.user} />
+							<HeaderUserInfo user={user} />
 							<DarkModeBtn />
 							<li>
 								<Image

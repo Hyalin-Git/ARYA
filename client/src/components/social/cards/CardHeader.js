@@ -6,6 +6,7 @@ import { blockUser } from "@/api/user/user";
 import { formattedDate, getAuthor, authorCheck } from "@/libs/utils";
 import styles from "@/styles/components/social/cards/cardHeader.module.css";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function CardHeader({
@@ -74,22 +75,24 @@ export default function CardHeader({
 
 	return (
 		<div className={styles.container}>
-			<div className={styles.user}>
-				<Image
-					src={picture ?? "/images/profil/default-pfp.jpg"}
-					alt="profil"
-					width={50}
-					height={50}
-					quality={100}
-				/>
-				<div>
-					<span>
-						{firstname} {lastname}
-					</span>
-					<span>{username}</span>
-					<span>{formattedDate(element)}</span>
+			<Link href={`/user/${username}/posts`}>
+				<div className={styles.user}>
+					<Image
+						src={picture ?? "/images/profil/default-pfp.jpg"}
+						alt="profil"
+						width={50}
+						height={50}
+						quality={100}
+					/>
+					<div>
+						<span>
+							{firstname} {lastname}
+						</span>
+						<span>{username}</span>
+						<span>{formattedDate(element)}</span>
+					</div>
 				</div>
-			</div>
+			</Link>
 			<div className={styles.more} onClick={handleMoreModal}>
 				{moreModal && (
 					<>

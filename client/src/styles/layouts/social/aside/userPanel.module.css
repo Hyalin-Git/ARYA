@@ -2,14 +2,29 @@
 	position: relative;
 	background-color: rgba(var(--layer-color));
 	width: 100%;
-	padding: 20px;
 	border-radius: 8px;
 	display: flex;
-	justify-content: flex-start;
 	flex-direction: column;
-	align-items: center;
 }
-.link {
+
+.settings {
+	position: absolute;
+	z-index: 2000;
+	top: 10px;
+	right: 10px;
+}
+.settings img {
+	filter: invert(1);
+}
+
+/* PROFIL SECTION  */
+
+.profil {
+	position: relative;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	gap: 20px;
 }
 .background {
 	position: absolute;
@@ -23,21 +38,21 @@
 	top: 0;
 	border-radius: 8px 8px 0 0;
 }
-.container img {
-	margin-top: 20px;
-	margin-bottom: -5px;
+.image img {
 	position: relative;
-	z-index: 2000;
 	border-radius: 50%;
+	top: 40px;
+	margin-bottom: 30px;
 }
 
+/* NAMES */
+
 .names {
-	margin-top: 20px;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	align-items: center;
-	gap: 5px;
+	gap: 2px;
+	margin-bottom: -10px;
 }
 .names span:nth-child(1) {
 	font-weight: 500;
@@ -47,7 +62,55 @@
 	font-weight: 600;
 	color: var(--lavender-color);
 }
-.bio {
+
+/* JOB */
+
+.job {
+	font-weight: 600;
+	font-size: 0.8rem;
+}
+.job span {
+	color: color-mix(in srgb, white, black 50%) !important;
+}
+
+/* USER INFO SECTION   */
+
+.userInfo {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.userInfo p {
+	margin: 0;
+	padding: 0;
+	font-size: 0.9rem;
+}
+
+.team span,
+.bio span,
+.contact span,
+.tools span,
+.social span {
+	text-transform: uppercase;
+	color: color-mix(in srgb, white, black 50%) !important;
+	font-weight: bold;
+	font-size: 0.7rem;
+}
+
+.content {
+	margin-top: 10px;
+}
+.team .content,
+.tools .content,
+.social .content {
+	background-color: white;
+	border-radius: 4px;
+	padding: 10px;
+}
+
+/* .bio {
 	text-align: center;
 	width: 100%;
 }
@@ -58,13 +121,13 @@
 	display: block;
 	overflow: hidden;
 	color: color-mix(in srgb, white, black 70%) !important;
-}
+} */
 /* FOLLOWERS SECTION  */
 .horizontal {
 	width: 100%;
 	border: 0.5px solid grey;
 }
-.follow {
+.stats {
 	width: 100%;
 	display: flex;
 	font-weight: 400;
@@ -100,24 +163,31 @@
 	font-weight: 500;
 }
 
-.createdAt {
-}
-.createdAt span {
-}
-
-.footer {
-	margin-top: 20px;
+.date {
 	width: 100%;
 	text-align: center;
 }
 
-.footer span {
+.date span {
 	color: color-mix(in srgb, white, black 50%) !important;
 	text-transform: uppercase;
 	font-weight: bold;
 	font-size: 11px;
 }
 
+.reports {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+}
+.reports span {
+	color: color-mix(in srgb, white, black 50%) !important;
+	font-size: 0.8rem;
+	cursor: pointer;
+}
+.reports span:hover {
+	text-decoration: underline;
+}
 .link {
 	width: 100%;
 }
@@ -129,18 +199,22 @@
 
 .buttons {
 	width: 100%;
-	margin-bottom: 20px;
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+	padding-inline: 20px;
 }
 .buttons button {
 	padding: 8px;
 	width: 100%;
 	border-radius: 20px;
+	font-weight: 500;
+	box-shadow: inherit;
+	font-size: 1.1rem;
 }
 .buttons button:last-child {
 	background-image: inherit !important;
-	background-color: color-mix(in srgb, white, var(--meteorite-color) 10%);
+	/* background-color: color-mix(in srgb, white, var(--meteorite-color) 30%); */
+	background-color: white;
 	color: var(--meteorite-color);
 }
