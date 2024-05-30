@@ -20,10 +20,11 @@ export default function UserPanel({ fetchedUser }) {
 
 	const userCreatedAt = moment(user.createdAt).locale("fr").format("D MMMM Y");
 	// const hasSocialMedia = false;
+	const hasWebsite = userInfo?.website;
 
 	return (
 		<Link className={styles.link} href={`/user/${userInfo?.userName}/posts`}>
-			<div className={styles.container}>
+			<div className={styles.container} id="panel">
 				{isAuthor && (
 					<div className={styles.settings}>
 						<Link href={"/user/settings"}>
@@ -60,6 +61,11 @@ export default function UserPanel({ fetchedUser }) {
 					<div className={styles.job}>
 						<span>Développeur web full-stack</span>
 					</div>
+					{hasWebsite && (
+						<div className={styles.website}>
+							<Link href={userInfo?.website}>{userInfo?.website}</Link>
+						</div>
+					)}
 					{!isAuthor && isUserPage && (
 						<div className={styles.buttons}>
 							<button className={montserrat.className}>Suivre</button>
@@ -88,7 +94,7 @@ export default function UserPanel({ fetchedUser }) {
 						<>
 							<div className={styles.team}>
 								<div>
-									<span>équipe</span>
+									<span>Entreprise</span>
 								</div>
 								<div className={styles.content}>
 									<p>Gaycorp</p>
@@ -112,9 +118,9 @@ export default function UserPanel({ fetchedUser }) {
 									<p>nicolas.tombal01@gmail.com</p>
 								</div>
 							</div>
-							<div className={styles.tools}>
+							<div className={styles.social}>
 								<div>
-									<span>Mes Outils</span>
+									<span>Mes réseaux</span>
 								</div>
 								<div className={styles.content}>
 									<ul>
@@ -124,9 +130,9 @@ export default function UserPanel({ fetchedUser }) {
 									</ul>
 								</div>
 							</div>
-							<div className={styles.social}>
+							<div className={styles.tools}>
 								<div>
-									<span>Mes réseaux</span>
+									<span>Mes Outils</span>
 								</div>
 								<div className={styles.content}>
 									<ul>

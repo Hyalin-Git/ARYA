@@ -12,6 +12,7 @@
 	width: 100%;
 	min-width: 15%;
 	gap: 20px;
+	padding: 2px;
 }
 
 .content {

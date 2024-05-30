@@ -1,10 +1,12 @@
 .container {
 	position: relative;
-	background-color: rgba(var(--layer-color));
+	background-color: #f1f1f1;
 	width: 100%;
 	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
+	box-shadow: -1px 1px 2px color-mix(in srgb, white, black 10%),
+		1px -1px 2px color-mix(in srgb, white, black 10%);
 }
 
 .settings {
@@ -28,6 +30,8 @@
 }
 .background {
 	position: absolute;
+	/* box-shadow: -1px -1px 2px color-mix(in srgb, white, black 10%),
+		1px -1px 2px color-mix(in srgb, white, black 10%); */
 	background-image: linear-gradient(
 		-165deg,
 		var(--meteorite-color),
@@ -69,8 +73,24 @@
 	font-weight: 600;
 	font-size: 0.8rem;
 }
-.job span {
+.job span,
+.website a {
 	color: color-mix(in srgb, white, black 50%) !important;
+}
+
+.website {
+	margin-top: -20px;
+}
+
+.website a {
+	text-decoration: underline;
+	transition: 150ms all linear;
+	font-size: 0.8rem;
+}
+
+.website a:hover {
+	color: color-mix(in srgb, white, black 100%) !important;
+	transition: 150ms all linear;
 }
 
 /* USER INFO SECTION   */
@@ -125,7 +145,7 @@
 /* FOLLOWERS SECTION  */
 .horizontal {
 	width: 100%;
-	border: 0.5px solid grey;
+	border: 1px solid color-mix(in srgb, white, black 10%);
 }
 .stats {
 	width: 100%;
@@ -139,7 +159,7 @@
 }
 
 .line {
-	background-color: grey;
+	border: 1px solid color-mix(in srgb, white, black 10%);
 	width: 2px;
 	height: 50%;
 }

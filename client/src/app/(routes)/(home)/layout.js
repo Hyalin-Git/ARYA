@@ -1,3 +1,4 @@
+import Footer from "@/layouts/Footer";
 import Header from "@/layouts/Header";
 
 export default function HomeLayout({ children }) {
@@ -5,6 +6,7 @@ export default function HomeLayout({ children }) {
 		<>
 			<Header />
 			{children}
+			<Footer />
 		</>
 	);
 }

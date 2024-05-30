@@ -47,7 +47,6 @@ const UserSchema = new mongoose.Schema(
 			maxLength: 350,
 			default: "Salut ! Je suis nouveau ici sur Arya",
 		},
-
 		picture: {
 			type: String,
 		},
@@ -76,6 +75,10 @@ const UserSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Freelance",
 		},
+		website: {
+			type: String,
+			trim: true,
+		},
 		job: {
 			type: String,
 			trim: true,
@@ -83,6 +86,28 @@ const UserSchema = new mongoose.Schema(
 		lookingForJob: {
 			type: Boolean,
 			default: false,
+		},
+		social: {
+			type: {
+				twitter: {
+					type: String,
+				},
+				tiktok: {
+					type: String,
+				},
+				instagram: {
+					type: String,
+				},
+				linkedIn: {
+					type: String,
+				},
+				behance: {
+					type: String,
+				},
+			},
+		},
+		tools: {
+			type: [String],
 		},
 		subscription: {
 			type: String,

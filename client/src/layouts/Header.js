@@ -11,37 +11,41 @@ import HeaderUserInfo from "@/components/header/HeaderUserInfo";
 import DarkModeBtn from "@/components/DarkModeBtn";
 
 export default function Header() {
-	const { uid, user } = useContext(AuthContext);
+	const context = useContext(AuthContext);
 	const [isScroll, setIsScroll] = useState(false);
 	const [isScrollEnd, setIsScrollEnd] = useState(false);
 	const pathname = usePathname();
 
 	useEffect(() => {
-		const header = document.getElementById("header");
-		document.addEventListener("scroll", (e) => {
-			const documentHeight = document.body.scrollHeight;
-			const currentScroll = window.scrollY + window.innerHeight;
-			const marginOfError = 100;
+		if (!pathname.includes("/social") && !pathname.includes("/user")) {
+			const header = document.getElementById("header");
+			document.addEventListener("scroll", (e) => {
+				const documentHeight = document.body.scrollHeight;
+				const currentScroll = window.scrollY + window.innerHeight;
+				const marginOfError = 100;
 
-			// When the user starts scrolling make the background appear
-			if (header?.offsetTop > 10) {
-				setIsScroll(true);
-			}
-			// If the user is at the top of the page then make the header background disapear
-			if (header?.offsetTop <= 10) {
-				setIsScroll(false);
-			}
+				// When the user starts scrolling make the background appear
+				if (header?.offsetTop > 10) {
+					setIsScroll(true);
+					document.getElementById("title").style.color = "white";
+				}
+				// If the user is at the top of the page then make the header background disapear
+				if (header?.offsetTop <= 10) {
+					setIsScroll(false);
+					document.getElementById("title").style.color = "black";
+				}
 
-			// If the user is at the bottom of the page then make the header disapear
-			if (currentScroll + marginOfError >= documentHeight) {
-				setIsScrollEnd(true);
-			} else {
-				setIsScrollEnd(false);
-			}
-		});
+				// If the user is at the bottom of the page then make the header disapear
+				if (currentScroll + marginOfError >= documentHeight) {
+					setIsScrollEnd(true);
+				} else {
+					setIsScrollEnd(false);
+				}
+			});
+		}
 		if (pathname.includes("/social") || pathname.includes("/user")) {
 			document.getElementById("nav").style.color = "white";
-			document.getElementById("nav");
+			document.getElementById("title").style.color = "white";
 
 			document.getElementById("nav").style.backgroundColor = "#712fd9";
 		}
@@ -54,7 +58,7 @@ export default function Header() {
 					styles.nav,
 					isScroll && styles.slide,
 					isScrollEnd && styles.disapear,
-					uid && styles.connected
+					context?.uid && styles.connected
 				)}
 				id="nav">
 				{/* Logo  */}
@@ -62,7 +66,9 @@ export default function Header() {
 					<Link href="/">
 						<Image
 							src={
-								isScroll || pathname.includes("/social")
+								isScroll ||
+								pathname.includes("/social") ||
+								pathname.includes("/user")
 									? "/images/logo/Arya_Monochrome_White.png"
 									: "/images/logo/Arya_Monochrome_black.png"
 							}
@@ -72,10 +78,10 @@ export default function Header() {
 							loading="lazy"
 							id="logo"
 						/>
-						<h1>rya</h1>
+						<h1 id="title">rya</h1>
 					</Link>
 				</div>
-				{uid && (
+				{context?.uid && (
 					<>
 						<div>
 							<span>Trouver des indépendants</span>
@@ -91,7 +97,7 @@ export default function Header() {
 				)}
 				{/* Menu  */}
 				<div className={styles.menu}>
-					{!uid ? (
+					{!context?.uid ? (
 						<ul>
 							<li>
 								<Link href="/auth">Connexion </Link>
@@ -102,7 +108,7 @@ export default function Header() {
 						<ul className={styles.connected}>
 							<li>
 								<Image
-									src="./images/icons/briefcase_icon.svg"
+									src="/images/icons/briefcase_icon.svg"
 									width={25}
 									height={25}
 									alt="icon"
@@ -110,18 +116,18 @@ export default function Header() {
 							</li>
 							<li>
 								<Image
-									src="./images/icons/bell_icon.svg"
+									src="/images/icons/bell_icon.svg"
 									width={25}
 									height={25}
 									alt="icon"
 								/>
 							</li>
 							<li></li>
-							<HeaderUserInfo user={user} />
+							<HeaderUserInfo user={context?.user} />
 							<DarkModeBtn />
 							<li>
 								<Image
-									src="./images/icons/nine_dots_icon.svg"
+									src="/images/icons/nine_dots_icon.svg"
 									width={30}
 									height={30}
 									alt="icon"

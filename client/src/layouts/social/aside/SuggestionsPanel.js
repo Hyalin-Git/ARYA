@@ -7,7 +7,7 @@ import MoreSuggestions from "../../../components/social/modals/MoreSuggestions";
 export default function FollowPanel({ suggestions }) {
 	const [more, setMore] = useState(false);
 	return (
-		<div className={styles.container}>
+		<div className={styles.container} id="panel">
 			<div className={styles.header}>
 				<span>Personnes ayant les mêmes centres d'intérêt</span>
 			</div>

@@ -1,8 +1,10 @@
 .wrapper {
 	position: relative;
-	padding: 15px 15px 15px 15px;
+	padding: 15px;
 	border-radius: 8px;
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	border: 1px solid color-mix(in srgb, white, black 10%);
+	background-color: #f9f9f9;
+
 	transition: 150ms all linear;
 }
 .wrapper[data-type="comment"] {
@@ -12,7 +14,3 @@
 	/* background-color: rgba(0, 0, 0, 0.15);
 	transition: 150ms all linear; */
 }
-
-
-
-

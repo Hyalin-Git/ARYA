@@ -10,7 +10,7 @@ export default function Conversations({ conversation }) {
 	const getOtherUser = conversation.users.find((user) => user._id !== uid);
 
 	return (
-		<div className={styles.container}>
+		<div className={styles.container} id="panel">
 			<div className={styles.left}>
 				<div>
 					<Image

@@ -159,12 +159,18 @@ body[data-dark="false"] span {
 }
 
 body[data-dark="true"] #background {
-	background-color: rgba(0, 0, 0, 0);
-	border: 1px solid rgba(0, 0, 0, 0.2);
+	background-color: rgba(0, 0, 0, 0.5);
+	border: 1px solid color-mix(in srgb, white, black 80%);
 }
 
 body[data-dark="true"] #background #icon {
 	filter: invert(1);
+}
+
+body[data-dark="true"] #panel {
+	background-color: #181a1b;
+	box-shadow: -1px 1px 2px color-mix(in srgb, white, black 80%),
+		1px -1px 2px color-mix(in srgb, white, black 80%);
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -388,4 +394,9 @@ ul {
 	border-radius: 20px;
 	border: 6px solid transparent;
 	background-clip: content-box;
+}
+
+/* FORMS  */
+input {
+	margin-top: 5px;
 }

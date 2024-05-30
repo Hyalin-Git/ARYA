@@ -1,6 +1,8 @@
 .container {
 	position: relative;
-	background-color: rgba(var(--layer-color));
+	background-color: #f1f1f1;
+	box-shadow: -1px 1px 2px color-mix(in srgb, white, black 10%),
+		1px -1px 2px color-mix(in srgb, white, black 10%);
 	width: 100%;
 
 	border-radius: 8px;

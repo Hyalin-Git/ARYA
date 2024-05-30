@@ -1,7 +1,7 @@
 .header {
 	position: sticky;
 	top: 0;
-	z-index: 2500;
+	z-index: 9500;
 	height: 60px;
 	/* opacity: 0; */
 }

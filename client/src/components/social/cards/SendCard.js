@@ -86,7 +86,7 @@ export default function SendCard({
 
 	const formId = (type === "repost" && "repost") || (type === "post" && "post");
 	return (
-		<div className={styles.container} data-type={type}>
+		<div className={styles.container} data-type={type} id="panel">
 			<form action={formAction} id={formId}>
 				<div className={styles.form} ref={formRef}>
 					<div className={styles.top}>
