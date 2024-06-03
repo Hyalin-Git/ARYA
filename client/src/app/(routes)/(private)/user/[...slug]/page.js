@@ -39,8 +39,8 @@ export default async function User({ params }) {
 							<li data-active={isActive("images")}>Images</li>
 						</Link>
 						<li>/</li>
-						<Link href={`/user/${user.userName}/projects`}>
-							<li data-active={isActive("projects")}>Projets</li>
+						<Link href={`/user/${user.userName}/portfolio`}>
+							<li data-active={isActive("portfolio")}>Portfolio</li>
 						</Link>
 						<Link href={`/user/${user.userName}/services`}>
 							<li data-active={isActive("services")}>Services</li>

@@ -1,6 +1,9 @@
 "use server";
+import ContactEditor from "@/components/settings/ContactEditor";
+import CvEditor from "@/components/settings/CvEditor";
 import NavPanel from "@/components/settings/NavPanel";
 import SocialEditor from "@/components/settings/SocialEditor";
+import ToolsEditor from "@/components/settings/ToolsEditor";
 import UserEditor from "@/components/settings/UserEditor";
 import styles from "@/styles/pages/settings.module.css";
 export default async function Settings() {
@@ -12,7 +15,10 @@ export default async function Settings() {
 				</aside>
 				<div className={styles.right}>
 					<UserEditor />
+					<ContactEditor />
 					<SocialEditor />
+					<ToolsEditor />
+					<CvEditor />
 				</div>
 			</div>
 		</main>

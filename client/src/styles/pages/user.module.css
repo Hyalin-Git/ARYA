@@ -39,7 +39,7 @@
 	position: relative;
 	z-index: 2000;
 	padding: 8px 16px 8px 16px;
-	border-radius: 20px;
+	border-radius: 4px;
 	font-weight: 600;
 	font-size: 0.9rem;
 }

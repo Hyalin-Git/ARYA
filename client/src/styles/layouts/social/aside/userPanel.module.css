@@ -123,11 +123,54 @@
 	margin-top: 10px;
 }
 .team .content,
-.tools .content,
 .social .content {
 	background-color: white;
 	border-radius: 4px;
 	padding: 10px;
+}
+
+.social .content {
+	padding-bottom: 5px;
+}
+.social .content ul {
+	display: flex;
+
+	flex-direction: column;
+	gap: 5px;
+}
+.social .content ul li:not(:last-child) {
+	padding-bottom: 5px;
+	border-bottom: 1px solid color-mix(in srgb, white, black 10%);
+}
+.social .content ul li a {
+	display: flex;
+	align-items: center;
+	color: inherit;
+	font-size: 0.9rem;
+	gap: 5px;
+	font-weight: 400;
+}
+
+.tools .content ul {
+	display: flex;
+	gap: 5px;
+	/* color: color-mix(in srgb, white, black 50%) !important; */
+
+	font-size: 0.9rem;
+}
+.tools .content li {
+	background-color: white;
+	padding: 10px;
+	border-radius: 4px;
+}
+
+.cv button {
+	padding: 8px;
+	width: 100%;
+	border-radius: 4px;
+	font-weight: 500;
+	box-shadow: inherit;
+	font-size: 1.1rem;
 }
 
 /* .bio {
@@ -227,7 +270,7 @@
 .buttons button {
 	padding: 8px;
 	width: 100%;
-	border-radius: 20px;
+	border-radius: 4px;
 	font-weight: 500;
 	box-shadow: inherit;
 	font-size: 1.1rem;
@@ -237,4 +280,11 @@
 	/* background-color: color-mix(in srgb, white, var(--meteorite-color) 30%); */
 	background-color: white;
 	color: var(--meteorite-color);
+}
+
+.link[data-disabled="true"] {
+	pointer-events: none;
+}
+.link[data-disabled="false"] {
+	pointer-events: all;
 }

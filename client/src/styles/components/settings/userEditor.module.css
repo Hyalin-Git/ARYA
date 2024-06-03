@@ -53,30 +53,6 @@
 	gap: 10px;
 }
 
-.form > div:nth-child(2) input,
-.form > div:nth-child(2) textarea {
-	background-color: inherit;
-	padding: 8px;
-	outline: none;
-	border-radius: 4px;
-	border: 1px solid color-mix(in srgb, white, black 10%);
-	background-color: white;
-	/* box-shadow: var(--passive-shadow); */
-	caret-color: var(--meteorite-color);
-	transition: 150ms all linear;
-	font-size: 0.8rem;
-	font-weight: 500;
-	color: black;
-	resize: none;
-	box-sizing: border-box;
-	width: 100%;
-}
-
-.form > div:nth-child(2) input:focus,
-.form > div:nth-child(2) textarea:focus {
-	border: 1px solid var(--lavender-color);
-}
-
 .names {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);

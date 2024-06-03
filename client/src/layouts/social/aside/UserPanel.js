@@ -19,11 +19,22 @@ export default function UserPanel({ fetchedUser }) {
 	const isUserPage = pathname.includes("/@");
 
 	const userCreatedAt = moment(user.createdAt).locale("fr").format("D MMMM Y");
-	// const hasSocialMedia = false;
 	const hasWebsite = userInfo?.website;
-
+	const hasContact = userInfo?.contact;
+	const hasSocialMedia =
+		userInfo?.social?.twitter ||
+		userInfo?.social?.tiktok ||
+		userInfo?.social?.instagram ||
+		userInfo?.social?.facebook ||
+		userInfo?.social?.linkedIn ||
+		userInfo?.social?.youtube ||
+		userInfo?.social?.twitch;
+	const hasTools = userInfo?.tools;
 	return (
-		<Link className={styles.link} href={`/user/${userInfo?.userName}/posts`}>
+		<Link
+			className={styles.link}
+			href={`/user/${userInfo?.userName}/posts`}
+			data-disabled={fetchedUser ? true : false}>
 			<div className={styles.container} id="panel">
 				{isAuthor && (
 					<div className={styles.settings}>
@@ -59,11 +70,16 @@ export default function UserPanel({ fetchedUser }) {
 						<span> {userInfo?.userName}</span>
 					</div>
 					<div className={styles.job}>
-						<span>Développeur web full-stack</span>
+						<span>{userInfo?.job}</span>
 					</div>
 					{hasWebsite && (
 						<div className={styles.website}>
-							<Link href={userInfo?.website}>{userInfo?.website}</Link>
+							<Link
+								className={styles.link}
+								href={userInfo?.website}
+								data-disabled={false}>
+								{userInfo?.website}
+							</Link>
 						</div>
 					)}
 					{!isAuthor && isUserPage && (
@@ -110,37 +126,160 @@ export default function UserPanel({ fetchedUser }) {
 									</p>
 								</div>
 							</div>
-							<div className={styles.contact}>
-								<div>
-									<span>Me contacter</span>
+							{hasContact && (
+								<div className={styles.contact}>
+									<div>
+										<span>Me contacter</span>
+									</div>
+									<div className={styles.content}>
+										<p>{userInfo.contact}</p>
+									</div>
 								</div>
-								<div className={styles.content}>
-									<p>nicolas.tombal01@gmail.com</p>
+							)}
+							{hasSocialMedia && (
+								<div className={styles.social}>
+									<div>
+										<span>Mes réseaux</span>
+									</div>
+									<div className={styles.content}>
+										<ul>
+											{userInfo?.social?.twitter && (
+												<li>
+													<Link
+														className={styles.link}
+														data-disabled={false}
+														href={userInfo?.social?.twitter}>
+														<Image
+															src="/images/icons/x_icon.svg"
+															alt="icon"
+															width={30}
+															height={28}
+														/>
+														Twitter
+													</Link>
+												</li>
+											)}
+
+											{userInfo?.social?.tiktok && (
+												<li>
+													<Link
+														className={styles.link}
+														data-disabled={false}
+														href={userInfo?.social?.tiktok}>
+														<Image
+															src="/images/icons/tiktok_icon.svg"
+															alt="icon"
+															width={30}
+															height={30}
+														/>
+														Tiktok
+													</Link>
+												</li>
+											)}
+
+											{userInfo?.social?.instagram && (
+												<li>
+													<Link
+														className={styles.link}
+														data-disabled={false}
+														href={userInfo?.social?.instagram}>
+														<Image
+															src="/images/icons/instagram_icon.svg"
+															alt="icon"
+															width={30}
+															height={30}
+														/>
+														Instagram
+													</Link>
+												</li>
+											)}
+
+											{userInfo?.social?.facebook && (
+												<li>
+													<Link
+														className={styles.link}
+														data-disabled={false}
+														href={userInfo?.social?.facebook}>
+														<Image
+															src="/images/icons/facebook_icon.svg"
+															alt="icon"
+															width={30}
+															height={30}
+														/>
+														Facebook
+													</Link>
+												</li>
+											)}
+											{userInfo?.social?.linkedIn && (
+												<li>
+													<Link
+														className={styles.link}
+														data-disabled={false}
+														href={userInfo?.social?.linkedIn}>
+														<Image
+															src="/images/icons/linkedIn_icon.svg"
+															alt="icon"
+															width={30}
+															height={30}
+														/>
+														LinkedIn
+													</Link>
+												</li>
+											)}
+											{userInfo?.social?.youtube && (
+												<li>
+													<Link
+														className={styles.link}
+														data-disabled={false}
+														href={userInfo?.social?.youtube}>
+														<Image
+															src="/images/icons/youtube_icon.svg"
+															alt="icon"
+															width={30}
+															height={30}
+														/>
+														Youtube
+													</Link>
+												</li>
+											)}
+											{userInfo?.social?.twitch && (
+												<li>
+													<Link
+														className={styles.link}
+														data-disabled={false}
+														href={userInfo?.social?.twitch}>
+														<Image
+															src="/images/icons/twitch_icon.svg"
+															alt="icon"
+															width={30}
+															height={30}
+														/>
+														Twitch
+													</Link>
+												</li>
+											)}
+										</ul>
+									</div>
 								</div>
-							</div>
-							<div className={styles.social}>
-								<div>
-									<span>Mes réseaux</span>
+							)}
+							{hasTools[0] && (
+								<div className={styles.tools}>
+									<div>
+										<span>Mes Outils</span>
+									</div>
+									<div className={styles.content}>
+										<ul>
+											{userInfo.tools.map((tool, idx) => {
+												return <li key={idx}>{tool}</li>;
+											})}
+										</ul>
+									</div>
 								</div>
-								<div className={styles.content}>
-									<ul>
-										<li>Twitter</li>
-										<li>Instagram</li>
-										<li>LinkedIn</li>
-									</ul>
-								</div>
-							</div>
-							<div className={styles.tools}>
-								<div>
-									<span>Mes Outils</span>
-								</div>
-								<div className={styles.content}>
-									<ul>
-										<li>Twitter</li>
-										<li>Instagram</li>
-										<li>LinkedIn</li>
-									</ul>
-								</div>
+							)}
+							<div className={styles.cv}>
+								<button className={montserrat.className}>
+									Télécharger mon CV
+								</button>
 							</div>
 						</>
 					)}

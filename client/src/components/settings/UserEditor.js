@@ -7,7 +7,7 @@ import { useContext } from "react";
 export default function UserEditor() {
 	const { user } = useContext(AuthContext);
 	return (
-		<div className={styles.container}>
+		<div className={styles.container} id="panel">
 			<div className={styles.userInfo}>
 				<div>
 					<span>Informations de l'utilisateur</span>
@@ -62,6 +62,17 @@ export default function UserEditor() {
 									id="username"
 									className={montserrat.className}
 									defaultValue={user.userName}
+								/>
+							</div>
+							<div>
+								<label htmlFor="job">Profession</label>
+								<br />
+								<input
+									type="text"
+									name="job"
+									id="job"
+									className={montserrat.className}
+									defaultValue={user?.job}
 								/>
 							</div>
 							<div>

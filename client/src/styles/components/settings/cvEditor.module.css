@@ -24,13 +24,23 @@
 }
 
 .form {
-	margin-top: 10px;
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 }
-.form div {
+
+.form > div:nth-child(1) {
 	display: flex;
-	align-items: flex-end;
-	gap: 5px;
+	align-items: center;
+	gap: 10px;
+}
+.form > div:nth-child(1) label {
+	width: max-content;
+}
+.form > div:nth-child(1) input {
+	width: min-content;
+}
+
+.form em {
+	color: var(--lavender-color);
 }

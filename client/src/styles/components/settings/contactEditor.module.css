@@ -22,15 +22,3 @@
 	text-transform: inherit;
 	color: color-mix(in srgb, white, black 40%) !important;
 }
-
-.form {
-	margin-top: 10px;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-.form div {
-	display: flex;
-	align-items: flex-end;
-	gap: 5px;
-}

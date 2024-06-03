@@ -83,6 +83,13 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			trim: true,
 		},
+		contact: {
+			type: String,
+			unique: true,
+			lowercase: true,
+			validate: [validateEmail, "Veuillez entrer une adresse mail valide"],
+			trim: true,
+		},
 		lookingForJob: {
 			type: Boolean,
 			default: false,
@@ -98,10 +105,16 @@ const UserSchema = new mongoose.Schema(
 				instagram: {
 					type: String,
 				},
+				facebook: {
+					type: String,
+				},
 				linkedIn: {
 					type: String,
 				},
-				behance: {
+				youtube: {
+					type: String,
+				},
+				twitch: {
 					type: String,
 				},
 			},
