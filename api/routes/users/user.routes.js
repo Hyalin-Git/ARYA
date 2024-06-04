@@ -39,6 +39,18 @@ router.put(
 	authorize,
 	userController.updateUser
 );
+router.put(
+	"/update-social/:id",
+	authenticate,
+	authorize,
+	userController.updateUserSocial
+);
+router.put(
+	"/update-tools/:id",
+	authenticate,
+	authorize,
+	userController.updateUserTools
+);
 // Update user phone
 router.put(
 	"/update-phone/:id",

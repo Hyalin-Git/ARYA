@@ -1,0 +1,42 @@
+.container {
+	position: relative;
+	padding: 20px;
+	border-radius: 4px;
+	border: 1px solid color-mix(in srgb, white, black 10%);
+	background-color: #f1f1f1;
+}
+.title {
+	margin-bottom: 5px;
+}
+
+.title span,
+.form label {
+	text-transform: uppercase;
+	color: color-mix(in srgb, white, black 50%) !important;
+	font-weight: bold;
+	font-size: 0.7rem;
+}
+
+.tools {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+.tools span {
+	padding: 10px;
+	background-color: white;
+	border-radius: 4px;
+	font-weight: 500;
+}
+
+.tools span:hover {
+	background-color: var(--meteorite-color);
+	color: white;
+	cursor: pointer;
+}
+
+.form label {
+	text-transform: inherit;
+	color: color-mix(in srgb, white, black 40%) !important;
+}

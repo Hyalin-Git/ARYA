@@ -48,6 +48,9 @@
 .form > div:nth-child(2) {
 	padding-left: 20px;
 	width: 100%;
+}
+
+.form > div:nth-child(2) form {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;

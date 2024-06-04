@@ -1,9 +1,111 @@
 "use server";
 import axios from "axios";
+import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
+export async function updateUser(uid, prevState, formData) {
+	try {
+		const updatedData = {
+			lastName: formData.get("lastName"),
+			firstName: formData.get("firstName"),
+			userName: formData.get("userName"),
+			job: formData.get("job"),
+			biographie: formData.get("biographie"),
+			contact: formData.get("contact"),
+			website: formData.get("website"),
+		};
 
+		const res = await fetch(
+			`http://localhost:5000/api/users/update-user/${uid}`,
+			{
+				method: "PUT",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(updatedData),
+			}
+		);
+		const data = await res.json();
+		console.log(data);
+	} catch (err) {
+		console.log(err);
+	}
+}
 
+export async function updateUserSocial(uid, prevState, formData) {
+	try {
+		const updatedData = {
+			twitter: formData.get("twitter"),
+			tiktok: formData.get("tiktok"),
+			instagram: formData.get("instagram"),
+			facebook: formData.get("facebook"),
+			linkedIn: formData.get("linkedIn"),
+			youtube: formData.get("youtube"),
+			twitch: formData.get("twitch"),
+		};
+
+		const res = await fetch(
+			`http://localhost:5000/api/users/update-social/${uid}`,
+			{
+				method: "PUT",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(updatedData),
+			}
+		);
+		const data = await res.json();
+		console.log(data);
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+export async function updateUserTools(uid, tools, prevState, formData) {
+	try {
+		let array;
+
+		if (formData) {
+			if (formData.get("tool").length <= 0) {
+				array = [...tools];
+			} else {
+				console.log("played bro");
+				array = [...tools, formData.get("tool")];
+			}
+		} else {
+			array = [...tools];
+		}
+
+		const toolsData = {
+			tools: array,
+		};
+		const res = await fetch(
+			`http://localhost:5000/api/users/update-tools/${uid}`,
+			{
+				method: "PUT",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(toolsData),
+			}
+		);
+		const data = await res.json();
+		console.log(data);
+
+		return {
+			status: "success",
+			data: data.tools,
+		};
+	} catch (err) {
+		console.log(err);
+	}
+}
 
 export async function updateForgotPassword(prevState, formData) {
 	try {

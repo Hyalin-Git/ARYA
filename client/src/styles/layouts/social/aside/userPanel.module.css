@@ -8,6 +8,16 @@
 	box-shadow: -1px 1px 2px color-mix(in srgb, white, black 10%),
 		1px -1px 2px color-mix(in srgb, white, black 10%);
 }
+/* LINKS  */
+.container [data-disabled="true"] {
+	pointer-events: none;
+}
+.container [data-disabled="false"] {
+	pointer-events: all;
+}
+.container a {
+	font-weight: 500;
+}
 
 .settings {
 	position: absolute;
@@ -109,6 +119,7 @@
 }
 
 .team span,
+.status span,
 .bio span,
 .contact span,
 .tools span,
@@ -153,6 +164,7 @@
 
 .tools .content ul {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 5px;
 	/* color: color-mix(in srgb, white, black 50%) !important; */
 
@@ -170,7 +182,7 @@
 	border-radius: 4px;
 	font-weight: 500;
 	box-shadow: inherit;
-	font-size: 1.1rem;
+	font-size: 1rem;
 }
 
 /* .bio {
@@ -221,11 +233,6 @@
 	font-weight: 500;
 }
 
-.container a {
-	color: var(--lavender-color);
-	font-weight: 500;
-}
-
 .date {
 	width: 100%;
 	text-align: center;
@@ -251,9 +258,7 @@
 .reports span:hover {
 	text-decoration: underline;
 }
-.link {
-	width: 100%;
-}
+
 .container button {
 	width: 100%;
 }
@@ -280,11 +285,4 @@
 	/* background-color: color-mix(in srgb, white, var(--meteorite-color) 30%); */
 	background-color: white;
 	color: var(--meteorite-color);
-}
-
-.link[data-disabled="true"] {
-	pointer-events: none;
-}
-.link[data-disabled="false"] {
-	pointer-events: all;
 }

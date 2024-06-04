@@ -1,5 +1,4 @@
 "use server";
-import ContactEditor from "@/components/settings/ContactEditor";
 import CvEditor from "@/components/settings/CvEditor";
 import NavPanel from "@/components/settings/NavPanel";
 import SocialEditor from "@/components/settings/SocialEditor";
@@ -15,7 +14,6 @@ export default async function Settings() {
 				</aside>
 				<div className={styles.right}>
 					<UserEditor />
-					<ContactEditor />
 					<SocialEditor />
 					<ToolsEditor />
 					<CvEditor />

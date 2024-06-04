@@ -30,15 +30,15 @@ export default function UserPanel({ fetchedUser }) {
 		userInfo?.social?.youtube ||
 		userInfo?.social?.twitch;
 	const hasTools = userInfo?.tools;
+	const isLookingForJob = userInfo?.lookingForJob;
 	return (
-		<Link
-			className={styles.link}
-			href={`/user/${userInfo?.userName}/posts`}
-			data-disabled={fetchedUser ? true : false}>
-			<div className={styles.container} id="panel">
+		<div className={styles.container} id="panel">
+			<Link
+				href={`/user/${userInfo?.userName}/posts`}
+				data-disabled={fetchedUser ? true : false}>
 				{isAuthor && (
 					<div className={styles.settings}>
-						<Link href={"/user/settings"}>
+						<Link href={"/user/settings"} data-disabled={false}>
 							<Image
 								src="/images/icons/setting_icon.svg"
 								alt="settings"
@@ -74,10 +74,7 @@ export default function UserPanel({ fetchedUser }) {
 					</div>
 					{hasWebsite && (
 						<div className={styles.website}>
-							<Link
-								className={styles.link}
-								href={userInfo?.website}
-								data-disabled={false}>
+							<Link href={userInfo?.website} data-disabled={false}>
 								{userInfo?.website}
 							</Link>
 						</div>
@@ -116,6 +113,16 @@ export default function UserPanel({ fetchedUser }) {
 									<p>Gaycorp</p>
 								</div>
 							</div>
+							{isLookingForJob && (
+								<div className={styles.status}>
+									<div>
+										<span>Disponible</span>
+									</div>
+									<div className={styles.content}>
+										<p>En recherche d'emploi</p>
+									</div>
+								</div>
+							)}
 							<div className={styles.bio}>
 								<div>
 									<span>à propos de moi</span>
@@ -146,7 +153,6 @@ export default function UserPanel({ fetchedUser }) {
 											{userInfo?.social?.twitter && (
 												<li>
 													<Link
-														className={styles.link}
 														data-disabled={false}
 														href={userInfo?.social?.twitter}>
 														<Image
@@ -163,7 +169,6 @@ export default function UserPanel({ fetchedUser }) {
 											{userInfo?.social?.tiktok && (
 												<li>
 													<Link
-														className={styles.link}
 														data-disabled={false}
 														href={userInfo?.social?.tiktok}>
 														<Image
@@ -180,7 +185,6 @@ export default function UserPanel({ fetchedUser }) {
 											{userInfo?.social?.instagram && (
 												<li>
 													<Link
-														className={styles.link}
 														data-disabled={false}
 														href={userInfo?.social?.instagram}>
 														<Image
@@ -197,7 +201,6 @@ export default function UserPanel({ fetchedUser }) {
 											{userInfo?.social?.facebook && (
 												<li>
 													<Link
-														className={styles.link}
 														data-disabled={false}
 														href={userInfo?.social?.facebook}>
 														<Image
@@ -213,7 +216,6 @@ export default function UserPanel({ fetchedUser }) {
 											{userInfo?.social?.linkedIn && (
 												<li>
 													<Link
-														className={styles.link}
 														data-disabled={false}
 														href={userInfo?.social?.linkedIn}>
 														<Image
@@ -229,7 +231,6 @@ export default function UserPanel({ fetchedUser }) {
 											{userInfo?.social?.youtube && (
 												<li>
 													<Link
-														className={styles.link}
 														data-disabled={false}
 														href={userInfo?.social?.youtube}>
 														<Image
@@ -245,7 +246,6 @@ export default function UserPanel({ fetchedUser }) {
 											{userInfo?.social?.twitch && (
 												<li>
 													<Link
-														className={styles.link}
 														data-disabled={false}
 														href={userInfo?.social?.twitch}>
 														<Image
@@ -277,8 +277,8 @@ export default function UserPanel({ fetchedUser }) {
 								</div>
 							)}
 							<div className={styles.cv}>
-								<button className={montserrat.className}>
-									Télécharger mon CV
+								<button className={montserrat.className} data-disabled={false}>
+									{isAuthor ? "Télécharger mon CV" : "Télécharger le CV"}
 								</button>
 							</div>
 						</>
@@ -293,7 +293,7 @@ export default function UserPanel({ fetchedUser }) {
 						</div>
 					)}
 				</div>
-			</div>
-		</Link>
+			</Link>
+		</div>
 	);
 }

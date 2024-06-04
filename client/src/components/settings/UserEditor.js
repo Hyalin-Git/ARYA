@@ -1,65 +1,75 @@
 "use client";
+import { updateUser } from "@/actions/user";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/settings/userEditor.module.css";
 import Image from "next/image";
 import { useContext } from "react";
+import { useFormState } from "react-dom";
+
+const initialState = {
+	status: "pending",
+	message: "",
+};
 export default function UserEditor() {
-	const { user } = useContext(AuthContext);
+	const { user, uid } = useContext(AuthContext);
+	const updateUserWithUid = updateUser.bind(null, uid);
+	const [state, formAction] = useFormState(updateUserWithUid, initialState);
 	return (
 		<div className={styles.container} id="panel">
 			<div className={styles.userInfo}>
 				<div>
 					<span>Informations de l'utilisateur</span>
 				</div>
-				<form action="">
-					<div className={styles.form}>
-						<div>
-							<Image
-								src={user.picture}
-								width={100}
-								height={100}
-								quality={100}
-								alt="profil picture"
-								style={{
-									borderRadius: "50%",
-								}}
-							/>
-							<br />
-							<span>Changer ma photo de profil</span>
-						</div>
-						<div>
+
+				<div className={styles.form}>
+					<div>
+						<Image
+							src={user.picture}
+							width={100}
+							height={100}
+							quality={100}
+							alt="profil picture"
+							style={{
+								borderRadius: "50%",
+							}}
+						/>
+						<br />
+						<span>Changer ma photo de profil</span>
+					</div>
+					<div>
+						<form action={formAction}>
 							<div className={styles.names}>
 								<div>
-									<label htmlFor="lastname">Nom</label>
+									<label htmlFor="lastName">Nom</label>
 									<br />
 									<input
 										type="text"
-										name="lastname"
-										id="lastname"
+										name="lastName"
+										id="lastName"
 										className={montserrat.className}
 										defaultValue={user.lastName}
 									/>
 								</div>
 								<div>
-									<label htmlFor="firstname">Prénom</label>
+									<label htmlFor="firstName">Prénom</label>
 									<br />
 									<input
 										type="text"
-										name="firstname"
-										id="firstname"
+										name="firstName"
+										id="firstName"
 										className={montserrat.className}
 										defaultValue={user.firstName}
 									/>
 								</div>
 							</div>
 							<div>
-								<label htmlFor="username">Nom d'utilisateur</label>
+								<label htmlFor="userName">Nom d'utilisateur</label>
 								<br />
 								<input
 									type="text"
-									name="username"
-									id="username"
+									name="userName"
+									id="userName"
 									className={montserrat.className}
 									defaultValue={user.userName}
 								/>
@@ -76,12 +86,12 @@ export default function UserEditor() {
 								/>
 							</div>
 							<div>
-								<label htmlFor="bio">Biographie</label>
+								<label htmlFor="biographie">Biographie</label>
 								<br />
 								<textarea
 									type="text"
-									name="bio"
-									id="bio"
+									name="biographie"
+									id="biographie"
 									className={montserrat.className}
 									onChange={(e) => {
 										e.preventDefault();
@@ -92,19 +102,33 @@ export default function UserEditor() {
 								/>
 							</div>
 							<div>
-								<label htmlFor="username">URL du site web</label>
+								<label htmlFor="contact">Adresse mail de contact</label>
 								<br />
 								<input
 									type="text"
-									name="username"
-									id="username"
+									name="contact"
+									id="contact"
+									className={montserrat.className}
+									defaultValue={user?.contact}
+								/>
+							</div>
+							<div>
+								<label htmlFor="website">URL du site web</label>
+								<br />
+								<input
+									type="text"
+									name="website"
+									id="website"
 									className={montserrat.className}
 									defaultValue={user?.website}
 								/>
 							</div>
-						</div>
+							<button hidden type="submit">
+								Submit
+							</button>
+						</form>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	);

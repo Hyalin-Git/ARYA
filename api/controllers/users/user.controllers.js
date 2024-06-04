@@ -188,8 +188,68 @@ exports.updateUser = (req, res, next) => {
 		{ _id: req.params.id },
 		{
 			$set: {
+				lastName: req.body.lastName,
+				firstName: req.body.firstName,
 				userName: "@" + req.body.userName,
+				job: req.body.job,
 				biographie: req.body.biographie,
+				contact: req.body.contact,
+				website: req.body.website,
+			},
+		},
+		{
+			setDefaultsOnInsert: true,
+			new: true,
+		}
+	)
+		.then((user) => {
+			if (!user) {
+				return res.status(404).send("Cet utilisateur n'existe pas"); // This user does not exist
+			}
+			res.status(200).send(user);
+		})
+		.catch((err) => res.status(500).send(err));
+};
+
+exports.updateUserSocial = (req, res, next) => {
+	const { twitter, tiktok, instagram, facebook, linkedIn, youtube, twitch } =
+		req.body;
+	UserModel.findByIdAndUpdate(
+		{ _id: req.params.id },
+		{
+			$set: {
+				social: {
+					twitter: twitter,
+					tiktok: tiktok,
+					instagram: instagram,
+					facebook: facebook,
+					linkedIn: linkedIn,
+					youtube: youtube,
+					twitch: twitch,
+				},
+			},
+		},
+		{
+			setDefaultsOnInsert: true,
+			new: true,
+		}
+	)
+		.then((user) => {
+			if (!user) {
+				return res.status(404).send("Cet utilisateur n'existe pas"); // This user does not exist
+			}
+			res.status(200).send(user);
+		})
+		.catch((err) => res.status(500).send(err));
+};
+
+exports.updateUserTools = (req, res, next) => {
+	const { tools } = req.body;
+	UserModel.findByIdAndUpdate(
+		{ _id: req.params.id },
+		{
+			$set: {
+				tools: tools,
 			},
 		},
 		{
