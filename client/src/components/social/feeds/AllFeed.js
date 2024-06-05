@@ -48,7 +48,7 @@ export default function AllFeed({ initialPosts, key, notFound }) {
 	}, [inView]);
 
 	return (
-		<div className={styles.container}>
+		<div className={styles.container} id="scroll">
 			<div className={styles.filters}>
 				<Link href={"/social"}>
 					<span>Pour toi</span>

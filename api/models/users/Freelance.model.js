@@ -8,10 +8,8 @@ const freelanceSchema = mongoose.Schema(
 			unique: true,
 			required: true,
 		},
-		cv: { type: String },
-		portfolio: { type: String },
-		activity: { type: String },
 		lookingForJob: { type: Boolean },
+		availability: { type: Date },
 	},
 	{
 		timestamps: true,

@@ -1,5 +1,6 @@
 "use server";
 import CvEditor from "@/components/settings/CvEditor";
+import LookingForJobEditor from "@/components/settings/LookingForJobEditor";
 import NavPanel from "@/components/settings/NavPanel";
 import SocialEditor from "@/components/settings/SocialEditor";
 import ToolsEditor from "@/components/settings/ToolsEditor";
@@ -14,6 +15,7 @@ export default async function Settings() {
 				</aside>
 				<div className={styles.right}>
 					<UserEditor />
+					<LookingForJobEditor />
 					<SocialEditor />
 					<ToolsEditor />
 					<CvEditor />

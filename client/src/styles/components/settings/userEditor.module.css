@@ -22,6 +22,7 @@
 	/* background-color: red; */
 	justify-content: space-between;
 }
+
 .form label {
 	text-transform: inherit;
 	color: color-mix(in srgb, white, black 40%) !important;
@@ -36,12 +37,11 @@
 	align-items: center;
 	justify-content: center; */
 }
-.form > div:nth-child(1) span {
+.form > div:nth-child(1) label {
 	color: var(--lavender-color) !important;
-	font-weight: inherit;
 	cursor: pointer;
 }
-.form > div:nth-child(1) span:hover {
+.form > div:nth-child(1) label:hover {
 	text-decoration: underline;
 }
 

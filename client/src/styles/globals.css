@@ -381,15 +381,15 @@ ul {
 }
 
 /* SCROLL BAR  */
-::-webkit-scrollbar {
+#scroll::-webkit-scrollbar {
 	width: 20px;
 }
 
-::-webkit-scrollbar-track {
+#scroll::-webkit-scrollbar-track {
 	background-color: transparent;
 }
 
-::-webkit-scrollbar-thumb {
+#scroll::-webkit-scrollbar-thumb {
 	background-color: #d6dee1;
 	border-radius: 20px;
 	border: 6px solid transparent;

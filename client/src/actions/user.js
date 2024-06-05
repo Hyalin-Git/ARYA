@@ -3,6 +3,31 @@ import axios from "axios";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
+export async function updateUserPicture(uid, formData) {
+	try {
+		const dataToSend = new FormData();
+		dataToSend.append("picture", formData.get("picture"));
+
+		console.log(formData.get("picture"));
+
+		const res = await fetch(
+			`http://localhost:5000/api/users/update-picture/${uid}`,
+			{
+				method: "PUT",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+				},
+				body: dataToSend,
+			}
+		);
+		const data = await res.json();
+		console.log(data);
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 export async function updateUser(uid, prevState, formData) {
 	try {
 		const updatedData = {

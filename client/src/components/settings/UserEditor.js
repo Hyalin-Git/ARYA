@@ -1,5 +1,5 @@
 "use client";
-import { updateUser } from "@/actions/user";
+import { updateUser, updateUserPicture } from "@/actions/user";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/settings/userEditor.module.css";
@@ -14,6 +14,7 @@ const initialState = {
 export default function UserEditor() {
 	const { user, uid } = useContext(AuthContext);
 	const updateUserWithUid = updateUser.bind(null, uid);
+	const updateUserPictureWithUid = updateUserPicture.bind(null, uid);
 	const [state, formAction] = useFormState(updateUserWithUid, initialState);
 	return (
 		<div className={styles.container} id="panel">
@@ -24,18 +25,27 @@ export default function UserEditor() {
 
 				<div className={styles.form}>
 					<div>
-						<Image
-							src={user.picture}
-							width={100}
-							height={100}
-							quality={100}
-							alt="profil picture"
-							style={{
-								borderRadius: "50%",
+						<form
+							action={updateUserPictureWithUid}
+							onChange={(e) => {
+								e.preventDefault();
+								document.getElementById("picture-form").requestSubmit();
 							}}
-						/>
-						<br />
-						<span>Changer ma photo de profil</span>
+							id="picture-form">
+							<Image
+								src={user.picture}
+								width={100}
+								height={100}
+								quality={100}
+								alt="profil picture"
+								style={{
+									borderRadius: "50%",
+								}}
+							/>
+							<br />
+							<label htmlFor="picture">Changer ma photo de profil</label>
+							<input type="file" id="picture" name="picture" hidden />
+						</form>
 					</div>
 					<div>
 						<form action={formAction}>

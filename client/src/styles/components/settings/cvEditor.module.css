@@ -26,7 +26,6 @@
 .form {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
 }
 
 .form > div:nth-child(1) {
@@ -43,4 +42,41 @@
 
 .form em {
 	color: var(--lavender-color);
+}
+
+.zone {
+	position: relative;
+	z-index: 9999;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	background-color: white;
+	height: 150px;
+	border-radius: 2px;
+	border: 1px dashed var(--meteorite-color);
+}
+
+.zone span:nth-child(1) {
+	font-weight: bold;
+	font-size: 0.8rem;
+}
+
+.zone span:nth-child(2) {
+	font-size: 0.7rem;
+}
+
+.zone span {
+	text-transform: inherit;
+	color: color-mix(in srgb, white, black 40%) !important;
+}
+
+.zone label {
+	border: 1px solid var(--meteorite-color);
+	padding: 10px;
+	border-radius: 4px;
+	color: var(--meteorite-color) !important;
+	cursor: pointer;
+	font-size: 0.8rem;
 }
