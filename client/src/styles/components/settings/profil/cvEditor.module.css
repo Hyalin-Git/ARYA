@@ -56,6 +56,12 @@
 	height: 150px;
 	border-radius: 2px;
 	border: 1px dashed var(--meteorite-color);
+	transition: 100ms all linear;
+}
+
+.zone[data-dragging="true"] {
+	background-color: color-mix(in srgb, var(--lavender-color), white 80%);
+	transition: 100ms all linear;
 }
 
 .zone span:nth-child(1) {

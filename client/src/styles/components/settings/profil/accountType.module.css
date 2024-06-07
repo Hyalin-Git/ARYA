@@ -1,0 +1,64 @@
+.container {
+	position: relative;
+	padding: 20px;
+	border-radius: 4px;
+	border: 1px solid color-mix(in srgb, white, black 10%);
+	background-color: #f1f1f1;
+	transition: all linear 250ms;
+}
+
+.title {
+	margin-bottom: 10px;
+}
+
+.form {
+	display: flex;
+	gap: 10px;
+}
+.title span,
+.form label {
+	text-transform: uppercase;
+	color: color-mix(in srgb, white, black 50%) !important;
+	font-weight: bold;
+	font-size: 0.7rem;
+}
+
+.form label {
+	text-transform: inherit;
+	color: color-mix(in srgb, white, black 40%) !important;
+}
+
+.form > div {
+	background-color: white;
+	padding: 20px;
+	border-radius: 4px;
+	text-align: center;
+	cursor: pointer;
+	border: 1px solid color-mix(in srgb, white, black 10%);
+}
+
+.form > div span {
+	color: var(--meteorite-color);
+	font-weight: bold;
+	font-size: 0.8rem;
+}
+
+.form > div:has(input:checked) {
+	border: 1px solid var(--meteorite-color);
+}
+
+.button {
+	display: flex;
+	gap: 20px;
+	justify-content: flex-end;
+	margin-top: 20px;
+	text-align: right;
+}
+
+.button button {
+	box-shadow: inherit;
+	padding: 0;
+	background-image: inherit;
+	color: var(--meteorite-color);
+	font-size: 1rem;
+}

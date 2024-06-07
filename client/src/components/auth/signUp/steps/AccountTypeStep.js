@@ -53,8 +53,8 @@ export default function AccountType({
 					data-checked={false}>
 					<h3>Entreprise</h3>
 					<p>
-						Le compte travail, vous permettra de chercher du travail auprès des
-						entreprises, vous pourrez ajouter votre CV etc
+						Le compte entreprise, vous permettra de chercher du travail auprès
+						des entreprises, vous pourrez ajouter votre CV etc
 					</p>
 					<input
 						className={styles.input}

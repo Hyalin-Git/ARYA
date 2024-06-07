@@ -1,4 +1,4 @@
-import styles from "@/styles/components/settings/cvEditor.module.css";
+import styles from "@/styles/components/settings/profil/cvEditor.module.css";
 
 export default function LookingForJobEditor() {
 	return (

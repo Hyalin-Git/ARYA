@@ -122,16 +122,7 @@ const UserSchema = new mongoose.Schema(
 		tools: {
 			type: [String],
 		},
-		cv: {
-			type: {
-				pdf: {
-					type: String,
-				},
-				private: {
-					type: Boolean,
-				},
-			},
-		},
+
 		subscription: {
 			type: String,
 		},

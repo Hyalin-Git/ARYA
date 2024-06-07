@@ -1,7 +1,7 @@
 "use client";
 import { updateUserTools } from "@/actions/user";
 import { AuthContext } from "@/context/auth";
-import styles from "@/styles/components/settings/toolsEditor.module.css";
+import styles from "@/styles/components/settings/profil/toolsEditor.module.css";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 

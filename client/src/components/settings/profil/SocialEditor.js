@@ -2,7 +2,7 @@
 import { updateUserSocial } from "@/actions/user";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
-import styles from "@/styles/components/settings/socialEditor.module.css";
+import styles from "@/styles/components/settings/profil/socialEditor.module.css";
 import Image from "next/image";
 import { useContext } from "react";
 import { useFormState } from "react-dom";

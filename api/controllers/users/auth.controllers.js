@@ -84,9 +84,9 @@ exports.signUp = (req, res, next) => {
 
 							const freelance = new FreelanceModel({
 								userId: user._id,
-								cv: uploadResponse,
-								portfolio: req.body.portfolio,
-								activity: req.body.activity,
+								cv: {
+									pdf: uploadResponse,
+								},
 								lookingForJob: req.body.lookingForJob,
 							});
 

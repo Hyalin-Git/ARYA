@@ -15,10 +15,13 @@ exports.saveWorker = (req, res, next) => {
 			}
 			new WorkerModel({
 				workerId: user._id,
-				cv: req.body.cv,
-				portfolio: req.body.portfolio,
-				business: req.body.business,
+				cv: {
+					pdf: req.body.pdf,
+					private: req.body.private,
+				},
+				// business: req.body.business,
 				lookingForJob: req.body.lookingForJob,
+				availability: req.body.availability,
 			})
 				.save()
 				.then((worker) => {
@@ -74,10 +77,13 @@ exports.updateWorker = (req, res, next) => {
 				{ workerId: user._id },
 				{
 					$set: {
-						cv: req.body.cv,
-						portfolio: req.body.portfolio,
-						business: req.body.business,
+						cv: {
+							pdf: req.body.pdf,
+							private: req.body.private,
+						},
+						// business: req.body.business,
 						lookingForJob: req.body.lookingForJob,
+						availability: req.body.availability,
 					},
 				},
 				{
