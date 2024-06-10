@@ -1,8 +1,21 @@
+"use client";
+import saveFreelance from "@/actions/freelance";
+import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/settings/profil/accountType.module.css";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { useFormState } from "react-dom";
+
+const initialState = {
+	status: "pending",
+	message: "",
+};
+
 export default function AccountType() {
+	const { uid } = useContext(AuthContext);
 	const [isChecked, setIsChecked] = useState(false);
+	const saveFreelanceWithUid = saveFreelance.bind(null, uid);
+	const [state, formAction] = useFormState(saveFreelanceWithUid, initialState);
 	function handleChoice(e) {
 		e.preventDefault();
 		const input = e.currentTarget.children[2];
@@ -23,7 +36,7 @@ export default function AccountType() {
 			<div className={styles.title}>
 				<span>Type de compte</span>
 			</div>
-			<form action="">
+			<form action={formAction}>
 				<div className={styles.form}>
 					<div onClick={handleChoice}>
 						<div>
@@ -63,14 +76,12 @@ export default function AccountType() {
 					</div>
 				</div>
 				{isChecked && (
-					<div className={styles.button}>
-						<button className={montserrat.className} onClick={handleCancel}>
-							Annuler
-						</button>
-						<button type="submit" className={montserrat.className}>
-							Confirmer
-						</button>{" "}
-					</div>
+					<>
+						<div id="modal">
+							<h1>yas</h1>
+						</div>
+						<div id="overlay"></div>
+					</>
 				)}
 			</form>
 		</div>

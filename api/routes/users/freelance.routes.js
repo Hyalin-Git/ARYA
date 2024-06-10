@@ -1,7 +1,8 @@
 const router = require("express").Router();
+const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
 const workerController = require("../../controllers/users/freelance.controller");
 
-router.post("/:id", workerController.saveWorker);
+router.post("/:id", authenticate, authorize, workerController.saveWorker);
 
 router.get("/:id", workerController.getWorker);
 

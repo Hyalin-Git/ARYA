@@ -19,7 +19,10 @@ const freelanceSchema = mongoose.Schema(
 				},
 			},
 		},
-		lookingForJob: { type: Boolean },
+		lookingForJob: {
+			type: Boolean,
+			default: false,
+		},
 		availability: { type: Date },
 	},
 	{

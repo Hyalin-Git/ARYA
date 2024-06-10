@@ -4,17 +4,18 @@ const WorkerModel = require("../../models/users/Freelance.model");
 exports.saveWorker = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id })
 		.then((user) => {
+			if (!user) {
+				return res.status(404).send("User does not exist");
+			}
 			if (user.company !== undefined) {
 				return res.status(400).send({
 					error: true,
 					message: "User account cannot be worker and company at the same",
 				});
 			}
-			if (!user) {
-				return res.status(404).send("User does not exist");
-			}
+
 			new WorkerModel({
-				workerId: user._id,
+				userId: user._id,
 				cv: {
 					pdf: req.body.pdf,
 					private: req.body.private,
@@ -24,12 +25,12 @@ exports.saveWorker = (req, res, next) => {
 				availability: req.body.availability,
 			})
 				.save()
-				.then((worker) => {
+				.then((freelance) => {
 					UserModel.findByIdAndUpdate(
 						{ _id: req.params.id },
 						{
 							$set: {
-								worker: worker._id,
+								freelance: freelance._id,
 							},
 						},
 						{
