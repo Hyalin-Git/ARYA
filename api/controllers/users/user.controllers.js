@@ -71,6 +71,8 @@ exports.getUsers = (req, res, next) => {
 exports.getUser = (req, res, next) => {
 	UserModel.findOne({ _id: req.params.id })
 		.select("-password")
+		.populate("freelance", "cv lookingForJob availability")
+		.exec()
 		.then((user) => {
 			if (!user) {
 				return res
@@ -85,6 +87,8 @@ exports.getUser = (req, res, next) => {
 exports.getUserByUsername = (req, res, next) => {
 	UserModel.findOne({ userName: req.params.id })
 		.select("-password")
+		.populate("freelance", "cv lookingForJob availability")
+		.exec()
 		.then((user) => {
 			if (!user) {
 				return res

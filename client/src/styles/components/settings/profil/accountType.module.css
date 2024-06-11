@@ -16,19 +16,23 @@
 	gap: 10px;
 }
 .title span,
-.form label {
+.form label,
+.modal span,
+.modal label {
 	text-transform: uppercase;
 	color: color-mix(in srgb, white, black 50%) !important;
 	font-weight: bold;
 	font-size: 0.7rem;
 }
 
-.form label {
+.form label,
+.modal label {
 	text-transform: inherit;
 	color: color-mix(in srgb, white, black 40%) !important;
 }
 
 .form > div {
+	width: 100%;
 	background-color: white;
 	padding: 20px;
 	border-radius: 4px;
@@ -47,18 +51,113 @@
 	border: 1px solid var(--meteorite-color);
 }
 
-.button {
+.modal {
+	padding: 20px;
+	border: 1px solid color-mix(in srgb, white, black 10%);
+	background-color: #f1f1f1 !important;
+}
+
+.modal span:nth-child(1) {
+	display: flex;
+	justify-content: center;
+	color: var(--meteorite-color) !important;
+	font-size: 1rem;
+	text-align: center;
+}
+
+.inputs {
+	margin-top: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+/* .file input[type="file"] {
+	position: absolute;
+	z-index: -1;
+	overflow: hidden;
+	opacity: 0;
+	width: 0.1px;
+	height: 0.1px;
+} */
+
+/* .file {
+	margin-top: -5px;
+	background-color: white;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	height: 50px;
+
+	border: 1px solid color-mix(in srgb, white, black 10%);
+	border-radius: 8px;
+}
+.file div {
+	width: 60%;
+}
+
+.file div span {
+	position: relative;
+	top: 15px;
+	display: block;
+	text-align: center;
+	font-weight: 600;
+	color: grey;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 200px; 
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis; 
+}
+
+.file label {
+	color: white !important;
+} */
+
+.lookingForEmployees {
+	display: flex;
+}
+
+.lookingForEmployees label {
+	width: 100%;
+}
+.lookingForEmployees input {
+	width: 100%;
+	background-color: red;
+}
+
+/* FREELANCE MODAL  */
+.modal em {
+	color: var(--meteorite-color);
+}
+
+.checkbox {
+	display: flex;
+	align-items: center;
+}
+
+.buttons {
 	display: flex;
 	gap: 20px;
 	justify-content: flex-end;
 	margin-top: 20px;
 	text-align: right;
 }
-
-.button button {
+.buttons button {
+	font-weight: 500;
+}
+.buttons button:first-child {
 	box-shadow: inherit;
 	padding: 0;
 	background-image: inherit;
+	background-color: inherit;
 	color: var(--meteorite-color);
+	font-size: 1rem;
+}
+
+.buttons button:last-child {
+	box-shadow: inherit;
+	padding: 8px;
+	border-radius: 4px;
 	font-size: 1rem;
 }

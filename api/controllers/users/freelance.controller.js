@@ -1,9 +1,10 @@
 const UserModel = require("../../models/users/User.model");
 const WorkerModel = require("../../models/users/Freelance.model");
+const { uploadFile } = require("../../helpers/cloudinaryManager");
 
 exports.saveWorker = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id })
-		.then((user) => {
+		.then(async (user) => {
 			if (!user) {
 				return res.status(404).send("User does not exist");
 			}
@@ -14,10 +15,14 @@ exports.saveWorker = (req, res, next) => {
 				});
 			}
 
+			const cv = req.file;
+
+			const uploadResponse = cv ? await uploadFile(cv, "cv") : "";
+
 			new WorkerModel({
 				userId: user._id,
 				cv: {
-					pdf: req.body.pdf,
+					pdf: uploadResponse,
 					private: req.body.private,
 				},
 				// business: req.body.business,
@@ -49,7 +54,7 @@ exports.saveWorker = (req, res, next) => {
 					res.status(500).send(err);
 				});
 		})
-		.catch((err) => res.status(500).send(err));
+		.catch((err) => res.status(500).send(err.message));
 };
 
 exports.getWorker = (req, res, next) => {

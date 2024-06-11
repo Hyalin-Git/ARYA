@@ -22,12 +22,12 @@ export default function Settings() {
 				<div className={styles.right}>
 					<UserEditor />
 					<SocialEditor />
+					<ToolsEditor />
 					{!isFreelance && !isCompany ? (
 						<AccountType />
 					) : (
 						<>
 							<LookingForJobEditor />
-							<ToolsEditor />
 							{isFreelance && <CvEditor />}
 						</>
 					)}

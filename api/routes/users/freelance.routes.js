@@ -1,8 +1,16 @@
 const router = require("express").Router();
 const { authenticate, authorize } = require("../../middlewares/jwt.middleware");
 const workerController = require("../../controllers/users/freelance.controller");
-
-router.post("/:id", authenticate, authorize, workerController.saveWorker);
+const { userPictureUpload } = require("../../middlewares/multer.middleware");
+const { multerErrorsHandler } = require("../../utils/multerErrors");
+router.post(
+	"/:id",
+	authenticate,
+	authorize,
+	userPictureUpload.single("cv"),
+	multerErrorsHandler,
+	workerController.saveWorker
+);
 
 router.get("/:id", workerController.getWorker);
 
