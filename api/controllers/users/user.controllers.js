@@ -71,7 +71,8 @@ exports.getUsers = (req, res, next) => {
 exports.getUser = (req, res, next) => {
 	UserModel.findOne({ _id: req.params.id })
 		.select("-password")
-		.populate("freelance", "cv lookingForJob availability")
+		.populate("freelance", "cv lookingForJob availability ")
+		.populate("company", "name logo activity bio members")
 		.exec()
 		.then((user) => {
 			if (!user) {
@@ -87,7 +88,8 @@ exports.getUser = (req, res, next) => {
 exports.getUserByUsername = (req, res, next) => {
 	UserModel.findOne({ userName: req.params.id })
 		.select("-password")
-		.populate("freelance", "cv lookingForJob availability")
+		.populate("freelance", "cv lookingForJob availability ")
+		.populate("company", "name logo activity bio members")
 		.exec()
 		.then((user) => {
 			if (!user) {

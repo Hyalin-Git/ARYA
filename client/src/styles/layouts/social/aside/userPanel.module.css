@@ -133,12 +133,47 @@
 .content {
 	margin-top: 10px;
 }
+
+.team .content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.team .content > div {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.team .content img {
+	border-radius: 4px;
+}
+.team .content .companyInfo {
+	text-align: center;
+}
+.team .content .companyInfo span:last-child {
+	color: color-mix(in srgb, white, black 50%) !important;
+	font-size: 0.7rem;
+}
+.team .content span {
+	text-transform: inherit;
+	color: black !important;
+	font-size: 0.9rem;
+	font-weight: 500;
+	display: block;
+}
+.team .content > div:last-child span {
+	font-size: 0.7rem;
+	color: color-mix(in srgb, white, black 50%) !important;
+}
+
 .team .content,
 .social .content {
 	background-color: white;
 	border-radius: 4px;
 	padding: 10px;
 }
+
+/* SOCIAL  */
 
 .social .content {
 	padding-bottom: 5px;
@@ -149,6 +184,7 @@
 	flex-direction: column;
 	gap: 5px;
 }
+
 .social .content ul li:not(:last-child) {
 	padding-bottom: 5px;
 	border-bottom: 1px solid color-mix(in srgb, white, black 10%);
@@ -161,6 +197,8 @@
 	gap: 5px;
 	font-weight: 400;
 }
+
+/* TOOLS  */
 
 .tools .content ul {
 	display: flex;
@@ -175,6 +213,8 @@
 	padding: 10px;
 	border-radius: 4px;
 }
+
+/* CV  */
 
 .cv button {
 	padding: 8px;

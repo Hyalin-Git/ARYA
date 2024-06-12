@@ -12,7 +12,7 @@ router.post(
 	"/",
 	authenticate,
 	authorize,
-	userPictureUpload.fields([{ name: "logo", maxCount: 1 }]),
+	userPictureUpload.single("logo"),
 	multerErrorsHandler,
 	companyController.saveCompany
 );

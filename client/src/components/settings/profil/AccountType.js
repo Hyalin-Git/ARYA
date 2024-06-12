@@ -1,4 +1,5 @@
 "use client";
+import saveCompany from "@/actions/company";
 import saveFreelance from "@/actions/freelance";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
@@ -18,7 +19,11 @@ export default function AccountType() {
 	const [isFreelance, setIsFreelance] = useState(false);
 	const [availability, setAvailability] = useState("");
 	const saveFreelanceWithUid = saveFreelance.bind(null, uid);
-	const [state, formAction] = useFormState(saveFreelanceWithUid, initialState);
+	const saveCompanyWithUid = saveCompany.bind(null, uid);
+	const [state, formAction] = useFormState(
+		isFreelance ? saveFreelanceWithUid : saveCompanyWithUid,
+		initialState
+	);
 	function handleChoice(e) {
 		e.preventDefault();
 		const input = e.currentTarget.children[2];

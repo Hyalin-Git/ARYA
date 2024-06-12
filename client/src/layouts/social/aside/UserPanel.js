@@ -15,8 +15,12 @@ export default function UserPanel({ fetchedUser }) {
 	const pathname = usePathname();
 	let userInfo = fetchedUser ?? user;
 
+	console.log(userInfo);
+
 	const isAuthor = userInfo._id === uid;
 	const isUserPage = pathname.includes("/@");
+
+	const hasCompany = userInfo?.company;
 
 	const userCreatedAt = moment(user.createdAt).locale("fr").format("D MMMM Y");
 	const hasWebsite = userInfo?.website;
@@ -105,14 +109,32 @@ export default function UserPanel({ fetchedUser }) {
 					</div>
 					{isUserPage && (
 						<>
-							<div className={styles.team}>
-								<div>
-									<span>Entreprise</span>
+							{hasCompany && (
+								<div className={styles.team}>
+									<div>
+										<span>Entreprise</span>
+									</div>
+									<div className={styles.content}>
+										<div>
+											<Image
+												src={userInfo?.company?.logo}
+												alt="logo"
+												width={40}
+												height={40}
+											/>
+											<div className={styles.companyInfo}>
+												<span>{userInfo?.company?.name}</span>
+												<span>{userInfo?.company?.activity}</span>
+											</div>
+										</div>
+										<div>
+											<span>
+												{userInfo?.company?.members?.length + 1} membres
+											</span>
+										</div>
+									</div>
 								</div>
-								<div className={styles.content}>
-									<p>Gaycorp</p>
-								</div>
-							</div>
+							)}
 							{isLookingForJob && (
 								<div className={styles.status}>
 									<div>
