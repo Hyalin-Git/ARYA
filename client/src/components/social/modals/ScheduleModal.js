@@ -126,6 +126,7 @@ export default function ScheduleModal({ setOpenSchedule, setScheduledTime }) {
 					</div>
 				</div>
 			</div>
+
 			<div id="hiddenOverlay" onClick={(e) => setOpenSchedule(false)}></div>
 		</>
 	);

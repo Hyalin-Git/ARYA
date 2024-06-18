@@ -21,7 +21,7 @@
 .modal label {
 	text-transform: uppercase;
 	color: color-mix(in srgb, white, black 50%) !important;
-	font-weight: bold;
+	font-weight: bold !important;
 	font-size: 0.7rem;
 }
 

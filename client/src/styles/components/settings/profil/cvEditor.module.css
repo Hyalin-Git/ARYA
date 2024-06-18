@@ -28,15 +28,15 @@
 	flex-direction: column;
 }
 
-.form > div:nth-child(1) {
+.checkbox {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 }
-.form > div:nth-child(1) label {
+.checkbox label {
 	width: max-content;
 }
-.form > div:nth-child(1) input {
+.checkbox input {
 	width: min-content;
 }
 
@@ -85,4 +85,34 @@
 	color: var(--meteorite-color) !important;
 	cursor: pointer;
 	font-size: 0.8rem;
+}
+
+.buttons {
+	margin: 10px 0 10px 0;
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+}
+.buttons button {
+	padding: 8px;
+	width: 100%;
+	border-radius: 4px;
+	font-weight: 500;
+	box-shadow: inherit;
+	font-size: 1rem;
+}
+
+.date {
+	margin-top: 5px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.date select {
+	margin-top: 5px;
+	padding: 10px;
+	border-radius: 4px;
+	border: 1px solid color-mix(in srgb, white, black 10%);
+	background-color: white;
 }

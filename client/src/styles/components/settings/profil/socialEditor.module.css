@@ -4,6 +4,7 @@
 	border-radius: 4px;
 	border: 1px solid color-mix(in srgb, white, black 10%);
 	background-color: #f1f1f1;
+	scroll-margin-top: 5rem;
 }
 
 .title {

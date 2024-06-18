@@ -90,6 +90,7 @@ a {
 }
 html {
 	scroll-behavior: smooth;
+	scroll-margin-top: 5rem;
 }
 body[data-dark="true"] {
 	background-image: linear-gradient(

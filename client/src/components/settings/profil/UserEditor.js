@@ -4,8 +4,9 @@ import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/settings/profil/userEditor.module.css";
 import Image from "next/image";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import { mutate } from "swr";
 
 const initialState = {
 	status: "pending",
@@ -13,11 +14,25 @@ const initialState = {
 };
 export default function UserEditor() {
 	const { user, uid } = useContext(AuthContext);
+	const [isPicture, setIsPicture] = useState(false);
 	const updateUserWithUid = updateUser.bind(null, uid);
 	const updateUserPictureWithUid = updateUserPicture.bind(null, uid);
-	const [state, formAction] = useFormState(updateUserWithUid, initialState);
+	const [stateOne, formAction] = useFormState(updateUserWithUid, initialState);
+	const [stateTwo, formActionn] = useFormState(
+		updateUserPictureWithUid,
+		initialState
+	);
+
+	useEffect(() => {
+		if (stateOne.status === "success") {
+			mutate("/login/success");
+		}
+		if (stateTwo.status === "success") {
+			mutate("/login/success");
+		}
+	}, [stateOne, stateTwo]);
 	return (
-		<div className={styles.container} id="panel">
+		<div className={styles.container} id="user">
 			<div className={styles.userInfo}>
 				<div>
 					<span>Informations de l'utilisateur</span>
@@ -26,9 +41,10 @@ export default function UserEditor() {
 				<div className={styles.form}>
 					<div>
 						<form
-							action={updateUserPictureWithUid}
+							action={formActionn}
 							onChange={(e) => {
 								e.preventDefault();
+
 								document.getElementById("picture-form").requestSubmit();
 							}}
 							id="picture-form">

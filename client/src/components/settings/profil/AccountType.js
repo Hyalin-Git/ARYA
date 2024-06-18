@@ -1,11 +1,14 @@
 "use client";
 import saveCompany from "@/actions/company";
 import saveFreelance from "@/actions/freelance";
+import ScheduleModal from "@/components/social/modals/ScheduleModal";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/settings/profil/accountType.module.css";
-import { useContext, useState } from "react";
+import moment from "moment";
+import { useContext, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import { mutate } from "swr";
 
 const initialState = {
 	status: "pending",
@@ -18,7 +21,9 @@ export default function AccountType() {
 	const [isCompany, setIsCompany] = useState(false);
 	const [isFreelance, setIsFreelance] = useState(false);
 	const [availability, setAvailability] = useState("");
-	const saveFreelanceWithUid = saveFreelance.bind(null, uid);
+	const [scheduledTime, setScheduledTime] = useState("");
+
+	const saveFreelanceWithUid = saveFreelance.bind(null, uid, scheduledTime);
 	const saveCompanyWithUid = saveCompany.bind(null, uid);
 	const [state, formAction] = useFormState(
 		isFreelance ? saveFreelanceWithUid : saveCompanyWithUid,
@@ -45,6 +50,17 @@ export default function AccountType() {
 		inputs[0].checked = false;
 		inputs[1].checked = false;
 	}
+	useEffect(() => {
+		if (state.status === "success") {
+			setIsChecked(false);
+			setIsCompany(false);
+			setIsFreelance(false);
+			const inputs = document.getElementsByName("choice");
+			inputs[0].checked = false;
+			inputs[1].checked = false;
+			mutate("/login/success");
+		}
+	}, [state]);
 	return (
 		<div className={styles.container} id="panel">
 			<div className={styles.title}>
@@ -88,72 +104,97 @@ export default function AccountType() {
 						/>
 					</div>
 				</div>
-				{isChecked && isCompany && (
-					<>
-						<div className={styles.modal} id="modal">
-							<div>
-								<span>Compte Entreprise</span>
-							</div>
-							<div className={styles.inputs}>
-								<div>
-									<label htmlFor="name">Nom de l'entreprise</label>
-									<input type="text" id="name" name="name" />
-								</div>
-								<div className={styles.file}>
-									<label htmlFor="image">Choisir un fichier</label>
-									<input
-										type="file"
-										id="image"
-										name="image"
-										accept="image/png, image/jpeg, image/jpg"
-									/>
-								</div>
-								<div>
-									<label htmlFor="activity">Secteur d'activité</label>
-									<input type="text" id="activity" name="activity" />
-								</div>
-								<div>
-									<label htmlFor="biographie">Biographie</label>
-									<textarea
-										type="text"
-										id="biographie"
-										name="biographie"
-										className={montserrat.className}
-										onChange={(e) => {
-											e.preventDefault();
-											e.target.style.height = "";
-											e.target.style.height = e.target.scrollHeight + "px";
-										}}
-									/>
-								</div>
-								<div className={styles.lookingForEmployees}>
-									<label htmlFor="lookingForEmployees">
-										Êtes-vous à la recherche d'employés ?
-									</label>
-									<input
-										type="checkbox"
-										id="lookingForEmployees"
-										name="lookingForEmployees"
-									/>
-								</div>
-							</div>
-							<div className={styles.buttons}>
-								<button className={montserrat.className} onClick={handleCancel}>
-									Annuler
-								</button>
-								<button className={montserrat.className}>Confirmer</button>
-							</div>
-						</div>
-						<div id="overlay" onClick={handleCancel}></div>
-					</>
+				{isChecked && isCompany && <Company handleCancel={handleCancel} />}
+				{isChecked && isFreelance && (
+					<Freelance
+						handleCancel={handleCancel}
+						setScheduledTime={setScheduledTime}
+					/>
 				)}
-				{isChecked && isFreelance && <Freelance />}
 			</form>
 		</div>
 	);
 }
 
-export function Freelance() {
+export function Company({ handleCancel }) {
+	return (
+		<>
+			<div className={styles.modal} id="modal">
+				<div>
+					<span>Compte Entreprise</span>
+				</div>
+				<div className={styles.inputs}>
+					<div>
+						<label htmlFor="name">Nom de l'entreprise</label>
+						<input type="text" id="name" name="name" />
+					</div>
+					<div className={styles.file}>
+						<label htmlFor="image">Choisir un fichier</label>
+						<input
+							type="file"
+							id="image"
+							name="image"
+							accept="image/png, image/jpeg, image/jpg"
+						/>
+					</div>
+					<div>
+						<label htmlFor="activity">Secteur d'activité</label>
+						<input type="text" id="activity" name="activity" />
+					</div>
+					<div>
+						<label htmlFor="biographie">Biographie</label>
+						<textarea
+							type="text"
+							id="biographie"
+							name="biographie"
+							className={montserrat.className}
+							onChange={(e) => {
+								e.preventDefault();
+								e.target.style.height = "";
+								e.target.style.height = e.target.scrollHeight + "px";
+							}}
+						/>
+					</div>
+					<div className={styles.lookingForEmployees}>
+						<label htmlFor="lookingForEmployees">
+							Êtes-vous à la recherche d'employés ?
+						</label>
+						<input
+							type="checkbox"
+							id="lookingForEmployees"
+							name="lookingForEmployees"
+						/>
+					</div>
+				</div>
+				<div className={styles.buttons}>
+					<button className={montserrat.className} onClick={handleCancel}>
+						Annuler
+					</button>
+					<button className={montserrat.className}>Confirmer</button>
+				</div>
+			</div>
+			<div id="overlay" onClick={handleCancel}></div>
+		</>
+	);
+}
+
+export function Freelance({ handleCancel, setScheduledTime }) {
+	const months = moment.months();
+	const actualMonth = moment().format("MMMM");
+	const days = Array.from(Array(moment().daysInMonth()).keys());
+	const actualDay = moment().date();
+	const actualYear = moment().get("year");
+
+	function handleScheduledTime(e) {
+		const getMonth = document.getElementById("months").value;
+		const getDay = document.getElementById("days").value;
+		const getYear = document.getElementById("years").value;
+
+		console.log(getDay);
+
+		setScheduledTime(getYear + "-" + getMonth + "-" + getDay);
+	}
+
 	const [isCv, setIsCv] = useState(false);
 	const [isLookingForJob, setIsLookingForJob] = useState(false);
 	function handleCv(e) {
@@ -219,20 +260,66 @@ export function Freelance() {
 					</div>
 					{isLookingForJob && (
 						<div>
-							<label htmlFor="availability">
-								À partir de quand êtes-vous disponible ?
-							</label>
+							<div>
+								<span>à partir de quand êtes vous disponible ?</span>
+							</div>
+							<div>
+								<span>Mois</span>
+								<select name="months" id="months" form="post">
+									{months.map((month, idx) => {
+										const trueMonth = idx + 1;
+										const formattedMonth = () => {
+											return month.charAt(0).toUpperCase() + month.slice(1);
+										};
+										return (
+											<option
+												value={trueMonth.toString().padStart(2, "0")}
+												key={idx}>
+												{formattedMonth()}
+											</option>
+										);
+									})}
+								</select>
+							</div>
+							<div className={styles.input}>
+								<span>Jour</span>
+								<select name="days" id="days" form="post" value={actualDay}>
+									{days.map((day, idx) => {
+										const formattedDay = () => {
+											const trueDay = day + 1;
+											return trueDay.toString().padStart(2, "0");
+										};
 
-							<input type="text" id="availability" name="availability" />
+										return (
+											<option value={formattedDay()} key={idx}>
+												{formattedDay()}
+											</option>
+										);
+									})}
+								</select>
+							</div>
+							<div className={styles.input}>
+								<span>Année</span>
+								<select name="years" id="years" form="post">
+									<option value={actualYear}>{actualYear}</option>
+									<option value={actualYear + 1}>{actualYear + 1}</option>
+								</select>
+							</div>
 						</div>
 					)}
 				</div>
 				<div className={styles.buttons}>
-					<button className={montserrat.className}>Annuler</button>
-					<button className={montserrat.className}>Confirmer</button>
+					<button className={montserrat.className} onClick={handleCancel}>
+						Annuler
+					</button>
+					<button
+						className={montserrat.className}
+						onClick={handleScheduledTime}>
+						Confirmer
+					</button>
 				</div>
 			</div>
-			<div id="overlay"></div>
+			<div id="overlay" onClick={handleCancel}></div>
 		</>
 	);
 }

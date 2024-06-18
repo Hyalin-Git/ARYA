@@ -2,8 +2,9 @@
 	position: fixed;
 	width: 20%;
 	border-radius: 4px;
-	border: 1px solid color-mix(in srgb, white, black 10%);
-	background-color: #f1f1f1;
+	border: 1px solid color-mix(in srgb, white, #000000 10%);
+	background-color: var(--meteorite-color);
+	color: white;
 }
 
 .container ul {
@@ -17,19 +18,43 @@
 	font-weight: 500;
 	transition: 50ms all linear;
 }
+.container ul li span {
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.container ul li img {
+	filter: invert(1);
+}
 
 .container ul li:first-child {
-	border-radius: 4px 4px 0 0;
+	border-radius: 2px 2px 0 0;
 }
 .container ul li:last-child {
-	border-radius: 0 0 4px 4px;
+	border-radius: 0 0 2px 2px;
 }
 
-.container ul li:hover {
+/* .container ul li:hover {
 	background-color: white;
 	transition: 50ms all linear;
+	color: black;
 }
+
+.container ul li:hover span {
+	color: black;
+}
+.container ul li:hover img {
+	filter: invert(0);
+} */
 
 .container ul li:not(:last-child) {
 	border-bottom: 1px solid color-mix(in srgb, white, black 10%);
+}
+
+.container ul li:not(:last-child) ul {
+	margin-top: 10px;
+}
+.container ul li:not(:last-child) ul li {
+	border-bottom: 0px solid color-mix(in srgb, white, black 10%);
 }

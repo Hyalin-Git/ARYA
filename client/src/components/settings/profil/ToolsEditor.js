@@ -46,7 +46,7 @@ export default function ToolsEditor() {
 		console.log(state?.data);
 	}, [state, tools]);
 	return (
-		<div className={styles.container} id="panel">
+		<div className={styles.container} id="tools">
 			<div className={styles.title}>
 				<span>Outils</span>
 			</div>

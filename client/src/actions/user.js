@@ -3,7 +3,7 @@ import axios from "axios";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
-export async function updateUserPicture(uid, formData) {
+export async function updateUserPicture(uid, prevState, formData) {
 	try {
 		const dataToSend = new FormData();
 		dataToSend.append("picture", formData.get("picture"));
@@ -23,6 +23,9 @@ export async function updateUserPicture(uid, formData) {
 		);
 		const data = await res.json();
 		console.log(data);
+		return {
+			status: "success",
+		};
 	} catch (err) {
 		console.log(err);
 	}
@@ -54,6 +57,9 @@ export async function updateUser(uid, prevState, formData) {
 		);
 		const data = await res.json();
 		console.log(data);
+		return {
+			status: "success",
+		};
 	} catch (err) {
 		console.log(err);
 	}

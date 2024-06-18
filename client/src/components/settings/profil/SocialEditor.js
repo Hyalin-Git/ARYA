@@ -20,7 +20,7 @@ export default function SocialEditor() {
 	);
 
 	return (
-		<div className={styles.container} id="panel">
+		<div className={styles.container} id="social">
 			<div className={styles.title}>
 				<span>Réseau social</span>
 			</div>
