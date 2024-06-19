@@ -1,7 +1,6 @@
 "use client";
 import saveCompany from "@/actions/company";
-import saveFreelance from "@/actions/freelance";
-import ScheduleModal from "@/components/social/modals/ScheduleModal";
+import { saveFreelance } from "@/actions/freelance";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/settings/profil/accountType.module.css";

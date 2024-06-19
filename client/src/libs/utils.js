@@ -3,6 +3,10 @@ import { regex } from "./regex";
 import moment from "moment";
 import "moment/locale/fr"; // without this line it didn't work
 
+export function capitalizeFirstLetter(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 // Form validation for sign in
 
 export const signInValidation = () => {

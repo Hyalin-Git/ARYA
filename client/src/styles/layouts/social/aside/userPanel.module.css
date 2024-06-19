@@ -119,7 +119,7 @@
 }
 
 .team span,
-.status span,
+.availability span,
 .bio span,
 .contact span,
 .tools span,
@@ -167,7 +167,8 @@
 }
 
 .team .content,
-.social .content {
+.social .content,
+.availability .content {
 	background-color: white;
 	border-radius: 4px;
 	padding: 10px;
@@ -212,6 +213,29 @@
 	background-color: white;
 	padding: 10px;
 	border-radius: 4px;
+}
+
+.availability .content {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.availability .content svg {
+	width: 40px;
+	height: 40px;
+	filter: invert(16%) sepia(83%) saturate(6585%) hue-rotate(265deg)
+		brightness(92%) contrast(84%);
+}
+.availability .content p span {
+	color: var(--meteorite-color) !important;
+	font-size: 0.9rem;
+	text-transform: none;
+	font-weight: bold !important;
+}
+.availability .content div span {
+	text-transform: none;
+	font-weight: 500;
 }
 
 /* CV  */

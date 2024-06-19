@@ -1,6 +1,10 @@
 const UserModel = require("../../models/users/User.model");
 const WorkerModel = require("../../models/users/Freelance.model");
-const { uploadFile } = require("../../helpers/cloudinaryManager");
+const {
+	uploadFile,
+	destroyFile,
+	destroyPdfFile,
+} = require("../../helpers/cloudinaryManager");
 
 exports.saveWorker = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id })
@@ -63,10 +67,10 @@ exports.getWorker = (req, res, next) => {
 		.exec()
 		.then((user) => {
 			if (user.worker === undefined) {
-				return res.status(404).send("User does not exist");
+				return res.status(404).send("Cet utilisateur n'existe pas");
 			}
 			if (!user) {
-				return res.status(404).send("User does not exist");
+				return res.status(404).send("Cet utilisateur n'existe pas");
 			}
 			res.status(200).send(user.worker);
 		})
@@ -75,25 +79,40 @@ exports.getWorker = (req, res, next) => {
 
 exports.updateWorker = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id })
-		.then((user) => {
+		.populate("freelance")
+		.exec()
+		.then(async (user) => {
 			if (!user) {
-				return res.status(404).send("User does not exist");
+				return res.status(404).send("Cet utilisateur n'existe pas");
 			}
+
+			const cv = req.file;
+
+			if (cv) {
+				if (user.freelance?.cv?.pdf) {
+					await destroyPdfFile(user, "cv");
+				}
+			}
+
+			const uploadResponse = await uploadFile(cv, "cv");
+
 			WorkerModel.findOneAndUpdate(
-				{ workerId: user._id },
+				{ userId: user._id },
 				{
 					$set: {
 						cv: {
-							pdf: req.body.pdf,
-							private: req.body.private,
+							pdf: uploadResponse ?? user?.freelance?.cv?.pdf,
+							private: req.body.private ?? user?.freelance.private,
 						},
-						// business: req.body.business,
-						lookingForJob: req.body.lookingForJob,
-						availability: req.body.availability,
+
+						lookingForJob:
+							req.body.lookingForJob ?? user?.freelance.lookingForJob,
+						availability: req.body.availability ?? user?.freelance.availability,
 					},
 				},
 				{
 					new: true,
+					setDefaultsOnInsert: true,
 				}
 			)
 				.then((worker) => res.status(200).send(worker))
@@ -106,7 +125,7 @@ exports.deleteWorker = (req, res, next) => {
 	UserModel.findById({ _id: req.params.id })
 		.then((user) => {
 			if (!user) {
-				return res.status(404).send("User does not exist");
+				return res.status(404).send("Cet utilisateur n'existe pas");
 			}
 			WorkerModel.findOneAndDelete({ workerId: user._id })
 				.then(() => {

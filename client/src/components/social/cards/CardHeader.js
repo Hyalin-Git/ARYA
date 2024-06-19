@@ -71,7 +71,6 @@ export default function CardHeader({
 			}
 		}
 	}
-	console.log(element);
 
 	return (
 		<div className={styles.container}>

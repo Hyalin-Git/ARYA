@@ -12,10 +12,17 @@ router.post(
 	workerController.saveWorker
 );
 
-router.get("/:id", workerController.getWorker);
+router.get("/:id", authenticate, authorize, workerController.getWorker);
 
-router.put("/:id", workerController.updateWorker);
+router.put(
+	"/:id",
+	authenticate,
+	authorize,
+	userPictureUpload.single("cv"),
+	multerErrorsHandler,
+	workerController.updateWorker
+);
 
-router.delete("/:id", workerController.deleteWorker);
+router.delete("/:id", authenticate, authorize, workerController.deleteWorker);
 
 module.exports = router;

@@ -88,7 +88,18 @@ exports.uploadFiles = async (medias, folder) => {
 
 exports.destroyFile = async (model, folder) => {
 	try {
-		const getFileName = model.picture.split("/")[9].split(".")[0];
+		const filePath = model.picture;
+		const getFileName = filePath.split("/")[9].split(".")[0];
+		await cloudinary.uploader.destroy(`Arya/${folder}/${getFileName}`);
+	} catch (err) {
+		throw err;
+	}
+};
+
+exports.destroyPdfFile = async (model, folder) => {
+	try {
+		const filePath = model.freelance?.cv?.pdf;
+		const getFileName = filePath.split("/")[9].split(".")[0];
 		await cloudinary.uploader.destroy(`Arya/${folder}/${getFileName}`);
 	} catch (err) {
 		throw err;

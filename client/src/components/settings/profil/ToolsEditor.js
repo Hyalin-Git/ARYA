@@ -29,8 +29,6 @@ export default function ToolsEditor() {
 		const filteredTools = displayedTools.filter((a) => a !== value);
 		setDisplayedTools(filteredTools);
 
-		console.log(filteredTools);
-
 		await updateUserTools(uid, filteredTools);
 	}
 
@@ -43,7 +41,6 @@ export default function ToolsEditor() {
 				setDisplayedTools(tools);
 			}
 		}
-		console.log(state?.data);
 	}, [state, tools]);
 	return (
 		<div className={styles.container} id="tools">

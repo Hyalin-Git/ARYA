@@ -8,6 +8,10 @@ import { usePathname, useRouter } from "next/navigation";
 import moment from "moment";
 import "moment/locale/fr"; // without this line it didn't work
 import { montserrat } from "@/libs/fonts";
+import { capitalizeFirstLetter } from "@/libs/utils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBusinessTime } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 export default function UserPanel({ fetchedUser }) {
 	const router = useRouter();
@@ -22,6 +26,7 @@ export default function UserPanel({ fetchedUser }) {
 
 	const hasCompany = userInfo?.company;
 
+	// User related
 	const userCreatedAt = moment(user.createdAt).locale("fr").format("D MMMM Y");
 	const hasWebsite = userInfo?.website;
 	const hasContact = userInfo?.contact;
@@ -34,7 +39,16 @@ export default function UserPanel({ fetchedUser }) {
 		userInfo?.social?.youtube ||
 		userInfo?.social?.twitch;
 	const hasTools = userInfo?.tools;
-	const isLookingForJob = userInfo?.lookingForJob;
+
+	// Freelance related
+	const hasCv = userInfo?.freelance?.cv?.pdf;
+	const cvIsPublic = userInfo?.freelance?.cv?.private;
+	const isLookingForJob = userInfo?.freelance?.lookingForJob;
+	const hasAvailability = userInfo?.freelance?.availability;
+	const availabilityDate = moment().to(hasAvailability);
+	const hasPassed = availabilityDate.includes("il y a");
+	console.log(hasPassed);
+
 	return (
 		<div className={styles.container} id="panel">
 			<Link
@@ -135,16 +149,7 @@ export default function UserPanel({ fetchedUser }) {
 									</div>
 								</div>
 							)}
-							{isLookingForJob && (
-								<div className={styles.status}>
-									<div>
-										<span>Disponible</span>
-									</div>
-									<div className={styles.content}>
-										<p>En recherche d'emploi</p>
-									</div>
-								</div>
-							)}
+
 							<div className={styles.bio}>
 								<div>
 									<span>à propos de moi</span>
@@ -298,11 +303,33 @@ export default function UserPanel({ fetchedUser }) {
 									</div>
 								</div>
 							)}
-							<div className={styles.cv}>
-								<button className={montserrat.className} data-disabled={false}>
-									{isAuthor ? "Télécharger mon CV" : "Télécharger le CV"}
-								</button>
-							</div>
+							{isLookingForJob && hasAvailability && (
+								<div className={styles.availability}>
+									<div>
+										<span>Disponibilité</span>
+									</div>
+									<div className={styles.content}>
+										<FontAwesomeIcon icon={faBusinessTime} />
+										<div>
+											<p>
+												Recruter <span>{userInfo?.userName}</span>
+											</p>
+											<span>
+												Disponible {hasPassed ? "" : availabilityDate}
+											</span>
+										</div>
+									</div>
+								</div>
+							)}
+							{hasCv && !cvIsPublic && (
+								<div className={styles.cv}>
+									<button
+										className={montserrat.className}
+										data-disabled={false}>
+										{isAuthor ? "Télécharger mon CV" : "Télécharger le CV"}
+									</button>
+								</div>
+							)}
 						</>
 					)}
 					<div className={styles.date}>
