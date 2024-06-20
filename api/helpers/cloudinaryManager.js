@@ -88,7 +88,7 @@ exports.uploadFiles = async (medias, folder) => {
 
 exports.destroyFile = async (model, folder) => {
 	try {
-		const filePath = model.picture;
+		const filePath = model.picture || model.logo;
 		const getFileName = filePath.split("/")[9].split(".")[0];
 		await cloudinary.uploader.destroy(`Arya/${folder}/${getFileName}`);
 	} catch (err) {

@@ -99,7 +99,7 @@ exports.updateCompany = async (req, res, next) => {
 	try {
 		const { userId } = req.query;
 		const { name, activity, lookingForEmployees, bio, links } = req.body;
-		const picture = req.file;
+		const logo = req.file;
 
 		CompanyModel.findById({ _id: req.params.id })
 			.then(async (company) => {
@@ -130,22 +130,24 @@ exports.updateCompany = async (req, res, next) => {
 						});
 					}
 				}
-
-				if (company.picture) {
-					await destroyFile(company, "logo");
+				if (logo) {
+					if (company.logo) {
+						await destroyFile(company, "logo");
+					}
 				}
 
-				const uploadResponse = await uploadFile(picture, "logo");
+				const uploadResponse = await uploadFile(logo, "logo");
 
 				const updatedCompany = await CompanyModel.findByIdAndUpdate(
 					{ _id: req.params.id },
 					{
 						$set: {
-							name: name,
-							picture: picture ? uploadResponse : "",
-							activity: activity,
-							lookingForEmployees: lookingForEmployees,
-							bio: bio,
+							name: name ?? company.name,
+							logo: uploadResponse ?? company.logo,
+							activity: activity ?? company.activity,
+							lookingForEmployees:
+								lookingForEmployees ?? company.lookingForEmployees,
+							bio: bio ?? company.bio,
 							links: links,
 						},
 					},

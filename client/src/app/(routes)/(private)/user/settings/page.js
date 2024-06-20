@@ -8,10 +8,13 @@ import styles from "@/styles/pages/settings.module.css";
 import { useContext } from "react";
 import AccountType from "@/components/settings/profil/AccountType";
 import Freelance from "@/components/settings/profil/Freelance";
+import Company from "@/components/settings/profil/Company";
 export default function Settings() {
-	const { user } = useContext(AuthContext);
+	const { uid, user } = useContext(AuthContext);
 	const isFreelance = user?.freelance;
 	const isCompany = user?.company;
+	const isLeader = user?.company?.leaderId === uid;
+
 	return (
 		<main>
 			<div className={styles.container}>
@@ -25,7 +28,10 @@ export default function Settings() {
 					{!isFreelance && !isCompany ? (
 						<AccountType />
 					) : (
-						<>{isFreelance && <Freelance />}</>
+						<>
+							{isFreelance && <Freelance />}
+							{isCompany && isLeader && <Company />}
+						</>
 					)}
 				</div>
 			</div>
