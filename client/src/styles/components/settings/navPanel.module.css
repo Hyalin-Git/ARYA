@@ -47,6 +47,10 @@
 .container ul li:hover img {
 	filter: invert(0);
 } */
+.container ul li[data-active="true"] {
+	background-color: #f1f1f1;
+	color: black;
+}
 
 .container ul li:not(:last-child) {
 	border-bottom: 1px solid color-mix(in srgb, white, black 10%);

@@ -70,7 +70,7 @@ router.post(
 
 // Update user password route
 router.put(
-	"/password-reset/:id",
+	"/update-password/:id",
 	checkUserPassword,
 	checkIfUserVerified,
 	userController.updateUserPassword // If the user want to update his password

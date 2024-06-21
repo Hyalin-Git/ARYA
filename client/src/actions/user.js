@@ -1,7 +1,9 @@
 "use server";
+import { regex } from "@/libs/regex";
 import axios from "axios";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
+import { string, z } from "zod";
 
 export async function updateUserPicture(uid, prevState, formData) {
 	try {
@@ -104,7 +106,6 @@ export async function updateUserTools(uid, tools, prevState, formData) {
 			if (formData.get("tool").length <= 0) {
 				array = [...tools];
 			} else {
-				console.log("played bro");
 				array = [...tools, formData.get("tool")];
 			}
 		} else {
@@ -133,6 +134,84 @@ export async function updateUserTools(uid, tools, prevState, formData) {
 			status: "success",
 			data: data.tools,
 		};
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+const UpdatePassword = z.object({
+	password: z.string().min(8).regex(regex.password.pass),
+	newPassword: z.string().min(8).regex(regex.password.pass),
+	confirmNewPassword: z.string().min(8).regex(regex.password.pass),
+});
+
+export async function updateUserPassword(uid, prevState, formData) {
+	try {
+		const passData = UpdatePassword.safeParse({
+			password: formData.get("password"),
+			newPassword: formData.get("newPassword"),
+			confirmNewPassword: formData.get("confirmNewPassword"),
+		});
+		if (!passData.success) {
+			const error = passData.error.flatten().fieldErrors;
+			const inputError =
+				(error.password && "password") ||
+				(error.newPassword && "newPassword") ||
+				(error?.confirmNewPassword && "confirmNewPassword");
+
+			return {
+				message:
+					"Votre mot de passe doit contenir au moins 8 caractères, 1 chiffre, une majuscule, une minuscule et un caratère spécial",
+				error: [inputError],
+			};
+		}
+		if (formData.get("confirmNewPassword") !== formData.get("newPassword")) {
+			return {
+				message: "Les mots de passe ne correspondent pas",
+			};
+		}
+
+		const dataToSend = {
+			password: formData.get("password"),
+			newPassword: formData.get("newPassword"),
+			confirmNewPassword: formData.get("confirmNewPassword"),
+		};
+		const res = await fetch(
+			`http://localhost:5000/api/users/update-password/${uid}`,
+			{
+				method: "PUT",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(dataToSend),
+			}
+		);
+
+		const data = await res.json();
+		console.log(data);
+		if (data?.message?.includes("actuel")) {
+			return {
+				message: data?.message,
+				error: ["password"],
+			};
+		}
+		if (data?.message?.includes("ancien")) {
+			return {
+				message: data?.message,
+				error: ["newPassword"],
+			};
+		}
+
+		if (res.status === 200) {
+			return {
+				status: "success",
+				message: "Mot de passe réinitialiser avec succès",
+			};
+		} else {
+			throw new Error("Quelque chose s'est mal passée");
+		}
 	} catch (err) {
 		console.log(err);
 	}

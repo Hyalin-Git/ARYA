@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import styles from "@/styles/components/popup/popUp.module.css";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 export default function PopUp({ status, title, message }) {
 	useEffect(() => {
 		const popup = document.getElementById("popup");

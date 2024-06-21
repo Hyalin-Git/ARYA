@@ -1,6 +1,6 @@
 .container {
 	position: fixed;
-	bottom: 20px;
+	bottom: 100px;
 	right: 20px;
 	background-color: white;
 	width: 400px;
@@ -21,9 +21,9 @@
 	transition: all linear 150ms;
 }
 
-/* .success {
+.success {
 	color: var(--lavender-color);
-} */
+}
 
 .failure h3 {
 	color: red;

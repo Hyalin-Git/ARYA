@@ -1,0 +1,14 @@
+.container {
+	margin: 0px 30px 0 30px;
+	display: flex;
+	justify-content: center;
+	gap: 30px;
+}
+
+.left {
+	width: 20%;
+	align-self: flex-start;
+}
+.right {
+	width: 40%;
+}

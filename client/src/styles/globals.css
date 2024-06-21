@@ -421,6 +421,14 @@ input:focus,
 textarea:focus {
 	border: 1px solid var(--lavender-color);
 }
+input[data-error="true"],
+textarea[data-error="true"] {
+	border: 1px solid red;
+}
+i[data-error="true"] {
+	color: red;
+	font-size: 0.8rem;
+}
 
 body[data-dark="true"] input,
 body[data-dark="true"] textarea {

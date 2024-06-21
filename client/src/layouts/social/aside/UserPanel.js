@@ -8,10 +8,8 @@ import { usePathname, useRouter } from "next/navigation";
 import moment from "moment";
 import "moment/locale/fr"; // without this line it didn't work
 import { montserrat } from "@/libs/fonts";
-import { capitalizeFirstLetter } from "@/libs/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBusinessTime } from "@fortawesome/free-solid-svg-icons";
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 export default function UserPanel({ fetchedUser }) {
 	const router = useRouter();
