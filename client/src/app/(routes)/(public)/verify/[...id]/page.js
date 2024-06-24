@@ -2,12 +2,14 @@
 import styles from "@/styles/pages/verify.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { verifyEmail } from "@/api/verifications/verifications";
+import { verifyEmail, verifyNewEmail } from "@/api/verifications/verifications";
 import { montserrat } from "@/libs/fonts";
 import { cookies } from "next/headers";
 
 export default async function Verify({ params }) {
-	await verifyEmail(params.id[0], params.id[1]);
+	params.id[0] === "reset"
+		? await verifyNewEmail(params.id[1], params.id[2])
+		: await verifyEmail(params.id[0], params.id[1]);
 	const log = cookies().get("session");
 
 	return (

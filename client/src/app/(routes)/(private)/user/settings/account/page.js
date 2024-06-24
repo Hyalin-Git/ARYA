@@ -9,17 +9,19 @@ import Link from "next/link";
 export default function Account() {
 	return (
 		<div className={styles.container}>
-			<div className={styles.wrapper}>
-				<div>
-					<FontAwesomeIcon icon={faEnvelope} />
+			<Link href={"/user/settings/account/mail"}>
+				<div className={styles.wrapper}>
+					<div>
+						<FontAwesomeIcon icon={faEnvelope} />
+					</div>
+					<div>
+						<span>Changer votre Adresse mail</span>
+						<p>
+							Changer votre adresse mail en confirmant votre nouvelle adresse.
+						</p>
+					</div>
 				</div>
-				<div>
-					<span>Changer votre Adresse mail</span>
-					<p>
-						Changer votre adresse mail en confirmant votre nouvelle adresse.
-					</p>
-				</div>
-			</div>
+			</Link>
 			<Link href={"/user/settings/account/password"}>
 				<div className={styles.wrapper}>
 					<div>

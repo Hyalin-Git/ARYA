@@ -2,29 +2,29 @@
 import styles from "@/styles/pages/password.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faCheck } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
 import { useFormState } from "react-dom";
-import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/auth";
-import { updateUserPassword } from "@/actions/user";
+import { useContext, useEffect, useState } from "react";
+import { sendEmailResetLink } from "@/actions/user";
+import Link from "next/link";
 import { montserrat } from "@/libs/fonts";
 import PopUp from "@/components/popup/PopUp";
+
 const initialState = {
 	status: "pending",
 	message: "",
 	error: [],
 };
 
-export default function Password() {
+export default function Mail() {
 	const { uid } = useContext(AuthContext);
+	const [isDisabled, setIsDisabled] = useState(true);
 	const [displayPopUp, setDisplayPopUp] = useState(false);
-	const updatePasswordWithUid = updateUserPassword.bind(null, uid);
-	const [state, formAction] = useFormState(updatePasswordWithUid, initialState);
+	const updateEmailWithUid = sendEmailResetLink.bind(null, uid);
+	const [state, formAction] = useFormState(updateEmailWithUid, initialState);
 
-	// Differents inputs errors
 	const passwordError = state?.error?.includes("password");
-	const newPasswordError = state?.error?.includes("newPassword");
-	const confirmNewPasswordError = state?.message?.includes("correspondent");
+	const newEmailError = state?.error?.includes("newEmail");
 
 	useEffect(() => {
 		if (state?.status === "success" || state?.status === "failure") {
@@ -36,8 +36,23 @@ export default function Password() {
 				clearTimeout(timeout);
 			}
 		}
+		if (state?.status === "success") {
+			document.getElementById("password").value = "";
+			document.getElementById("newEmail").value = "";
+		}
 	}, [state]);
 
+	function checkIfFilled(e) {
+		e.preventDefault();
+		const value = e.target.value;
+		if (value.length > 0) {
+			setIsDisabled(false);
+		} else {
+			setIsDisabled(true);
+		}
+	}
+
+	console.log(state);
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
@@ -46,65 +61,55 @@ export default function Password() {
 						<FontAwesomeIcon icon={faArrowLeft} />
 					</Link>
 				</div>
-				<span>Changer votre mot de passe</span>
+				<span>Changer votre adresse mail</span>
 			</div>
 			<form action={formAction}>
 				<div>
-					<label htmlFor="password">Mot de passe actuel</label>
+					<label htmlFor="password">Entrez votre mot de passe</label>
 					<input
 						data-error={passwordError}
 						type="password"
 						id="password"
 						name="password"
 						className={montserrat.className}
-						placeholder="Mot de passe actuel"
+						placeholder="Mot de passe"
+						onChange={checkIfFilled}
+						required
 					/>
 					<br />
 					{passwordError && <i data-error={passwordError}>{state?.message}</i>}
 				</div>
 				<br />
 				<div>
-					<label htmlFor="newPassword">Nouveau mot de passe</label>
+					<label htmlFor="newEmail">Entrez la nouvelle adresse mail</label>
 					<input
-						data-error={newPasswordError}
-						type="password"
-						id="newPassword"
-						name="newPassword"
+						data-error={newEmailError}
+						type="email"
+						id="newEmail"
+						name="newEmail"
 						className={montserrat.className}
-						placeholder="Nouveau mot de passe"
+						placeholder="Nouvelle adresse mail"
+						onChange={checkIfFilled}
+						required
 					/>
 					<br />
-					{newPasswordError && (
-						<i data-error={newPasswordError}>{state?.message}</i>
-					)}
-				</div>
-				<br />
-				<div>
-					<label htmlFor="confirmPassword">Confirmer le mot de passe</label>
-					<input
-						data-error={confirmNewPasswordError}
-						type="password"
-						id="confirmNewPassword"
-						name="confirmNewPassword"
-						className={montserrat.className}
-						placeholder="Vérification du mot de passe"
-					/>
-					<br />
-					{confirmNewPasswordError && (
-						<i data-error={confirmNewPasswordError}>{state?.message}</i>
-					)}
+					{newEmailError && <i data-error={newEmailError}>{state?.message}</i>}
 				</div>
 				<br />
 				<div className={styles.button}>
-					<button type="submit">
-						<FontAwesomeIcon icon={faCheck} />
+					<button
+						type="submit"
+						className={montserrat.className}
+						data-disabled={isDisabled}
+						disabled={isDisabled}>
+						Confirmer
 					</button>
 				</div>
 			</form>
 			{displayPopUp && (
 				<PopUp
 					status={state.status}
-					title="Mot de passe"
+					title="Demande de changement d'adresse mail"
 					message={state.message}
 				/>
 			)}

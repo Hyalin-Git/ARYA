@@ -234,6 +234,12 @@ button.loading {
 	transition: inherit;
 	border: 1px solid white;
 }
+button[data-disabled="true"] {
+	background-image: none;
+
+	box-shadow: 1px 1px 0 white, -1px -1px 0 white !important;
+	transition: inherit;
+}
 
 body::-webkit-scrollbar {
 	/* display: none; */

@@ -139,6 +139,95 @@ export async function updateUserTools(uid, tools, prevState, formData) {
 	}
 }
 
+// EMAIL LOGIC
+
+const updateEmail = z.object({
+	password: z.string().min(8).regex(regex.password.pass),
+	newEmail: z.string().min(3).regex(regex.email),
+});
+
+export async function sendEmailResetLink(uid, prevState, formData) {
+	try {
+		const parsedData = updateEmail.safeParse({
+			password: formData.get("password"),
+			newEmail: formData.get("newEmail"),
+		});
+
+		if (!parsedData.success) {
+			const error = parsedData.error.flatten().fieldErrors;
+			console.log(error);
+
+			if (error.password) {
+				return {
+					message:
+						"Votre mot de passe doit contenir au moins 8 caractères, 1 chiffre, une majuscule, une minuscule et un caratère spécial",
+					error: ["password"],
+				};
+			}
+			if (error.newEmail) {
+				return {
+					message: "L'adresse mail renseigné n'est pas valide",
+					error: ["newEmail"],
+				};
+			}
+		}
+		const dataToSend = {
+			password: formData.get("password"),
+			newEmail: formData.get("newEmail"),
+		};
+		const res = await fetch(
+			`http://localhost:5000/api/users/email-reset/${uid}`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(dataToSend),
+			}
+		);
+
+		const data = await res.json();
+
+		if (res.status === 201) {
+			return {
+				status: "success",
+				message: data?.message,
+			};
+		} else {
+			throw new Error(data.message);
+		}
+	} catch (err) {
+		console.log(err);
+		if (err?.message?.includes("mot de passe")) {
+			return {
+				message: err.message,
+				error: "password",
+			};
+		}
+		if (err?.message?.includes("différente")) {
+			return {
+				message: err.message,
+				error: "newEmail",
+			};
+		}
+		if (err?.message?.includes("déjà utilisé")) {
+			return {
+				message: err.message,
+				error: "newEmail",
+			};
+		}
+		return {
+			status: "failure",
+			message:
+				"Quelque chose s'est mal passé de notre côté veuillez réessayer ultérieurement...",
+		};
+	}
+}
+
+// PASSWORDS LOGIC
+
 const UpdatePassword = z.object({
 	password: z.string().min(8).regex(regex.password.pass),
 	newPassword: z.string().min(8).regex(regex.password.pass),

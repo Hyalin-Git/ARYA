@@ -48,8 +48,8 @@
 	filter: invert(0);
 } */
 .container ul li[data-active="true"] {
-	background-color: #f1f1f1;
-	color: black;
+	background-color: var(--lavender-color);
+	color: white;
 }
 
 .container ul li:not(:last-child) {

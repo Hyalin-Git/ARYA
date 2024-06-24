@@ -282,6 +282,9 @@ exports.updateUserTools = (req, res, next) => {
 exports.sendEmailResetLink = async (req, res, next) => {
 	const user = await UserModel.findById({ _id: req.params.id });
 	const newEmail = req.body.newEmail;
+	const isEmailUsed = await UserModel.find({ email: newEmail });
+
+	console.log(isEmailUsed.length);
 
 	if (!user) {
 		return res
@@ -296,6 +299,13 @@ exports.sendEmailResetLink = async (req, res, next) => {
 		});
 	}
 
+	if (isEmailUsed.length > 0) {
+		return res.status(400).send({
+			error: true,
+			message: "L'adresse mail renseigné est déjà utilisé",
+		});
+	}
+
 	ResetEmailModel.findOne({ userEmail: newEmail })
 		.then(async (data) => {
 			if (data) {
@@ -306,9 +316,11 @@ exports.sendEmailResetLink = async (req, res, next) => {
 			}
 
 			const generateUniqueToken = crypto.randomBytes(32).toString("hex");
-			const uniqueToken = generateUniqueToken;
-			const url = `${process.env.CLIENT_URL}/verify/${user._id}/${uniqueToken}`;
 
+			const uniqueToken = generateUniqueToken;
+
+			const url = `${process.env.CLIENT_URL}/verify/reset/${user._id}/${uniqueToken}`;
+			console.log(uniqueToken);
 			const sent = await sendEmail(
 				newEmail,
 				"Confirmation de changement d'adresse e-mail",
