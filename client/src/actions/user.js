@@ -3,6 +3,7 @@ import { regex } from "@/libs/regex";
 import axios from "axios";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { string, z } from "zod";
 
 export async function updateUserPicture(uid, prevState, formData) {
@@ -394,4 +395,61 @@ export async function updateForgotPassword(prevState, formData) {
 				"Quelque chose s'est mal passé de notre côté, veuillez réessayer",
 		};
 	}
+}
+
+// DELETE USER ACCOUNT
+const deleteUserSchema = z.object({
+	password: z.string().min(8).regex(regex.password.pass),
+});
+
+export async function deleteUserAccount(uid, prevState, formData) {
+	try {
+		const validation = deleteUserSchema.safeParse({
+			password: formData.get("password"),
+		});
+
+		if (!validation.success) {
+			const error = validation.error.flatten().fieldErrors;
+			if (error.password) {
+				return {
+					message:
+						"Votre mot de passe doit contenir au moins 8 caractères, 1 chiffre, une majuscule, une minuscule et un caratère spécial",
+					error: ["password"],
+				};
+			}
+		}
+		const dataToSend = {
+			password: formData.get("password"),
+		};
+		const res = await fetch(`http://localhost:5000/api/users/${uid}`, {
+			method: "DELETE",
+			credentials: "include",
+			headers: {
+				Authorization: `Bearer ${cookies().get("session")?.value}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(dataToSend),
+		});
+
+		const data = await res.json();
+		if (res.status !== 200) {
+			throw data;
+		}
+	} catch (err) {
+		console.log("ceci est l'erreur: " + err.message);
+		if (err?.message?.includes("mot de passe actuel")) {
+			return {
+				message: err.message,
+				error: ["password"],
+			};
+		}
+		return {
+			status: "failure",
+			message:
+				"Quelque chose s'est mal passé de notre côté, veuillez réessayer ultérieurment",
+			error: ["password"],
+		};
+	}
+	cookies().delete("session");
+	redirect("/");
 }

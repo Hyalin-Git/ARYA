@@ -49,7 +49,11 @@ export default function UserEditor() {
 							}}
 							id="picture-form">
 							<Image
-								src={user.picture}
+								src={
+									user?.picture
+										? user.picture
+										: "/images/profil/default-pfp.jpg"
+								}
 								width={100}
 								height={100}
 								quality={100}

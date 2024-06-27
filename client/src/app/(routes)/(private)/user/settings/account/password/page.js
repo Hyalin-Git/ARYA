@@ -17,6 +17,7 @@ const initialState = {
 
 export default function Password() {
 	const { uid } = useContext(AuthContext);
+	const [isDisabled, setIsDisabled] = useState(true);
 	const [displayPopUp, setDisplayPopUp] = useState(false);
 	const updatePasswordWithUid = updateUserPassword.bind(null, uid);
 	const [state, formAction] = useFormState(updatePasswordWithUid, initialState);
@@ -38,6 +39,16 @@ export default function Password() {
 		}
 	}, [state]);
 
+	function checkIfFilled(e) {
+		e.preventDefault();
+		const value = e.target.value;
+		if (value.length > 0) {
+			setIsDisabled(false);
+		} else {
+			setIsDisabled(true);
+		}
+	}
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
@@ -57,6 +68,7 @@ export default function Password() {
 						id="password"
 						name="password"
 						className={montserrat.className}
+						onChange={checkIfFilled}
 						placeholder="Mot de passe actuel"
 					/>
 					<br />
@@ -71,6 +83,7 @@ export default function Password() {
 						id="newPassword"
 						name="newPassword"
 						className={montserrat.className}
+						onChange={checkIfFilled}
 						placeholder="Nouveau mot de passe"
 					/>
 					<br />
@@ -87,6 +100,7 @@ export default function Password() {
 						id="confirmNewPassword"
 						name="confirmNewPassword"
 						className={montserrat.className}
+						onChange={checkIfFilled}
 						placeholder="Vérification du mot de passe"
 					/>
 					<br />
@@ -96,8 +110,12 @@ export default function Password() {
 				</div>
 				<br />
 				<div className={styles.button}>
-					<button type="submit">
-						<FontAwesomeIcon icon={faCheck} />
+					<button
+						type="submit"
+						className={montserrat.className}
+						data-disabled={isDisabled}
+						disabled={isDisabled}>
+						Confirmer
 					</button>
 				</div>
 			</form>

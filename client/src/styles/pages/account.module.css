@@ -34,3 +34,54 @@
 	line-height: 0rem;
 	color: color-mix(in srgb, white, black 50%) !important;
 }
+
+.modal {
+	text-align: center;
+	padding: 20px;
+}
+
+.modal span {
+	font-weight: 500;
+}
+
+.modal p {
+	font-size: 0.8rem;
+	color: color-mix(in srgb, white, black 50%) !important;
+}
+
+.modal form {
+	text-align: left;
+}
+
+.modal label {
+	color: color-mix(in srgb, white, black 40%) !important;
+	font-weight: bold;
+	font-size: 0.7rem;
+}
+
+.buttons {
+	margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+.buttons button {
+	padding: 8px;
+	border-radius: 4px;
+	font-weight: 500;
+	box-shadow: inherit;
+	font-size: 1.1rem;
+}
+
+.buttons button:nth-child(1) {
+	background-image: none !important;
+	background-color: transparent;
+	text-shadow: none !important;
+	color: var(--lavender-color);
+	font-weight: 400;
+	box-shadow: none;
+}
+
+.buttons button:nth-child(1):hover {
+	color: var(--meteorite-color);
+}

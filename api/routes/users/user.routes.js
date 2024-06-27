@@ -63,6 +63,8 @@ router.put(
 // Update email routes
 router.post(
 	"/email-reset/:id",
+	authenticate,
+	authorize,
 	checkUserPassword,
 	checkIfUserVerified,
 	userController.sendEmailResetLink
@@ -71,12 +73,20 @@ router.post(
 // Update user password route
 router.put(
 	"/update-password/:id",
+	authenticate,
+	authorize,
 	checkUserPassword,
 	checkIfUserVerified,
 	userController.updateUserPassword // If the user want to update his password
 );
 
-router.delete("/:id", authenticate, authorize, userController.deleteOneUser);
+router.delete(
+	"/:id",
+	authenticate,
+	authorize,
+	checkUserPassword,
+	userController.deleteOneUser
+);
 
 // forgot passsword routes
 router.post("/forgot-password", userController.sendPasswordResetCode);

@@ -3,7 +3,13 @@ import { getSession } from "./actions/auth";
 import { cookies } from "next/headers";
 
 export async function middleware(request) {
-	const privateRoutes = ["", "/social", "/user", "/user/settings"];
+	const privateRoutes = [
+		"",
+		"/social",
+		"/user",
+		"/user/settings",
+		"/user/settings/account",
+	];
 	const cantAccessWhenLogged = ["/", "/auth"];
 	// If user is logged in
 	if (cookies().get("session")) {

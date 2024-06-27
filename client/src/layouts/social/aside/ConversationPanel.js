@@ -5,8 +5,9 @@ import styles from "@/styles/layouts/social/aside/conversationPanel.module.css";
 
 export default async function ConversationPanel() {
 	const conversations = await getConversations();
+	console.log(conversations);
 	const notFound = conversations?.message?.includes(
-		"Aucune conversations n'a été trouvée"
+		"Aucune conversations n'a été trouvé"
 	);
 	console.log(notFound);
 
