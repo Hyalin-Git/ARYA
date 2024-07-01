@@ -5,7 +5,8 @@ import Card from "@/components/social/cards/Card";
 
 export default async function Posts({ user }) {
 	const res = await getPosts(user._id, "desc");
-	const posts = res.data;
+	const posts = res?.data;
+	console.log(posts);
 
 	return (
 		<div className={styles.container}>

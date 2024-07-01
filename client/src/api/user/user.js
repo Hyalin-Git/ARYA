@@ -102,6 +102,27 @@ export async function getUserLikes(userId) {
 
 // Block logic
 
+export async function getBlockedUsers() {
+	try {
+		const uid = await getUserId();
+		const response = await fetch(
+			`http://localhost:5000/api/users/block/${uid}`,
+			{
+				method: "GET",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+				},
+			}
+		);
+		const data = await response.json();
+
+		return data.blockedUsers;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 export async function blockUser(uid, uidToBlock) {
 	try {
 		const dataToSend = {
@@ -109,6 +130,31 @@ export async function blockUser(uid, uidToBlock) {
 		};
 		const response = await fetch(
 			`http://localhost:5000/api/users/block/${uid}`,
+			{
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(dataToSend),
+			}
+		);
+
+		const data = await response.json();
+
+		console.log(data);
+	} catch (err) {
+		console.log("block user error:", err);
+	}
+}
+export async function unblockUser(uid, idToUnblock) {
+	try {
+		const dataToSend = {
+			idToUnblock: idToUnblock,
+		};
+		const response = await fetch(
+			`http://localhost:5000/api/users/unblock/${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",

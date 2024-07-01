@@ -9,7 +9,13 @@ import Reposts from "@/components/user/reposts/Reposts";
 import Likes from "@/components/user/likes/Likes";
 
 export default async function User({ params }) {
+	console.log(params);
 	const user = await getUserByUsername(params.slug[0]);
+	console.log(user?.message);
+	const isBlocked = user?.message?.includes("bloqué");
+	const isBlockedByAuth = user?.message?.includes(
+		"Vous avez bloqué cet utilisateur"
+	);
 
 	function isActive(path) {
 		return params?.slug[1]?.includes(path);
@@ -21,44 +27,56 @@ export default async function User({ params }) {
 				<UserPanel fetchedUser={user} />
 			</aside>
 			<div className={styles.content}>
-				<div className={styles.filters}>
-					<ul>
-						<Link href={`/user/${user.userName}/posts`}>
-							<li data-active={isActive("posts")}>Posts</li>
-						</Link>
-						<Link href={`/user/${user.userName}/dick`}>
-							<li data-active={isActive("dick")}>Reposts</li>
-						</Link>
-						<Link href={`/user/${user.userName}/commentaires`}>
-							<li data-active={isActive("commentaires")}>Commentaires</li>
-						</Link>
-						<Link href={`/user/${user.userName}/reactions`}>
-							<li data-active={isActive("reactions")}>Réactions</li>
-						</Link>
-						<Link href={`/user/${user.userName}/images`}>
-							<li data-active={isActive("images")}>Images</li>
-						</Link>
-						<li>/</li>
-						<Link href={`/user/${user.userName}/portfolio`}>
-							<li data-active={isActive("portfolio")}>Portfolio</li>
-						</Link>
-						<Link href={`/user/${user.userName}/services`}>
-							<li data-active={isActive("services")}>Services</li>
-						</Link>
-						<Link href={`/user/${user.userName}/planning`}>
-							<li data-active={isActive("planning")}>Planning</li>
-						</Link>
-					</ul>
-				</div>
-				<div className={styles.feed}>
-					{isActive("posts") && <Posts user={user} />}
-					{isActive("dick") && <Reposts user={user} />}
-					{isActive("commentaires") && <div>commentaires</div>}
-					{isActive("reactions") && <Likes user={user} />}
-					{isActive("images") && <div>img</div>}
-					{isActive("projects") && <div>Projets</div>}
-					{isActive("planning") && <div>planning</div>}
-				</div>
+				{isBlocked ? (
+					<div>
+						{isBlockedByAuth ? (
+							<span>{user.message}</span>
+						) : (
+							<span>{user.message}</span>
+						)}
+					</div>
+				) : (
+					<>
+						<div className={styles.filters}>
+							<ul>
+								<Link href={`/user/${user.userName}/posts`}>
+									<li data-active={isActive("posts")}>Posts</li>
+								</Link>
+								<Link href={`/user/${user.userName}/dick`}>
+									<li data-active={isActive("dick")}>Reposts</li>
+								</Link>
+								<Link href={`/user/${user.userName}/commentaires`}>
+									<li data-active={isActive("commentaires")}>Commentaires</li>
+								</Link>
+								<Link href={`/user/${user.userName}/reactions`}>
+									<li data-active={isActive("reactions")}>Réactions</li>
+								</Link>
+								<Link href={`/user/${user.userName}/images`}>
+									<li data-active={isActive("images")}>Images</li>
+								</Link>
+								<li>/</li>
+								<Link href={`/user/${user.userName}/portfolio`}>
+									<li data-active={isActive("portfolio")}>Portfolio</li>
+								</Link>
+								<Link href={`/user/${user.userName}/services`}>
+									<li data-active={isActive("services")}>Services</li>
+								</Link>
+								<Link href={`/user/${user.userName}/planning`}>
+									<li data-active={isActive("planning")}>Planning</li>
+								</Link>
+							</ul>
+						</div>
+						<div className={styles.feed}>
+							{isActive("posts") && <Posts user={user} />}
+							{isActive("dick") && <Reposts user={user} />}
+							{isActive("commentaires") && <div>commentaires</div>}
+							{isActive("reactions") && <Likes user={user} />}
+							{isActive("images") && <div>img</div>}
+							{isActive("projects") && <div>Projets</div>}
+							{isActive("planning") && <div>planning</div>}
+						</div>
+					</>
+				)}
 			</div>
 			<aside>
 				<ConversationPanel />

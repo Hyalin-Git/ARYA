@@ -17,7 +17,7 @@ router.get("/:id", authenticate, isBlocked, isPrivate, userController.getUser);
 router.get(
 	"/username/:id",
 	authenticate,
-
+	isBlocked,
 	userController.getUserByUsername
 );
 router.get("/likes/:id", authenticate, userController.getUserLikes);
@@ -92,6 +92,12 @@ router.delete(
 router.post("/forgot-password", userController.sendPasswordResetCode);
 router.put("/forgot-password", userController.updateForgotPassword); // If the reset code is verified, then update the password
 
+router.get(
+	"/block/:id",
+	authenticate,
+	authorize,
+	userController.getBlockedUsers
+);
 router.patch("/block/:id", authenticate, authorize, userController.blockAnUser);
 router.patch(
 	"/unblock/:id",

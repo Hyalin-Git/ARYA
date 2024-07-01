@@ -8,8 +8,11 @@ import { useState } from "react";
 export default function NavPanel() {
 	const pathname = usePathname();
 	const isSettings =
-		pathname.includes("/settings") && !pathname.includes("/account");
+		pathname.includes("/settings") &&
+		!pathname.includes("/account") &&
+		!pathname.includes("/privacy-security");
 	const isAccount = pathname.includes("/account");
+	const isPrivacySecurity = pathname.includes("/privacy-security");
 	console.log(isAccount);
 	console.log(pathname);
 	const [openId, setOpenId] = useState(null);
@@ -26,8 +29,10 @@ export default function NavPanel() {
 				<li data-active={isAccount}>
 					<Link href={"/user/settings/account"}>Informations du compte</Link>
 				</li>
-				<li>
-					<Link href={"/user/settings"}>Vie privée et sécurité</Link>
+				<li data-active={isPrivacySecurity}>
+					<Link href={"/user/settings/privacy-security"}>
+						Vie privée et sécurité
+					</Link>
 				</li>
 				<li>
 					<Link href={"/user/settings"}>Notifications</Link>

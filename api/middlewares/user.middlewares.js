@@ -48,10 +48,10 @@ exports.isBlocked = async (req, res, next) => {
 			? await UserModel.findOne({ userName: req.params.id }) // If yes we get the requestedUser by username
 			: await UserModel.findById({ _id: req.params.id }); // If not then we findById
 
-		const isAuthUserBlocked = requestedUser.blockedUsers.includes(
+		const isAuthUserBlocked = requestedUser?.blockedUsers?.includes(
 			AuthUserModel._id
 		);
-		const isRequestedUserBlocked = AuthUserModel.blockedUsers.includes(
+		const isRequestedUserBlocked = AuthUserModel?.blockedUsers?.includes(
 			requestedUser._id
 		);
 
@@ -65,6 +65,7 @@ exports.isBlocked = async (req, res, next) => {
 						: "Vous avez bloqué cet utilisateur"
 				}`,
 				UserInfo: {
+					_id: requestedUser._id,
 					lastName: requestedUser.lastName,
 					firstName: requestedUser.firstName,
 					userName: requestedUser.userName,

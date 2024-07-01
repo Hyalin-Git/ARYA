@@ -609,6 +609,23 @@ exports.deleteOneUser = (req, res, next) => {
 		.catch((err) => res.status(500).send(err.message ? err.message : err));
 };
 
+// BLOCK
+
+exports.getBlockedUsers = async (req, res, next) => {
+	UserModel.findById({ _id: req.params.id })
+		.populate("blockedUsers", "lastName firstName userName picture biographie")
+		.exec()
+		.then((user) => {
+			if (!user) {
+				return res
+					.status(404)
+					.send({ error: true, message: "Cet utilisateur n'existe pas" }); // This user does not exist
+			}
+			res.status(200).send(user);
+		})
+		.catch((err) => res.status(500).send(err.message ? err.message : err));
+};
+
 exports.blockAnUser = async (req, res, next) => {
 	try {
 		console.log("block user is played");
@@ -684,7 +701,7 @@ exports.unblockAnUser = (req, res, next) => {
 		{ _id: req.params.id },
 		{
 			$pull: {
-				blockedUsers: req.body.idToBlock,
+				blockedUsers: req.body.idToUnblock,
 			},
 		},
 		{

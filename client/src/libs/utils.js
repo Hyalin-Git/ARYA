@@ -7,6 +7,14 @@ export function capitalizeFirstLetter(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+export function checkIfEmpty(array) {
+	if (array?.length === 0 || array === undefined) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 // Form validation for sign in
 
 export const signInValidation = () => {
