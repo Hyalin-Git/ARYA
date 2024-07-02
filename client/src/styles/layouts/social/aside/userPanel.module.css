@@ -10,10 +10,10 @@
 }
 /* LINKS  */
 .container [data-disabled="true"] {
-	pointer-events: none;
+	/* pointer-events: none; */
 }
 .container [data-disabled="false"] {
-	pointer-events: all;
+	/* pointer-events: all; */
 }
 .container a {
 	font-weight: 500;
@@ -312,19 +312,17 @@
 .reports {
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	gap: 20px;
 }
 .reports span {
 	color: color-mix(in srgb, white, black 50%) !important;
 	font-size: 0.8rem;
+
 	cursor: pointer;
 }
 .reports span:hover {
 	text-decoration: underline;
-}
-
-.container button {
-	width: 100%;
 }
 
 /* IF USER PAGE AND NOT AUTHOR */

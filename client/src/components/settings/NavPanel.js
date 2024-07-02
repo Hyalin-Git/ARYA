@@ -23,20 +23,18 @@ export default function NavPanel() {
 	return (
 		<div className={styles.container}>
 			<ul>
-				<li data-active={isSettings}>
-					<Link href={"/user/settings"}>Informations du profil </Link>
-				</li>
-				<li data-active={isAccount}>
-					<Link href={"/user/settings/account"}>Informations du compte</Link>
-				</li>
-				<li data-active={isPrivacySecurity}>
-					<Link href={"/user/settings/privacy-security"}>
-						Vie privée et sécurité
-					</Link>
-				</li>
-				<li>
-					<Link href={"/user/settings"}>Notifications</Link>
-				</li>
+				<Link href={"/user/settings"}>
+					<li data-active={isSettings}>Informations du profil</li>
+				</Link>
+				<Link href={"/user/settings/account"}>
+					<li data-active={isAccount}>Informations du compte</li>
+				</Link>
+				<Link href={"/user/settings/privacy-security"}>
+					<li data-active={isPrivacySecurity}>Vie privée et sécurité</li>
+				</Link>
+				<Link href={"/user/settings"}>
+					<li>Notifications</li>
+				</Link>
 			</ul>
 		</div>
 	);

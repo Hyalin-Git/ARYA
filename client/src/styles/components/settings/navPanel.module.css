@@ -52,13 +52,6 @@
 	color: white;
 }
 
-.container ul li:not(:last-child) {
+.container ul a:not(:last-child) {
 	border-bottom: 1px solid color-mix(in srgb, white, black 10%);
-}
-
-.container ul li:not(:last-child) ul {
-	margin-top: 10px;
-}
-.container ul li:not(:last-child) ul li {
-	border-bottom: 0px solid color-mix(in srgb, white, black 10%);
 }

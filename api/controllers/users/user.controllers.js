@@ -149,10 +149,11 @@ exports.getUserLikes = async (req, res, next) => {
 			return res.status(404).send({
 				error: true,
 				message: "Cet utilisateur n'a aimé aucune publication pour le moment",
+				data: data,
 			});
 		}
 
-		return res.status(200).send(data);
+		return res.status(200).send({ data: data });
 	} catch (err) {
 		return res.status(500).send(err);
 	}
@@ -709,7 +710,7 @@ exports.unblockAnUser = (req, res, next) => {
 			setDefaultsOnInsert: true,
 		}
 	)
-		.then((blockedUser) => res.status(200).send(blockedUser))
+		.then((updatedUser) => res.status(200).send(updatedUser))
 		.catch((err) => res.status(500).send(err));
 };
 

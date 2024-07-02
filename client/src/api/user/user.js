@@ -113,6 +113,9 @@ export async function getBlockedUsers() {
 				headers: {
 					Authorization: `Bearer ${cookies().get("session")?.value}`,
 				},
+				next: {
+					tags: ["blockedUsers"],
+				},
 			}
 		);
 		const data = await response.json();
@@ -120,57 +123,6 @@ export async function getBlockedUsers() {
 		return data.blockedUsers;
 	} catch (err) {
 		console.log(err);
-	}
-}
-
-export async function blockUser(uid, uidToBlock) {
-	try {
-		const dataToSend = {
-			idToBlock: uidToBlock,
-		};
-		const response = await fetch(
-			`http://localhost:5000/api/users/block/${uid}`,
-			{
-				method: "PATCH",
-				credentials: "include",
-				headers: {
-					Authorization: `Bearer ${cookies().get("session")?.value}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(dataToSend),
-			}
-		);
-
-		const data = await response.json();
-
-		console.log(data);
-	} catch (err) {
-		console.log("block user error:", err);
-	}
-}
-export async function unblockUser(uid, idToUnblock) {
-	try {
-		const dataToSend = {
-			idToUnblock: idToUnblock,
-		};
-		const response = await fetch(
-			`http://localhost:5000/api/users/unblock/${uid}`,
-			{
-				method: "PATCH",
-				credentials: "include",
-				headers: {
-					Authorization: `Bearer ${cookies().get("session")?.value}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(dataToSend),
-			}
-		);
-
-		const data = await response.json();
-
-		console.log(data);
-	} catch (err) {
-		console.log("block user error:", err);
 	}
 }
 

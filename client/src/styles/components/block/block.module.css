@@ -1,0 +1,26 @@
+.form button {
+	position: relative;
+	top: -1px;
+	padding: 0;
+	background-image: inherit;
+	background-color: transparent;
+	box-shadow: none;
+	color: color-mix(in srgb, white, black 50%) !important;
+	text-shadow: none !important;
+	background-position: inherit;
+	background-size: inherit;
+	font-size: 0.8rem;
+}
+.form button:hover {
+	text-decoration: underline;
+}
+
+.form button[data-text="false"] {
+	color: red !important;
+}
+
+.form button[data-text="false"] svg {
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+}

@@ -397,6 +397,84 @@ export async function updateForgotPassword(prevState, formData) {
 	}
 }
 
+// BLOCK LOGIC
+export async function blockUser(uid, prevState, formData) {
+	try {
+		const dataToSend = {
+			idToBlock: formData.get("idToBlock"),
+		};
+		const response = await fetch(
+			`http://localhost:5000/api/users/block/${uid}`,
+			{
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(dataToSend),
+			}
+		);
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new Error(data.message || "Failed to unblock user");
+		}
+		console.log(data);
+		revalidateTag("user");
+		return {
+			status: "success",
+			message: "aya",
+		};
+	} catch (err) {
+		console.log("block user error:", err);
+		return {
+			status: "failure",
+			message: "aya",
+		};
+	}
+}
+export async function unblockUser(uid, prevState, formData) {
+	try {
+		console.log(uid, "l'id de l'auth");
+		const dataToSend = {
+			idToUnblock: formData.get("idToUnblock"),
+		};
+		console.log(formData.get("idToUnblock"), "l'id de l'user à débloquer");
+		const response = await fetch(
+			`http://localhost:5000/api/users/unblock/${uid}`,
+			{
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(dataToSend),
+			}
+		);
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new Error(data.message || "Failed to unblock user");
+		}
+		console.log(data);
+		revalidateTag("blockedUsers");
+		return {
+			status: "success",
+			message: "aya",
+		};
+	} catch (err) {
+		console.log("block user error:", err);
+		return {
+			status: "failure",
+			message: "aya",
+		};
+	}
+}
+
 // DELETE USER ACCOUNT
 const deleteUserSchema = z.object({
 	password: z.string().min(8).regex(regex.password.pass),
