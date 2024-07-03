@@ -10,6 +10,7 @@ import { useFormState } from "react-dom";
 const initialState = {
 	status: "pending",
 	message: "",
+	error: [],
 };
 export default function SocialEditor() {
 	const { user, uid } = useContext(AuthContext);
@@ -18,6 +19,15 @@ export default function SocialEditor() {
 		updateUserSocialWithUid,
 		initialState
 	);
+
+	const errorX = state?.error?.includes("x");
+	const errorTiktok = state?.error?.includes("tiktok");
+	const errorInstagram = state?.error?.includes("instagram");
+	const errorFacebook = state?.error?.includes("facebook");
+	const errorLinkedIn = state?.error?.includes("linkedIn");
+	const errorYoutube = state?.error?.includes("youtube");
+	const errorTwitch = state?.error?.includes("twitch");
+	console.log(state);
 
 	return (
 		<div className={styles.container} id="social">
@@ -36,6 +46,7 @@ export default function SocialEditor() {
 							/>
 						</label>
 						<input
+							data-error={errorX}
 							type="text"
 							name="twitter"
 							id="twitter"
@@ -43,6 +54,7 @@ export default function SocialEditor() {
 							defaultValue={user?.social?.twitter}
 						/>
 					</div>
+					{errorX && <i data-error={errorX}>{state?.message}</i>}
 					<div>
 						<label htmlFor="tiktok">
 							<Image
@@ -53,6 +65,7 @@ export default function SocialEditor() {
 							/>
 						</label>
 						<input
+							data-error={errorTiktok}
 							type="text"
 							name="tiktok"
 							id="tiktok"
@@ -60,6 +73,7 @@ export default function SocialEditor() {
 							defaultValue={user?.social?.tiktok}
 						/>
 					</div>
+					{errorTiktok && <i data-error={errorTiktok}>{state?.message}</i>}
 					<div>
 						<label htmlFor="instagram">
 							<Image
@@ -70,6 +84,7 @@ export default function SocialEditor() {
 							/>
 						</label>
 						<input
+							data-error={errorInstagram}
 							type="text"
 							name="instagram"
 							id="instagram"
@@ -77,6 +92,9 @@ export default function SocialEditor() {
 							defaultValue={user?.social?.instagram}
 						/>
 					</div>
+					{errorInstagram && (
+						<i data-error={errorInstagram}>{state?.message}</i>
+					)}
 					<div>
 						<label htmlFor="facebook">
 							<Image
@@ -87,6 +105,7 @@ export default function SocialEditor() {
 							/>
 						</label>
 						<input
+							data-error={errorFacebook}
 							type="text"
 							name="facebook"
 							id="facebook"
@@ -94,6 +113,7 @@ export default function SocialEditor() {
 							defaultValue={user?.social?.facebook}
 						/>
 					</div>
+					{errorFacebook && <i data-error={errorFacebook}>{state?.message}</i>}
 					<div>
 						<label htmlFor="linkedIn">
 							<Image
@@ -104,6 +124,7 @@ export default function SocialEditor() {
 							/>
 						</label>
 						<input
+							data-error={errorLinkedIn}
 							type="text"
 							name="linkedIn"
 							id="linkedIn"
@@ -111,6 +132,7 @@ export default function SocialEditor() {
 							defaultValue={user?.social?.linkedIn}
 						/>
 					</div>
+					{errorLinkedIn && <i data-error={errorLinkedIn}>{state?.message}</i>}
 					<div>
 						<label htmlFor="youtube">
 							<Image
@@ -121,6 +143,7 @@ export default function SocialEditor() {
 							/>
 						</label>
 						<input
+							data-error={errorYoutube}
 							type="text"
 							name="youtube"
 							id="youtube"
@@ -128,6 +151,7 @@ export default function SocialEditor() {
 							defaultValue={user?.social?.youtube}
 						/>
 					</div>
+					{errorYoutube && <i data-error={errorYoutube}>{state?.message}</i>}
 					<div>
 						<label htmlFor="twitch">
 							<Image
@@ -138,6 +162,7 @@ export default function SocialEditor() {
 							/>
 						</label>
 						<input
+							data-error={errorTwitch}
 							type="text"
 							name="twitch"
 							id="twitch"
@@ -145,6 +170,7 @@ export default function SocialEditor() {
 							defaultValue={user?.social?.twitch}
 						/>
 					</div>
+					{errorTwitch && <i data-error={errorTwitch}>{state?.message}</i>}
 					<button hidden type="submit">
 						Submit
 					</button>

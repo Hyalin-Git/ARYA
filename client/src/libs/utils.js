@@ -1,7 +1,8 @@
 import styles from "@/styles/components/auth/userStep.module.css";
-import { regex } from "./regex";
+import { regex, socialRegex } from "./regex";
 import moment from "moment";
 import "moment/locale/fr"; // without this line it didn't work
+import { z } from "zod";
 
 export function capitalizeFirstLetter(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
@@ -482,3 +483,35 @@ export function authorCheck(uid, element) {
 }
 
 export function handleAddReaction() {}
+
+// ZOD SCHEMA
+
+export const UpdateUserSchema = z.object({
+	lastName: z.string().min(2).max(16).regex(regex.names),
+	firstName: z.string().min(2).max(16).regex(regex.names),
+	userName: z.string().min(2).max(16).regex(regex.userName),
+	job: z.string().min(2).max(50).regex(regex.job).optional().or(z.literal("")),
+	biographie: z.string().min(0).max(500).regex(regex.biographie),
+	contact: z
+		.string()
+		.min(6)
+		.max(254)
+		.regex(regex.email)
+		.optional()
+		.or(z.literal("")),
+	website: z.string().regex(regex.website).optional().or(z.literal("")),
+});
+
+export const UpdateUserSocialSchema = z.object({
+	x: z.string().regex(socialRegex.x).optional().or(z.literal("")),
+	tiktok: z.string().regex(socialRegex.tiktok).optional().or(z.literal("")),
+	instagram: z
+		.string()
+		.regex(socialRegex.instagram)
+		.optional()
+		.or(z.literal("")),
+	facebook: z.string().regex(socialRegex.facebook).optional().or(z.literal("")),
+	linkedIn: z.string().regex(socialRegex.linkedIn).optional().or(z.literal("")),
+	youtube: z.string().regex(socialRegex.youtube).optional().or(z.literal("")),
+	twitch: z.string().regex(socialRegex.twitch).optional().or(z.literal("")),
+});

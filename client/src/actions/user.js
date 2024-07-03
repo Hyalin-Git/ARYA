@@ -1,5 +1,6 @@
 "use server";
 import { regex } from "@/libs/regex";
+import { UpdateUserSchema, UpdateUserSocialSchema } from "@/libs/utils";
 import axios from "axios";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
@@ -36,6 +37,44 @@ export async function updateUserPicture(uid, prevState, formData) {
 
 export async function updateUser(uid, prevState, formData) {
 	try {
+		const parsedData = UpdateUserSchema.safeParse({
+			lastName: formData.get("lastName"),
+			firstName: formData.get("firstName"),
+			userName: formData.get("userName"),
+			job: formData.get("job"),
+			biographie: formData.get("biographie"),
+			contact: formData.get("contact"),
+			website: formData.get("website"),
+		});
+
+		if (!parsedData.success) {
+			const error = parsedData.error.flatten().fieldErrors;
+			console.log(error);
+			if (error.lastName) {
+				throw new Error("Veuillez saisir un nom valide");
+			}
+			if (error.firstName) {
+				throw new Error("Veuillez saisir un prénom valide");
+			}
+			if (error.userName) {
+				throw new Error("Veuillez saisir un nom d'utilisateur valide");
+			}
+			if (error.job) {
+				throw new Error("Veuillez saisir une profession valide");
+			}
+			if (error.biographie) {
+				throw new Error(
+					"Veuillez saisir une biographie valide comprise entre 0 et 500 caratères"
+				);
+			}
+			if (error.contact) {
+				throw new Error("Veuillez saisir une adresse mail de contact valide");
+			}
+			if (error.website) {
+				throw new Error("Veuillez saisir une URL valide");
+			}
+		}
+
 		const updatedData = {
 			lastName: formData.get("lastName"),
 			firstName: formData.get("firstName"),
@@ -64,12 +103,117 @@ export async function updateUser(uid, prevState, formData) {
 			status: "success",
 		};
 	} catch (err) {
-		console.log(err);
+		if (
+			err.message.includes("nom") &&
+			!err.message.includes("prénom") &&
+			!err.message.includes("nom d'utilisateur")
+		) {
+			return {
+				status: "failure",
+				message: err.message,
+				error: ["lastName"],
+			};
+		}
+		if (err.message.includes("prénom")) {
+			return {
+				status: "failure",
+				message: err.message,
+				error: ["firstName"],
+			};
+		}
+		if (err.message.includes("nom d'utilisateur")) {
+			return {
+				status: "failure",
+				message: err.message,
+				error: ["userName"],
+			};
+		}
+		if (err.message.includes("profession")) {
+			return {
+				status: "failure",
+				message: err.message,
+				error: ["job"],
+			};
+		}
+		if (err.message.includes("biographie")) {
+			return {
+				status: "failure",
+				message: err.message,
+				error: ["biographie"],
+			};
+		}
+		if (err.message.includes("contact")) {
+			return {
+				status: "failure",
+				message: err.message,
+				error: ["contact"],
+			};
+		}
+		if (err.message.includes("URL")) {
+			return {
+				status: "failure",
+				message: err.message,
+				error: ["website"],
+			};
+		}
+		return {
+			status: "failure",
+			message:
+				"Une erreur s'est produite de notre côté, veuillez réessayer ultérieurement",
+		};
 	}
 }
 
 export async function updateUserSocial(uid, prevState, formData) {
 	try {
+		const parsedData = UpdateUserSocialSchema.safeParse({
+			x: formData.get("twitter"),
+			tiktok: formData.get("tiktok"),
+			instagram: formData.get("instagram"),
+			facebook: formData.get("facebook"),
+			linkedIn: formData.get("linkedIn"),
+			youtube: formData.get("youtube"),
+			twitch: formData.get("twitch"),
+		});
+
+		if (!parsedData.success) {
+			const error = parsedData.error.flatten().fieldErrors;
+			console.log(error);
+			if (error.x) {
+				throw new Error("Veuillez saisir une URL valide vers votre profil x");
+			}
+			if (error.tiktok) {
+				throw new Error(
+					"Veuillez saisir une URL valide vers votre profil tiktok"
+				);
+			}
+			if (error.instagram) {
+				throw new Error(
+					"Veuillez saisir une URL valide vers votre profil instagram"
+				);
+			}
+			if (error.facebook) {
+				throw new Error(
+					"Veuillez saisir une URL valide vers votre profil facebook"
+				);
+			}
+			if (error.linkedIn) {
+				throw new Error(
+					"Veuillez saisir une URL valide vers votre profil linkedIn"
+				);
+			}
+			if (error.youtube) {
+				throw new Error(
+					"Veuillez saisir une URL valide vers votre chaine youtube"
+				);
+			}
+			if (error.twitch) {
+				throw new Error(
+					"Veuillez saisir une URL valide vers votre chaine twitch"
+				);
+			}
+		}
+
 		const updatedData = {
 			twitter: formData.get("twitter"),
 			tiktok: formData.get("tiktok"),
@@ -96,6 +240,60 @@ export async function updateUserSocial(uid, prevState, formData) {
 		console.log(data);
 	} catch (err) {
 		console.log(err);
+		if (err?.message?.includes("x")) {
+			return {
+				status: "failure",
+				message: err?.message,
+				error: ["x"],
+			};
+		}
+		if (err?.message?.includes("tiktok")) {
+			return {
+				status: "failure",
+				message: err?.message,
+				error: ["tiktok"],
+			};
+		}
+		if (err?.message?.includes("instagram")) {
+			return {
+				status: "failure",
+				message: err?.message,
+				error: ["instagram"],
+			};
+		}
+		if (err?.message?.includes("facebook")) {
+			return {
+				status: "failure",
+				message: err?.message,
+				error: ["facebook"],
+			};
+		}
+		if (err?.message?.includes("linkedIn")) {
+			return {
+				status: "failure",
+				message: err?.message,
+				error: ["linkedIn"],
+			};
+		}
+		if (err?.message?.includes("youtube")) {
+			return {
+				status: "failure",
+				message: err?.message,
+				error: ["youtube"],
+			};
+		}
+		if (err?.message?.includes("twitch")) {
+			return {
+				status: "failure",
+				message: err?.message,
+				error: ["twitch"],
+			};
+		}
+		return {
+			status: "failure",
+			message:
+				"Une erreur s'est produite de notre côté, veuillez réessayer ultérieurement",
+		};
 	}
 }
 
