@@ -14,7 +14,7 @@ export default async function ConversationPanel() {
 	return (
 		<div className={styles.container}>
 			<ConversationHeader />
-			<div className={styles.body} id="bodyy">
+			<div className={styles.content} id="content">
 				{notFound ? (
 					<div className={styles.empty}>
 						<Image

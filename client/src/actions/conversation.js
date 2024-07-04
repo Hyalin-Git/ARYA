@@ -2,10 +2,10 @@
 
 import { cookies } from "next/headers";
 
-export async function accessOrCreateConversation() {
+export async function accessOrCreateConversation(formData) {
 	try {
-		const uid = "";
-		const otherUserId = "";
+		const uid = formData.get("userId");
+		const otherUserId = formData.get("otherUserId");
 		const res = await fetch(
 			`http://localhost:5000/api/conversations?userId=${uid}&otherUserId=${otherUserId}`,
 			{
@@ -17,5 +17,8 @@ export async function accessOrCreateConversation() {
 			}
 		);
 		const data = await res.json();
-	} catch (err) {}
+		console.log(data);
+	} catch (err) {
+		console.log(err);
+	}
 }

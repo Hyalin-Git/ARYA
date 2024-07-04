@@ -57,26 +57,23 @@
 	line-height: 0;
 	color: color-mix(in srgb, white, black 50%) !important;
 }
-.body {
+.content {
 	visibility: hidden;
 	min-height: 400px;
 	/* display: flex;
 	flex-direction: column; */
 }
-.body {
+.content {
 	margin-bottom: -400px;
 	visibility: hidden;
 }
-.body[data-display="false"] {
+.content[data-display="false"] {
 	animation: forwards close 400ms;
 
 	animation-play-state: unset;
 }
-.body[data-display="true"] {
+.content[data-display="true"] {
 	animation: forwards open 400ms;
-}
-
-.header:hover .body[data-display="false"] {
 }
 
 @keyframes close {

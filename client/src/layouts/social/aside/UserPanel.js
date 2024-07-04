@@ -15,6 +15,7 @@ import { blockUser, unblockUser } from "@/api/user/user";
 import { mutate } from "swr";
 import Unblock from "@/components/blocks/Unblock";
 import Block from "@/components/blocks/Block";
+import { accessOrCreateConversation } from "@/actions/conversation";
 
 export default function UserPanel({ fetchedUser }) {
 	const router = useRouter();
@@ -52,6 +53,8 @@ export default function UserPanel({ fetchedUser }) {
 	const availabilityDate = moment().to(hasAvailability);
 	const hasPassed = availabilityDate.includes("il y a");
 	console.log(hasPassed);
+
+	async function handleMessage() {}
 
 	return (
 		<div className={styles.container} id="panel">
@@ -104,7 +107,19 @@ export default function UserPanel({ fetchedUser }) {
 				{!isAuthor && isUserPage && !isBlocked && (
 					<div className={styles.buttons}>
 						<button className={montserrat.className}>Suivre</button>
-						<button className={montserrat.className}>Message</button>
+						<form action={accessOrCreateConversation}>
+							<input type="text" name="userId" id="userId" value={uid} hidden />
+							<input
+								type="text"
+								name="otherUserId"
+								id="otherUserId"
+								value={userInfo?._id}
+								hidden
+							/>
+							<button type="submit" className={montserrat.className}>
+								Message
+							</button>
+						</form>
 					</div>
 				)}
 			</div>

@@ -10,12 +10,11 @@ export function ConversationHeader() {
 		<>
 			<div
 				className={styles.header}
-				id="header"
 				onClick={(e) => {
 					e.preventDefault();
 					setDisplay(!display);
 					document
-						.getElementById("bodyy")
+						.getElementById("content")
 						.setAttribute("data-display", display);
 				}}>
 				<span>Messagerie </span>
