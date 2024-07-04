@@ -1,8 +1,8 @@
 import styles from "@/styles/components/auth/userStep.module.css";
-import { regex, socialRegex } from "./regex";
+import { regex, socialRegex, toolsRegex } from "./regex";
 import moment from "moment";
 import "moment/locale/fr"; // without this line it didn't work
-import { z } from "zod";
+import { z } from "./zodConfig";
 
 export function capitalizeFirstLetter(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
@@ -514,4 +514,8 @@ export const UpdateUserSocialSchema = z.object({
 	linkedIn: z.string().regex(socialRegex.linkedIn).optional().or(z.literal("")),
 	youtube: z.string().regex(socialRegex.youtube).optional().or(z.literal("")),
 	twitch: z.string().regex(socialRegex.twitch).optional().or(z.literal("")),
+});
+
+export const UpdateUserToolsSchema = z.object({
+	tools: z.array(z.string().min(2).max(20).regex(toolsRegex.tools)).optional(),
 });

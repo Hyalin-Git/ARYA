@@ -9,6 +9,7 @@ const initialState = {
 	status: "pending",
 	message: "",
 	data: [],
+	error: [],
 };
 export default function ToolsEditor() {
 	const { user, uid } = useContext(AuthContext);
@@ -23,6 +24,7 @@ export default function ToolsEditor() {
 		updateUserToolWithParams,
 		initialState
 	);
+	const errorTools = state?.error?.includes("tools");
 
 	async function deleteTool(e) {
 		const value = e.target.innerText;
@@ -60,7 +62,8 @@ export default function ToolsEditor() {
 				<form action={formAction}>
 					<label htmlFor="tool">Ajouter des outils</label>
 					<br />
-					<input type="tool" name="tool" id="tool" />
+					<input data-error={errorTools} type="tool" name="tool" id="tool" />
+					{errorTools && <i data-error={errorTools}>{state?.message}</i>}
 					<button hidden type="submit">
 						submit
 					</button>

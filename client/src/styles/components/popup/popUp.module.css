@@ -1,19 +1,39 @@
 .container {
 	position: fixed;
-	bottom: 100px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	z-index: 9000;
+	bottom: 20px;
 	right: 20px;
 	background-color: white;
 	width: 400px;
-	max-height: 150px;
+	max-height: 120px;
 	height: 100%;
 	overflow: hidden;
 	border-radius: 8px;
 	box-shadow: var(--active-shadow);
-	color: var(--lavender-color);
 	text-align: left;
-	padding: 0 15px 0 15px;
+	padding: 0 15px 0 0;
 	animation: popUpAppear forwards linear 150ms;
 	box-sizing: content-box;
+}
+.failure .icon {
+	background-color: red;
+}
+.icon {
+	background-color: var(--meteorite-color);
+	padding: 10px;
+	height: 100%;
+	display: flex;
+}
+.icon svg {
+	position: relative;
+	color: white;
+	/* top: 30px; */
+	width: 80px;
+	height: 80px;
+	align-self: center;
 }
 
 .disapear {
@@ -22,7 +42,7 @@
 }
 
 .success {
-	color: var(--lavender-color);
+	/* color: var(--lavender-color); */
 }
 
 .failure h3 {
@@ -32,11 +52,11 @@
 	font-size: 1.1rem;
 }
 .container p {
-	font-weight: 300;
-	color: black;
+	font-weight: 500;
+	color: color-mix(in srgb, white, black 50%) !important;
 }
 
-.container::before {
+/* .container::before {
 	position: absolute;
 	content: "";
 	bottom: 0;
@@ -49,7 +69,7 @@
 
 .failure::before {
 	background-color: red;
-}
+} */
 
 @keyframes popUpAppear {
 	from {

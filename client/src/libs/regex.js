@@ -3,7 +3,7 @@ export const regex = {
 	userName: /^(?!.*\.\.)(?!.*\.$)(?!.*@)[a-zA-Z0-9_-]{2,16}$/,
 	email:
 		/^(?!.*@.*\.co$)(?=[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,})$/,
-	biographie: /^[\wÀ-ÿ.,!?'"()\s-]{0,500}$/,
+	biographie: /^[\wÀ-ž.,!?'"’()\s-]{0,500}$/,
 	job: /^[\w\sÀ-ÿ-]{2,50}$/,
 	password: {
 		pass: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}|:"<>?[\];',.\/\\-])[a-zA-Z\d!@#$%^&*()_+{}|:"<>?[\];',.\/\\-]{8,}$/,
@@ -27,4 +27,8 @@ export const socialRegex = {
 	linkedIn: /^https:\/\/www\.linkedin\.com\/in\/[a-zA-Z0-9\-\.]+\/?$/,
 	youtube: /^https:\/\/www\.youtube\.com\/(c\/)?[\w-]+\/?$/,
 	twitch: /^https:\/\/www\.twitch\.tv\/[\w-]+\/?$/,
+};
+
+export const toolsRegex = {
+	tools: /^[a-zA-Z0-9.-]+$/,
 };

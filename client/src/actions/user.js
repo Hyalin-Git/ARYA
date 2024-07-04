@@ -1,11 +1,15 @@
 "use server";
 import { regex } from "@/libs/regex";
-import { UpdateUserSchema, UpdateUserSocialSchema } from "@/libs/utils";
+import {
+	UpdateUserSchema,
+	UpdateUserSocialSchema,
+	UpdateUserToolsSchema,
+} from "@/libs/utils";
 import axios from "axios";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { string, z } from "zod";
+import { z } from "../libs/zodConfig";
 
 export async function updateUserPicture(uid, prevState, formData) {
 	try {
@@ -27,6 +31,7 @@ export async function updateUserPicture(uid, prevState, formData) {
 		);
 		const data = await res.json();
 		console.log(data);
+		revalidateTag("user");
 		return {
 			status: "success",
 		};
@@ -99,8 +104,10 @@ export async function updateUser(uid, prevState, formData) {
 		);
 		const data = await res.json();
 		console.log(data);
+		revalidateTag("user");
 		return {
 			status: "success",
+			message: "Modifications enregistrées avec succès",
 		};
 	} catch (err) {
 		if (
@@ -109,49 +116,42 @@ export async function updateUser(uid, prevState, formData) {
 			!err.message.includes("nom d'utilisateur")
 		) {
 			return {
-				status: "failure",
 				message: err.message,
 				error: ["lastName"],
 			};
 		}
 		if (err.message.includes("prénom")) {
 			return {
-				status: "failure",
 				message: err.message,
 				error: ["firstName"],
 			};
 		}
 		if (err.message.includes("nom d'utilisateur")) {
 			return {
-				status: "failure",
 				message: err.message,
 				error: ["userName"],
 			};
 		}
 		if (err.message.includes("profession")) {
 			return {
-				status: "failure",
 				message: err.message,
 				error: ["job"],
 			};
 		}
 		if (err.message.includes("biographie")) {
 			return {
-				status: "failure",
 				message: err.message,
 				error: ["biographie"],
 			};
 		}
 		if (err.message.includes("contact")) {
 			return {
-				status: "failure",
 				message: err.message,
 				error: ["contact"],
 			};
 		}
 		if (err.message.includes("URL")) {
 			return {
-				status: "failure",
 				message: err.message,
 				error: ["website"],
 			};
@@ -178,7 +178,7 @@ export async function updateUserSocial(uid, prevState, formData) {
 
 		if (!parsedData.success) {
 			const error = parsedData.error.flatten().fieldErrors;
-			console.log(error);
+
 			if (error.x) {
 				throw new Error("Veuillez saisir une URL valide vers votre profil x");
 			}
@@ -238,56 +238,28 @@ export async function updateUserSocial(uid, prevState, formData) {
 		);
 		const data = await res.json();
 		console.log(data);
+		revalidateTag("user");
+		return {
+			status: "success",
+			message: "Modifications enregistrées avec succès",
+		};
 	} catch (err) {
-		console.log(err);
-		if (err?.message?.includes("x")) {
-			return {
-				status: "failure",
-				message: err?.message,
-				error: ["x"],
-			};
-		}
-		if (err?.message?.includes("tiktok")) {
-			return {
-				status: "failure",
-				message: err?.message,
-				error: ["tiktok"],
-			};
-		}
-		if (err?.message?.includes("instagram")) {
-			return {
-				status: "failure",
-				message: err?.message,
-				error: ["instagram"],
-			};
-		}
-		if (err?.message?.includes("facebook")) {
-			return {
-				status: "failure",
-				message: err?.message,
-				error: ["facebook"],
-			};
-		}
-		if (err?.message?.includes("linkedIn")) {
-			return {
-				status: "failure",
-				message: err?.message,
-				error: ["linkedIn"],
-			};
-		}
-		if (err?.message?.includes("youtube")) {
-			return {
-				status: "failure",
-				message: err?.message,
-				error: ["youtube"],
-			};
-		}
-		if (err?.message?.includes("twitch")) {
-			return {
-				status: "failure",
-				message: err?.message,
-				error: ["twitch"],
-			};
+		const errors = [
+			"x",
+			"tiktok",
+			"instagram",
+			"facebook",
+			"linkedIn",
+			"youtube",
+			"twitch",
+		];
+		for (const error of errors) {
+			if (err?.message?.includes(error)) {
+				return {
+					message: err?.message,
+					error: [error],
+				};
+			}
 		}
 		return {
 			status: "failure",
@@ -311,6 +283,19 @@ export async function updateUserTools(uid, tools, prevState, formData) {
 			array = [...tools];
 		}
 
+		const parsedData = UpdateUserToolsSchema.safeParse({
+			tools: array,
+		});
+		if (!parsedData.success) {
+			const error = parsedData.error.flatten().fieldErrors;
+			if (error.tools) {
+				console.log(error.tools[0]);
+				const message = !error?.tools[0].includes("expression")
+					? error?.tools[0]
+					: "Veuillez saisir un outil valide";
+				throw new Error(message);
+			}
+		}
 		const toolsData = {
 			tools: array,
 		};
@@ -328,13 +313,27 @@ export async function updateUserTools(uid, tools, prevState, formData) {
 		);
 		const data = await res.json();
 		console.log(data);
-
+		revalidateTag("user");
 		return {
 			status: "success",
 			data: data.tools,
 		};
 	} catch (err) {
-		console.log(err);
+		const keywords = ["caractère", "outil"];
+		for (const keyword of keywords) {
+			if (err?.message?.includes(keyword)) {
+				return {
+					status: "failure",
+					message: err?.message,
+					error: ["tools"],
+				};
+			}
+		}
+		return {
+			status: "failure",
+			message:
+				"Une erreur s'est produite de notre côté, veuillez réessayer ultérieurement",
+		};
 	}
 }
 

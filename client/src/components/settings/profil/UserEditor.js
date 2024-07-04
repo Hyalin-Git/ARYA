@@ -1,5 +1,6 @@
 "use client";
 import { updateUser, updateUserPicture } from "@/actions/user";
+import PopUp from "@/components/popup/PopUp";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/settings/profil/userEditor.module.css";
@@ -16,7 +17,7 @@ const initialState = {
 };
 export default function UserEditor() {
 	const { user, uid } = useContext(AuthContext);
-	const [isPicture, setIsPicture] = useState(false);
+	const [displayPopUp, setDisplayPopUp] = useState(false);
 	const updateUserWithUid = updateUser.bind(null, uid);
 	const updateUserPictureWithUid = updateUserPicture.bind(null, uid);
 	const [stateOne, formAction] = useFormState(updateUserWithUid, initialState);
@@ -31,10 +32,17 @@ export default function UserEditor() {
 	const errorBio = stateOne?.error?.includes("biographie");
 	const errorContact = stateOne?.error?.includes("contact");
 	const errorWebsite = stateOne?.error?.includes("website");
-	console.log(stateOne);
+
 	useEffect(() => {
-		if (stateOne?.status === "success") {
+		if (stateOne?.status === "success" || stateOne?.status === "failure") {
 			mutate("/login/success");
+			setDisplayPopUp(true);
+			const timeout = setTimeout(() => {
+				setDisplayPopUp(false);
+			}, 4000);
+			if (displayPopUp) {
+				clearTimeout(timeout);
+			}
 		}
 		if (stateTwo?.status === "success") {
 			mutate("/login/success");
@@ -208,6 +216,13 @@ export default function UserEditor() {
 					</div>
 				</div>
 			</div>
+			{displayPopUp && (
+				<PopUp
+					status={stateOne?.status}
+					title={"Modifications"}
+					message={stateOne?.message}
+				/>
+			)}
 		</div>
 	);
 }

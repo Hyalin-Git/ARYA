@@ -1,11 +1,13 @@
 "use client";
 import { updateUserSocial } from "@/actions/user";
+import PopUp from "@/components/popup/PopUp";
 import { AuthContext } from "@/context/auth";
 import { montserrat } from "@/libs/fonts";
 import styles from "@/styles/components/settings/profil/socialEditor.module.css";
 import Image from "next/image";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import { useDebouncedCallback } from "use-debounce";
 
 const initialState = {
 	status: "pending",
@@ -14,6 +16,7 @@ const initialState = {
 };
 export default function SocialEditor() {
 	const { user, uid } = useContext(AuthContext);
+	const [displayPopUp, setDisplayPopUp] = useState(false);
 	const updateUserSocialWithUid = updateUserSocial.bind(null, uid);
 	const [state, formAction] = useFormState(
 		updateUserSocialWithUid,
@@ -29,12 +32,29 @@ export default function SocialEditor() {
 	const errorTwitch = state?.error?.includes("twitch");
 	console.log(state);
 
+	const debounced = useDebouncedCallback((e) => {
+		e.preventDefault();
+		document.getElementById("social-info").requestSubmit();
+	}, 1200);
+
+	useEffect(() => {
+		if (state?.status === "success" || state?.status === "failure") {
+			setDisplayPopUp(true);
+			const timeout = setTimeout(() => {
+				setDisplayPopUp(false);
+			}, 4000);
+			if (displayPopUp) {
+				clearTimeout(timeout);
+			}
+		}
+	}, [state]);
+
 	return (
 		<div className={styles.container} id="social">
 			<div className={styles.title}>
 				<span>Réseau social</span>
 			</div>
-			<form action={formAction}>
+			<form action={formAction} id="social-info">
 				<div className={styles.form}>
 					<div>
 						<label htmlFor="twitter">
@@ -52,6 +72,7 @@ export default function SocialEditor() {
 							id="twitter"
 							className={montserrat.className}
 							defaultValue={user?.social?.twitter}
+							onChange={debounced}
 						/>
 					</div>
 					{errorX && <i data-error={errorX}>{state?.message}</i>}
@@ -71,6 +92,7 @@ export default function SocialEditor() {
 							id="tiktok"
 							className={montserrat.className}
 							defaultValue={user?.social?.tiktok}
+							onChange={debounced}
 						/>
 					</div>
 					{errorTiktok && <i data-error={errorTiktok}>{state?.message}</i>}
@@ -90,6 +112,7 @@ export default function SocialEditor() {
 							id="instagram"
 							className={montserrat.className}
 							defaultValue={user?.social?.instagram}
+							onChange={debounced}
 						/>
 					</div>
 					{errorInstagram && (
@@ -111,6 +134,7 @@ export default function SocialEditor() {
 							id="facebook"
 							className={montserrat.className}
 							defaultValue={user?.social?.facebook}
+							onChange={debounced}
 						/>
 					</div>
 					{errorFacebook && <i data-error={errorFacebook}>{state?.message}</i>}
@@ -130,6 +154,7 @@ export default function SocialEditor() {
 							id="linkedIn"
 							className={montserrat.className}
 							defaultValue={user?.social?.linkedIn}
+							onChange={debounced}
 						/>
 					</div>
 					{errorLinkedIn && <i data-error={errorLinkedIn}>{state?.message}</i>}
@@ -149,6 +174,7 @@ export default function SocialEditor() {
 							id="youtube"
 							className={montserrat.className}
 							defaultValue={user?.social?.youtube}
+							onChange={debounced}
 						/>
 					</div>
 					{errorYoutube && <i data-error={errorYoutube}>{state?.message}</i>}
@@ -168,6 +194,7 @@ export default function SocialEditor() {
 							id="twitch"
 							className={montserrat.className}
 							defaultValue={user?.social?.twitch}
+							onChange={debounced}
 						/>
 					</div>
 					{errorTwitch && <i data-error={errorTwitch}>{state?.message}</i>}
@@ -176,6 +203,13 @@ export default function SocialEditor() {
 					</button>
 				</div>
 			</form>
+			{displayPopUp && (
+				<PopUp
+					status={state?.status}
+					title={"Modification"}
+					message={state?.message}
+				/>
+			)}
 		</div>
 	);
 }

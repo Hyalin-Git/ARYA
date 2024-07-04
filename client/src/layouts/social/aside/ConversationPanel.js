@@ -2,6 +2,8 @@
 import { getConversations } from "@/api/conversations/conversations";
 import Conversations from "@/components/social/conversations/Conversations";
 import styles from "@/styles/layouts/social/aside/conversationPanel.module.css";
+import Image from "next/image";
+import { ConversationHeader } from "./ConversationHeader";
 
 export default async function ConversationPanel() {
 	const conversations = await getConversations();
@@ -9,14 +11,21 @@ export default async function ConversationPanel() {
 	const notFound = conversations?.message?.includes(
 		"Aucune conversations n'a été trouvé"
 	);
-	console.log(notFound);
-
 	return (
 		<div className={styles.container}>
-			<div className={styles.header}>Messagerie</div>
-			<div className={styles.body}>
+			<ConversationHeader />
+			<div className={styles.body} id="bodyy">
 				{notFound ? (
-					<div>Aucun</div>
+					<div className={styles.empty}>
+						<Image
+							src={"/images/illustrations/no-message.png"}
+							alt="illustration"
+							width={200}
+							height={200}
+						/>
+						<span>Aucun message ?</span>
+						<p>C'est pas grâve ça va venir</p>
+					</div>
 				) : (
 					<>
 						{conversations?.map((conversation) => {

@@ -1,5 +1,10 @@
 import clsx from "clsx";
 import styles from "@/styles/components/popup/popUp.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+	faCircleCheck,
+	faCircleXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
 export default function PopUp({ status, title, message }) {
 	useEffect(() => {
@@ -19,11 +24,20 @@ export default function PopUp({ status, title, message }) {
 				styles.container
 			)}
 			id="popup">
-			<div>
-				<h3>{title}</h3>
+			<div className={styles.icon}>
+				{status === "success" ? (
+					<FontAwesomeIcon icon={faCircleCheck} />
+				) : (
+					<FontAwesomeIcon icon={faCircleXmark} />
+				)}
 			</div>
-			<div>
-				<p>{message}</p>
+			<div className={styles.text}>
+				<div>
+					<h3>{title}</h3>
+				</div>
+				<div>
+					<p>{message}</p>
+				</div>
 			</div>
 		</div>
 	);
