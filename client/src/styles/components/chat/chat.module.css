@@ -1,0 +1,53 @@
+.container {
+	/* display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%; */
+}
+.header {
+	background-color: white;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 5px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.header svg {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	padding: 5px;
+	border-radius: 50%;
+	transition: 150ms all linear;
+}
+.header svg:hover {
+	background-color: #f1f1f1;
+
+	transition: 150ms all linear;
+}
+.header img {
+	border-radius: 50%;
+}
+.names {
+	display: flex;
+	flex-direction: column;
+}
+.names span:nth-child(1) {
+	font-weight: 500;
+	font-size: 0.8rem;
+}
+
+.names span:nth-child(2) {
+	color: var(--meteorite-color);
+	font-size: 0.8rem;
+}
+
+.conversation {
+	height: 300px;
+}
+
+.form {
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	height: 50px;
+	background-color: white;
+}

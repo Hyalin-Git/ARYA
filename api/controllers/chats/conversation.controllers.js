@@ -90,7 +90,7 @@ exports.getConversation = (req, res, next) => {
 			{ isDeletedFor: { $ne: userId } },
 		],
 	})
-		.populate("users", "lastName firstName userName")
+		.populate("users", "lastName firstName userName picture")
 		.exec()
 		.then((conversation) => {
 			if (!conversation) {

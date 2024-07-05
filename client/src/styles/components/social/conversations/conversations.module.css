@@ -1,12 +1,10 @@
 .container {
 	display: flex;
-	background-color: white;
-	justify-content: space-between;
 	align-items: center;
+	gap: 10px;
+	background-color: white;
 	padding: 5px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-
-	transition: 50ms all linear;
 }
 .container:hover {
 	cursor: pointer;
@@ -14,57 +12,57 @@
 	transition: 50ms all linear;
 }
 
-.left {
-	display: flex;
-	align-items: center;
-	gap: 5px;
-}
-
-.left img {
+.picture img {
 	position: relative;
 	top: 2px;
 	border-radius: 50%;
 }
 
-.left span {
-	display: inline-block;
-	font-size: 0.8rem;
-	max-width: 60px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-.left span:nth-child(1) {
-	font-weight: 500;
-}
-.left span:nth-child(3) {
-	position: relative;
-	top: -2px;
-	font-size: 0.7rem;
-	font-weight: 600;
-	color: var(--meteorite-color);
-}
-.right {
+.conversation {
 	width: 100%;
-	text-align: center;
+	max-width: 200px;
 }
-.right span {
-	display: block;
-	font-weight: 300;
-	font-size: 0.8rem;
-	max-width: 150px;
+
+.names {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.names span {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	margin-left: auto;
-	margin-right: auto;
 }
+.names span:nth-child(1) {
+	font-weight: 500;
+	font-size: 0.8rem;
+}
+
+.names span:nth-child(2) {
+	color: var(--meteorite-color);
+	font-size: 0.8rem;
+}
+.latestMessage {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.latestMessage span {
+	color: color-mix(in srgb, white, black 50%) !important;
+	font-size: 0.8rem;
+}
+
 .date {
-	width: 30%;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	min-width: 100px;
 	text-align: right;
 }
+
 .date span {
-	display: block;
-	font-weight: 200;
-	font-size: 0.6rem;
+	color: color-mix(in srgb, white, black 50%) !important;
+	font-size: 0.8rem;
 }
