@@ -11,6 +11,7 @@
 	gap: 10px;
 	padding: 5px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	margin-bottom: 10px;
 }
 .header svg {
 	width: 20px;
@@ -43,11 +44,86 @@
 }
 
 .conversation {
+	display: flex;
+	flex-direction: column;
 	height: 300px;
 }
+.conversation p {
+	margin: 0;
+	font-size: 0.8rem;
+	font-weight: 500;
+}
+.conversation div {
+	padding: 10px;
+	border-radius: 8px;
+	width: fit-content;
+	max-width: 250px;
+}
 
+.conversation div[data-self="false"] div {
+	background-color: white;
+}
+.conversation div[data-self="true"] {
+	align-self: flex-end;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+.conversation div[data-self="true"] div {
+	background-color: var(--meteorite-color);
+}
+.conversation div[data-self="true"] p {
+	color: white;
+}
 .form {
 	border-top: 1px solid rgba(0, 0, 0, 0.1);
-	height: 50px;
+	padding: 5px 10px 5px 5px;
+	/* height: 50px; */
 	background-color: white;
+}
+.form form {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+.message {
+	width: 100%;
+}
+.form textarea {
+	overflow: hidden;
+	width: 100%;
+}
+.form:has(textarea:focus) .icons:nth-child(1) {
+	width: 5%;
+}
+
+.icons {
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap;
+	gap: 10px;
+	color: var(--meteorite-color);
+}
+
+.icons svg,
+.icon {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+
+.icons button {
+	background-color: transparent;
+	background-image: none;
+	padding: 0;
+	color: var(--meteorite-color);
+}
+
+.icons button[data-disabled="true"] {
+	color: color-mix(in srgb, var(--meteorite-color), white 50%);
+}
+
+.icon {
+	filter: invert(16%) sepia(75%) saturate(6658%) hue-rotate(264deg)
+		brightness(91%) contrast(85%);
 }

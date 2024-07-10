@@ -19,7 +19,7 @@
 	text-align: center;
 	padding: 10px;
 	background-color: var(--meteorite-color);
-	border-radius: 4px 4px 0 0;
+	border-radius: 8px 8px 0 0;
 	cursor: pointer;
 }
 .header span {
@@ -59,17 +59,17 @@
 }
 .content {
 	visibility: hidden;
-	min-height: 400px;
+	min-height: 415px;
 	height: 100%;
 	/* display: flex;
 	flex-direction: column; */
 }
 .content {
-	margin-bottom: -400px;
+	margin-bottom: -415px;
 	visibility: hidden;
 }
 .content[data-display="false"] {
-	margin-bottom: -400px;
+	margin-bottom: -415px;
 	visibility: hidden;
 	transition: all 200ms linear;
 }

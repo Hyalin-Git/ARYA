@@ -87,7 +87,7 @@ export default function UserPanel({ fetchedUser }) {
 				</div>
 				<div className={styles.names}>
 					<span>
-						{isBlocked ? userBlockedInfo.firstName : userInfo?.firstName}
+						{isBlocked ? userBlockedInfo.firstName : userInfo?.firstName}{" "}
 						{isBlocked ? userBlockedInfo.lastName : userInfo?.lastName}
 					</span>
 					<span>
