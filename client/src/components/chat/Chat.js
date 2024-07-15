@@ -13,7 +13,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import useSWR from "swr";
 import { montserrat } from "@/libs/fonts";
-import { useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useFormState } from "react-dom";
+import { AuthContext } from "@/context/auth";
+import { saveMessage } from "@/actions/message";
+import { socket } from "@/libs/socket";
+
+const initialState = {
+	status: "pending",
+	message: "",
+	error: [],
+};
 
 export default function Chat({
 	conversationId,
@@ -21,8 +31,17 @@ export default function Chat({
 	setOpenedConv,
 	setOtherUserId,
 }) {
+	const { uid } = useContext(AuthContext);
+
+	// form action
+	const saveMessageWithUid = saveMessage.bind(null, uid);
+	const [state, formAction] = useFormState(saveMessageWithUid, initialState);
+
+	// use state
+	const [isConnected, setIsConnected] = useState(socket.connected);
 	const [isFocus, setIsFocus] = useState(false);
 	const [isDisabled, setIsDisabled] = useState(true);
+	// SWR
 	const getConversationWithId = getConversation.bind(
 		null,
 		conversationId,
@@ -47,6 +66,47 @@ export default function Chat({
 		setOtherUserId(null);
 	}
 
+	function displayMessage(message) {
+		const div = document.createElement("div");
+		div.textContent = message;
+		document?.getElementById("conversation").append(div);
+	}
+
+	useEffect(() => {
+		// socket.on("connect", () => {
+		// 	console.log("played");
+		// 	displayMessage(`You connected with id: ${socket.id}`);
+		// });
+		function onConnect() {
+			setIsConnected(true);
+		}
+
+		function onDisconnect() {
+			setIsConnected(false);
+		}
+
+		socket.once("connect", onConnect);
+		if (isConnected) {
+			displayMessage(`You connected with id: ${socket.id}`);
+		}
+		socket.once("disconnect", onDisconnect);
+
+		return () => {
+			socket.off("connect", onConnect);
+			socket.off("disconnect", onDisconnect);
+		};
+	}, []);
+
+	socket.on("receive-message", (message) => {
+		console.log("bordel mais marche");
+	});
+
+	// useMemo(() => {
+	// 	if (state.status === "success") {
+	// 		document.getElementById("message").value = "";
+	// 	}
+	// }, [state]);
+
 	return (
 		<div className={styles.container}>
 			{/* header */}
@@ -67,32 +127,16 @@ export default function Chat({
 				</div>
 			</div>
 			{/* main conv  */}
-			<div className={styles.conversation}>
-				<div data-self={false}>
+			<div className={styles.conversation} id="conversation">
+				{/* <div data-self={false}>
 					<div>
 						<p>Salut, j'aimerais te recruter</p>
 					</div>
-				</div>
-				<div data-self={true}>
-					<div>
-						<p>
-							Salut, ça serait avec plaisir, mais je ne suis pas disponible tout
-							de suite...
-						</p>
-					</div>
-					<div>
-						<p>Je vous envoie mes disponibilités dès que possible</p>
-					</div>
-				</div>
-				<div data-self={false}>
-					<div>
-						<p>Pas de soucis</p>
-					</div>
-				</div>
+				</div> */}
 			</div>
 			{/* input to send msg */}
 			<div className={styles.form}>
-				<form action="">
+				<form action={formAction} id="send-message">
 					<div className={styles.icons}>
 						{isFocus ? (
 							<FontAwesomeIcon icon={faEllipsisVertical} />
@@ -101,7 +145,7 @@ export default function Chat({
 								<label htmlFor="img">
 									<FontAwesomeIcon icon={faImage} />
 								</label>
-								<input type="file" id="img" name="img" hidden />
+								<input type="file" id="img" name="img" multiple hidden />
 								<Image
 									src="/images/icons/gif_icon.svg"
 									width={20}
@@ -126,12 +170,28 @@ export default function Chat({
 								e.preventDefault();
 								e.target.style.height = "";
 								e.target.style.height = e.target.scrollHeight + "px";
+
 								if (e.target.value.length > 0) {
 									setIsDisabled(false);
 								} else {
 									setIsDisabled(true);
 								}
+							}}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" && e.shiftKey) {
+								} else if (e.key === "Enter") {
+									e.preventDefault();
+									document.getElementById("send-message").requestSubmit();
+									socket.emit("send-message", e.target.value);
+								}
 							}}></textarea>
+						<input
+							type="text"
+							id="conversationId"
+							name="conversationId"
+							value={conversationId}
+							hidden
+						/>
 					</div>
 					<div className={styles.icons}>
 						<button data-disabled={isDisabled}>

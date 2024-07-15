@@ -10,7 +10,8 @@ exports.saveMessage = async (req, res, next) => {
 	try {
 		const { userId } = req.query;
 		const { content, conversationId } = req.body;
-		let medias = req.files["media"];
+		console.log(req.files["media"]);
+		const medias = req.files["media"];
 
 		if (!userId || !content || !conversationId) {
 			return res
@@ -18,13 +19,13 @@ exports.saveMessage = async (req, res, next) => {
 				.send({ error: true, message: "Les données fournit sont invalides" });
 		}
 
-		const uploadResponse = await uploadFiles(medias, "message");
+		const uploadResponse = medias ? await uploadFiles(medias, "message") : [];
 
 		const newMessage = new MessageModel({
 			conversationId: conversationId,
 			senderId: userId,
 			content: content,
-			media: medias ? uploadResponse : [],
+			media: uploadResponse,
 		});
 		newMessage
 			.save()

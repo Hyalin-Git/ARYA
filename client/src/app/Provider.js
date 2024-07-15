@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getSession } from "@/api/user/auth";
 import { AuthContext } from "@/context/auth";
 import { getUser } from "@/api/user/user";
@@ -53,7 +53,3 @@ export default function Provider({ children }) {
 		</>
 	);
 }
-
-export const useMyContext = () => {
-	return useContext(AuthContext);
-};

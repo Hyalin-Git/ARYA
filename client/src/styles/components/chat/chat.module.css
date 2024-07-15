@@ -46,6 +46,7 @@
 .conversation {
 	display: flex;
 	flex-direction: column;
+	overflow: auto;
 	height: 300px;
 }
 .conversation p {

@@ -125,6 +125,9 @@ const io = require("socket.io")(server, {
 	},
 });
 
-io.on("connection", () => {
-	console.log("connected to socket");
+io.on("connection", (socket) => {
+	socket.on("send-message", (msg) => {
+		console.log("message: " + msg);
+		socket.broadcast.emit("receive-message", msg);
+	});
 });

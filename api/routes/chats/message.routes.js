@@ -11,7 +11,7 @@ router.post(
 	authorize,
 	messageUpload.fields([{ name: "media", maxCount: 4 }]),
 	multerErrorsHandler,
-	canSendMessage,
+	// canSendMessage,
 	messageController.saveMessage
 );
 
