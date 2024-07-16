@@ -43,7 +43,6 @@ export default function UserPanel({ fetchedUser }) {
 		userInfo?.social?.youtube ||
 		userInfo?.social?.twitch;
 	const hasTools = userInfo?.tools;
-	console.log(hasTools);
 
 	// Freelance related
 	const hasCv = userInfo?.freelance?.cv?.pdf;
@@ -52,7 +51,6 @@ export default function UserPanel({ fetchedUser }) {
 	const hasAvailability = userInfo?.freelance?.availability;
 	const availabilityDate = moment().to(hasAvailability);
 	const hasPassed = availabilityDate.includes("il y a");
-	console.log(hasPassed);
 
 	async function handleMessage() {}
 

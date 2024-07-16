@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 export async function saveMessage(uid, prevState, formData) {
 	try {
@@ -26,6 +27,7 @@ export async function saveMessage(uid, prevState, formData) {
 		);
 		const data = await res.json();
 		console.log(data);
+		revalidateTag("conversations");
 		return { status: "success" };
 	} catch (err) {
 		console.log(err);

@@ -1,11 +1,13 @@
 "use client";
 import { AuthContext } from "@/context/auth";
-
+import socket from "@/libs/socket";
 import styles from "@/styles/components/social/conversations/conversations.module.css";
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import "moment/locale/fr"; // without this line it didn't work
 import Image from "next/image";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 export default function Conversations({
 	conversation,
@@ -22,6 +24,7 @@ export default function Conversations({
 		setOpenedConv(conversation._id);
 		setOtherUserId(getOtherUser?._id);
 	}
+	socket.emit("logged-user", uid);
 
 	return (
 		<div className={styles.container} onClick={openSelectedConv}>
@@ -33,6 +36,12 @@ export default function Conversations({
 					height={50}
 					quality={100}
 				/>
+
+				<FontAwesomeIcon
+					data-connected={getOtherUser?.status?.isConnected}
+					className={styles.connectivity}
+					icon={faCircle}
+				/>
 			</div>
 			<div className={styles.conversation}>
 				<div className={styles.names}>
@@ -41,7 +50,8 @@ export default function Conversations({
 				</div>
 				<div className={styles.latestMessage}>
 					<span>
-						{conversation.latestMessage || "Démarrer une conversation"}
+						{conversation?.latestMessage?.content ||
+							"Démarrer une conversation"}
 					</span>
 				</div>
 			</div>

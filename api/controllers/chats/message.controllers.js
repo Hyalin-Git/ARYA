@@ -52,6 +52,19 @@ exports.saveMessage = async (req, res, next) => {
 		});
 	}
 };
+exports.getMessages = (req, res, next) => {
+	MessageModel.find({ conversationId: req.query.conversationId })
+		.then((message) => {
+			if (message.length <= 0) {
+				return res.status(404).send({
+					error: true,
+					message: "Cette conversation ne contient pas de message",
+				});
+			}
+			res.status(200).send(message);
+		})
+		.catch((err) => res.status(500).send(err));
+};
 
 exports.getMessage = (req, res, next) => {
 	MessageModel.findById({ _id: req.params.id })

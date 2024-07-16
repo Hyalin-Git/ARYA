@@ -14,6 +14,7 @@ export async function getConversations() {
 				headers: {
 					Authorization: `Bearer ${cookies().get("session")?.value}`,
 				},
+				next: { tags: ["conversations"] },
 			}
 		);
 

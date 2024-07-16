@@ -152,6 +152,13 @@ const UserSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		status: {
+			isConnected: {
+				type: Boolean,
+				default: false,
+			},
+			socketId: { type: String },
+		},
 	},
 	{
 		timestamps: true,

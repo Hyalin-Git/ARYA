@@ -58,9 +58,10 @@ exports.getConversations = (req, res, next) => {
 
 	ConversationModel.find({ users: userId, isDeletedFor: { $ne: userId } })
 		.sort({ updatedAt: "desc" })
-		.populate("users", "lastName firstName userName picture")
+		.populate("users", "lastName firstName userName picture status")
 		.populate({
 			path: "latestMessage",
+
 			populate: {
 				path: "senderId",
 				select: "lastName firstName userName",
@@ -90,6 +91,7 @@ exports.getConversation = (req, res, next) => {
 			{ isDeletedFor: { $ne: userId } },
 		],
 	})
+
 		.populate("users", "lastName firstName userName picture")
 		.exec()
 		.then((conversation) => {

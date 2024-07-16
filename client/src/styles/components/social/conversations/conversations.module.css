@@ -11,11 +11,27 @@
 	background-color: color-mix(in srgb, white, #f5f5f5 20%);
 	transition: 50ms all linear;
 }
-
+.picture {
+	position: relative;
+}
 .picture img {
 	position: relative;
 	top: 2px;
 	border-radius: 50%;
+}
+.connectivity {
+	position: absolute;
+	right: 0;
+	bottom: 5px;
+	width: 10px;
+	height: 10px;
+}
+
+.connectivity[data-connected="false"] {
+	color: grey;
+}
+.connectivity[data-connected="true"] {
+	color: #26df20;
 }
 
 .conversation {

@@ -43,6 +43,7 @@ const { authenticate } = require("./middlewares/jwt.middleware");
 
 const twitterRouter = require("./routes/twitter.routes");
 const facebookRouter = require("./routes/facebook.routes");
+const UserModel = require("./models/users/User.model");
 
 const app = express();
 
@@ -126,8 +127,46 @@ const io = require("socket.io")(server, {
 });
 
 io.on("connection", (socket) => {
-	socket.on("send-message", (msg) => {
-		console.log("message: " + msg);
-		socket.broadcast.emit("receive-message", msg);
+	console.log(`⚡: ${socket.id} user just connected!`);
+
+	socket.once("logged-user", (userId) => {
+		UserModel.findByIdAndUpdate(
+			{ _id: userId },
+			{
+				$set: {
+					status: {
+						isConnected: true,
+						socketId: socket.id,
+					},
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		).then((user) => console.log(user));
+	});
+
+	socket.on("private-message", (msg) => {
+		io.emit("receive-message", msg);
+	});
+
+	socket.once("disconnect", () => {
+		console.log("🔥: A user disconnected");
+		UserModel.findOneAndUpdate(
+			{ "status.socketId": socket.id },
+			{
+				$set: {
+					status: {
+						isConnected: false,
+						socketId: null,
+					},
+				},
+			},
+			{
+				new: true,
+				setDefaultsOnInsert: true,
+			}
+		).then((user) => console.log(user));
 	});
 });

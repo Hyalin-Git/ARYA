@@ -15,6 +15,7 @@ router.post(
 	messageController.saveMessage
 );
 
+router.get("/", authenticate, messageController.getMessages);
 router.get("/:id", authenticate, messageController.getMessage);
 
 router.put(

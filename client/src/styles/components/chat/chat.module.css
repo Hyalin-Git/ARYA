@@ -42,40 +42,53 @@
 	color: var(--meteorite-color);
 	font-size: 0.8rem;
 }
+/* CONVERSATION  */
 
 .conversation {
 	display: flex;
 	flex-direction: column;
+	gap: 20px;
+	min-height: 295px;
+	max-height: 295px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
 	overflow: auto;
-	height: 300px;
 }
-.conversation p {
+.options {
+	color: color-mix(in srgb, white, black 50%) !important;
+}
+.message,
+.options {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.message[data-self="true"] {
+	align-self: flex-end;
+}
+.message[data-self="false"] .content {
+	background-color: white;
+	color: black;
+}
+
+.content {
+	background-color: var(--meteorite-color);
+	max-width: fit-content;
+	padding: 10px;
+	border-radius: 8px;
+}
+.content p {
 	margin: 0;
 	font-size: 0.8rem;
 	font-weight: 500;
 }
-.conversation div {
-	padding: 10px;
-	border-radius: 8px;
-	width: fit-content;
-	max-width: 250px;
+
+.message[data-self="true"] .content p {
+	color: #f1f1f1;
 }
 
-.conversation div[data-self="false"] div {
-	background-color: white;
-}
-.conversation div[data-self="true"] {
-	align-self: flex-end;
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
-}
-.conversation div[data-self="true"] div {
-	background-color: var(--meteorite-color);
-}
-.conversation div[data-self="true"] p {
-	color: white;
-}
 .form {
 	border-top: 1px solid rgba(0, 0, 0, 0.1);
 	padding: 5px 10px 5px 5px;
@@ -87,7 +100,7 @@
 	align-items: center;
 	gap: 5px;
 }
-.message {
+.input {
 	width: 100%;
 }
 .form textarea {
