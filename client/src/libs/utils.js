@@ -9,7 +9,7 @@ export function capitalizeFirstLetter(string) {
 }
 
 export function checkIfEmpty(array) {
-	if (array?.length === 0 || array === undefined) {
+	if (array?.length === 0 || array === undefined || array.error === true) {
 		return true;
 	} else {
 		return false;

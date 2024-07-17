@@ -6,21 +6,12 @@ import useSWR from "swr";
 import Image from "next/image";
 
 export default function ChatHeader({
-	conversationId,
+	conversation,
 	otherUserId,
 	setOpenedConv,
 	setOtherUserId,
 }) {
-	const getConversationWithId = getConversation.bind(
-		null,
-		conversationId,
-		otherUserId
-	);
-	const conversationData = useSWR(
-		`/conversations/${conversationId}`,
-		getConversationWithId
-	);
-	const getOtherUserInfo = conversationData?.data?.users?.find(
+	const getOtherUserInfo = conversation?.users?.find(
 		(user) => user._id === otherUserId
 	);
 

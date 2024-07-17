@@ -11,7 +11,6 @@
 	gap: 10px;
 	padding: 5px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-	margin-bottom: 10px;
 }
 .header svg {
 	width: 20px;
@@ -48,15 +47,14 @@
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
-	min-height: 295px;
-	max-height: 295px;
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-bottom: 10px;
+	min-height: 310px;
+	max-height: 310px;
+	padding: 10px;
 	overflow: auto;
 }
 .options {
-	color: color-mix(in srgb, white, black 50%) !important;
+	/* visibility: hidden; */
+	/* color: color-mix(in srgb, white, black 50%) !important; */
 }
 .message,
 .options {
@@ -64,7 +62,10 @@
 	align-items: center;
 	gap: 10px;
 }
-
+.message[data-self="false"] {
+	flex-direction: row-reverse;
+	align-self: flex-start;
+}
 .message[data-self="true"] {
 	align-self: flex-end;
 }
@@ -78,11 +79,21 @@
 	max-width: fit-content;
 	padding: 10px;
 	border-radius: 8px;
+	transition: 150ms linear all;
 }
 .content p {
 	margin: 0;
 	font-size: 0.8rem;
 	font-weight: 500;
+}
+
+.message[data-self="false"] .content:hover {
+	background-color: color-mix(in srgb, white, black 20%);
+}
+.content:hover {
+	transition: 150ms linear all;
+	background-color: var(--lavender-color);
+	cursor: pointer;
 }
 
 .message[data-self="true"] .content p {
@@ -140,4 +151,56 @@
 .icon {
 	filter: invert(16%) sepia(75%) saturate(6658%) hue-rotate(264deg)
 		brightness(91%) contrast(85%);
+}
+
+.typing {
+	display: flex;
+	gap: 10px;
+	padding: 10px;
+	color: grey;
+	background-color: var(--white-color);
+	max-width: fit-content;
+	border-radius: 8px;
+	font-size: 0.8rem;
+	font-weight: 500;
+}
+
+.typing svg {
+	width: 10px;
+	height: 10px;
+	opacity: 0.5;
+	animation: typing 1s infinite;
+}
+
+.typing svg:nth-child(1) {
+	animation-delay: 0s;
+}
+
+.typing svg:nth-child(2) {
+	animation-delay: 0.2s;
+}
+
+.typing svg:nth-child(3) {
+	animation-delay: 0.4s;
+}
+
+@keyframes typing {
+	0% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.5;
+	}
+}
+
+@keyframes appear {
+	from {
+		scale: 0;
+	}
+	to {
+		scale: 1;
+	}
 }

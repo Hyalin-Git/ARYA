@@ -19,11 +19,21 @@ const initialState = {
 	error: [],
 };
 
-export default function ChatFooter({ uid, conversationId }) {
+export default function ChatFooter({
+	uid,
+	conversationId,
+	otherUserId,
+	conversation,
+	setIsTyping,
+}) {
 	const saveMessageWithUid = saveMessage.bind(null, uid);
 	const [state, formAction] = useFormState(saveMessageWithUid, initialState);
 	const [isFocus, setIsFocus] = useState(false);
 	const [isDisabled, setIsDisabled] = useState(true);
+
+	const getOtherUserInfo = conversation?.users?.find(
+		(user) => user._id === otherUserId
+	);
 
 	// useMemo(() => {
 	// 	if (state.status === "success") {
@@ -31,11 +41,45 @@ export default function ChatFooter({ uid, conversationId }) {
 	// 	}
 	// }, [state]);
 
+	function handleTyping(e) {
+		socket.emit("typing", true, conversationId);
+
+		if (e.target.value <= 0) {
+			socket.emit("typing", false, conversationId);
+		}
+		// let timeout;
+
+		// clearTimeout(timeout);
+
+		// timeout = setTimeout(() => {
+		// 	socket.emit("typing", false);
+		// }, 5000);
+	}
+	function handleTextOnChange(e) {
+		e.preventDefault();
+		handleTyping(e);
+		e.target.style.height = "";
+		e.target.style.height = e.target.scrollHeight + "px";
+
+		if (e.target.value.length > 0) {
+			setIsDisabled(false);
+		} else {
+			setIsDisabled(true);
+		}
+	}
+
 	function handleSendMessage(e) {
+		if (e.target.value.length <= 0) {
+			return;
+		}
+
 		socket.emit("private-message", {
+			conversationId: conversationId,
+			receiverId: getOtherUserInfo._id,
 			senderId: uid,
 			content: e.target.value,
 		});
+		socket.emit("typing", false);
 		e.target.value = "";
 	}
 
@@ -71,17 +115,7 @@ export default function ChatFooter({ uid, conversationId }) {
 						className={montserrat.className}
 						onFocus={(e) => setIsFocus(true)}
 						onBlur={(e) => setIsFocus(false)}
-						onChange={(e) => {
-							e.preventDefault();
-							e.target.style.height = "";
-							e.target.style.height = e.target.scrollHeight + "px";
-
-							if (e.target.value.length > 0) {
-								setIsDisabled(false);
-							} else {
-								setIsDisabled(true);
-							}
-						}}
+						onChange={handleTextOnChange}
 						onKeyDown={(e) => {
 							if (e.key === "Enter" && e.shiftKey) {
 							} else if (e.key === "Enter") {
