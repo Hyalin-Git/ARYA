@@ -1,12 +1,16 @@
 "use client";
 
+import { getConversations } from "@/api/conversations/conversations";
 import Chat from "@/components/chat/Chat";
 import Conversations from "@/components/social/conversations/Conversations";
+import { AuthContext } from "@/context/auth";
+import socket from "@/libs/socket";
 import styles from "@/styles/layouts/social/aside/conversationPanel.module.css";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import useSWR, { mutate } from "swr";
 
 export default function ConversationPanel({ conversations }) {
 	const [display, setDisplay] = useState(false);

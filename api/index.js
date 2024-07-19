@@ -156,7 +156,9 @@ io.on("connection", (socket) => {
 			.to(senderId.status.socketId)
 			.emit("receive-message", content);
 	});
-
+	socket.on("latest-message", (message) => {
+		io.emit("latest-message", message);
+	});
 	socket.once("disconnect", () => {
 		console.log("🔥: A user disconnected");
 		UserModel.findOneAndUpdate(

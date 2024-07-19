@@ -61,7 +61,6 @@ exports.getConversations = (req, res, next) => {
 		.populate("users", "lastName firstName userName picture status")
 		.populate({
 			path: "latestMessage",
-
 			populate: {
 				path: "senderId",
 				select: "lastName firstName userName",

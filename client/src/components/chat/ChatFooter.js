@@ -1,4 +1,5 @@
 import { saveMessage } from "@/actions/message";
+import { revalidateConversations } from "@/api/conversations/conversations";
 import { montserrat } from "@/libs/fonts";
 import socket from "@/libs/socket";
 import styles from "@/styles/components/chat/chat.module.css";
@@ -10,8 +11,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
+import { mutate } from "swr";
 
 const initialState = {
 	status: "pending",
@@ -34,12 +36,6 @@ export default function ChatFooter({
 	const getOtherUserInfo = conversation?.users?.find(
 		(user) => user._id === otherUserId
 	);
-
-	// useMemo(() => {
-	// 	if (state.status === "success") {
-	// 		document.getElementById("message").value = "";
-	// 	}
-	// }, [state]);
 
 	function handleTyping(e) {
 		socket.emit("typing", true, conversationId);
@@ -79,10 +75,20 @@ export default function ChatFooter({
 			senderId: uid,
 			content: e.target.value,
 		});
+		socket.emit("latest-message", e.target.value);
 		socket.emit("typing", false);
 		e.target.value = "";
 	}
 
+	useEffect(() => {
+		socket.on("latest-message", () => {
+			revalidateConversations();
+		});
+
+		return () => {
+			socket.off("latest-message");
+		};
+	}, [socket]);
 	return (
 		<div className={styles.form}>
 			<form action={formAction} id="send-message">

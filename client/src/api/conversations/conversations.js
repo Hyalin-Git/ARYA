@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { getUserId } from "../user/auth";
+import { revalidateTag } from "next/cache";
 
 export async function getConversations() {
 	try {
@@ -24,6 +25,10 @@ export async function getConversations() {
 	} catch (err) {
 		console.log(err);
 	}
+}
+
+export async function revalidateConversations() {
+	revalidateTag("conversations");
 }
 
 export async function getConversation(conversationId, otherUserId) {

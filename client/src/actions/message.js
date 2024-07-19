@@ -27,7 +27,7 @@ export async function saveMessage(uid, prevState, formData) {
 		);
 		const data = await res.json();
 		console.log(data);
-		revalidateTag("conversations");
+
 		return { status: "success" };
 	} catch (err) {
 		console.log(err);

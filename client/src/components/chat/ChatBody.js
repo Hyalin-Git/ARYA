@@ -29,11 +29,11 @@ export default function ChatBody({
 		revalidateOnMount: true,
 	});
 
-	useEffect(() => {
-		if (data) {
-			setMessages(data);
-		}
-	}, [data]);
+	// useEffect(() => {
+	// 	if (data) {
+	// 		setMessages(data);
+	// 	}
+	// }, [data]);
 
 	useEffect(() => {
 		socket?.on("is-typing", (boolean, conversationId) => {
