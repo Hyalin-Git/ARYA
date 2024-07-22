@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import useSWR from "swr";
 import { mutate } from "swr";
 import Image from "next/image";
+import socket from "@/libs/socket";
 export default function Provider({ children }) {
 	const [uid, setUid] = useState(null);
 	const [user, setUser] = useState({});
@@ -17,6 +18,7 @@ export default function Provider({ children }) {
 			setUid(data);
 			const user = await getUser(data);
 			setUser({ ...user });
+			socket.emit("logged-user", data);
 		},
 		refreshInterval: 10 * 60 * 1000,
 		revalidateOnMount: true,

@@ -53,8 +53,35 @@
 	overflow: auto;
 }
 .options {
+	position: relative;
+	cursor: pointer;
 	/* visibility: hidden; */
 	/* color: color-mix(in srgb, white, black 50%) !important; */
+}
+.more {
+	position: relative;
+}
+.popup {
+	position: absolute;
+	width: 140px;
+	z-index: 9999;
+	bottom: -2px;
+	right: -2px;
+	background-color: white;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	border-radius: 8px;
+	box-shadow: var(--active-shadow);
+}
+
+.popup span {
+	display: flex;
+	justify-content: space-between;
+}
+
+.message {
 }
 .message,
 .options {
@@ -79,11 +106,24 @@
 	max-width: fit-content;
 	padding: 10px;
 	border-radius: 8px;
+	max-width: 220px;
 	transition: 150ms linear all;
 }
 .content p {
 	margin: 0;
-	font-size: 0.8rem;
+	font-size: 0.9rem;
+	font-weight: 500;
+}
+
+.message[data-self="true"] .content div {
+	text-align: right;
+}
+.message[data-self="true"] .content div span {
+	color: white;
+}
+.content div {
+	margin-top: 5px;
+	font-size: 0.7rem;
 	font-weight: 500;
 }
 

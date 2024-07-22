@@ -11,9 +11,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
-import { mutate } from "swr";
 
 const initialState = {
 	status: "pending",
@@ -75,7 +74,10 @@ export default function ChatFooter({
 			senderId: uid,
 			content: e.target.value,
 		});
-		socket.emit("latest-message", e.target.value);
+		socket.emit("latest-message", {
+			conversationId: conversationId,
+			content: e.target.value,
+		});
 		socket.emit("typing", false);
 		e.target.value = "";
 	}
@@ -89,6 +91,18 @@ export default function ChatFooter({
 			socket.off("latest-message");
 		};
 	}, [socket]);
+
+	// useEffect(() => {
+	// 	if (state.status === "success") {
+	// 		socket.on("latest-message", () => {
+	// 			console.log("giga played");
+	// 			revalidateConversations();
+	// 		});
+	// 	}
+	// 	return () => {
+	// 		socket.off("latest-message");
+	// 	};
+	// }, [state, socket]);
 	return (
 		<div className={styles.form}>
 			<form action={formAction} id="send-message">

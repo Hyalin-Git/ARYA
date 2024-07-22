@@ -1,8 +1,4 @@
 "use client";
-import {
-	getConversations,
-	revalidateConversations,
-} from "@/api/conversations/conversations";
 import { AuthContext } from "@/context/auth";
 import socket from "@/libs/socket";
 import styles from "@/styles/components/social/conversations/conversations.module.css";
@@ -20,7 +16,7 @@ export default function Conversations({
 }) {
 	const { uid } = useContext(AuthContext);
 	const [latestMessage, setLatestMessage] = useState(
-		conversation?.latestMessage?.content
+		conversation?.latestMessage?.content || "Démarrer une conversation"
 	);
 	const getOtherUser = conversation.users.find((user) => user._id !== uid);
 	const date = moment(conversation?.updatedAt).format("Do MMMM");
@@ -31,11 +27,13 @@ export default function Conversations({
 		setOpenedConv(conversation._id);
 		setOtherUserId(getOtherUser?._id);
 	}
-	socket.emit("logged-user", uid);
 
 	useEffect(() => {
 		socket.on("latest-message", (message) => {
-			setLatestMessage(message);
+			console.log(message);
+			if (message.conversationId === conversation._id) {
+				setLatestMessage(message.content);
+			}
 		});
 
 		return () => {
@@ -66,7 +64,7 @@ export default function Conversations({
 					<span>{getOtherUser?.userName}</span>
 				</div>
 				<div className={styles.latestMessage}>
-					<span>{latestMessage || "Démarrer une conversation"}</span>
+					<span>{latestMessage}</span>
 				</div>
 			</div>
 			<div className={styles.date}>

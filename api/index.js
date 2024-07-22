@@ -129,7 +129,7 @@ const io = require("socket.io")(server, {
 io.on("connection", (socket) => {
 	console.log(`⚡: ${socket.id} user just connected!`);
 
-	socket.on("logged-user", (userId) => {
+	socket.once("logged-user", (userId) => {
 		UserModel.findByIdAndUpdate(
 			{ _id: userId },
 			{
@@ -144,7 +144,9 @@ io.on("connection", (socket) => {
 				new: true,
 				setDefaultsOnInsert: true,
 			}
-		).then((user) => console.log(user));
+		)
+			.then((user) => console.log(user))
+			.catch((err) => console.log(err));
 	});
 	socket.on("typing", (boolean, conversationId) => {
 		socket.broadcast.emit("is-typing", boolean, conversationId);
@@ -158,6 +160,9 @@ io.on("connection", (socket) => {
 	});
 	socket.on("latest-message", (message) => {
 		io.emit("latest-message", message);
+	});
+	socket.on("updated-message", () => {
+		io.emit("updated-message");
 	});
 	socket.once("disconnect", () => {
 		console.log("🔥: A user disconnected");
