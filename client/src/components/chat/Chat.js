@@ -1,12 +1,13 @@
 "use client";
 import styles from "@/styles/components/chat/chat.module.css";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/auth";
 import ChatHeader from "./ChatHeader";
 import ChatBody from "./ChatBody";
 import ChatFooter from "./ChatFooter";
 import useSWR from "swr";
 import { getConversation } from "@/api/conversations/conversations";
+import { addToRead } from "@/api/conversations/message";
 
 export default function Chat({
 	conversationId,
@@ -29,6 +30,11 @@ export default function Chat({
 		`/conversations/${conversationId}`,
 		getConversationWithId
 	);
+	const latestMessage = data?.latestMessage;
+
+	useEffect(() => {
+		addToRead(latestMessage, uid);
+	}, [data]);
 
 	return (
 		<div className={styles.container}>
@@ -41,6 +47,7 @@ export default function Chat({
 			/>
 			{/* main conv  */}
 			<ChatBody
+				conversation={data}
 				conversationId={conversationId}
 				uid={uid}
 				isTyping={isTyping}

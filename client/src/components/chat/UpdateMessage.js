@@ -19,16 +19,12 @@ export default function UpdateMessage({
 }) {
 	const updateMessageAction = updateMessage.bind(null, uid, message._id);
 	const [state, formAction] = useFormState(updateMessageAction, initialState);
-	const [value, setValue] = useState("");
 
 	useEffect(() => {
 		if (state?.status === "success") {
 			setEdit(false);
 			socket.emit("updated-message");
-			socket.emit("latest-message", {
-				conversationId: conversationId,
-				content: value,
-			});
+			socket.emit("latest-message");
 		}
 	}, [state]);
 
@@ -41,7 +37,6 @@ export default function UpdateMessage({
 					name="content"
 					className={montserrat.className}
 					defaultValue={message?.content}
-					onChange={(e) => setValue(e.target.value)}
 				/>
 
 				<div className={styles.buttons}>

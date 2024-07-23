@@ -13,7 +13,9 @@ import { useContext, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 
 export default function ConversationPanel({ conversations }) {
+	const { uid } = useContext(AuthContext);
 	const [display, setDisplay] = useState(false);
+	const [newMessage, setNewMessage] = useState(0);
 	const [openedConv, setOpenedConv] = useState(null);
 	const [otherUserId, setOtherUserId] = useState(null);
 	const notFound = conversations?.message?.includes(
@@ -21,6 +23,21 @@ export default function ConversationPanel({ conversations }) {
 	);
 
 	const isOpenedConv = openedConv === null ? false : true;
+
+	useEffect(() => {
+		if (!conversations?.error) {
+			const count = conversations.filter(
+				(conversation) =>
+					conversation.latestMessage &&
+					!conversation.latestMessage.readBy.includes(uid)
+			).length;
+			console.log(count);
+
+			setNewMessage(count);
+		}
+	}, [conversations]);
+
+	console.log(conversations, "from panel");
 
 	return (
 		<div className={styles.container}>
@@ -30,7 +47,7 @@ export default function ConversationPanel({ conversations }) {
 					e.preventDefault();
 					setDisplay(!display);
 				}}>
-				<span>Messagerie </span>
+				<span>Messagerie {newMessage !== 0 && `(${newMessage})`}</span>
 				{display ? (
 					<FontAwesomeIcon icon={faAngleUp} />
 				) : (

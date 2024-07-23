@@ -1,4 +1,8 @@
-import { getMessages } from "@/api/conversations/message";
+import {
+	addToRead,
+	deleteMessage,
+	getMessages,
+} from "@/api/conversations/message";
 import socket from "@/libs/socket";
 import { checkIfEmpty, formattedDate } from "@/libs/utils";
 import styles from "@/styles/components/chat/chat.module.css";
@@ -18,13 +22,13 @@ import moment from "moment";
 import "moment/locale/fr"; // without this line it didn't work
 
 export default function ChatBody({
+	latestMessage,
 	conversationId,
 	uid,
 	isTyping,
 	setIsTyping,
 }) {
 	const conversationRef = useRef(null);
-	const [messages, setMessages] = useState([]);
 	const [displayOptions, setDisplayOptions] = useState(null);
 	const [displayMessageOptions, setDisplayMessageOptions] = useState(false);
 	const [edit, setEdit] = useState(null);
@@ -34,10 +38,6 @@ export default function ChatBody({
 		`/messages?conversationId=${conversationId}`,
 		getMessagesWithId,
 		{
-			onSuccess: (data) => {
-				setMessages(data);
-			},
-			revalidateOnFocus: false,
 			revalidateOnMount: true,
 		}
 	);
@@ -46,17 +46,19 @@ export default function ChatBody({
 		setDisplayMessageOptions(true);
 	}
 
+	async function handleDelete(message) {
+		await deleteMessage(message?._id, uid);
+
+		socket.emit("delete-message");
+		setDisplayMessageOptions(false);
+	}
+
 	function displayCreatedAt(message) {
 		return moment(message?.createdAt).locale("fr").format("ll LT");
 	}
 	function displayUpdatedAt(message) {
 		return moment(message?.updatedAt).locale("fr").format("ll LT");
 	}
-	// useEffect(() => {
-	// 	if (data) {
-	// 		setMessages(data);
-	// 	}
-	// }, [data]);
 
 	useEffect(() => {
 		socket?.on("is-typing", (boolean, conversationId) => {
@@ -66,19 +68,25 @@ export default function ChatBody({
 				conversationId: conversationId,
 			});
 		});
-		socket?.on("receive-message", (data) => {
-			console.log("socket", data);
-			setMessages((prevState) => [...prevState, data]);
+		socket?.on("receive-message", (res) => {
+			// When we receive a new message, we revalidate the conversation
+			mutate(`/messages?conversationId=${conversationId}`);
+			// and add the uid into the readBy array in the message model
+			addToRead(res?._id, uid);
 		});
 
 		socket.on("updated-message", () => {
 			mutate(`/messages?conversationId=${conversationId}`);
 		});
 
+		socket.on("delete-message", () => {
+			mutate(`/messages?conversationId=${conversationId}`);
+		});
+
 		return () => {
 			socket.off("is-typing");
 			socket.off("receive-message");
-			socket.off("latest-message");
+			// socket.off("latest-message");
 		};
 	}, [socket]);
 
@@ -90,15 +98,15 @@ export default function ChatBody({
 
 	useEffect(() => {
 		scrollToBottom();
-	}, [messages, isTyping]);
+	}, [data, isTyping]);
 
 	return (
 		<div
 			className={styles.conversation}
 			id="conversation"
 			ref={conversationRef}>
-			{!checkIfEmpty(messages) &&
-				messages?.map((message, idx) => {
+			{!checkIfEmpty(data) &&
+				data?.map((message, idx) => {
 					if (message.conversationId === conversationId) {
 						return (
 							<div
@@ -137,7 +145,10 @@ export default function ChatBody({
 														<span>
 															Copier <FontAwesomeIcon icon={faCopy} />
 														</span>
-														<span>
+														<span
+															onClick={(e) => {
+																handleDelete(message);
+															}}>
 															Supprimer <FontAwesomeIcon icon={faTrashCan} />
 														</span>
 													</div>

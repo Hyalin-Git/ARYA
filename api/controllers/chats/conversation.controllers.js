@@ -91,7 +91,7 @@ exports.getConversation = (req, res, next) => {
 		],
 	})
 
-		.populate("users", "lastName firstName userName picture")
+		.populate("users", "lastName firstName userName picture status")
 		.exec()
 		.then((conversation) => {
 			if (!conversation) {
@@ -174,3 +174,4 @@ exports.deleteConversation = (req, res, next) => {
 		})
 		.catch((err) => res.status(500).send(err));
 };
+

@@ -26,6 +26,7 @@ exports.saveMessage = async (req, res, next) => {
 			senderId: userId,
 			content: content,
 			media: uploadResponse,
+			readBy: userId,
 		});
 		newMessage
 			.save()
@@ -119,8 +120,20 @@ exports.editMessage = (req, res, next) => {
 		.catch((err) => res.status(500).send(err));
 };
 
-exports.deleteMessage = (req, res, next) => {
+exports.deleteMessage = async (req, res, next) => {
 	const { userId } = req.query;
+
+	// const message = await MessageModel.findOne({
+	// 	_id: req.params.id,
+	// 	senderId: userId,
+	// });
+
+	// if (!message) {
+	// 	return res.status(404).send({
+	// 		error: true,
+	// 		message: "Impossible de supprimer un message qui n'existe pas.",
+	// 	});
+	// }
 
 	MessageModel.findOneAndDelete({ _id: req.params.id, senderId: userId })
 		.then(async (message) => {
@@ -134,6 +147,24 @@ exports.deleteMessage = (req, res, next) => {
 			if (message.media.length > 0) {
 				await destroyFiles(message, "message");
 			}
+			const newLatestMessage = await MessageModel.findOne({
+				conversationId: message.conversationId,
+			})
+				.sort({ createdAt: "desc" })
+				.exec();
+			console.log(newLatestMessage);
+			await ConversationModel.findByIdAndUpdate(
+				{ _id: newLatestMessage.conversationId },
+				{
+					$set: {
+						latestMessage: newLatestMessage?._id,
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
 
 			return res.status(200).send(message);
 		})
@@ -143,6 +174,36 @@ exports.deleteMessage = (req, res, next) => {
 				message: err.message || "Erreur interne du serveur",
 			});
 		});
+};
+
+exports.addToRead = (req, res, next) => {
+	const { userId } = req.query;
+
+	MessageModel.findOne({ _id: req.params.id })
+		.then(async (message) => {
+			if (!message) {
+				return res.status(404).send({
+					error: true,
+					message: "Impossible de lire un message qui n'existe pas.",
+				});
+			}
+
+			const updatedMessage = await MessageModel.findOneAndUpdate(
+				{ _id: req.params.id },
+				{
+					$addToSet: {
+						readBy: userId,
+					},
+				},
+				{
+					new: true,
+					setDefaultsOnInsert: true,
+				}
+			);
+
+			return res.status(200).send(updatedMessage);
+		})
+		.catch((err) => res.status(500).send(err));
 };
 
 // Reactions controllers

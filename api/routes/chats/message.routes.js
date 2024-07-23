@@ -30,6 +30,13 @@ router.put(
 router.delete("/:id", authenticate, authorize, messageController.deleteMessage);
 
 router.patch(
+	"/add-read/:id",
+	authenticate,
+	authorize,
+	messageController.addToRead
+);
+
+router.patch(
 	"/add-react/:id",
 	authenticate,
 	authorize,

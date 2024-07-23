@@ -13,10 +13,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import { mutate } from "swr";
 
 const initialState = {
 	status: "pending",
 	message: "",
+	data: {},
 	error: [],
 };
 
@@ -68,16 +70,6 @@ export default function ChatFooter({
 			return;
 		}
 
-		socket.emit("private-message", {
-			conversationId: conversationId,
-			receiverId: getOtherUserInfo._id,
-			senderId: uid,
-			content: e.target.value,
-		});
-		socket.emit("latest-message", {
-			conversationId: conversationId,
-			content: e.target.value,
-		});
 		socket.emit("typing", false);
 		e.target.value = "";
 	}
@@ -92,17 +84,28 @@ export default function ChatFooter({
 		};
 	}, [socket]);
 
-	// useEffect(() => {
-	// 	if (state.status === "success") {
-	// 		socket.on("latest-message", () => {
-	// 			console.log("giga played");
-	// 			revalidateConversations();
-	// 		});
-	// 	}
-	// 	return () => {
-	// 		socket.off("latest-message");
-	// 	};
-	// }, [state, socket]);
+	useEffect(() => {
+		if (state.status === "success") {
+			mutate(`/messages?conversationId=${conversationId}`);
+
+			socket.emit("private-message", {
+				_id: state?.data.message._id,
+				conversationId: conversationId,
+				receiverId: getOtherUserInfo._id,
+				senderId: uid,
+			});
+			socket.emit("latest-message");
+		}
+		// if (state.status === "success") {
+		// 	socket.on("latest-message", () => {
+		// 		console.log("giga played");
+		// 		revalidateConversations();
+		// 	});
+		// }
+		// return () => {
+		// 	socket.off("latest-message");
+		// };
+	}, [state]);
 	return (
 		<div className={styles.form}>
 			<form action={formAction} id="send-message">
@@ -149,7 +152,7 @@ export default function ChatFooter({
 						type="text"
 						id="conversationId"
 						name="conversationId"
-						value={conversationId}
+						defaultValue={conversationId}
 						hidden
 					/>
 				</div>

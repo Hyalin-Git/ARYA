@@ -145,7 +145,10 @@ io.on("connection", (socket) => {
 				setDefaultsOnInsert: true,
 			}
 		)
-			.then((user) => console.log(user))
+			.then((user) => {
+				console.log(user);
+				io.emit("logged-user");
+			})
 			.catch((err) => console.log(err));
 	});
 	socket.on("typing", (boolean, conversationId) => {
@@ -154,6 +157,7 @@ io.on("connection", (socket) => {
 	socket.on("private-message", async (content) => {
 		const senderId = await UserModel.findById({ _id: content.senderId });
 		const receiverId = await UserModel.findById({ _id: content.receiverId });
+		console.log(content);
 		io.to(receiverId.status.socketId)
 			.to(senderId.status.socketId)
 			.emit("receive-message", content);
@@ -163,6 +167,9 @@ io.on("connection", (socket) => {
 	});
 	socket.on("updated-message", () => {
 		io.emit("updated-message");
+	});
+	socket.on("delete-message", () => {
+		io.emit("delete-message");
 	});
 	socket.once("disconnect", () => {
 		console.log("🔥: A user disconnected");
@@ -180,6 +187,9 @@ io.on("connection", (socket) => {
 				new: true,
 				setDefaultsOnInsert: true,
 			}
-		).then((user) => console.log(user));
+		).then((user) => {
+			console.log(user);
+			io.emit("disconnected-user");
+		});
 	});
 });

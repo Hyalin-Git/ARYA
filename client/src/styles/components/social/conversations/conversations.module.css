@@ -11,6 +11,10 @@
 	background-color: color-mix(in srgb, white, #f5f5f5 20%);
 	transition: 50ms all linear;
 }
+
+.container[data-read="false"] {
+	background-color: color-mix(in srgb, white, var(--lavender-color) 15%);
+}
 .picture {
 	position: relative;
 }

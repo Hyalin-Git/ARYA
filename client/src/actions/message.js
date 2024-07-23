@@ -28,7 +28,7 @@ export async function saveMessage(uid, prevState, formData) {
 		const data = await res.json();
 		console.log(data);
 
-		return { status: "success", message: data.content };
+		return { status: "success", data: data };
 	} catch (err) {
 		console.log(err);
 	}
