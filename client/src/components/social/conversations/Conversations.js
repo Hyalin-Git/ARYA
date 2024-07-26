@@ -34,7 +34,7 @@ export default function Conversations({
 		socket.on("latest-message", () => {
 			revalidateConversations();
 		});
-		socket.on("delete-message", () => {
+		socket.on("deleted-message", () => {
 			revalidateConversations();
 		});
 		socket.on("logged-user", () => {

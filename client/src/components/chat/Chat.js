@@ -6,7 +6,10 @@ import ChatHeader from "./ChatHeader";
 import ChatBody from "./ChatBody";
 import ChatFooter from "./ChatFooter";
 import useSWR from "swr";
-import { getConversation } from "@/api/conversations/conversations";
+import {
+	getConversation,
+	revalidateConversations,
+} from "@/api/conversations/conversations";
 import { addToRead } from "@/api/conversations/message";
 
 export default function Chat({
@@ -26,7 +29,7 @@ export default function Chat({
 		conversationId,
 		otherUserId
 	);
-	const { data, error, loading } = useSWR(
+	const { data, error, loading, mutate } = useSWR(
 		`/conversations/${conversationId}`,
 		getConversationWithId
 	);
@@ -50,6 +53,7 @@ export default function Chat({
 				conversation={data}
 				conversationId={conversationId}
 				uid={uid}
+				otherUserId={otherUserId}
 				isTyping={isTyping}
 				setIsTyping={setIsTyping}
 			/>

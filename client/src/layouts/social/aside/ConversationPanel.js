@@ -1,6 +1,9 @@
 "use client";
 
-import { getConversations } from "@/api/conversations/conversations";
+import {
+	getConversations,
+	revalidateConversations,
+} from "@/api/conversations/conversations";
 import Chat from "@/components/chat/Chat";
 import Conversations from "@/components/social/conversations/Conversations";
 import { AuthContext } from "@/context/auth";
@@ -37,7 +40,9 @@ export default function ConversationPanel({ conversations }) {
 		}
 	}, [conversations]);
 
-	console.log(conversations, "from panel");
+	useEffect(() => {
+		revalidateConversations();
+	}, [openedConv]);
 
 	return (
 		<div className={styles.container}>

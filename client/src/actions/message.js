@@ -59,7 +59,7 @@ export async function updateMessage(uid, messageId, prevState, formData) {
 		const data = await res.json();
 		console.log(data);
 
-		return { status: "success" };
+		return { status: "success", data: data };
 	} catch (err) {
 		console.log(err);
 	}

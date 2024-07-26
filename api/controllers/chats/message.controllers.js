@@ -43,7 +43,7 @@ exports.saveMessage = async (req, res, next) => {
 					{ new: true, setDefaultsOnInsert: true }
 				);
 
-				res.status(201).send({ message: newMessage });
+				res.status(201).send(newMessage);
 			})
 			.catch((err) => res.status(500).send(err));
 	} catch (err) {
@@ -152,7 +152,7 @@ exports.deleteMessage = async (req, res, next) => {
 			})
 				.sort({ createdAt: "desc" })
 				.exec();
-			console.log(newLatestMessage);
+
 			await ConversationModel.findByIdAndUpdate(
 				{ _id: newLatestMessage.conversationId },
 				{

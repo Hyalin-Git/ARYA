@@ -34,10 +34,6 @@ export default function ChatFooter({
 	const [isFocus, setIsFocus] = useState(false);
 	const [isDisabled, setIsDisabled] = useState(true);
 
-	const getOtherUserInfo = conversation?.users?.find(
-		(user) => user._id === otherUserId
-	);
-
 	function handleTyping(e) {
 		socket.emit("typing", true, conversationId);
 
@@ -69,7 +65,12 @@ export default function ChatFooter({
 		if (e.target.value.length <= 0) {
 			return;
 		}
-
+		const message = {
+			senderId: uid,
+			conversationId: conversationId,
+			content: e.target.value,
+		};
+		socket.emit("pending-message", message);
 		socket.emit("typing", false);
 		e.target.value = "";
 	}
@@ -86,14 +87,10 @@ export default function ChatFooter({
 
 	useEffect(() => {
 		if (state.status === "success") {
-			mutate(`/messages?conversationId=${conversationId}`);
+			// mutate(`/messages?conversationId=${conversationId}`);
 
-			socket.emit("private-message", {
-				_id: state?.data.message._id,
-				conversationId: conversationId,
-				receiverId: getOtherUserInfo._id,
-				senderId: uid,
-			});
+			const receiver = otherUserId;
+			socket.emit("private-message", state?.data, receiver);
 			socket.emit("latest-message");
 		}
 		// if (state.status === "success") {
@@ -143,6 +140,7 @@ export default function ChatFooter({
 							if (e.key === "Enter" && e.shiftKey) {
 							} else if (e.key === "Enter") {
 								e.preventDefault();
+
 								document.getElementById("send-message").requestSubmit();
 
 								handleSendMessage(e);

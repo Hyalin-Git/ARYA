@@ -11,6 +11,7 @@ import {
 	faCopy,
 	faEllipsisVertical,
 	faPenToSquare,
+	faSpinner,
 	faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,31 +26,32 @@ export default function ChatBody({
 	latestMessage,
 	conversationId,
 	uid,
+	otherUserId,
 	isTyping,
 	setIsTyping,
 }) {
 	const conversationRef = useRef(null);
+	const [messages, setMessages] = useState([]);
+	const [pendingMessages, setPendingMessages] = useState([]);
 	const [displayOptions, setDisplayOptions] = useState(null);
 	const [displayMessageOptions, setDisplayMessageOptions] = useState(false);
 	const [edit, setEdit] = useState(null);
 
 	const getMessagesWithId = getMessages.bind(null, conversationId);
-	const { data } = useSWR(
+	const { data, isLoading, isValidating } = useSWR(
 		`/messages?conversationId=${conversationId}`,
-		getMessagesWithId,
-		{
-			revalidateOnMount: true,
-		}
+		getMessagesWithId
 	);
+
 	function handleMessageOptions(e) {
 		e.preventDefault();
 		setDisplayMessageOptions(true);
 	}
 
 	async function handleDelete(message) {
-		await deleteMessage(message?._id, uid);
+		const deletedMessage = await deleteMessage(message?._id, uid);
 
-		socket.emit("delete-message");
+		socket.emit("delete-message", deletedMessage, otherUserId);
 		setDisplayMessageOptions(false);
 	}
 
@@ -68,27 +70,46 @@ export default function ChatBody({
 				conversationId: conversationId,
 			});
 		});
-		socket?.on("receive-message", (res) => {
+		socket?.on("pending-message", (res) => {
+			console.log(res, "pending");
+			setPendingMessages((prev) => [...prev, res]);
+		});
+		socket.on("receive-message", (res) => {
 			// When we receive a new message, we revalidate the conversation
-			mutate(`/messages?conversationId=${conversationId}`);
+			if (!res.readBy.includes(uid) && res.conversationId === conversationId) {
+				res.readBy.push(uid); // Push the id in readBy array for an instant response
+				addToRead(res?._id, uid); // Save the modification in the DB
+			}
+			setMessages((prev) => [...prev, res]);
+
+			if (pendingMessages.length > 0) {
+				setPendingMessages((prev) => prev.slice(1));
+			}
+
 			// and add the uid into the readBy array in the message model
-			addToRead(res?._id, uid);
 		});
 
-		socket.on("updated-message", () => {
-			mutate(`/messages?conversationId=${conversationId}`);
+		socket.on("updated-message", (res) => {
+			const updatedMessage = messages.find(
+				(message) => message._id === res._id
+			);
+			updatedMessage.content = res?.content;
 		});
 
-		socket.on("delete-message", () => {
-			mutate(`/messages?conversationId=${conversationId}`);
+		socket.on("deleted-message", (res) => {
+			setMessages((prevMessages) =>
+				prevMessages.filter((message) => message._id !== res._id)
+			);
 		});
 
 		return () => {
 			socket.off("is-typing");
+			socket.off("updated-message");
+			socket.off("deleted-message");
+			socket.off("pending-message");
 			socket.off("receive-message");
-			// socket.off("latest-message");
 		};
-	}, [socket]);
+	}, [socket, messages, pendingMessages]);
 
 	const scrollToBottom = () => {
 		if (conversationRef.current) {
@@ -98,98 +119,143 @@ export default function ChatBody({
 
 	useEffect(() => {
 		scrollToBottom();
-	}, [data, isTyping]);
+	}, [messages, pendingMessages, isTyping]);
+
+	useEffect(() => {
+		if (data) {
+			setMessages(data);
+		}
+	}, [data]);
 
 	return (
 		<div
 			className={styles.conversation}
 			id="conversation"
 			ref={conversationRef}>
-			{!checkIfEmpty(data) &&
-				data?.map((message, idx) => {
-					if (message.conversationId === conversationId) {
-						return (
-							<div
-								data-self={message?.senderId === uid}
-								className={styles.message}
-								key={message._id || idx}
-								onMouseEnter={(e) => setDisplayOptions(message._id)}
-								onMouseLeave={(e) => {
-									setDisplayOptions(null);
-									setDisplayMessageOptions(false);
-								}}>
-								{displayOptions === message._id && (
-									<div className={styles.options}>
-										<Image
-											src={"/images/icons/addReaction_icon.svg"}
-											alt="icon"
-											width={25}
-											height={25}
-											id="icon"
-										/>
-										{message?.senderId === uid && (
-											<div className={styles.more}>
-												<FontAwesomeIcon
-													icon={faEllipsisVertical}
-													onClick={handleMessageOptions}
+			{isLoading ? (
+				<div className={styles.loader}>
+					<FontAwesomeIcon icon={faSpinner} />
+				</div>
+			) : (
+				<>
+					{!checkIfEmpty(messages) &&
+						messages?.map((message, idx) => {
+							if (message.conversationId === conversationId) {
+								const nextMessage = messages[idx + 1];
+								const displayDate =
+									!nextMessage ||
+									!moment(message.createdAt).isSame(
+										nextMessage.createdAt,
+										"minute"
+									);
+
+								return (
+									<div
+										data-self={message?.senderId === uid}
+										className={styles.message}
+										key={message._id || idx}
+										onMouseEnter={(e) => setDisplayOptions(message._id)}
+										onMouseLeave={(e) => {
+											setDisplayOptions(null);
+											setDisplayMessageOptions(false);
+										}}>
+										{displayOptions === message._id && (
+											<div className={styles.options}>
+												<Image
+													src={"/images/icons/addReaction_icon.svg"}
+													alt="icon"
+													width={25}
+													height={25}
+													id="icon"
 												/>
-												{displayMessageOptions && (
-													<div className={styles.popup}>
-														<span
-															onClick={(e) => {
-																setDisplayMessageOptions(false);
-																setEdit(message?._id);
-															}}>
-															Modifier <FontAwesomeIcon icon={faPenToSquare} />
-														</span>
-														<span>
-															Copier <FontAwesomeIcon icon={faCopy} />
-														</span>
-														<span
-															onClick={(e) => {
-																handleDelete(message);
-															}}>
-															Supprimer <FontAwesomeIcon icon={faTrashCan} />
-														</span>
+												{message?.senderId === uid && (
+													<div className={styles.more}>
+														<FontAwesomeIcon
+															icon={faEllipsisVertical}
+															onClick={handleMessageOptions}
+														/>
+														{displayMessageOptions && (
+															<div className={styles.popup}>
+																<span
+																	onClick={(e) => {
+																		setDisplayMessageOptions(false);
+																		setEdit(message?._id);
+																	}}>
+																	Modifier{" "}
+																	<FontAwesomeIcon icon={faPenToSquare} />
+																</span>
+																<span>
+																	Copier <FontAwesomeIcon icon={faCopy} />
+																</span>
+																<span
+																	onClick={(e) => {
+																		handleDelete(message);
+																	}}>
+																	Supprimer{" "}
+																	<FontAwesomeIcon icon={faTrashCan} />
+																</span>
+															</div>
+														)}
 													</div>
 												)}
 											</div>
 										)}
-									</div>
-								)}
-								{edit === message?._id ? (
-									<UpdateMessage
-										conversationId={conversationId}
-										message={message}
-										setEdit={setEdit}
-										uid={uid}
-									/>
-								) : (
-									<>
-										<div className={styles.content}>
-											<p>{message?.content}</p>
-											<div>
-												{message?.isEdited ? (
-													<span>Modifié {displayUpdatedAt(message)}</span>
-												) : (
-													<span>{displayCreatedAt(message)}</span>
-												)}
+										{edit === message?._id ? (
+											<UpdateMessage
+												conversationId={conversationId}
+												message={message}
+												setEdit={setEdit}
+												uid={uid}
+												otherUserId={otherUserId}
+											/>
+										) : (
+											<div className={styles.content}>
+												<div className={styles.text}>
+													<p>{message?.content}</p>
+												</div>
+												<div className={styles.date}>
+													{message?.isEdited ? (
+														<span>Modifié {displayUpdatedAt(message)}</span>
+													) : (
+														<>
+															{displayDate && (
+																<span>{displayCreatedAt(message)}</span>
+															)}
+														</>
+													)}
+												</div>
 											</div>
+										)}
+									</div>
+								);
+							}
+						})}
+
+					{!checkIfEmpty(pendingMessages) &&
+						pendingMessages.map((pendingMessage, idx) => {
+							if (pendingMessage.conversationId === conversationId) {
+								return (
+									<div
+										data-self={pendingMessage?.senderId === uid}
+										className={styles.message}
+										key={idx}>
+										<div className={styles.text} data-pending={true}>
+											<p>{pendingMessage?.content}</p>
 										</div>
-									</>
-								)}
+									</div>
+								);
+							}
+						})}
+					{isTyping.boolean === true &&
+						isTyping.conversationId === conversationId && (
+							<div className={styles.typing}>
+								<FontAwesomeIcon icon={faCircle} />
+								<FontAwesomeIcon icon={faCircle} />
+								<FontAwesomeIcon icon={faCircle} />
 							</div>
-						);
-					}
-				})}
-			{isTyping.boolean === true &&
-				isTyping.conversationId === conversationId && (
-					<div className={styles.typing}>
-						<FontAwesomeIcon icon={faCircle} />
-						<FontAwesomeIcon icon={faCircle} />
-						<FontAwesomeIcon icon={faCircle} />
-					</div>
-				)}
+						)}
+				</>
+			)}
 		</div>
 	);
 }

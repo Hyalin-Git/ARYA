@@ -61,12 +61,36 @@
 .conversation {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 5px;
 	min-height: 310px;
 	max-height: 310px;
 	padding: 10px;
 	overflow: auto;
 }
+.loader {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 280px;
+	max-height: 280px;
+}
+.loader svg {
+	color: var(--meteorite-color);
+	width: 40px;
+	height: 40px;
+	animation: infinite loading 1s linear forwards;
+}
+
+@keyframes loading {
+	from {
+		rotate: 0;
+		transform-origin: center;
+	}
+	to {
+		rotate: 360deg;
+	}
+}
+
 .options {
 	position: relative;
 	cursor: pointer;
@@ -108,51 +132,62 @@
 	flex-direction: row-reverse;
 	align-self: flex-start;
 }
+
 .message[data-self="true"] {
 	align-self: flex-end;
 }
-.message[data-self="false"] .content {
+.message[data-self="false"] .text {
 	background-color: white;
 	color: black;
 }
-
-.content {
+.message[data-self="true"] .content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+.text[data-pending="true"] {
+	background-color: var(--lavender-color);
+}
+.text {
 	background-color: var(--meteorite-color);
-	max-width: fit-content;
+
 	padding: 10px;
 	border-radius: 8px;
 	max-width: 220px;
+	width: fit-content;
 	transition: 150ms linear all;
 }
-.content p {
+.text p {
 	margin: 0;
 	font-size: 0.9rem;
 	font-weight: 500;
 }
 
-.message[data-self="true"] .content div {
+.message[data-self="true"] .text div {
 	text-align: right;
 }
-.message[data-self="true"] .content div span {
-	color: white;
-}
-.content div {
-	margin-top: 5px;
-	font-size: 0.7rem;
-	font-weight: 500;
-}
 
-.message[data-self="false"] .content:hover {
+.message[data-self="false"] .text:hover {
 	background-color: color-mix(in srgb, white, black 20%);
 }
-.content:hover {
+.text:hover {
 	transition: 150ms linear all;
 	background-color: var(--lavender-color);
 	cursor: pointer;
 }
 
-.message[data-self="true"] .content p {
+.message[data-self="true"] .text p {
 	color: #f1f1f1;
+}
+
+.date:has(span) {
+	padding: 5px;
+	font-size: 0.7rem;
+	font-weight: 500;
+}
+
+.date span {
+	color: color-mix(in srgb, white, black 50%) !important;
 }
 
 .form {

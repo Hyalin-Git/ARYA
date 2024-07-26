@@ -154,10 +154,15 @@ io.on("connection", (socket) => {
 	socket.on("typing", (boolean, conversationId) => {
 		socket.broadcast.emit("is-typing", boolean, conversationId);
 	});
-	socket.on("private-message", async (content) => {
+	socket.on("pending-message", async (content) => {
 		const senderId = await UserModel.findById({ _id: content.senderId });
-		const receiverId = await UserModel.findById({ _id: content.receiverId });
-		console.log(content);
+
+		io.to(senderId.status.socketId).emit("pending-message", content);
+	});
+	socket.on("private-message", async (content, receiver) => {
+		const senderId = await UserModel.findById({ _id: content.senderId });
+		const receiverId = await UserModel.findById({ _id: receiver });
+
 		io.to(receiverId.status.socketId)
 			.to(senderId.status.socketId)
 			.emit("receive-message", content);
@@ -165,11 +170,21 @@ io.on("connection", (socket) => {
 	socket.on("latest-message", (message) => {
 		io.emit("latest-message", message);
 	});
-	socket.on("updated-message", () => {
-		io.emit("updated-message");
+	socket.on("update-message", async (content, receiver) => {
+		const senderId = await UserModel.findById({ _id: content.senderId });
+		const receiverId = await UserModel.findById({ _id: receiver });
+
+		io.to(receiverId.status.socketId)
+			.to(senderId.status.socketId)
+			.emit("updated-message", content);
 	});
-	socket.on("delete-message", () => {
-		io.emit("delete-message");
+	socket.on("delete-message", async (content, receiver) => {
+		const senderId = await UserModel.findById({ _id: content.senderId });
+		const receiverId = await UserModel.findById({ _id: receiver });
+
+		io.to(receiverId.status.socketId)
+			.to(senderId.status.socketId)
+			.emit("deleted-message", content);
 	});
 	socket.once("disconnect", () => {
 		console.log("🔥: A user disconnected");

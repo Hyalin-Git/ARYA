@@ -4,11 +4,10 @@ import styles from "@/styles/components/chat/updateMessage.module.css";
 import { useFormState } from "react-dom";
 import { useEffect, useState } from "react";
 import socket from "@/libs/socket";
-import { revalidateMessages } from "@/api/conversations/message";
-import { mutate } from "swr";
 const initialState = {
 	status: "pending",
 	message: "",
+	data: {},
 	error: [],
 };
 export default function UpdateMessage({
@@ -16,6 +15,7 @@ export default function UpdateMessage({
 	message,
 	setEdit,
 	uid,
+	otherUserId,
 }) {
 	const updateMessageAction = updateMessage.bind(null, uid, message._id);
 	const [state, formAction] = useFormState(updateMessageAction, initialState);
@@ -23,7 +23,8 @@ export default function UpdateMessage({
 	useEffect(() => {
 		if (state?.status === "success") {
 			setEdit(false);
-			socket.emit("updated-message");
+
+			socket.emit("update-message", state?.data, otherUserId);
 			socket.emit("latest-message");
 		}
 	}, [state]);
