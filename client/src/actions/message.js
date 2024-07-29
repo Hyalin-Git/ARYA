@@ -26,11 +26,15 @@ export async function saveMessage(uid, prevState, formData) {
 			}
 		);
 		const data = await res.json();
-		console.log(data);
-
+		if (!res.ok) {
+			throw new Error(data.message);
+		}
 		return { status: "success", data: data };
 	} catch (err) {
-		console.log(err);
+		console.log(err, "from err");
+		return {
+			status: "failure",
+		};
 	}
 }
 
@@ -38,12 +42,6 @@ export async function updateMessage(uid, messageId, prevState, formData) {
 	try {
 		const dataToSend = new FormData();
 		dataToSend.append("content", formData.get("content"));
-		if (formData.get("img")?.name !== "undefined") {
-			const mediaFiles = formData.getAll("img");
-			mediaFiles.forEach((file) => {
-				dataToSend.append("media", file);
-			});
-		}
 
 		const res = await fetch(
 			`http://localhost:5000/api/messages/${messageId}?userId=${uid}`,

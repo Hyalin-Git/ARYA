@@ -1,0 +1,86 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	cursor: pointer;
+}
+
+.container[data-self="false"] {
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.container[data-self="true"] {
+	align-self: flex-end;
+}
+
+.container[data-self="false"] .message {
+	display: flex;
+	flex-direction: row-reverse;
+	gap: 10px;
+}
+
+.message {
+	display: flex;
+	gap: 10px;
+}
+
+.options,
+.messageOptions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+/* TEXT  */
+
+.text {
+	background-color: white;
+	padding: 10px;
+	border-radius: 8px;
+	transition: 150ms linear all;
+}
+
+.text:hover {
+	transition: 150ms linear all;
+	background-color: color-mix(in srgb, white, black 20%);
+}
+
+.container[data-self="true"] .text {
+	background-color: var(--meteorite-color);
+}
+
+.container[data-self="true"] .text:hover {
+	background-color: var(--lavender-color);
+}
+
+.text p {
+	margin: 0;
+	font-size: 0.9rem;
+	font-weight: 500;
+}
+.container[data-self="true"] .text p {
+	color: white;
+}
+
+/* MEDIA  */
+
+.media {
+	margin-top: 5px;
+	width: 100%;
+	max-width: fit-content;
+	height: 200px;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
+/* DATES  */
+.dates {
+	cursor: default;
+}
+.dates span {
+	padding: 5px;
+	font-size: 0.7rem;
+	font-weight: 500;
+	color: color-mix(in srgb, white, black 50%) !important;
+}

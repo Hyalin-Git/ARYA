@@ -2,18 +2,19 @@ import { saveMessage } from "@/actions/message";
 import { revalidateConversations } from "@/api/conversations/conversations";
 import { montserrat } from "@/libs/fonts";
 import socket from "@/libs/socket";
-import styles from "@/styles/components/chat/chat.module.css";
+import styles from "@/styles/components/chat/chatFooter.module.css";
 import {
 	faEllipsisVertical,
+	faFileSignature,
 	faImage,
+	faPaperclip,
 	faPaperPlane,
 	faSmile,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
-import { mutate } from "swr";
 
 const initialState = {
 	status: "pending",
@@ -22,17 +23,15 @@ const initialState = {
 	error: [],
 };
 
-export default function ChatFooter({
-	uid,
-	conversationId,
-	otherUserId,
-	conversation,
-	setIsTyping,
-}) {
+export default function ChatFooter({ uid, conversationId, otherUserId }) {
 	const saveMessageWithUid = saveMessage.bind(null, uid);
 	const [state, formAction] = useFormState(saveMessageWithUid, initialState);
+	const [more, setMore] = useState(false);
+	const [text, setText] = useState("");
+	const [files, setFiles] = useState([]);
 	const [isFocus, setIsFocus] = useState(false);
 	const [isDisabled, setIsDisabled] = useState(true);
+	const inputFile = useRef(null);
 
 	function handleTyping(e) {
 		socket.emit("typing", true, conversationId);
@@ -53,16 +52,11 @@ export default function ChatFooter({
 		handleTyping(e);
 		e.target.style.height = "";
 		e.target.style.height = e.target.scrollHeight + "px";
-
-		if (e.target.value.length > 0) {
-			setIsDisabled(false);
-		} else {
-			setIsDisabled(true);
-		}
+		setText(e.target.value);
 	}
 
 	function handleSendMessage(e) {
-		if (e.target.value.length <= 0) {
+		if (e.target.value.length <= 0 && inputFile.current.files.length === 0) {
 			return;
 		}
 		const message = {
@@ -73,6 +67,7 @@ export default function ChatFooter({
 		socket.emit("pending-message", message);
 		socket.emit("typing", false);
 		e.target.value = "";
+		inputFile.current.value = "";
 	}
 
 	useEffect(() => {
@@ -87,34 +82,52 @@ export default function ChatFooter({
 
 	useEffect(() => {
 		if (state.status === "success") {
-			// mutate(`/messages?conversationId=${conversationId}`);
-
-			const receiver = otherUserId;
-			socket.emit("private-message", state?.data, receiver);
+			setFiles([]);
+			setText("");
+			socket.emit("private-message", state?.data, otherUserId);
 			socket.emit("latest-message");
 		}
-		// if (state.status === "success") {
-		// 	socket.on("latest-message", () => {
-		// 		console.log("giga played");
-		// 		revalidateConversations();
-		// 	});
-		// }
-		// return () => {
-		// 	socket.off("latest-message");
-		// };
 	}, [state]);
+
+	useEffect(() => {
+		console.log(files[0]);
+		if (text.length === 0 && files.length === 0) {
+			setIsDisabled(true);
+		} else {
+			setIsDisabled(false);
+		}
+	}, [text, files]);
 	return (
-		<div className={styles.form}>
+		<div className={styles.container}>
 			<form action={formAction} id="send-message">
-				<div className={styles.icons}>
-					{isFocus ? (
-						<FontAwesomeIcon icon={faEllipsisVertical} />
+				<div className={styles.ellipsis}>
+					<FontAwesomeIcon
+						icon={faEllipsisVertical}
+						onClick={(e) => setMore(!more)}
+					/>
+					{more && (
+						<div className={styles.more}>
+							<label htmlFor="img">
+								<FontAwesomeIcon icon={faImage} />
+							</label>
+							<Image
+								src="/images/icons/gif_icon.svg"
+								width={20}
+								height={20}
+								alt="icon"
+								className={styles.icon}
+							/>
+							<FontAwesomeIcon icon={faSmile} />
+							<FontAwesomeIcon icon={faFileSignature} />
+						</div>
+					)}
+					{/* {isFocus ? (
+					
 					) : (
 						<>
 							<label htmlFor="img">
 								<FontAwesomeIcon icon={faImage} />
 							</label>
-							<input type="file" id="img" name="img" multiple hidden />
 							<Image
 								src="/images/icons/gif_icon.svg"
 								width={20}
@@ -124,7 +137,7 @@ export default function ChatFooter({
 							/>
 							<FontAwesomeIcon icon={faSmile} />
 						</>
-					)}
+					)} */}
 				</div>
 				<div className={styles.input}>
 					<textarea
@@ -147,6 +160,15 @@ export default function ChatFooter({
 							}
 						}}></textarea>
 					<input
+						type="file"
+						id="img"
+						name="img"
+						ref={inputFile}
+						onChange={(e) => setFiles(e.target.files)}
+						multiple
+						hidden
+					/>
+					<input
 						type="text"
 						id="conversationId"
 						name="conversationId"
@@ -154,7 +176,7 @@ export default function ChatFooter({
 						hidden
 					/>
 				</div>
-				<div className={styles.icons}>
+				<div className={styles.button}>
 					<button data-disabled={isDisabled}>
 						<FontAwesomeIcon icon={faPaperPlane} />
 					</button>

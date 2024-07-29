@@ -197,22 +197,25 @@ export async function logIn(prevState, formData) {
 			// Add domain
 		});
 	} catch (err) {
-		const reponse = err?.response;
-		const isEmail = reponse?.data.message.includes("Adresse mail");
-		const isPassword = reponse?.data.message.includes("Mot de passe");
+		const response = err?.response;
+		const isEmail = response?.data?.message?.includes("Adresse mail");
+		const isPassword = response?.data?.message?.includes("Mot de passe");
 
 		if (isEmail) {
 			return {
 				isEmail: true,
-				message: reponse.data.message,
+				message: response.data.message,
 			};
 		}
 		if (isPassword) {
 			return {
 				isPassword: true,
-				message: reponse.data.message,
+				message: response.data.message,
 			};
 		}
+		return {
+			message: response.data.message,
+		};
 	}
 	redirect("/social");
 }

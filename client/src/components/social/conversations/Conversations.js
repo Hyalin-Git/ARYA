@@ -19,7 +19,7 @@ export default function Conversations({
 	const getOtherUser = conversation.users.find((user) => user._id !== uid);
 	const date = moment(conversation?.updatedAt).format("Do MMMM");
 	const year = moment(conversation?.updatedAt).format("YYYY");
-
+	const hasMedia = conversation?.latestMessage?.media.length > 0;
 	const hasRead = conversation?.latestMessage?.readBy?.some(
 		(userId) => userId === uid
 	);

@@ -85,7 +85,6 @@ const UserSchema = new mongoose.Schema(
 		},
 		contact: {
 			type: String,
-			unique: true,
 			lowercase: true,
 			validate: [validateEmail, "Veuillez entrer une adresse mail valide"],
 			trim: true,

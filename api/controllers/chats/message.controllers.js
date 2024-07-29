@@ -10,10 +10,15 @@ exports.saveMessage = async (req, res, next) => {
 	try {
 		const { userId } = req.query;
 		const { content, conversationId } = req.body;
-		console.log(req.files["media"]);
 		const medias = req.files["media"];
 
-		if (!userId || !content || !conversationId) {
+		if (!userId || !conversationId) {
+			return res
+				.status(400)
+				.send({ error: true, message: "Les données fournit sont invalides" });
+		}
+
+		if (!content && !medias) {
 			return res
 				.status(400)
 				.send({ error: true, message: "Les données fournit sont invalides" });
@@ -84,7 +89,6 @@ exports.getMessage = (req, res, next) => {
 exports.editMessage = (req, res, next) => {
 	const { userId } = req.query;
 	const { content } = req.body;
-	let medias = req.files["media"];
 
 	MessageModel.findOne({ _id: req.params.id, senderId: userId })
 		.then(async (message) => {
@@ -98,14 +102,11 @@ exports.editMessage = (req, res, next) => {
 				await destroyFiles(message, "message"); // Destroy files only if there is medias
 			}
 
-			const uploadResponse = await uploadFiles(medias, "message");
-
 			const updatedMessage = await MessageModel.findOneAndUpdate(
 				{ _id: req.params.id, senderId: userId },
 				{
 					$set: {
 						content: content,
-						media: medias ? uploadResponse : [],
 						isEdited: true,
 					},
 				},
@@ -122,18 +123,6 @@ exports.editMessage = (req, res, next) => {
 
 exports.deleteMessage = async (req, res, next) => {
 	const { userId } = req.query;
-
-	// const message = await MessageModel.findOne({
-	// 	_id: req.params.id,
-	// 	senderId: userId,
-	// });
-
-	// if (!message) {
-	// 	return res.status(404).send({
-	// 		error: true,
-	// 		message: "Impossible de supprimer un message qui n'existe pas.",
-	// 	});
-	// }
 
 	MessageModel.findOneAndDelete({ _id: req.params.id, senderId: userId })
 		.then(async (message) => {
@@ -153,18 +142,33 @@ exports.deleteMessage = async (req, res, next) => {
 				.sort({ createdAt: "desc" })
 				.exec();
 
-			await ConversationModel.findByIdAndUpdate(
-				{ _id: newLatestMessage.conversationId },
-				{
-					$set: {
-						latestMessage: newLatestMessage?._id,
+			if (newLatestMessage) {
+				await ConversationModel.findByIdAndUpdate(
+					{ _id: newLatestMessage.conversationId },
+					{
+						$set: {
+							latestMessage: newLatestMessage?._id,
+						},
 					},
-				},
-				{
-					new: true,
-					setDefaultsOnInsert: true,
-				}
-			);
+					{
+						new: true,
+						setDefaultsOnInsert: true,
+					}
+				);
+			} else {
+				await ConversationModel.findByIdAndUpdate(
+					{ _id: message.conversationId },
+					{
+						$set: {
+							latestMessage: null,
+						},
+					},
+					{
+						new: true,
+						setDefaultsOnInsert: true,
+					}
+				);
+			}
 
 			return res.status(200).send(message);
 		})

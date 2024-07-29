@@ -1,26 +1,12 @@
-import {
-	addToRead,
-	deleteMessage,
-	getMessages,
-} from "@/api/conversations/message";
+import { addToRead, getMessages } from "@/api/conversations/message";
 import socket from "@/libs/socket";
-import { checkIfEmpty, formattedDate } from "@/libs/utils";
+import { checkIfEmpty } from "@/libs/utils";
 import styles from "@/styles/components/chat/chat.module.css";
-import {
-	faCircle,
-	faCopy,
-	faEllipsisVertical,
-	faPenToSquare,
-	faSpinner,
-	faTrashCan,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import useSWR, { mutate } from "swr";
-import UpdateMessage from "./UpdateMessage";
-import moment from "moment";
-import "moment/locale/fr"; // without this line it didn't work
+import useSWR from "swr";
+import Messages from "./Messages";
 
 export default function ChatBody({
 	latestMessage,
@@ -32,35 +18,14 @@ export default function ChatBody({
 }) {
 	const conversationRef = useRef(null);
 	const [messages, setMessages] = useState([]);
+
 	const [pendingMessages, setPendingMessages] = useState([]);
-	const [displayOptions, setDisplayOptions] = useState(null);
-	const [displayMessageOptions, setDisplayMessageOptions] = useState(false);
-	const [edit, setEdit] = useState(null);
 
 	const getMessagesWithId = getMessages.bind(null, conversationId);
 	const { data, isLoading, isValidating } = useSWR(
 		`/messages?conversationId=${conversationId}`,
 		getMessagesWithId
 	);
-
-	function handleMessageOptions(e) {
-		e.preventDefault();
-		setDisplayMessageOptions(true);
-	}
-
-	async function handleDelete(message) {
-		const deletedMessage = await deleteMessage(message?._id, uid);
-
-		socket.emit("delete-message", deletedMessage, otherUserId);
-		setDisplayMessageOptions(false);
-	}
-
-	function displayCreatedAt(message) {
-		return moment(message?.createdAt).locale("fr").format("ll LT");
-	}
-	function displayUpdatedAt(message) {
-		return moment(message?.updatedAt).locale("fr").format("ll LT");
-	}
 
 	useEffect(() => {
 		socket?.on("is-typing", (boolean, conversationId) => {
@@ -80,7 +45,11 @@ export default function ChatBody({
 				res.readBy.push(uid); // Push the id in readBy array for an instant response
 				addToRead(res?._id, uid); // Save the modification in the DB
 			}
-			setMessages((prev) => [...prev, res]);
+			if (messages.length > 0) {
+				setMessages((prev) => [...prev, res]);
+			} else {
+				setMessages([res]);
+			}
 
 			if (pendingMessages.length > 0) {
 				setPendingMessages((prev) => prev.slice(1));
@@ -93,6 +62,7 @@ export default function ChatBody({
 			const updatedMessage = messages.find(
 				(message) => message._id === res._id
 			);
+			updatedMessage.isEdited = true;
 			updatedMessage.content = res?.content;
 		});
 
@@ -125,6 +95,13 @@ export default function ChatBody({
 		if (data) {
 			setMessages(data);
 		}
+		const unReadMessages = messages.filter(
+			(message) => !message.readBy.includes(uid)
+		);
+		for (const unReadMessage of unReadMessages) {
+			addToRead(unReadMessage._id, uid);
+		}
+		console.log("tous les un read msg");
 	}, [data]);
 
 	return (
@@ -142,91 +119,14 @@ export default function ChatBody({
 						messages?.map((message, idx) => {
 							if (message.conversationId === conversationId) {
 								const nextMessage = messages[idx + 1];
-								const displayDate =
-									!nextMessage ||
-									!moment(message.createdAt).isSame(
-										nextMessage.createdAt,
-										"minute"
-									);
-
 								return (
-									<div
-										data-self={message?.senderId === uid}
-										className={styles.message}
-										key={message._id || idx}
-										onMouseEnter={(e) => setDisplayOptions(message._id)}
-										onMouseLeave={(e) => {
-											setDisplayOptions(null);
-											setDisplayMessageOptions(false);
-										}}>
-										{displayOptions === message._id && (
-											<div className={styles.options}>
-												<Image
-													src={"/images/icons/addReaction_icon.svg"}
-													alt="icon"
-													width={25}
-													height={25}
-													id="icon"
-												/>
-												{message?.senderId === uid && (
-													<div className={styles.more}>
-														<FontAwesomeIcon
-															icon={faEllipsisVertical}
-															onClick={handleMessageOptions}
-														/>
-														{displayMessageOptions && (
-															<div className={styles.popup}>
-																<span
-																	onClick={(e) => {
-																		setDisplayMessageOptions(false);
-																		setEdit(message?._id);
-																	}}>
-																	Modifier{" "}
-																	<FontAwesomeIcon icon={faPenToSquare} />
-																</span>
-																<span>
-																	Copier <FontAwesomeIcon icon={faCopy} />
-																</span>
-																<span
-																	onClick={(e) => {
-																		handleDelete(message);
-																	}}>
-																	Supprimer{" "}
-																	<FontAwesomeIcon icon={faTrashCan} />
-																</span>
-															</div>
-														)}
-													</div>
-												)}
-											</div>
-										)}
-										{edit === message?._id ? (
-											<UpdateMessage
-												conversationId={conversationId}
-												message={message}
-												setEdit={setEdit}
-												uid={uid}
-												otherUserId={otherUserId}
-											/>
-										) : (
-											<div className={styles.content}>
-												<div className={styles.text}>
-													<p>{message?.content}</p>
-												</div>
-												<div className={styles.date}>
-													{message?.isEdited ? (
-														<span>Modifié {displayUpdatedAt(message)}</span>
-													) : (
-														<>
-															{displayDate && (
-																<span>{displayCreatedAt(message)}</span>
-															)}
-														</>
-													)}
-												</div>
-											</div>
-										)}
-									</div>
+									<Messages
+										uid={uid}
+										message={message}
+										otherUserId={otherUserId}
+										nextMessage={nextMessage}
+										key={message._id}
+									/>
 								);
 							}
 						})}

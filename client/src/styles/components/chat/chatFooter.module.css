@@ -1,0 +1,59 @@
+.container {
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	padding: 5px 10px 5px 10px;
+	/* height: 50px; */
+	background-color: white;
+}
+.container form {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.input {
+	width: 100%;
+}
+
+.input textarea {
+	overflow: hidden;
+	width: 100%;
+}
+
+.ellipsis {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.ellipsis svg {
+	width: 20px;
+	height: 20px;
+	color: var(--meteorite-color);
+	cursor: pointer;
+}
+.ellipsis img {
+	cursor: pointer;
+	filter: invert(16%) sepia(75%) saturate(6658%) hue-rotate(264deg)
+		brightness(91%) contrast(85%);
+}
+
+.more {
+	position: absolute;
+	top: -65px;
+	display: flex;
+	gap: 10px;
+	background-color: white;
+	padding: 10px;
+}
+
+.button button {
+	background-color: transparent;
+	background-image: none;
+	box-shadow: inherit;
+	padding: 5px;
+	color: var(--meteorite-color);
+}
+
+.button button[data-disabled="true"] {
+	color: color-mix(in srgb, var(--meteorite-color), white 50%);
+}

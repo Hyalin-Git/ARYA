@@ -91,6 +91,10 @@
 	}
 }
 
+.content {
+	display: flex;
+}
+
 .options {
 	position: relative;
 	cursor: pointer;
@@ -121,12 +125,15 @@
 }
 
 .message {
-}
-.message,
-.options {
 	display: flex;
 	align-items: center;
 	gap: 10px;
+}
+.options {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	justify-items: flex-start;
 }
 .message[data-self="false"] {
 	flex-direction: row-reverse;
@@ -180,6 +187,15 @@
 	color: #f1f1f1;
 }
 
+.media {
+	margin-top: 5px;
+	width: 100%;
+	max-width: fit-content;
+	height: 200px;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
 .date:has(span) {
 	padding: 5px;
 	font-size: 0.7rem;
@@ -190,20 +206,7 @@
 	color: color-mix(in srgb, white, black 50%) !important;
 }
 
-.form {
-	border-top: 1px solid rgba(0, 0, 0, 0.1);
-	padding: 5px 10px 5px 5px;
-	/* height: 50px; */
-	background-color: white;
-}
-.form form {
-	display: flex;
-	align-items: center;
-	gap: 5px;
-}
-.input {
-	width: 100%;
-}
+
 .form textarea {
 	overflow: hidden;
 	width: 100%;
@@ -212,36 +215,8 @@
 	width: 5%;
 }
 
-.icons {
-	display: flex;
-	align-items: center;
-	flex-wrap: nowrap;
-	gap: 10px;
-	color: var(--meteorite-color);
-}
 
-.icons svg,
-.icon {
-	width: 20px;
-	height: 20px;
-	cursor: pointer;
-}
 
-.icons button {
-	background-color: transparent;
-	background-image: none;
-	padding: 0;
-	color: var(--meteorite-color);
-}
-
-.icons button[data-disabled="true"] {
-	color: color-mix(in srgb, var(--meteorite-color), white 50%);
-}
-
-.icon {
-	filter: invert(16%) sepia(75%) saturate(6658%) hue-rotate(264deg)
-		brightness(91%) contrast(85%);
-}
 
 .typing {
 	display: flex;

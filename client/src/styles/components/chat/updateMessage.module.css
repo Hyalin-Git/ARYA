@@ -4,7 +4,17 @@
 	border-radius: 8px;
 }
 
-.container {
+.container input {
+	background-color: red;
+}
+
+.media {
+	margin-top: 5px;
+	width: 100%;
+	max-width: fit-content;
+	height: 200px;
+	object-fit: cover;
+	border-radius: 8px;
 }
 
 .buttons {
