@@ -108,11 +108,11 @@ export default function ({ uid, nextMessage, message, otherUserId }) {
 							</div>
 						)}
 						<div className={styles.text}>
-							{hasVideo ? (
+							{/* {hasVideo ? (
 								<p dangerouslySetInnerHTML={{ __html: setLinks() }}></p>
-							) : (
-								<p>{message?.content}</p>
-							)}
+							) : ( */}
+							<p>{message?.content}</p>
+							{/* )} */}
 							{!checkIfEmpty(hasVideo) &&
 								hasVideo.map((vid, idx) => {
 									return <iframe src={vid} frameBorder={0} key={idx}></iframe>;
