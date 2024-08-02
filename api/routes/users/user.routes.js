@@ -12,7 +12,7 @@ const { userPictureUpload } = require("../../middlewares/multer.middleware");
 const { multerErrorsHandler } = require("../../utils/multerErrors");
 const userController = require("../../controllers/users/user.controllers");
 
-router.get("/", authenticate, userController.getUsers);
+router.get("/", userController.getUsers);
 router.get("/:id", authenticate, isBlocked, isPrivate, userController.getUser);
 router.get(
 	"/username/:id",
