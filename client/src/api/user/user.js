@@ -144,6 +144,7 @@ export async function getFollowSuggestions(limit) {
 				headers: {
 					Authorization: `Bearer ${cookies().get("session")?.value}`,
 				},
+
 				next: { tags: ["suggestion"] },
 			}
 		);
