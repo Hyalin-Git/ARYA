@@ -5,17 +5,20 @@ import { redirect } from "next/navigation";
 
 export async function getComment(commentId) {
 	try {
-		const res = await fetch(`http://localhost:5000/api/comments/${commentId}`, {
-			method: "GET",
-			credentials: "include",
-			headers: {
-				Authorization: `Bearer ${cookies().get("session")?.value}`,
-				"Content-Type": "application/json",
-			},
-			next: {
-				tags: ["comment"],
-			},
-		});
+		const res = await fetch(
+			`https://arya-tyxp.vercel.app/api/comments/${commentId}`,
+			{
+				method: "GET",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				next: {
+					tags: ["comment"],
+				},
+			}
+		);
 
 		const data = await res.json();
 
@@ -29,7 +32,7 @@ export async function getComments(postId, type) {
 	try {
 		console.log(type);
 		const res = await fetch(
-			`http://localhost:5000/api/comments?${
+			`https://arya-tyxp.vercel.app/api/comments?${
 				type === "post" ? "postId" : "repostId"
 			}=${postId}`,
 			{
@@ -55,7 +58,7 @@ export async function getComments(postId, type) {
 export default async function deleteComment(commentId, uid) {
 	try {
 		const res = await fetch(
-			`http://localhost:5000/api/comments/${commentId}?userId=${uid}`,
+			`https://arya-tyxp.vercel.app/api/comments/${commentId}?userId=${uid}`,
 			{
 				method: "DELETE",
 				credentials: "include",
@@ -82,7 +85,7 @@ export async function addCommentReaction(commentId, uid, reaction) {
 			reaction: reaction,
 		};
 		const res = await fetch(
-			`http://localhost:5000/api/comments/add-react/${commentId}?userId=${uid}`,
+			`https://arya-tyxp.vercel.app/api/comments/add-react/${commentId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -105,7 +108,7 @@ export async function addCommentReaction(commentId, uid, reaction) {
 export async function deleteCommentReaction(commentId, uid) {
 	try {
 		const res = await fetch(
-			`http://localhost:5000/api/comments/delete-react/${commentId}?userId=${uid}`,
+			`https://arya-tyxp.vercel.app/api/comments/delete-react/${commentId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",

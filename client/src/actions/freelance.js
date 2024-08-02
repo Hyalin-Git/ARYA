@@ -17,14 +17,17 @@ export async function saveFreelance(uid, scheduledTime, prevState, formData) {
 		dataToSend.append("lookingForJob", isLookingForJob);
 		dataToSend.append("availability", scheduledTime);
 
-		const res = await fetch(`http://localhost:5000/api/freelance/${uid}`, {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				Authorization: `Bearer ${cookies().get("session")?.value}`,
-			},
-			body: dataToSend,
-		});
+		const res = await fetch(
+			`https://arya-tyxp.vercel.app/api/freelance/${uid}`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+				},
+				body: dataToSend,
+			}
+		);
 		const data = await res.json();
 		console.log(data);
 
@@ -54,14 +57,17 @@ export async function updateFreelance(uid, scheduledTime, prevState, formData) {
 		dataToSend.append("lookingForJob", isLookingForJob);
 		dataToSend.append("availability", scheduledTime);
 		console.log(dataToSend);
-		const res = await fetch(`http://localhost:5000/api/freelance/${uid}`, {
-			method: "PUT",
-			credentials: "include",
-			headers: {
-				Authorization: `Bearer ${cookies().get("session")?.value}`,
-			},
-			body: dataToSend,
-		});
+		const res = await fetch(
+			`https://arya-tyxp.vercel.app/api/freelance/${uid}`,
+			{
+				method: "PUT",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+				},
+				body: dataToSend,
+			}
+		);
 		const data = await res.json();
 		console.log(data);
 

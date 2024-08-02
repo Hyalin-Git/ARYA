@@ -12,7 +12,7 @@ export async function saveRepost(uid, prevState, formData) {
 		// dataToSend.append("repostId", formData.get("repostId"));
 
 		const response = await fetch(
-			`http://localhost:5000/api/reposts?userId=${uid}`,
+			`https://arya-tyxp.vercel.app/api/reposts?userId=${uid}`,
 			{
 				method: "POST",
 				credentials: "include",
@@ -41,7 +41,7 @@ export async function updateRepost(repostId, uid, prevState, formData) {
 		data.append("text", formData.get("text"));
 		const res = await axios({
 			method: "PUT",
-			url: `http://localhost:5000/api/reposts/${repostId}?userId=${uid}`,
+			url: `https://arya-tyxp.vercel.app/api/reposts/${repostId}?userId=${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,

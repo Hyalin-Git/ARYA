@@ -7,7 +7,7 @@ export async function getUserId() {
 	try {
 		const response = await axios({
 			method: "GET",
-			url: "http://localhost:5000/login/success",
+			url: "https://arya-tyxp.vercel.app/login/success",
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
@@ -39,7 +39,7 @@ export async function decryptToken(token) {
 	try {
 		const response = await axios({
 			method: "GET",
-			url: "http://localhost:5000/login/success",
+			url: "https://arya-tyxp.vercel.app/login/success",
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -78,7 +78,7 @@ export async function getRefreshToken(token, uid) {
 	try {
 		const response = await axios({
 			method: "GET",
-			url: `http://localhost:5000/api/auth/refresh-token?userId=${uid}`,
+			url: `https://arya-tyxp.vercel.app/api/auth/refresh-token?userId=${uid}`,
 			withCredentials: true,
 		});
 
@@ -95,7 +95,7 @@ export async function updateSession(token, uid) {
 	try {
 		const response = await axios({
 			method: "POST",
-			url: "http://localhost:5000/api/auth/refresh-token",
+			url: "https://arya-tyxp.vercel.app/api/auth/refresh-token",
 			withCredentials: true,
 			data: {
 				refreshToken: token,

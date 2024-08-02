@@ -13,14 +13,17 @@ export default async function saveCompany(uid, prevState, formData) {
 			"lookingForEmployees",
 			formData.get("lookingForEmployees") === "on" ? true : false
 		);
-		const res = await fetch(`http://localhost:5000/api/company?userId=${uid}`, {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				Authorization: `Bearer ${cookies().get("session")?.value}`,
-			},
-			body: dataToSend,
-		});
+		const res = await fetch(
+			`https://arya-tyxp.vercel.app/api/company?userId=${uid}`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+				},
+				body: dataToSend,
+			}
+		);
 		const data = await res.json();
 		console.log(data);
 	} catch (err) {
@@ -42,7 +45,7 @@ export async function updateCompany(uid, companyId, prevState, formData) {
 			formData.get("lookingForEmployees") === "on" ? true : false
 		);
 		const res = await fetch(
-			`http://localhost:5000/api/company/${companyId}?userId=${uid}`,
+			`https://arya-tyxp.vercel.app/api/company/${companyId}?userId=${uid}`,
 			{
 				method: "PUT",
 				credentials: "include",

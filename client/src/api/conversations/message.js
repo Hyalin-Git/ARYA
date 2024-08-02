@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 export async function getMessages(conversationId) {
 	try {
 		const response = await fetch(
-			`http://localhost:5000/api/messages?conversationId=${conversationId}`,
+			`https://arya-tyxp.vercel.app/api/messages?conversationId=${conversationId}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -32,7 +32,7 @@ export async function revalidateMessages() {
 export async function addToRead(messageId, uid) {
 	try {
 		const response = await fetch(
-			`http://localhost:5000/api/messages/add-read/${messageId}?userId=${uid}`,
+			`https://arya-tyxp.vercel.app/api/messages/add-read/${messageId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -57,7 +57,7 @@ export async function addToRead(messageId, uid) {
 export async function deleteMessage(messageId, uid) {
 	try {
 		const response = await fetch(
-			`http://localhost:5000/api/messages/${messageId}?userId=${uid}`,
+			`https://arya-tyxp.vercel.app/api/messages/${messageId}?userId=${uid}`,
 			{
 				method: "DELETE",
 				credentials: "include",

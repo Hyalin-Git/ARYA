@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 export async function getAllFeed(offset, limit) {
 	try {
 		const res = await fetch(
-			`http://localhost:5000/api/feed?offset=${offset}&limit=${limit}`,
+			`https://arya-tyxp.vercel.app/api/feed?offset=${offset}&limit=${limit}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -27,7 +27,7 @@ export async function getAllFeed(offset, limit) {
 export async function getFollowingFeed(offset, limit) {
 	try {
 		const res = await fetch(
-			`http://localhost:5000/api/feed/for-me?offset=${offset}&limit=${limit}`,
+			`https://arya-tyxp.vercel.app/api/feed/for-me?offset=${offset}&limit=${limit}`,
 			{
 				method: "GET",
 				credentials: "include",

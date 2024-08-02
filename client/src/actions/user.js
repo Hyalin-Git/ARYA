@@ -19,7 +19,7 @@ export async function updateUserPicture(uid, prevState, formData) {
 		console.log(formData.get("picture"));
 
 		const res = await fetch(
-			`http://localhost:5000/api/users/update-picture/${uid}`,
+			`https://arya-tyxp.vercel.app/api/users/update-picture/${uid}`,
 			{
 				method: "PUT",
 				credentials: "include",
@@ -91,7 +91,7 @@ export async function updateUser(uid, prevState, formData) {
 		};
 
 		const res = await fetch(
-			`http://localhost:5000/api/users/update-user/${uid}`,
+			`https://arya-tyxp.vercel.app/api/users/update-user/${uid}`,
 			{
 				method: "PUT",
 				credentials: "include",
@@ -225,7 +225,7 @@ export async function updateUserSocial(uid, prevState, formData) {
 		};
 
 		const res = await fetch(
-			`http://localhost:5000/api/users/update-social/${uid}`,
+			`https://arya-tyxp.vercel.app/api/users/update-social/${uid}`,
 			{
 				method: "PUT",
 				credentials: "include",
@@ -300,7 +300,7 @@ export async function updateUserTools(uid, tools, prevState, formData) {
 			tools: array,
 		};
 		const res = await fetch(
-			`http://localhost:5000/api/users/update-tools/${uid}`,
+			`https://arya-tyxp.vercel.app/api/users/update-tools/${uid}`,
 			{
 				method: "PUT",
 				credentials: "include",
@@ -374,7 +374,7 @@ export async function sendEmailResetLink(uid, prevState, formData) {
 			newEmail: formData.get("newEmail"),
 		};
 		const res = await fetch(
-			`http://localhost:5000/api/users/email-reset/${uid}`,
+			`https://arya-tyxp.vercel.app/api/users/email-reset/${uid}`,
 			{
 				method: "POST",
 				credentials: "include",
@@ -464,7 +464,7 @@ export async function updateUserPassword(uid, prevState, formData) {
 			confirmNewPassword: formData.get("confirmNewPassword"),
 		};
 		const res = await fetch(
-			`http://localhost:5000/api/users/update-password/${uid}`,
+			`https://arya-tyxp.vercel.app/api/users/update-password/${uid}`,
 			{
 				method: "PUT",
 				credentials: "include",
@@ -508,7 +508,7 @@ export async function updateForgotPassword(prevState, formData) {
 	try {
 		const res = await axios({
 			method: "PUT",
-			url: "http://localhost:5000/api/users/forgot-password",
+			url: "https://arya-tyxp.vercel.app/api/users/forgot-password",
 			withCredentials: true,
 			data: {
 				resetCode: cookies().get("code")?.value,
@@ -601,7 +601,7 @@ export async function blockUser(uid, prevState, formData) {
 			idToBlock: formData.get("idToBlock"),
 		};
 		const response = await fetch(
-			`http://localhost:5000/api/users/block/${uid}`,
+			`https://arya-tyxp.vercel.app/api/users/block/${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -640,7 +640,7 @@ export async function unblockUser(uid, prevState, formData) {
 		};
 		console.log(formData.get("idToUnblock"), "l'id de l'user à débloquer");
 		const response = await fetch(
-			`http://localhost:5000/api/users/unblock/${uid}`,
+			`https://arya-tyxp.vercel.app/api/users/unblock/${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -696,7 +696,7 @@ export async function deleteUserAccount(uid, prevState, formData) {
 		const dataToSend = {
 			password: formData.get("password"),
 		};
-		const res = await fetch(`http://localhost:5000/api/users/${uid}`, {
+		const res = await fetch(`https://arya-tyxp.vercel.app/api/users/${uid}`, {
 			method: "DELETE",
 			credentials: "include",
 			headers: {
