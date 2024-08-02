@@ -6,7 +6,7 @@ export async function verifyEmail(id, token) {
 	try {
 		const res = await axios({
 			method: "PUT",
-			url: `http://arya-tyxp.vercel.app/api/verification/${id}/verify/${token}`,
+			url: `http://arya-4pmj.onrender.com/api/verification/${id}/verify/${token}`,
 			withCredentials: true,
 		});
 
@@ -21,7 +21,7 @@ export async function verifyNewEmail(id, token) {
 	try {
 		const res = await axios({
 			method: "PUT",
-			url: `http://arya-tyxp.vercel.app/api/verification/${id}/new-email-verify/${token}`,
+			url: `http://arya-4pmj.onrender.com/api/verification/${id}/new-email-verify/${token}`,
 			withCredentials: true,
 		});
 

@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export async function getRepost(repostId) {
 	try {
 		const res = await fetch(
-			`http://arya-tyxp.vercel.app/api/reposts/${repostId}`,
+			`http://arya-4pmj.onrender.com/api/reposts/${repostId}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -31,7 +31,7 @@ export async function getRepost(repostId) {
 export async function getReposts(reposterId, sortByDate) {
 	try {
 		const res = await fetch(
-			`http://arya-tyxp.vercel.app/api/reposts?reposterId=${reposterId}`,
+			`http://arya-4pmj.onrender.com/api/reposts?reposterId=${reposterId}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -56,7 +56,7 @@ export async function getReposts(reposterId, sortByDate) {
 export default async function deleteRepost(repostId, uid) {
 	try {
 		const res = await fetch(
-			`http://arya-tyxp.vercel.app/api/reposts/${repostId}?userId=${uid}`,
+			`http://arya-4pmj.onrender.com/api/reposts/${repostId}?userId=${uid}`,
 			{
 				method: "DELETE",
 				credentials: "include",
@@ -83,7 +83,7 @@ export async function addRepostReaction(repostId, uid, reaction) {
 			reaction: reaction,
 		};
 		const res = await fetch(
-			`http://arya-tyxp.vercel.app/api/reposts/add-react/${repostId}?userId=${uid}`,
+			`http://arya-4pmj.onrender.com/api/reposts/add-react/${repostId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -106,7 +106,7 @@ export async function addRepostReaction(repostId, uid, reaction) {
 export async function deleteRepostReaction(repostId, uid) {
 	try {
 		const res = await fetch(
-			`http://arya-tyxp.vercel.app/api/reposts/delete-react/${repostId}?userId=${uid}`,
+			`http://arya-4pmj.onrender.com/api/reposts/delete-react/${repostId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",

@@ -7,7 +7,7 @@ import { decryptToken, getUserId } from "./auth";
 export async function getUsers(interest, limit) {
 	try {
 		const res = await fetch(
-			`http://arya-tyxp.vercel.app/api/users?limit=${
+			`http://arya-4pmj.onrender.com/api/users?limit=${
 				limit ? limit : ""
 			}&interest=${interest ? interest : ""}`,
 			{
@@ -35,7 +35,7 @@ export async function getUser(uid) {
 	try {
 		const res = await axios({
 			method: "GET",
-			url: `http://arya-tyxp.vercel.app/api/users/${uid}`,
+			url: `http://arya-4pmj.onrender.com/api/users/${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
@@ -56,7 +56,7 @@ export async function getUser(uid) {
 export async function getUserByUsername(username) {
 	try {
 		const res = await fetch(
-			`http://arya-tyxp.vercel.app/api/users/username/${username}`,
+			`http://arya-4pmj.onrender.com/api/users/username/${username}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -81,7 +81,7 @@ export async function getUserByUsername(username) {
 export async function getUserLikes(userId) {
 	try {
 		const res = await fetch(
-			`http://arya-tyxp.vercel.app/api/users/likes/${userId}`,
+			`http://arya-4pmj.onrender.com/api/users/likes/${userId}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -109,7 +109,7 @@ export async function getBlockedUsers() {
 	try {
 		const uid = await getUserId();
 		const response = await fetch(
-			`http://arya-tyxp.vercel.app/api/users/block/${uid}`,
+			`http://arya-4pmj.onrender.com/api/users/block/${uid}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -134,31 +134,34 @@ export async function getBlockedUsers() {
 export async function getFollowSuggestions(limit) {
 	try {
 		const uid = await getUserId();
-		const response = await axios.get(
-			`http://arya-tyxp.vercel.app/api/users/suggestion/${uid}`,
+		const response = await fetch(
+			`http://arya-4pmj.onrender.com/api/users/suggestion/${uid}?limit=${
+				limit || 3
+			}`,
 			{
-				params: {
-					limit: limit || 3,
-				},
+				method: "GET",
+				credentials: "include",
 				headers: {
 					Authorization: `Bearer ${cookies().get("session")?.value}`,
 				},
-				withCredentials: true,
-				// Remarque : la configuration "next: { tags: ['suggestion'] }" n'est pas directement applicable avec axios,
-				// vous devrez peut-être gérer cette partie séparément selon vos besoins.
+				next: { tags: ["suggestion"] },
 			}
 		);
 
-		return response.data;
+		const data = await response.json();
+
+		console.log(data);
+		return data;
 	} catch (err) {
 		console.log(err);
 	}
 }
+
 export async function follow(uid, idToFollow) {
 	try {
 		console.log(uid, idToFollow);
 		const response = await fetch(
-			`http://arya-tyxp.vercel.app/api/users/follow?userId=${uid}&idToFollow=${idToFollow}`,
+			`http://arya-4pmj.onrender.com/api/users/follow?userId=${uid}&idToFollow=${idToFollow}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -181,7 +184,7 @@ export async function follow(uid, idToFollow) {
 export async function unFollow(uid, idToUnfollow) {
 	try {
 		const response = await fetch(
-			`http://arya-tyxp.vercel.app/api/users/unfollow?userId=${uid}&idToUnfollow=${idToUnfollow}`,
+			`http://arya-4pmj.onrender.com/api/users/unfollow?userId=${uid}&idToUnfollow=${idToUnfollow}`,
 			{
 				method: "PATCH",
 				credentials: "include",

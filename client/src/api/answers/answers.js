@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 export default async function getAnswers(commentId) {
 	try {
 		const response = await fetch(
-			`http://arya-tyxp.vercel.app/api/answers?commentId=${commentId}`,
+			`http://arya-4pmj.onrender.com/api/answers?commentId=${commentId}`,
 			{
 				method: "GET",
 				credentials: "include",

@@ -9,7 +9,7 @@ export async function getConversations() {
 		const uid = await getUserId();
 
 		const response = await fetch(
-			`http://arya-tyxp.vercel.app/api/conversations?userId=${uid}`,
+			`http://arya-4pmj.onrender.com/api/conversations?userId=${uid}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -20,12 +20,8 @@ export async function getConversations() {
 				next: { tags: ["conversations"] },
 			}
 		);
-		console.log(`Request Headers:`, {
-			Authorization: `Bearer ${cookies().get("session")?.value}`,
-		});
-		const data = await response.json();
 
-		console.log(data);
+		const data = await response.json();
 
 		return data;
 	} catch (err) {
@@ -41,7 +37,7 @@ export async function getConversation(conversationId, otherUserId) {
 	try {
 		const uid = await getUserId();
 		const response = await fetch(
-			`http://arya-tyxp.vercel.app/api/conversations/${conversationId}?userId=${uid}&otherUserId=${otherUserId}`,
+			`http://arya-4pmj.onrender.com/api/conversations/${conversationId}?userId=${uid}&otherUserId=${otherUserId}`,
 			{
 				method: "GET",
 				credentials: "include",
