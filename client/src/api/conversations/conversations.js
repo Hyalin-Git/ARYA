@@ -7,19 +7,25 @@ import { revalidateTag } from "next/cache";
 export async function getConversations() {
 	try {
 		const uid = await getUserId();
+
 		const response = await fetch(
 			`http://arya-tyxp.vercel.app/api/conversations?userId=${uid}`,
 			{
 				method: "GET",
 				credentials: "include",
+
 				headers: {
-					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					authorization: `Bearer ${cookies().get("session")?.value}`,
 				},
 				next: { tags: ["conversations"] },
 			}
 		);
-
+		console.log(`Request Headers:`, {
+			Authorization: `Bearer ${cookies().get("session")?.value}`,
+		});
 		const data = await response.json();
+
+		console.log(data);
 
 		return data;
 	} catch (err) {

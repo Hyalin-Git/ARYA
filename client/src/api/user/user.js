@@ -134,28 +134,26 @@ export async function getBlockedUsers() {
 export async function getFollowSuggestions(limit) {
 	try {
 		const uid = await getUserId();
-		const response = await fetch(
-			`http://arya-tyxp.vercel.app/api/users/suggestion/${uid}?limit=${
-				limit || 3
-			}`,
+		const response = await axios.get(
+			`http://arya-tyxp.vercel.app/api/users/suggestion/${uid}`,
 			{
-				method: "GET",
-				credentials: "include",
+				params: {
+					limit: limit || 3,
+				},
 				headers: {
 					Authorization: `Bearer ${cookies().get("session")?.value}`,
 				},
-				next: { tags: ["suggestion"] },
+				withCredentials: true,
+				// Remarque : la configuration "next: { tags: ['suggestion'] }" n'est pas directement applicable avec axios,
+				// vous devrez peut-être gérer cette partie séparément selon vos besoins.
 			}
 		);
 
-		const data = await response.json();
-
-		return data;
+		return response.data;
 	} catch (err) {
 		console.log(err);
 	}
 }
-
 export async function follow(uid, idToFollow) {
 	try {
 		console.log(uid, idToFollow);

@@ -27,18 +27,18 @@ export default function ConversationPanel({ conversations }) {
 
 	const isOpenedConv = openedConv === null ? false : true;
 
-	useEffect(() => {
-		if (!conversations?.error) {
-			const count = conversations.filter(
-				(conversation) =>
-					conversation.latestMessage &&
-					!conversation.latestMessage.readBy.includes(uid)
-			).length;
-			console.log(count);
+	// useEffect(() => {
+	// 	if (!conversations?.error) {
+	// 		const count = conversations.filter(
+	// 			(conversation) =>
+	// 				conversation.latestMessage &&
+	// 				!conversation.latestMessage.readBy.includes(uid)
+	// 		).length;
+	// 		console.log(count);
 
-			setNewMessage(count);
-		}
-	}, [conversations]);
+	// 		setNewMessage(count);
+	// 	}
+	// }, [conversations]);
 
 	useEffect(() => {
 		revalidateConversations();
