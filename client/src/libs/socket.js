@@ -1,6 +1,6 @@
 "use client";
 
 import { io } from "socket.io-client";
-const socket = io("http://arya-4pmj.onrender.com");
+const socket = io("https://arya-tyxp.vercel.app");
 
 export default socket;

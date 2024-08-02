@@ -18,7 +18,7 @@ export async function saveFreelance(uid, scheduledTime, prevState, formData) {
 		dataToSend.append("availability", scheduledTime);
 
 		const res = await fetch(
-			`http://arya-4pmj.onrender.com/api/freelance/${uid}`,
+			`https://arya-tyxp.vercel.app/api/freelance/${uid}`,
 			{
 				method: "POST",
 				credentials: "include",
@@ -58,7 +58,7 @@ export async function updateFreelance(uid, scheduledTime, prevState, formData) {
 		dataToSend.append("availability", scheduledTime);
 		console.log(dataToSend);
 		const res = await fetch(
-			`http://arya-4pmj.onrender.com/api/freelance/${uid}`,
+			`https://arya-tyxp.vercel.app/api/freelance/${uid}`,
 			{
 				method: "PUT",
 				credentials: "include",

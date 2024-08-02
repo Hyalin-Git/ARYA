@@ -24,7 +24,7 @@ export async function saveComment(uid, postId, type, prevState, formData) {
 		}
 		const res = await axios({
 			method: "POST",
-			url: `http://arya-4pmj.onrender.com/api/comments?userId=${uid}`,
+			url: `https://arya-tyxp.vercel.app/api/comments?userId=${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
@@ -50,7 +50,7 @@ export async function updateComment(commentId, uid, prevState, formData) {
 		data.append("text", formData.get("text"));
 		const res = await axios({
 			method: "PUT",
-			url: `http://arya-4pmj.onrender.com/api/comments/${commentId}?userId=${uid}`,
+			url: `https://arya-tyxp.vercel.app/api/comments/${commentId}?userId=${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,

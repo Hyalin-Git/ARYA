@@ -9,11 +9,11 @@ export async function getConversations() {
 		const uid = await getUserId();
 
 		const response = await fetch(
-			`http://arya-4pmj.onrender.com/api/conversations?userId=${uid}`,
+			`https://arya-tyxp.vercel.app/api/conversations?userId=${uid}`,
 			{
 				method: "GET",
 				credentials: "include",
-			
+
 				headers: {
 					authorization: `Bearer ${cookies().get("session")?.value}`,
 					"Access-Control-Allow-Origin": "http://localhost:3000:",
@@ -38,7 +38,7 @@ export async function getConversation(conversationId, otherUserId) {
 	try {
 		const uid = await getUserId();
 		const response = await fetch(
-			`http://arya-4pmj.onrender.com/api/conversations/${conversationId}?userId=${uid}&otherUserId=${otherUserId}`,
+			`https://arya-tyxp.vercel.app/api/conversations/${conversationId}?userId=${uid}&otherUserId=${otherUserId}`,
 			{
 				method: "GET",
 				credentials: "include",

@@ -9,7 +9,7 @@ export default async function saveAnswer(uid, prevState, formData) {
 		dataToSend.append("commentId", formData.get("commentId"));
 
 		const response = await fetch(
-			`http://arya-4pmj.onrender.com/api/answers?userId=${uid}`,
+			`https://arya-tyxp.vercel.app/api/answers?userId=${uid}`,
 			{
 				method: "POST",
 				credentials: "include",
