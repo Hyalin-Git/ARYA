@@ -3,7 +3,6 @@ const UserModel = require("../models/users/User.model");
 
 exports.authenticate = (req, res, next) => {
 	const token = req.headers?.authorization?.split(" ")[1];
-	console.log(req.headers?.authorization);
 
 	if (!token) {
 		const getId = req.url.split("/")[1];

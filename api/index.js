@@ -55,7 +55,7 @@ const app = express();
 // const httpsServer = https.createServer(credentials, app);
 
 const corsOptions = {
-	origin: `http://localhost:3000`,
+	origin: `*`,
 	credentials: true,
 	allowedHeaders: ["sessionId", "Content-Type"],
 	exposedHeaders: ["sessionId"],
