@@ -141,8 +141,10 @@ export async function getFollowSuggestions(limit) {
 			{
 				method: "GET",
 				credentials: "include",
+
 				headers: {
 					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Access-Control-Allow-Origin": "http://localhost:3000:",
 				},
 
 				next: { tags: ["suggestion"] },

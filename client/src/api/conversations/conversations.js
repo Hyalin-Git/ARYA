@@ -13,9 +13,10 @@ export async function getConversations() {
 			{
 				method: "GET",
 				credentials: "include",
-
+			
 				headers: {
 					authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Access-Control-Allow-Origin": "http://localhost:3000:",
 				},
 				next: { tags: ["conversations"] },
 			}
