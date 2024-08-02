@@ -4,6 +4,18 @@ import moment from "moment";
 import "moment/locale/fr"; // without this line it didn't work
 import { z } from "./zodConfig";
 
+export function extractURL(text) {
+	const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/g;
+	const matches = [];
+	let match;
+
+	while ((match = urlRegex.exec(text)) !== null) {
+		matches.push(match[0]);
+	}
+
+	return matches;
+}
+
 export function capitalizeFirstLetter(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }

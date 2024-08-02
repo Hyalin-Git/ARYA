@@ -38,6 +38,8 @@
 	background-color: white;
 	padding: 10px;
 	border-radius: 8px;
+	max-width: 250px;
+	width: fit-content;
 	transition: 150ms linear all;
 }
 
@@ -58,9 +60,24 @@
 	margin: 0;
 	font-size: 0.9rem;
 	font-weight: 500;
+	word-break: break-all;
 }
 .container[data-self="true"] .text p {
 	color: white;
+}
+
+.text a {
+	text-decoration: underline;
+	color: #77b5fe;
+}
+.text a:visited {
+	color: white;
+}
+.text iframe {
+	margin-top: 10px;
+	width: 230px;
+	height: 200px;
+	border-radius: 8px;
 }
 
 /* MEDIA  */

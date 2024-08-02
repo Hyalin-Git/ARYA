@@ -1,6 +1,6 @@
 import { addToRead, getMessages } from "@/api/conversations/message";
 import socket from "@/libs/socket";
-import { checkIfEmpty } from "@/libs/utils";
+import { checkIfEmpty, extractURL } from "@/libs/utils";
 import styles from "@/styles/components/chat/chat.module.css";
 import { faCircle, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -54,8 +54,6 @@ export default function ChatBody({
 			if (pendingMessages.length > 0) {
 				setPendingMessages((prev) => prev.slice(1));
 			}
-
-			// and add the uid into the readBy array in the message model
 		});
 
 		socket.on("updated-message", (res) => {
@@ -95,13 +93,15 @@ export default function ChatBody({
 		if (data) {
 			setMessages(data);
 		}
+		// Filter every unread message
 		const unReadMessages = messages.filter(
 			(message) => !message.readBy.includes(uid)
 		);
+
+		// then for each message who is not read, add the uid of the user in the readBy array
 		for (const unReadMessage of unReadMessages) {
 			addToRead(unReadMessage._id, uid);
 		}
-		console.log("tous les un read msg");
 	}, [data]);
 
 	return (

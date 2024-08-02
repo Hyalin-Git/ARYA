@@ -1,11 +1,34 @@
 "use server";
 
+import { extractURL } from "@/libs/utils";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 export async function saveMessage(uid, prevState, formData) {
 	try {
+		let message = formData.get("message");
 		const dataToSend = new FormData();
-		dataToSend.append("content", formData.get("message"));
+		const urls = extractURL(message);
+
+		if (urls.length > 0) {
+			let modifiedMessage = message;
+			for (let i = 0; i < urls.length; i++) {
+				if (
+					urls[i].includes("https://www.yout") ||
+					urls[i].includes("https://yout")
+				) {
+					const element = urls[i];
+					let modifiedElement = element.replace("watch?v=", "embed/");
+					modifiedElement = modifiedElement.split("&")[0];
+
+					modifiedMessage = modifiedMessage.replace(element, modifiedElement);
+				}
+			}
+
+			dataToSend.append("content", modifiedMessage);
+		} else {
+			dataToSend.append("content", message);
+		}
+
 		dataToSend.append("conversationId", formData.get("conversationId"));
 		if (formData.get("img")?.name !== "undefined") {
 			const mediaFiles = formData.getAll("img");
