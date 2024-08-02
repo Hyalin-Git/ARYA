@@ -38,7 +38,7 @@ export async function saveMessage(uid, prevState, formData) {
 		}
 
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/messages?userId=${uid}`,
+			`http://arya-tyxp.vercel.app/api/messages?userId=${uid}`,
 			{
 				method: "POST",
 				credentials: "include",
@@ -67,7 +67,7 @@ export async function updateMessage(uid, messageId, prevState, formData) {
 		dataToSend.append("content", formData.get("content"));
 
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/messages/${messageId}?userId=${uid}`,
+			`http://arya-tyxp.vercel.app/api/messages/${messageId}?userId=${uid}`,
 			{
 				method: "PUT",
 				credentials: "include",

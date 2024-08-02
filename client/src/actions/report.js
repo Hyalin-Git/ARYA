@@ -14,7 +14,7 @@ export async function saveReportPost(uid, prevState, formData) {
 		console.log(formData.get("message"));
 
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/post/report?userId=${uid}`,
+			`http://arya-tyxp.vercel.app/api/post/report?userId=${uid}`,
 			{
 				method: "POST",
 				credentials: "include",

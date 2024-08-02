@@ -8,7 +8,7 @@ export async function getConversations() {
 	try {
 		const uid = await getUserId();
 		const response = await fetch(
-			`https://arya-tyxp.vercel.app/api/conversations?userId=${uid}`,
+			`http://arya-tyxp.vercel.app/api/conversations?userId=${uid}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -35,7 +35,7 @@ export async function getConversation(conversationId, otherUserId) {
 	try {
 		const uid = await getUserId();
 		const response = await fetch(
-			`https://arya-tyxp.vercel.app/api/conversations/${conversationId}?userId=${uid}&otherUserId=${otherUserId}`,
+			`http://arya-tyxp.vercel.app/api/conversations/${conversationId}?userId=${uid}&otherUserId=${otherUserId}`,
 			{
 				method: "GET",
 				credentials: "include",

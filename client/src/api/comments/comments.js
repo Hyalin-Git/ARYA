@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export async function getComment(commentId) {
 	try {
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/comments/${commentId}`,
+			`http://arya-tyxp.vercel.app/api/comments/${commentId}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -32,7 +32,7 @@ export async function getComments(postId, type) {
 	try {
 		console.log(type);
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/comments?${
+			`http://arya-tyxp.vercel.app/api/comments?${
 				type === "post" ? "postId" : "repostId"
 			}=${postId}`,
 			{
@@ -58,7 +58,7 @@ export async function getComments(postId, type) {
 export default async function deleteComment(commentId, uid) {
 	try {
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/comments/${commentId}?userId=${uid}`,
+			`http://arya-tyxp.vercel.app/api/comments/${commentId}?userId=${uid}`,
 			{
 				method: "DELETE",
 				credentials: "include",
@@ -85,7 +85,7 @@ export async function addCommentReaction(commentId, uid, reaction) {
 			reaction: reaction,
 		};
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/comments/add-react/${commentId}?userId=${uid}`,
+			`http://arya-tyxp.vercel.app/api/comments/add-react/${commentId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -108,7 +108,7 @@ export async function addCommentReaction(commentId, uid, reaction) {
 export async function deleteCommentReaction(commentId, uid) {
 	try {
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/comments/delete-react/${commentId}?userId=${uid}`,
+			`http://arya-tyxp.vercel.app/api/comments/delete-react/${commentId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",

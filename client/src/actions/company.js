@@ -14,7 +14,7 @@ export default async function saveCompany(uid, prevState, formData) {
 			formData.get("lookingForEmployees") === "on" ? true : false
 		);
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/company?userId=${uid}`,
+			`http://arya-tyxp.vercel.app/api/company?userId=${uid}`,
 			{
 				method: "POST",
 				credentials: "include",
@@ -45,7 +45,7 @@ export async function updateCompany(uid, companyId, prevState, formData) {
 			formData.get("lookingForEmployees") === "on" ? true : false
 		);
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/company/${companyId}?userId=${uid}`,
+			`http://arya-tyxp.vercel.app/api/company/${companyId}?userId=${uid}`,
 			{
 				method: "PUT",
 				credentials: "include",

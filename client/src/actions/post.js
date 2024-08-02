@@ -30,7 +30,7 @@ export async function savePost(uid, scheduledTime, prevState, formData) {
 
 		const res = await axios({
 			method: "POST",
-			url: `https://arya-tyxp.vercel.app/api/posts?userId=${uid}`,
+			url: `http://arya-tyxp.vercel.app/api/posts?userId=${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
@@ -55,7 +55,7 @@ export async function updatePost(postId, uid, prevState, formData) {
 		data.append("text", formData.get("text"));
 		const res = await axios({
 			method: "PUT",
-			url: `https://arya-tyxp.vercel.app/api/posts/${postId}?userId=${uid}`,
+			url: `http://arya-tyxp.vercel.app/api/posts/${postId}?userId=${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
