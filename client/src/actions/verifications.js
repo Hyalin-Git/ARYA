@@ -6,7 +6,7 @@ export async function reSendVerifyEmail(prevState, formData) {
 	try {
 		const res = await axios({
 			method: "POST",
-			url: `https://arya-tyxp.vercel.app/api/verification/send-verification-mail`,
+			url: `https://arya-jnnv.onrender.com/api/verification/send-verification-mail`,
 			withCredentials: true,
 			data: {
 				userEmail: formData.get("email"),
@@ -50,7 +50,7 @@ export async function verifyResetPasswordCode(prevState, formData) {
 	try {
 		const res = await axios({
 			method: "PUT",
-			url: "https://arya-tyxp.vercel.app/api/verification/reset-code-verify",
+			url: "https://arya-jnnv.onrender.com/api/verification/reset-code-verify",
 			withCredentials: true,
 			data: {
 				resetCode: formData.get("code"),

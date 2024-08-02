@@ -60,7 +60,7 @@ const corsOptions = {
 	allowedHeaders: ["sessionId", "Content-Type", "Authorization"],
 	exposedHeaders: ["sessionId"],
 	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-	preflightContinue: false,
+	preflightContinue: true,
 };
 
 app.use(cors(corsOptions));
@@ -123,8 +123,10 @@ const io = require("socket.io")(server, {
 	cors: {
 		origin: "*",
 		methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+		transports: ["websocket", "polling"],
 		credentials: true,
 	},
+	allowEIO3: true,
 });
 
 io.on("connection", (socket) => {

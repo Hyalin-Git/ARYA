@@ -40,7 +40,7 @@ export async function createUser(prevState, formData) {
 
 		const res = await axios({
 			method: "POST",
-			url: "https://arya-tyxp.vercel.app/api/auth/signUp",
+			url: "https://arya-jnnv.onrender.com/api/auth/signUp",
 			withCredentials: true,
 			data: data,
 			headers: {
@@ -179,7 +179,7 @@ export async function logIn(prevState, formData) {
 	try {
 		const response = await axios({
 			method: "POST",
-			url: "https://arya-tyxp.vercel.app/api/auth/signIn",
+			url: "https://arya-jnnv.onrender.com/api/auth/signIn",
 			withCredentials: true,
 
 			data: {
@@ -224,7 +224,7 @@ export async function sendResetCode(prevState, formData) {
 	try {
 		const response = await axios({
 			method: "POST",
-			url: "https://arya-tyxp.vercel.app/api/users/forgot-password",
+			url: "https://arya-jnnv.onrender.com/api/users/forgot-password",
 			withCredentials: true,
 			data: {
 				userEmail: formData.get("email"),

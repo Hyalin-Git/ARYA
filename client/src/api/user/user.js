@@ -7,7 +7,7 @@ import { decryptToken, getUserId } from "./auth";
 export async function getUsers(interest, limit) {
 	try {
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/users?limit=${
+			`https://arya-jnnv.onrender.com/api/users?limit=${
 				limit ? limit : ""
 			}&interest=${interest ? interest : ""}`,
 			{
@@ -35,7 +35,7 @@ export async function getUser(uid) {
 	try {
 		const res = await axios({
 			method: "GET",
-			url: `https://arya-tyxp.vercel.app/api/users/${uid}`,
+			url: `https://arya-jnnv.onrender.com/api/users/${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
@@ -56,7 +56,7 @@ export async function getUser(uid) {
 export async function getUserByUsername(username) {
 	try {
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/users/username/${username}`,
+			`https://arya-jnnv.onrender.com/api/users/username/${username}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -81,7 +81,7 @@ export async function getUserByUsername(username) {
 export async function getUserLikes(userId) {
 	try {
 		const res = await fetch(
-			`https://arya-tyxp.vercel.app/api/users/likes/${userId}`,
+			`https://arya-jnnv.onrender.com/api/users/likes/${userId}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -109,7 +109,7 @@ export async function getBlockedUsers() {
 	try {
 		const uid = await getUserId();
 		const response = await fetch(
-			`https://arya-tyxp.vercel.app/api/users/block/${uid}`,
+			`https://arya-jnnv.onrender.com/api/users/block/${uid}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -135,7 +135,7 @@ export async function getFollowSuggestions(limit) {
 	try {
 		const uid = await getUserId();
 		const response = await fetch(
-			`https://arya-tyxp.vercel.app/api/users/suggestion/${uid}?limit=${
+			`https://arya-jnnv.onrender.com/api/users/suggestion/${uid}?limit=${
 				limit || 3
 			}`,
 			{
@@ -164,7 +164,7 @@ export async function follow(uid, idToFollow) {
 	try {
 		console.log(uid, idToFollow);
 		const response = await fetch(
-			`https://arya-tyxp.vercel.app/api/users/follow?userId=${uid}&idToFollow=${idToFollow}`,
+			`https://arya-jnnv.onrender.com/api/users/follow?userId=${uid}&idToFollow=${idToFollow}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -187,7 +187,7 @@ export async function follow(uid, idToFollow) {
 export async function unFollow(uid, idToUnfollow) {
 	try {
 		const response = await fetch(
-			`https://arya-tyxp.vercel.app/api/users/unfollow?userId=${uid}&idToUnfollow=${idToUnfollow}`,
+			`https://arya-jnnv.onrender.com/api/users/unfollow?userId=${uid}&idToUnfollow=${idToUnfollow}`,
 			{
 				method: "PATCH",
 				credentials: "include",
