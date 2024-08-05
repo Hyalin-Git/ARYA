@@ -4,6 +4,39 @@
 	/* height: 50px; */
 	background-color: white;
 }
+
+.preview {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	max-height: 200px;
+	overflow-y: auto;
+}
+.preview div {
+	position: relative;
+	background-color: #f1f1f1;
+	max-width: 150px;
+	padding: 10px;
+	border-radius: 8px;
+}
+
+.remove {
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	right: 15px;
+	top: 15px;
+	background-color: rgba(0, 0, 0, 0.349);
+	border-radius: 50%;
+	padding: 5px;
+	cursor: pointer;
+	color: var(--meteorite-color);
+}
+.preview img {
+	width: 100%;
+	height: 120px;
+	object-fit: cover;
+}
 .container form {
 	display: flex;
 	align-items: center;
@@ -15,8 +48,8 @@
 }
 
 .input textarea {
+	max-height: 100px;
 	overflow: hidden;
-	width: 100%;
 }
 
 .ellipsis {

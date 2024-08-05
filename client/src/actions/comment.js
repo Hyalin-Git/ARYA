@@ -24,7 +24,7 @@ export async function saveComment(uid, postId, type, prevState, formData) {
 		}
 		const res = await axios({
 			method: "POST",
-			url: `https://arya-jnnv.onrender.com/api/comments?userId=${uid}`,
+			url: `${process.env.API_URI}/api/comments?userId=${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
@@ -50,7 +50,7 @@ export async function updateComment(commentId, uid, prevState, formData) {
 		data.append("text", formData.get("text"));
 		const res = await axios({
 			method: "PUT",
-			url: `https://arya-jnnv.onrender.com/api/comments/${commentId}?userId=${uid}`,
+			url: `${process.env.API_URI}/api/comments/${commentId}?userId=${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,

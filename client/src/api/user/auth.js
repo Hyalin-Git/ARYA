@@ -7,7 +7,7 @@ export async function getUserId() {
 	try {
 		const response = await axios({
 			method: "GET",
-			url: "https://arya-jnnv.onrender.com/login/success",
+			url: `${process.env.API_URI}/login/success`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
@@ -39,7 +39,7 @@ export async function decryptToken(token) {
 	try {
 		const response = await axios({
 			method: "GET",
-			url: "https://arya-jnnv.onrender.com/login/success",
+			url: `${process.env.API_URI}/login/success`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -78,7 +78,7 @@ export async function getRefreshToken(token, uid) {
 	try {
 		const response = await axios({
 			method: "GET",
-			url: `https://arya-jnnv.onrender.com/api/auth/refresh-token?userId=${uid}`,
+			url: `${process.env.API_URI}/api/auth/refresh-token?userId=${uid}`,
 			withCredentials: true,
 		});
 
@@ -95,7 +95,7 @@ export async function updateSession(token, uid) {
 	try {
 		const response = await axios({
 			method: "POST",
-			url: "https://arya-jnnv.onrender.com/api/auth/refresh-token",
+			url: `${process.env.API_URI}/api/auth/refresh-token`,
 			withCredentials: true,
 			data: {
 				refreshToken: token,

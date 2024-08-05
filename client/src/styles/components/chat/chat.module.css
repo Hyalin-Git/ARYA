@@ -165,11 +165,15 @@
 	width: fit-content;
 	transition: 150ms linear all;
 }
-.text p {
+.text pre {
 	margin: 0;
 	font-size: 0.9rem;
 	font-weight: 500;
-	word-break: break-all;
+	white-space: pre-wrap; /* Since CSS 2.1 */
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
 .message[data-self="true"] .text div {
@@ -185,7 +189,7 @@
 	cursor: pointer;
 }
 
-.message[data-self="true"] .text p {
+.message[data-self="true"] .text pre {
 	color: #f1f1f1;
 }
 

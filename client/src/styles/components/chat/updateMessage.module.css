@@ -2,10 +2,15 @@
 	background-color: var(--meteorite-color);
 	padding: 10px;
 	border-radius: 8px;
+	margin-bottom: 10px;
+	max-width: 250px;
 }
 
-.container input {
-	background-color: red;
+.container textarea {
+	background-color: #f1f1f1;
+	border: none;
+	max-height: 200px;
+	overflow: hidden;
 }
 
 .media {
@@ -18,17 +23,24 @@
 }
 
 .buttons {
-	margin-top: 10px;
-	display: flex;
-	justify-content: flex-end;
-	gap: 5px;
+	margin-top: 5px;
+}
+.buttons p {
+	font-size: 0.7rem;
+	margin: 0;
+	color: white !important;
 }
 .buttons button {
 	background-color: transparent;
 	background-image: inherit;
 	box-shadow: inherit;
-	font-size: 0.8rem;
+	font-size: 0.7rem;
 	padding: 0;
+	color: #50afe4;
+}
+
+.buttons button:hover {
+	text-decoration: underline;
 }
 .buttons button:last-child {
 	/* font-weight: 500; */

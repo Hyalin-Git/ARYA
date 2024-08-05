@@ -7,9 +7,9 @@ import { decryptToken, getUserId } from "./auth";
 export async function getUsers(interest, limit) {
 	try {
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/users?limit=${
-				limit ? limit : ""
-			}&interest=${interest ? interest : ""}`,
+			`${process.env.API_URI}/api/users?limit=${limit ? limit : ""}&interest=${
+				interest ? interest : ""
+			}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -35,7 +35,7 @@ export async function getUser(uid) {
 	try {
 		const res = await axios({
 			method: "GET",
-			url: `https://arya-jnnv.onrender.com/api/users/${uid}`,
+			url: `${process.env.API_URI}/api/users/${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,
@@ -56,7 +56,7 @@ export async function getUser(uid) {
 export async function getUserByUsername(username) {
 	try {
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/users/username/${username}`,
+			`${process.env.API_URI}/api/users/username/${username}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -81,7 +81,7 @@ export async function getUserByUsername(username) {
 export async function getUserLikes(userId) {
 	try {
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/users/likes/${userId}`,
+			`${process.env.API_URI}/api/users/likes/${userId}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -109,7 +109,7 @@ export async function getBlockedUsers() {
 	try {
 		const uid = await getUserId();
 		const response = await fetch(
-			`https://arya-jnnv.onrender.com/api/users/block/${uid}`,
+			`${process.env.API_URI}/api/users/block/${uid}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -135,9 +135,7 @@ export async function getFollowSuggestions(limit) {
 	try {
 		const uid = await getUserId();
 		const response = await fetch(
-			`https://arya-jnnv.onrender.com/api/users/suggestion/${uid}?limit=${
-				limit || 3
-			}`,
+			`${process.env.API_URI}/api/users/suggestion/${uid}?limit=${limit || 3}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -153,7 +151,6 @@ export async function getFollowSuggestions(limit) {
 
 		const data = await response.json();
 
-		console.log(data);
 		return data;
 	} catch (err) {
 		console.log(err);
@@ -164,7 +161,7 @@ export async function follow(uid, idToFollow) {
 	try {
 		console.log(uid, idToFollow);
 		const response = await fetch(
-			`https://arya-jnnv.onrender.com/api/users/follow?userId=${uid}&idToFollow=${idToFollow}`,
+			`${process.env.API_URI}/api/users/follow?userId=${uid}&idToFollow=${idToFollow}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -187,7 +184,7 @@ export async function follow(uid, idToFollow) {
 export async function unFollow(uid, idToUnfollow) {
 	try {
 		const response = await fetch(
-			`https://arya-jnnv.onrender.com/api/users/unfollow?userId=${uid}&idToUnfollow=${idToUnfollow}`,
+			`${process.env.API_URI}/api/users/unfollow?userId=${uid}&idToUnfollow=${idToUnfollow}`,
 			{
 				method: "PATCH",
 				credentials: "include",

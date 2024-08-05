@@ -5,20 +5,17 @@ import { redirect } from "next/navigation";
 
 export async function getPost(postId) {
 	try {
-		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/posts/${postId}`,
-			{
-				method: "GET",
-				credentials: "include",
-				headers: {
-					Authorization: `Bearer ${cookies().get("session")?.value}`,
-					"Content-Type": "application/json",
-				},
-				next: {
-					tags: ["post"],
-				},
-			}
-		);
+		const res = await fetch(`${process.env.API_URI}/api/posts/${postId}`, {
+			method: "GET",
+			credentials: "include",
+			headers: {
+				Authorization: `Bearer ${cookies().get("session")?.value}`,
+				"Content-Type": "application/json",
+			},
+			next: {
+				tags: ["post"],
+			},
+		});
 
 		const data = await res.json();
 
@@ -31,7 +28,7 @@ export async function getPost(postId) {
 export async function getPosts(posterId, sortByDate) {
 	try {
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/posts?posterId=${posterId}&sortByDate=${sortByDate}`,
+			`${process.env.API_URI}/api/posts?posterId=${posterId}&sortByDate=${sortByDate}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -56,7 +53,7 @@ export async function getPosts(posterId, sortByDate) {
 export async function deletePost(postId, uid) {
 	try {
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/posts/${postId}?userId=${uid}`,
+			`${process.env.API_URI}/api/posts/${postId}?userId=${uid}`,
 			{
 				method: "DELETE",
 				credentials: "include",
@@ -83,7 +80,7 @@ export async function addReaction(postId, uid, reaction) {
 			reaction: reaction,
 		};
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/posts/add-react/${postId}?userId=${uid}`,
+			`${process.env.API_URI}/api/posts/add-react/${postId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -105,7 +102,7 @@ export async function addReaction(postId, uid, reaction) {
 export async function deleteReaction(postId, uid) {
 	try {
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/posts/delete-react/${postId}?userId=${uid}`,
+			`${process.env.API_URI}/api/posts/delete-react/${postId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",

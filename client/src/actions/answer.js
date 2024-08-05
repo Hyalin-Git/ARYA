@@ -9,7 +9,7 @@ export default async function saveAnswer(uid, prevState, formData) {
 		dataToSend.append("commentId", formData.get("commentId"));
 
 		const response = await fetch(
-			`https://arya-jnnv.onrender.com/api/answers?userId=${uid}`,
+			`${process.env.API_URI}/api/answers?userId=${uid}`,
 			{
 				method: "POST",
 				credentials: "include",

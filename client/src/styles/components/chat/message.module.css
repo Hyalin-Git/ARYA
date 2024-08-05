@@ -56,22 +56,26 @@
 	background-color: var(--lavender-color);
 }
 
-.text p {
+.text pre {
 	margin: 0;
 	font-size: 0.9rem;
 	font-weight: 500;
-	word-break: break-all;
+	white-space: pre-wrap; /* Since CSS 2.1 */
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
-.container[data-self="true"] .text p {
+.container[data-self="true"] .text pre {
 	color: white;
 }
 
 .text a {
 	text-decoration: underline;
-	color: #77b5fe;
+	color: #50afe4;
 }
 .text a:visited {
-	color: white;
+	color: #50afe4;
 }
 .text iframe {
 	margin-top: 10px;
@@ -88,7 +92,7 @@
 	max-width: fit-content;
 	height: 200px;
 	object-fit: cover;
-	border-radius: 8px;
+	border-radius: 4px;
 }
 
 /* DATES  */

@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import Messages from "./Messages";
+import { montserrat } from "@/libs/fonts";
 
 export default function ChatBody({
 	latestMessage,
@@ -140,7 +141,9 @@ export default function ChatBody({
 										className={styles.message}
 										key={idx}>
 										<div className={styles.text} data-pending={true}>
-											<p>{pendingMessage?.content}</p>
+											<pre className={montserrat.className}>
+												{pendingMessage?.content}
+											</pre>
 										</div>
 									</div>
 								);

@@ -12,7 +12,7 @@ export async function saveRepost(uid, prevState, formData) {
 		// dataToSend.append("repostId", formData.get("repostId"));
 
 		const response = await fetch(
-			`https://arya-jnnv.onrender.com/api/reposts?userId=${uid}`,
+			`${process.env.API_URI}/api/reposts?userId=${uid}`,
 			{
 				method: "POST",
 				credentials: "include",
@@ -41,7 +41,7 @@ export async function updateRepost(repostId, uid, prevState, formData) {
 		data.append("text", formData.get("text"));
 		const res = await axios({
 			method: "PUT",
-			url: `https://arya-jnnv.onrender.com/api/reposts/${repostId}?userId=${uid}`,
+			url: `${process.env.API_URI}/api/reposts/${repostId}?userId=${uid}`,
 			withCredentials: true,
 			headers: {
 				Authorization: `Bearer ${cookies().get("session")?.value}`,

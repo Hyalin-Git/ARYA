@@ -7,7 +7,7 @@ export async function accessOrCreateConversation(formData) {
 		const uid = formData.get("userId");
 		const otherUserId = formData.get("otherUserId");
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/conversations?userId=${uid}&otherUserId=${otherUserId}`,
+			`${process.env.API_URI}/api/conversations?userId=${uid}&otherUserId=${otherUserId}`,
 			{
 				method: "POST",
 				credentials: "include",

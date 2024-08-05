@@ -38,7 +38,7 @@ export async function saveMessage(uid, prevState, formData) {
 		}
 
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/messages?userId=${uid}`,
+			`${process.env.API_URI}/api/messages?userId=${uid}`,
 			{
 				method: "POST",
 				credentials: "include",
@@ -67,7 +67,7 @@ export async function updateMessage(uid, messageId, prevState, formData) {
 		dataToSend.append("content", formData.get("content"));
 
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/messages/${messageId}?userId=${uid}`,
+			`${process.env.API_URI}/api/messages/${messageId}?userId=${uid}`,
 			{
 				method: "PUT",
 				credentials: "include",

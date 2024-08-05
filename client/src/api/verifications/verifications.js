@@ -6,7 +6,7 @@ export async function verifyEmail(id, token) {
 	try {
 		const res = await axios({
 			method: "PUT",
-			url: `https://arya-jnnv.onrender.com/api/verification/${id}/verify/${token}`,
+			url: `${process.env.API_URI}/api/verification/${id}/verify/${token}`,
 			withCredentials: true,
 		});
 
@@ -21,7 +21,7 @@ export async function verifyNewEmail(id, token) {
 	try {
 		const res = await axios({
 			method: "PUT",
-			url: `https://arya-jnnv.onrender.com/api/verification/${id}/new-email-verify/${token}`,
+			url: `${process.env.API_URI}/api/verification/${id}/new-email-verify/${token}`,
 			withCredentials: true,
 		});
 

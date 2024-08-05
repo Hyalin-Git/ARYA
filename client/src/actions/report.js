@@ -14,7 +14,7 @@ export async function saveReportPost(uid, prevState, formData) {
 		console.log(formData.get("message"));
 
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/post/report?userId=${uid}`,
+			`${process.env.API_URI}/api/post/report?userId=${uid}`,
 			{
 				method: "POST",
 				credentials: "include",

@@ -9,7 +9,7 @@ export async function getConversations() {
 		const uid = await getUserId();
 
 		const response = await fetch(
-			`https://arya-jnnv.onrender.com/api/conversations?userId=${uid}`,
+			`${process.env.API_URI}/api/conversations?userId=${uid}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -38,7 +38,7 @@ export async function getConversation(conversationId, otherUserId) {
 	try {
 		const uid = await getUserId();
 		const response = await fetch(
-			`https://arya-jnnv.onrender.com/api/conversations/${conversationId}?userId=${uid}&otherUserId=${otherUserId}`,
+			`${process.env.API_URI}/api/conversations/${conversationId}?userId=${uid}&otherUserId=${otherUserId}`,
 			{
 				method: "GET",
 				credentials: "include",

@@ -5,20 +5,17 @@ import { redirect } from "next/navigation";
 
 export async function getRepost(repostId) {
 	try {
-		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/reposts/${repostId}`,
-			{
-				method: "GET",
-				credentials: "include",
-				headers: {
-					Authorization: `Bearer ${cookies().get("session")?.value}`,
-					"Content-Type": "application/json",
-				},
-				next: {
-					tags: ["repost"],
-				},
-			}
-		);
+		const res = await fetch(`${process.env.API_URI}/api/reposts/${repostId}`, {
+			method: "GET",
+			credentials: "include",
+			headers: {
+				Authorization: `Bearer ${cookies().get("session")?.value}`,
+				"Content-Type": "application/json",
+			},
+			next: {
+				tags: ["repost"],
+			},
+		});
 
 		const data = await res.json();
 
@@ -31,7 +28,7 @@ export async function getRepost(repostId) {
 export async function getReposts(reposterId, sortByDate) {
 	try {
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/reposts?reposterId=${reposterId}`,
+			`${process.env.API_URI}/api/reposts?reposterId=${reposterId}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -56,7 +53,7 @@ export async function getReposts(reposterId, sortByDate) {
 export default async function deleteRepost(repostId, uid) {
 	try {
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/reposts/${repostId}?userId=${uid}`,
+			`${process.env.API_URI}/api/reposts/${repostId}?userId=${uid}`,
 			{
 				method: "DELETE",
 				credentials: "include",
@@ -83,7 +80,7 @@ export async function addRepostReaction(repostId, uid, reaction) {
 			reaction: reaction,
 		};
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/reposts/add-react/${repostId}?userId=${uid}`,
+			`${process.env.API_URI}/api/reposts/add-react/${repostId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -106,7 +103,7 @@ export async function addRepostReaction(repostId, uid, reaction) {
 export async function deleteRepostReaction(repostId, uid) {
 	try {
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/reposts/delete-react/${repostId}?userId=${uid}`,
+			`${process.env.API_URI}/api/reposts/delete-react/${repostId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",

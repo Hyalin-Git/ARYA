@@ -14,7 +14,7 @@ export default async function saveCompany(uid, prevState, formData) {
 			formData.get("lookingForEmployees") === "on" ? true : false
 		);
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/company?userId=${uid}`,
+			`${process.env.API_URI}/api/company?userId=${uid}`,
 			{
 				method: "POST",
 				credentials: "include",
@@ -45,7 +45,7 @@ export async function updateCompany(uid, companyId, prevState, formData) {
 			formData.get("lookingForEmployees") === "on" ? true : false
 		);
 		const res = await fetch(
-			`https://arya-jnnv.onrender.com/api/company/${companyId}?userId=${uid}`,
+			`${process.env.API_URI}/api/company/${companyId}?userId=${uid}`,
 			{
 				method: "PUT",
 				credentials: "include",

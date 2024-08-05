@@ -19,7 +19,9 @@ export default function Conversations({
 	const getOtherUser = conversation.users.find((user) => user._id !== uid);
 	const date = moment(conversation?.updatedAt).format("Do MMMM");
 	const year = moment(conversation?.updatedAt).format("YYYY");
+	const isAuthor = conversation?.latestMessage?.senderId._id === uid;
 	const hasMedia = conversation?.latestMessage?.media.length > 0;
+	const singleMedia = conversation?.latestMessage?.media.length === 1;
 	const hasRead = conversation?.latestMessage?.readBy?.some(
 		(userId) => userId === uid
 	);
@@ -80,9 +82,29 @@ export default function Conversations({
 				</div>
 				<div className={styles.latestMessage}>
 					<span>
-						{hasRead === false && "Nouveau message : "}
-						{conversation?.latestMessage?.content ||
-							"Démarrer une conversation"}
+						{conversation?.latestMessage ? (
+							<>
+								{hasRead && isAuthor
+									? `Vous : ${
+											hasMedia
+												? `${
+														singleMedia ? "Fichier envoyé" : "Fichiers envoyé"
+												  }`
+												: conversation?.latestMessage?.content
+									  } `
+									: `${getOtherUser?.firstName} : ${
+											hasMedia
+												? `${
+														singleMedia
+															? "Vous a envoyé un fichier"
+															: "Vous a envoyé des fichiers"
+												  }`
+												: conversation?.latestMessage?.content
+									  }`}
+							</>
+						) : (
+							"Démarrer une conversation"
+						)}
 					</span>
 				</div>
 			</div>

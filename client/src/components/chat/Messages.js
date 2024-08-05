@@ -7,22 +7,22 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UpdateMessage from "./UpdateMessage";
 import moment from "moment";
 import "moment/locale/fr"; // without this line it didn't work
 import { deleteMessage } from "@/api/conversations/message";
 import socket from "@/libs/socket";
 import { checkIfEmpty, extractURL } from "@/libs/utils";
+import { montserrat } from "@/libs/fonts";
 
 export default function ({ uid, nextMessage, message, otherUserId }) {
+	const [messageWithLink, setMessageWithLink] = useState("");
 	const [displayOptions, setDisplayOptions] = useState(false);
 	const [displayMessageOptions, setDisplayMessageOptions] = useState(false);
 	const [edit, setEdit] = useState(false);
 
 	const hasVideo = extractURL(message?.content);
-
-	console.log("les vod", hasVideo);
 
 	const isAuthor = message?.senderId === uid;
 	const hasMedias = message.media.length > 0;
@@ -49,15 +49,18 @@ export default function ({ uid, nextMessage, message, otherUserId }) {
 		return moment(message?.updatedAt).locale("fr").format("ll LT");
 	}
 
-	function setLinks() {
-		hasVideo.map((link) => {
-			return `<a href={link} target="_blank">
-					{link}
-				</a>`;
-		});
-	}
+	useEffect(() => {
+		let msg = message?.content;
+		if (hasVideo.length > 0) {
+			for (let index = 0; index < hasVideo.length; index++) {
+				const element = hasVideo[index];
 
-	const yas = `<a href${hasVideo[0]}>yes</a>`;
+				const modifiedLink = `<a href=${element} target="_blank">${element}</a>`;
+				msg = msg.replace(element, modifiedLink);
+			}
+			setMessageWithLink(msg);
+		}
+	}, [message?.content]);
 
 	return (
 		<div data-self={isAuthor} className={styles.container} key={message._id}>
@@ -108,11 +111,13 @@ export default function ({ uid, nextMessage, message, otherUserId }) {
 							</div>
 						)}
 						<div className={styles.text}>
-							{/* {hasVideo ? (
-								<p dangerouslySetInnerHTML={{ __html: setLinks() }}></p>
-							) : ( */}
-							<p>{message?.content}</p>
-							{/* )} */}
+							{messageWithLink ? (
+								<pre
+									className={montserrat.className}
+									dangerouslySetInnerHTML={{ __html: messageWithLink }}></pre>
+							) : (
+								<pre className={montserrat.className}>{message?.content}</pre>
+							)}
 							{!checkIfEmpty(hasVideo) &&
 								hasVideo.map((vid, idx) => {
 									return <iframe src={vid} frameBorder={0} key={idx}></iframe>;

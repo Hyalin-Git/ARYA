@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 export async function getMessages(conversationId) {
 	try {
 		const response = await fetch(
-			`https://arya-jnnv.onrender.com/api/messages?conversationId=${conversationId}`,
+			`${process.env.API_URI}/api/messages?conversationId=${conversationId}`,
 			{
 				method: "GET",
 				credentials: "include",
@@ -32,7 +32,7 @@ export async function revalidateMessages() {
 export async function addToRead(messageId, uid) {
 	try {
 		const response = await fetch(
-			`https://arya-jnnv.onrender.com/api/messages/add-read/${messageId}?userId=${uid}`,
+			`${process.env.API_URI}/api/messages/add-read/${messageId}?userId=${uid}`,
 			{
 				method: "PATCH",
 				credentials: "include",
@@ -57,7 +57,7 @@ export async function addToRead(messageId, uid) {
 export async function deleteMessage(messageId, uid) {
 	try {
 		const response = await fetch(
-			`https://arya-jnnv.onrender.com/api/messages/${messageId}?userId=${uid}`,
+			`${process.env.API_URI}/api/messages/${messageId}?userId=${uid}`,
 			{
 				method: "DELETE",
 				credentials: "include",
