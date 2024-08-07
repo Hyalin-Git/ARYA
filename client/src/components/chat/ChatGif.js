@@ -1,16 +1,13 @@
-import styles from "@/styles/components/social/modals/gifModal.module.css";
+import styles from "@/styles/components/chat/chatGif.module.css";
 import { Grid } from "@giphy/react-components";
 import { GiphyFetch } from "@giphy/js-fetch-api";
 import { useEffect, useState } from "react";
 import { montserrat } from "@/libs/fonts";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 
-export default function GifModal({
-	formRef,
-	previewRef,
-	setOpenGif,
-	setIsWriting,
-}) {
+export default function ChatGif({ formRef, gifRef, setOpenGif }) {
 	const [searchTerms, setSearchTerms] = useState("");
 
 	const [categories, setCategories] = useState([]);
@@ -19,6 +16,21 @@ export default function GifModal({
 
 	// configure your fetch: fetch 10 gifs at a time as the user scrolls (offset is handled by the grid)
 	const fetchGifs = (offset) => gf.search(searchTerms, { offset, limit: 10 });
+
+	function handleSearch(e) {
+		e.preventDefault();
+		setSearchTerms(e.target.value);
+	}
+
+	function handleSendGif(e) {
+		const url = e.images.preview_webp.url;
+		gifRef.current.value = url;
+
+		formRef.current.requestSubmit();
+
+		gifRef.current.value = "";
+		setOpenGif(false);
+	}
 
 	useEffect(() => {
 		async function fetchCategories() {
@@ -31,48 +43,13 @@ export default function GifModal({
 		fetchCategories();
 	}, [categories]);
 
-	function handleSearch(e) {
-		e.preventDefault();
-		setSearchTerms(e.target.value);
-	}
-
-	function handleClickGif(e) {
-		const url = e.images.preview_webp.url;
-		const preview = previewRef.current;
-		const form = formRef.current;
-		const input = document.createElement("input");
-		const img = document.createElement("img");
-		preview.appendChild(img);
-		img.alt = "preview";
-		img.src = url;
-		form.appendChild(input);
-		input.type = "text";
-		input.name = "gif";
-		input.id = "gif";
-		input.value = url;
-		input.hidden = true;
-		setIsWriting(true);
-		console.log(e.target);
-		// addGif(e);
-	}
-
-	function addGif(e) {
-		// const preview = document.getElementById("preview");
-		// const parent = preview.parentElement;
-		console.log(e.currentTarget);
-	}
 	return (
 		<>
 			<div className={styles.container}>
 				<div className={styles.search}>
 					{searchTerms && (
-						<div className={styles.back} onClick={(e) => setSearchTerms("")}>
-							<Image
-								src={"/images/icons/back_icon.svg"}
-								alt="icon"
-								width={15}
-								height={20}
-							/>
+						<div onClick={(e) => setSearchTerms("")}>
+							<FontAwesomeIcon icon={faArrowLeftLong} className={styles.back} />
 						</div>
 					)}
 					<input
@@ -88,7 +65,7 @@ export default function GifModal({
 				<div className={styles.content}>
 					{searchTerms ? (
 						<Grid
-							width={410}
+							width={347}
 							columns={2}
 							fetchGifs={fetchGifs}
 							noLink={true}
@@ -96,7 +73,7 @@ export default function GifModal({
 							gutter={10}
 							borderRadius={8}
 							key={searchTerms}
-							onGifClick={handleClickGif}
+							onGifClick={handleSendGif}
 						/>
 					) : (
 						<>
@@ -109,7 +86,7 @@ export default function GifModal({
 										<span>{cat.name}</span>
 										<Image
 											src={cat.gif.images.preview_webp.url}
-											width={200}
+											width={167}
 											height={100}
 											quality={100}
 											alt="icon"

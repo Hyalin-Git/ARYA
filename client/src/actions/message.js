@@ -37,6 +37,8 @@ export async function saveMessage(uid, prevState, formData) {
 			});
 		}
 
+		dataToSend.append("gif", formData.get("gif"));
+
 		const res = await fetch(
 			`${process.env.API_URI}/api/messages?userId=${uid}`,
 			{

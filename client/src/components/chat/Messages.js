@@ -13,22 +13,40 @@ import moment from "moment";
 import "moment/locale/fr"; // without this line it didn't work
 import { deleteMessage } from "@/api/conversations/message";
 import socket from "@/libs/socket";
-import { checkIfEmpty, extractURL } from "@/libs/utils";
+import {
+	checkIfEmpty,
+	extractURL,
+	findUidReaction,
+	hasReacted,
+} from "@/libs/utils";
 import { montserrat } from "@/libs/fonts";
+import ChatReactions from "./ChatReactions";
 
 export default function ({ uid, nextMessage, message, otherUserId }) {
 	const [messageWithLink, setMessageWithLink] = useState("");
+	const [displayReactions, setDisplayReactions] = useState(false);
 	const [displayOptions, setDisplayOptions] = useState(false);
 	const [displayMessageOptions, setDisplayMessageOptions] = useState(false);
+
 	const [edit, setEdit] = useState(false);
-
-	const hasVideo = extractURL(message?.content);
-
 	const isAuthor = message?.senderId === uid;
+	const hasReaction =
+		hasReacted(message?.reactions, uid) ||
+		hasReacted(message?.reactions, otherUserId);
+	const AuthUserReaction = findUidReaction(message?.reactions, uid);
+	const otherUserReaction = findUidReaction(message?.reactions, otherUserId);
+	const hasVideo = extractURL(message?.content);
 	const hasMedias = message.media.length > 0;
+	const hasGif = message?.gif;
+
 	const displayDate =
 		!nextMessage ||
 		!moment(message.createdAt).isSame(nextMessage.createdAt, "minute");
+
+	function handleReactionDisplay(e) {
+		e.preventDefault();
+		setDisplayReactions(true);
+	}
 
 	function handleMessageOptions(e) {
 		e.preventDefault();
@@ -72,16 +90,46 @@ export default function ({ uid, nextMessage, message, otherUserId }) {
 						onMouseLeave={(e) => {
 							setDisplayOptions(false);
 							setDisplayMessageOptions(false);
+							setDisplayReactions(false);
 						}}>
-						{displayOptions && !displayMessageOptions && (
+						{!displayOptions && hasReaction && (
+							<div className={styles.reaction}>
+								{AuthUserReaction && (
+									<>
+										<span>vous avez réagit avec</span>
+										<Image
+											src={`/images/icons/${AuthUserReaction}_icon.svg`}
+											alt="icon"
+											width={20}
+											height={20}
+										/>
+									</>
+								)}
+								{otherUserReaction && (
+									<>
+										<span>Jhon a réagit avec</span>
+										<Image
+											src={`/images/icons/${otherUserReaction}_icon.svg`}
+											alt="icon"
+											width={20}
+											height={20}
+										/>
+									</>
+								)}
+							</div>
+						)}
+						{displayOptions && !displayMessageOptions && !displayReactions && (
 							<div className={styles.options}>
-								<Image
-									src={"/images/icons/addReaction_icon.svg"}
-									alt="icon"
-									width={25}
-									height={25}
-									id="icon"
-								/>
+								{!isAuthor && (
+									<Image
+										src={"/images/icons/addReaction_icon.svg"}
+										alt="icon"
+										width={25}
+										height={25}
+										id="icon"
+										onClick={handleReactionDisplay}
+									/>
+								)}
 								{isAuthor && (
 									<FontAwesomeIcon
 										icon={faEllipsisVertical}
@@ -89,6 +137,16 @@ export default function ({ uid, nextMessage, message, otherUserId }) {
 									/>
 								)}
 							</div>
+						)}
+						{displayReactions && (
+							<ChatReactions
+								uid={uid}
+								conversationId={message?.conversationId}
+								messageId={message?._id}
+								senderId={message?.senderId}
+								setDisplayReactions={setDisplayReactions}
+								otherUserId={uid}
+							/>
 						)}
 						{displayMessageOptions && (
 							<div className={styles.messageOptions}>
@@ -140,8 +198,22 @@ export default function ({ uid, nextMessage, message, otherUserId }) {
 									})}
 								</div>
 							)}
+							{hasGif && (
+								<div>
+									<Image
+										className={styles.gif}
+										src={message?.gif}
+										alt="media"
+										width={0}
+										height={0}
+										sizes="100vw"
+										quality={100}
+									/>
+								</div>
+							)}
 						</div>
 					</div>
+
 					<div className={styles.dates}>
 						{message?.isEdited ? (
 							<span>Modifié {displayUpdatedAt(message)}</span>

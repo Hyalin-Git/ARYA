@@ -1,6 +1,6 @@
 import { addToRead, getMessages } from "@/api/conversations/message";
 import socket from "@/libs/socket";
-import { checkIfEmpty, extractURL } from "@/libs/utils";
+import { checkIfEmpty, extractURL, hasReacted } from "@/libs/utils";
 import styles from "@/styles/components/chat/chat.module.css";
 import { faCircle, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,7 +37,6 @@ export default function ChatBody({
 			});
 		});
 		socket?.on("pending-message", (res) => {
-			console.log(res, "pending");
 			setPendingMessages((prev) => [...prev, res]);
 		});
 		socket.on("receive-message", (res) => {
@@ -65,6 +64,28 @@ export default function ChatBody({
 			updatedMessage.content = res?.content;
 		});
 
+		socket.on("added-message-reaction", (res) => {
+			setMessages((prevMessages) => {
+				// Trouver l'index du message correspondant à res._id
+				const index = prevMessages.findIndex(
+					(message) => message._id === res._id
+				);
+
+				if (index !== -1) {
+					// Créer une nouvelle copie du tableau de messages
+					const updatedMessages = [...prevMessages];
+
+					// Remplacer le message à l'index trouvé par res
+					updatedMessages[index] = res;
+
+					return updatedMessages;
+				}
+
+				// Si le message n'existe pas, retourner le tableau de messages précédent inchangé
+				return prevMessages;
+			});
+		});
+
 		socket.on("deleted-message", (res) => {
 			setMessages((prevMessages) =>
 				prevMessages.filter((message) => message._id !== res._id)
@@ -74,6 +95,7 @@ export default function ChatBody({
 		return () => {
 			socket.off("is-typing");
 			socket.off("updated-message");
+			socket.off("added-message-reaction");
 			socket.off("deleted-message");
 			socket.off("pending-message");
 			socket.off("receive-message");

@@ -1,4 +1,5 @@
 .container {
+	position: relative;
 	border-top: 1px solid rgba(0, 0, 0, 0.1);
 	padding: 5px 10px 5px 10px;
 	/* height: 50px; */
@@ -6,17 +7,24 @@
 }
 
 .preview {
+	position: absolute;
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	width: 100%;
+	top: -160px;
+	left: 0;
 	display: flex;
 	flex-wrap: wrap;
+	background-color: white;
+	padding: 10px;
 	gap: 10px;
-	max-height: 200px;
+	max-height: 160px;
 	overflow-y: auto;
 }
 .preview div {
 	position: relative;
 	background-color: #f1f1f1;
 	max-width: 150px;
-	padding: 10px;
+	padding: 10px 10px 5px 10px;
 	border-radius: 8px;
 }
 
@@ -53,18 +61,18 @@
 }
 
 .ellipsis {
-	position: relative;
 	display: flex;
 	align-items: center;
 }
 
+.more svg,
 .ellipsis svg {
 	width: 20px;
 	height: 20px;
 	color: var(--meteorite-color);
 	cursor: pointer;
 }
-.ellipsis img {
+.more img {
 	cursor: pointer;
 	filter: invert(16%) sepia(75%) saturate(6658%) hue-rotate(264deg)
 		brightness(91%) contrast(85%);
@@ -72,10 +80,11 @@
 
 .more {
 	position: absolute;
-	top: -65px;
+	top: -50px;
 	display: flex;
 	gap: 10px;
 	background-color: white;
+	box-shadow: var(--passive-shadow);
 	padding: 10px;
 }
 

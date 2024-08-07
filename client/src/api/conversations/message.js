@@ -29,6 +29,47 @@ export async function revalidateMessages() {
 	revalidateTag("messages");
 }
 
+export async function addReaction(
+	conversationId,
+	messageId,
+	senderId,
+	uid,
+	reaction
+) {
+	try {
+		const dataToSend = {
+			conversationId: conversationId,
+			senderId: senderId,
+			reaction: reaction,
+		};
+		const response = await fetch(
+			`${process.env.API_URI}/api/messages/add-react/${messageId}?userId=${uid}`,
+			{
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+				},
+				body: JSON.stringify(dataToSend),
+			}
+		);
+
+		const data = await response.json();
+
+		console.log("====================================");
+		console.log(data);
+		console.log("====================================");
+		// revalidateTag("conversations");
+		if (!response.ok) {
+			throw new Error(data?.message);
+		}
+		return data;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 export async function addToRead(messageId, uid) {
 	try {
 		const response = await fetch(

@@ -9,9 +9,8 @@ const {
 exports.saveMessage = async (req, res, next) => {
 	try {
 		const { userId } = req.query;
-		const { content, conversationId } = req.body;
+		const { content, gif, conversationId } = req.body;
 		const medias = req.files["media"];
-		
 
 		if (!userId || !conversationId) {
 			return res
@@ -19,7 +18,7 @@ exports.saveMessage = async (req, res, next) => {
 				.send({ error: true, message: "Les données fournit sont invalides" });
 		}
 
-		if (!content && !medias) {
+		if (!content && !medias && !gif) {
 			return res
 				.status(400)
 				.send({ error: true, message: "Les données fournit sont invalides" });
@@ -32,6 +31,7 @@ exports.saveMessage = async (req, res, next) => {
 			senderId: userId,
 			content: content,
 			media: uploadResponse,
+			gif: gif,
 			readBy: userId,
 		});
 		newMessage
@@ -216,14 +216,14 @@ function checkIfReacted(post, userId) {
 	let hasReacted;
 
 	// Set the variable hasReacted value where it returns true
-	if (post.reactions.like.includes(userId)) {
-		hasReacted = "like";
-	} else if (post.reactions.awesome.includes(userId)) {
-		hasReacted = "awesome";
-	} else if (post.reactions.love.includes(userId)) {
+	if (post.reactions.love.includes(userId)) {
 		hasReacted = "love";
 	} else if (post.reactions.funny.includes(userId)) {
 		hasReacted = "funny";
+	} else if (post.reactions.surprised.includes(userId)) {
+		hasReacted = "surprised";
+	} else if (post.reactions.sad.includes(userId)) {
+		hasReacted = "sad";
 	}
 
 	return hasReacted;
@@ -233,12 +233,23 @@ exports.addReaction = async (req, res, next) => {
 	try {
 		const { conversationId, senderId, reaction } = req.body;
 		const { userId } = req.query; // Gets the userId from the query (Helps to verify if it's the user reaction)
-		const allowedReactions = ["like", "awesome", "funny", "love"];
+		const allowedReactions = ["love", "funny", "surprised", "sad"];
+
+		console.log("add react", senderId);
 
 		if (!conversationId || !senderId) {
 			return res
 				.status(400)
 				.send({ error: true, message: "Paramètres manquants" });
+		}
+
+		if (senderId === userId) {
+			return res
+				.status(403)
+				.send({
+					error: true,
+					message: "Impossible de réagir à son propre message",
+				});
 		}
 
 		// Checks if the given reaction is in the allowedReactions array
@@ -250,7 +261,7 @@ exports.addReaction = async (req, res, next) => {
 		}
 
 		// Fetch the specified comment
-		const message = await MessageModel.findOneAndUpdate({
+		const message = await MessageModel.findOne({
 			_id: req.params.id,
 			conversationId: conversationId,
 			senderId: senderId,

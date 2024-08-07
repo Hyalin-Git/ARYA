@@ -149,7 +149,6 @@ io.on("connection", (socket) => {
 			}
 		)
 			.then((user) => {
-				console.log(user);
 				io.emit("logged-user");
 			})
 			.catch((err) => console.log(err));
@@ -181,6 +180,14 @@ io.on("connection", (socket) => {
 			.to(senderId.status.socketId)
 			.emit("updated-message", content);
 	});
+	socket.on("add-message-reaction", async (content, receiver) => {
+		const senderId = await UserModel.findById({ _id: content.senderId });
+		const receiverId = await UserModel.findById({ _id: receiver });
+
+		io.to(receiverId.status.socketId)
+			.to(senderId.status.socketId)
+			.emit("added-message-reaction", content);
+	});
 	socket.on("delete-message", async (content, receiver) => {
 		const senderId = await UserModel.findById({ _id: content.senderId });
 		const receiverId = await UserModel.findById({ _id: receiver });
@@ -206,7 +213,6 @@ io.on("connection", (socket) => {
 				setDefaultsOnInsert: true,
 			}
 		).then((user) => {
-			console.log(user);
 			io.emit("disconnected-user");
 		});
 	});

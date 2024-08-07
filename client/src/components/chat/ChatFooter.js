@@ -18,6 +18,8 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { useDebouncedCallback } from "use-debounce";
+import GifModal from "../social/modals/GifModal";
+import ChatGif from "./ChatGif";
 
 const initialState = {
 	status: "pending",
@@ -28,11 +30,14 @@ const initialState = {
 
 export default function ChatFooter({ uid, conversationId, otherUserId }) {
 	const [more, setMore] = useState(false);
+	const [openGif, setOpenGif] = useState(false);
 	const [text, setText] = useState("");
 	const [files, setFiles] = useState([]);
 	const [isFocus, setIsFocus] = useState(false);
 	const [isDisabled, setIsDisabled] = useState(true);
 	const inputFile = useRef(null);
+	const formRef = useRef(null);
+	const gifRef = useRef(null);
 	const saveMessageWithUid = saveMessage.bind(null, uid);
 	const [state, formAction] = useFormState(saveMessageWithUid, initialState);
 
@@ -138,9 +143,9 @@ export default function ChatFooter({ uid, conversationId, otherUserId }) {
 	// console.log(files);
 	return (
 		<div className={styles.container}>
-			<div className={styles.preview}>
-				{!checkIfEmpty(files) &&
-					files.map((file, idx) => {
+			{!checkIfEmpty(files) && (
+				<div className={styles.preview}>
+					{files.map((file, idx) => {
 						return (
 							<div key={idx} data-idx={idx}>
 								<FontAwesomeIcon
@@ -160,29 +165,38 @@ export default function ChatFooter({ uid, conversationId, otherUserId }) {
 							</div>
 						);
 					})}
-			</div>
-			<form action={formAction} id="send-message">
+				</div>
+			)}
+
+			{openGif && (
+				<ChatGif formRef={formRef} gifRef={gifRef} setOpenGif={setOpenGif} />
+			)}
+			{more && (
+				<div className={styles.more}>
+					<label htmlFor="img">
+						<FontAwesomeIcon icon={faImage} />
+					</label>
+					<Image
+						src="/images/icons/gif_icon.svg"
+						width={20}
+						height={20}
+						alt="icon"
+						className={styles.icon}
+						onClick={(e) => {
+							setOpenGif(true);
+							setMore(false);
+						}}
+					/>
+					<FontAwesomeIcon icon={faSmile} />
+					<FontAwesomeIcon icon={faFileSignature} />
+				</div>
+			)}
+			<form action={formAction} ref={formRef}>
 				<div className={styles.ellipsis}>
 					<FontAwesomeIcon
 						icon={faEllipsisVertical}
 						onClick={(e) => setMore(!more)}
 					/>
-					{more && (
-						<div className={styles.more}>
-							<label htmlFor="img">
-								<FontAwesomeIcon icon={faImage} />
-							</label>
-							<Image
-								src="/images/icons/gif_icon.svg"
-								width={20}
-								height={20}
-								alt="icon"
-								className={styles.icon}
-							/>
-							<FontAwesomeIcon icon={faSmile} />
-							<FontAwesomeIcon icon={faFileSignature} />
-						</div>
-					)}
 				</div>
 				<div className={styles.input}>
 					<textarea
@@ -199,11 +213,12 @@ export default function ChatFooter({ uid, conversationId, otherUserId }) {
 							} else if (e.key === "Enter") {
 								e.preventDefault();
 
-								document.getElementById("send-message").requestSubmit();
+								formRef.current.requestSubmit();
 
 								handleSendMessage(e);
 							}
 						}}></textarea>
+
 					<input
 						type="file"
 						id="img"
@@ -213,6 +228,7 @@ export default function ChatFooter({ uid, conversationId, otherUserId }) {
 						multiple
 						hidden
 					/>
+					<input ref={gifRef} type="text" id="gif" name="gif" hidden />
 					<input
 						type="text"
 						id="conversationId"

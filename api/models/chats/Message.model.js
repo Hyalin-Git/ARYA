@@ -18,11 +18,14 @@ const messageSchema = new mongoose.Schema(
 		media: {
 			type: [String],
 		},
+		gif: {
+			type: String,
+		},
 		reactions: {
-			like: { type: [String] },
-			awesome: { type: [String] },
 			love: { type: [String] },
 			funny: { type: [String] },
+			surprised: { type: [String] },
+			sad: { type: [String] },
 		},
 		isEdited: {
 			type: Boolean,
