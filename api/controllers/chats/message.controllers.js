@@ -244,12 +244,10 @@ exports.addReaction = async (req, res, next) => {
 		}
 
 		if (senderId === userId) {
-			return res
-				.status(403)
-				.send({
-					error: true,
-					message: "Impossible de réagir à son propre message",
-				});
+			return res.status(403).send({
+				error: true,
+				message: "Impossible de réagir à son propre message",
+			});
 		}
 
 		// Checks if the given reaction is in the allowedReactions array
@@ -348,6 +346,13 @@ exports.deleteReaction = async (req, res, next) => {
 				.send({ error: true, message: "Paramètres manquants" });
 		}
 
+		if (senderId === userId) {
+			return res.status(400).send({
+				error: true,
+				message: "Impossible de supprimer une réaction qui n'est pas la votre",
+				// Cannot delete a reaction from a comment who doesn't exist
+			});
+		}
 		// Fetch the specified comment
 		const message = await MessageModel.findById({
 			_id: req.params.id,

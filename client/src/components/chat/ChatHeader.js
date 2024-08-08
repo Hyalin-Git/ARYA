@@ -1,21 +1,31 @@
-import styles from "@/styles/components/chat/chat.module.css";
+import { blockUser, follow, unFollow } from "@/api/user/user";
+import styles from "@/styles/components/chat/chatHeader.module.css";
 import {
-	getConversation,
-	revalidateConversations,
-} from "@/api/conversations/conversations";
-import { faArrowLeft, faCircle } from "@fortawesome/free-solid-svg-icons";
+	faArrowLeft,
+	faBan,
+	faCircle,
+	faCross,
+	faGear,
+	faGears,
+	faUserAltSlash,
+	faUserMinus,
+	faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import useSWR from "swr";
 import Image from "next/image";
-import { useEffect } from "react";
-import socket from "@/libs/socket";
+import { useState } from "react";
 
 export default function ChatHeader({
+	uid,
+	user,
 	conversation,
 	otherUserId,
 	setOpenedConv,
 	setOtherUserId,
+	setSettings,
 }) {
+	const isFollowing = user?.following?.includes(otherUserId);
+	const [hasFollow, setHasFollow] = useState(isFollowing || false);
 	const getOtherUserInfo = conversation?.users?.find(
 		(user) => user._id === otherUserId
 	);
@@ -26,8 +36,24 @@ export default function ChatHeader({
 		setOtherUserId(null);
 	}
 
+	async function followUser(e) {
+		e.preventDefault();
+		await follow(uid, otherUserId);
+
+		setHasFollow(true);
+	}
+
+	async function unfollowUser(e) {
+		e.preventDefault();
+		await unFollow(uid, otherUserId);
+
+		setHasFollow(false);
+	}
+
+	console.log(isFollowing, "follow");
+
 	return (
-		<div className={styles.header}>
+		<div className={styles.container}>
 			<FontAwesomeIcon
 				icon={faArrowLeft}
 				onClick={goBack}
@@ -51,10 +77,26 @@ export default function ChatHeader({
 				</span>
 				<span>{getOtherUserInfo?.userName}</span>
 			</div>
-			{/* <div>
-                 <FontAwesomeIcon icon={faUserPlus} />
-                 <FontAwesomeIcon icon={faBan} />
-             </div> */}
+			<div className={styles.icons}>
+				{!hasFollow ? (
+					<FontAwesomeIcon
+						icon={faUserPlus}
+						title="Suivre cet utilisateur"
+						onClick={followUser}
+					/>
+				) : (
+					<FontAwesomeIcon
+						icon={faUserMinus}
+						title="Suivre cet utilisateur"
+						onClick={unfollowUser}
+					/>
+				)}
+				<FontAwesomeIcon
+					icon={faGear}
+					title="Paramètres de la conversation"
+					onClick={(e) => setSettings(true)}
+				/>
+			</div>
 		</div>
 	);
 }

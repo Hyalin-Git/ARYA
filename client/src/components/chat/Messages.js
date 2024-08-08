@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import UpdateMessage from "./UpdateMessage";
 import moment from "moment";
 import "moment/locale/fr"; // without this line it didn't work
-import { deleteMessage } from "@/api/conversations/message";
+import { deleteMessage, deleteReaction } from "@/api/conversations/message";
 import socket from "@/libs/socket";
 import {
 	checkIfEmpty,
@@ -22,7 +22,13 @@ import {
 import { montserrat } from "@/libs/fonts";
 import ChatReactions from "./ChatReactions";
 
-export default function ({ uid, nextMessage, message, otherUserId }) {
+export default function ({
+	uid,
+	conversation,
+	nextMessage,
+	message,
+	otherUserId,
+}) {
 	const [messageWithLink, setMessageWithLink] = useState("");
 	const [displayReactions, setDisplayReactions] = useState(false);
 	const [displayOptions, setDisplayOptions] = useState(false);
@@ -39,6 +45,10 @@ export default function ({ uid, nextMessage, message, otherUserId }) {
 	const hasMedias = message.media.length > 0;
 	const hasGif = message?.gif;
 
+	const getOtherUserInfo = conversation?.users?.find(
+		(user) => user._id === otherUserId
+	);
+
 	const displayDate =
 		!nextMessage ||
 		!moment(message.createdAt).isSame(nextMessage.createdAt, "minute");
@@ -51,6 +61,19 @@ export default function ({ uid, nextMessage, message, otherUserId }) {
 	function handleMessageOptions(e) {
 		e.preventDefault();
 		setDisplayMessageOptions(true);
+	}
+
+	async function handleDeleteReaction(e) {
+		e.preventDefault();
+		// Call the delete function
+		const conversationId = message?.conversationId;
+		const senderId = message?.senderId;
+		const messageId = message?._id;
+		const res = await deleteReaction(conversationId, senderId, messageId, uid);
+		// Emit with socket
+		if (res) {
+			socket.emit("delete-message-reaction", res, uid, otherUserId);
+		}
 	}
 
 	async function handleDelete(message) {
@@ -86,7 +109,6 @@ export default function ({ uid, nextMessage, message, otherUserId }) {
 				<>
 					<div
 						className={styles.message}
-						onMouseEnter={(e) => setDisplayOptions(true)}
 						onMouseLeave={(e) => {
 							setDisplayOptions(false);
 							setDisplayMessageOptions(false);
@@ -95,26 +117,26 @@ export default function ({ uid, nextMessage, message, otherUserId }) {
 						{!displayOptions && hasReaction && (
 							<div className={styles.reaction}>
 								{AuthUserReaction && (
-									<>
-										<span>vous avez réagit avec</span>
+									<div onClick={handleDeleteReaction}>
 										<Image
 											src={`/images/icons/${AuthUserReaction}_icon.svg`}
 											alt="icon"
 											width={20}
 											height={20}
 										/>
-									</>
+									</div>
 								)}
 								{otherUserReaction && (
-									<>
-										<span>Jhon a réagit avec</span>
+									<div>
 										<Image
 											src={`/images/icons/${otherUserReaction}_icon.svg`}
 											alt="icon"
 											width={20}
 											height={20}
 										/>
-									</>
+										{/* display the counter if it's a group  */}
+										{/* <span>{message?.reactions[otherUserReaction].length}</span> */}
+									</div>
 								)}
 							</div>
 						)}
@@ -168,7 +190,9 @@ export default function ({ uid, nextMessage, message, otherUserId }) {
 								</span>
 							</div>
 						)}
-						<div className={styles.text}>
+						<div
+							className={styles.text}
+							onMouseEnter={(e) => setDisplayOptions(true)}>
 							{messageWithLink ? (
 								<pre
 									className={montserrat.className}

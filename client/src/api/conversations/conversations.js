@@ -50,7 +50,9 @@ export async function getConversation(conversationId, otherUserId) {
 
 		const data = await response.json();
 
-		return data;
+		console.log("the fucking conversation", response.status);
+
+		return { data: data, isBlocked: response.status === 403 ? true : false };
 	} catch (err) {
 		console.log(err);
 	}

@@ -99,3 +99,18 @@
 .button button[data-disabled="true"] {
 	color: color-mix(in srgb, var(--meteorite-color), white 50%);
 }
+
+.block {
+	height: 40px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	cursor: default;
+}
+
+.block span {
+	font-size: 0.8rem;
+	font-weight: 500;
+	color: color-mix(in srgb, white, black 50%) !important;
+}

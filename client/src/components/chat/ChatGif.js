@@ -90,6 +90,7 @@ export default function ChatGif({ formRef, gifRef, setOpenGif }) {
 											height={100}
 											quality={100}
 											alt="icon"
+											unoptimized
 										/>
 									</div>
 								);

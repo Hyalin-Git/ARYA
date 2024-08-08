@@ -129,6 +129,36 @@ export async function getBlockedUsers() {
 	}
 }
 
+export async function blockUser(uid, idToBlock) {
+	try {
+		const dataToSend = {
+			idToBlock: idToBlock,
+		};
+		const response = await fetch(
+			`${process.env.API_URI}/api/users/block/${uid}`,
+			{
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(dataToSend),
+			}
+		);
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new Error(data.message || "Failed to unblock user");
+		}
+		console.log(data);
+		revalidateTag("user");
+	} catch (err) {
+		console.log("block user error:", err);
+	}
+}
+
 // Follow logic
 
 export async function getFollowSuggestions(limit) {
@@ -159,7 +189,6 @@ export async function getFollowSuggestions(limit) {
 
 export async function follow(uid, idToFollow) {
 	try {
-		console.log(uid, idToFollow);
 		const response = await fetch(
 			`${process.env.API_URI}/api/users/follow?userId=${uid}&idToFollow=${idToFollow}`,
 			{

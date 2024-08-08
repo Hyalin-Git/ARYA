@@ -10,7 +10,7 @@ import Messages from "./Messages";
 import { montserrat } from "@/libs/fonts";
 
 export default function ChatBody({
-	latestMessage,
+	conversation,
 	conversationId,
 	uid,
 	otherUserId,
@@ -86,6 +86,28 @@ export default function ChatBody({
 			});
 		});
 
+		socket.on("deleted-message-reaction", (res) => {
+			setMessages((prevMessages) => {
+				// Trouver l'index du message correspondant à res._id
+				const index = prevMessages.findIndex(
+					(message) => message._id === res._id
+				);
+
+				if (index !== -1) {
+					// Créer une nouvelle copie du tableau de messages
+					const updatedMessages = [...prevMessages];
+
+					// Remplacer le message à l'index trouvé par res
+					updatedMessages[index] = res;
+
+					return updatedMessages;
+				}
+
+				// Si le message n'existe pas, retourner le tableau de messages précédent inchangé
+				return prevMessages;
+			});
+		});
+
 		socket.on("deleted-message", (res) => {
 			setMessages((prevMessages) =>
 				prevMessages.filter((message) => message._id !== res._id)
@@ -110,7 +132,7 @@ export default function ChatBody({
 
 	useEffect(() => {
 		scrollToBottom();
-	}, [messages, pendingMessages, isTyping]);
+	}, [messages, pendingMessages]);
 
 	useEffect(() => {
 		if (data) {
@@ -145,6 +167,7 @@ export default function ChatBody({
 								return (
 									<Messages
 										uid={uid}
+										conversation={conversation}
 										message={message}
 										otherUserId={otherUserId}
 										nextMessage={nextMessage}

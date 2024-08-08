@@ -188,6 +188,14 @@ io.on("connection", (socket) => {
 			.to(senderId.status.socketId)
 			.emit("added-message-reaction", content);
 	});
+	socket.on("delete-message-reaction", async (content, uid, otherUserId) => {
+		const senderId = await UserModel.findById({ _id: uid });
+		const receiverId = await UserModel.findById({ _id: otherUserId });
+
+		io.to(receiverId.status.socketId)
+			.to(senderId.status.socketId)
+			.emit("deleted-message-reaction", content);
+	});
 	socket.on("delete-message", async (content, receiver) => {
 		const senderId = await UserModel.findById({ _id: content.senderId });
 		const receiverId = await UserModel.findById({ _id: receiver });

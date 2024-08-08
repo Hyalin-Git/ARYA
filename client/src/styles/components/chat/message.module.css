@@ -104,13 +104,19 @@
 
 .reaction {
 	display: flex;
+}
+
+.reaction div {
+	display: flex;
 	align-items: center;
+	background-color: rgba(255, 255, 255, 0.39);
+	align-self: center;
+	padding: 4px;
+	border-radius: 8px;
 	gap: 5px;
 }
 
-.reaction span {
-	position: relative;
-	top: -1px;
+.reaction div span {
 	font-size: 0.7rem;
 	font-weight: 500;
 	color: color-mix(in srgb, white, black 50%) !important;

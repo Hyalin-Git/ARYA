@@ -8,6 +8,8 @@ import ChatFooter from "./ChatFooter";
 import useSWR from "swr";
 import { getConversation } from "@/api/conversations/conversations";
 import { addToRead } from "@/api/conversations/message";
+import { getBlockedUsers } from "@/api/user/user";
+import ChatSettings from "./ChatSettings";
 
 export default function Chat({
 	conversationId,
@@ -15,7 +17,8 @@ export default function Chat({
 	setOpenedConv,
 	setOtherUserId,
 }) {
-	const { uid } = useContext(AuthContext);
+	const { user, uid } = useContext(AuthContext);
+	const [settings, setSettings] = useState(false);
 	const [isTyping, setIsTyping] = useState({
 		boolean: false,
 		conversationId: "",
@@ -26,11 +29,11 @@ export default function Chat({
 		conversationId,
 		otherUserId
 	);
-	const { data, error, loading, mutate } = useSWR(
+	const { data, error, isLoading, mutate } = useSWR(
 		`/conversations/${conversationId}`,
 		getConversationWithId
 	);
-	const latestMessage = data?.latestMessage;
+	const latestMessage = data?.data?.latestMessage;
 
 	useEffect(() => {
 		addToRead(latestMessage, uid);
@@ -38,31 +41,47 @@ export default function Chat({
 
 	return (
 		<div className={styles.container}>
-			{/* header */}
-			<ChatHeader
-				conversation={data}
-				otherUserId={otherUserId}
-				setOpenedConv={setOpenedConv}
-				setOtherUserId={setOtherUserId}
-			/>
-			{/* main conv  */}
-			<ChatBody
-				conversation={data}
-				conversationId={conversationId}
-				uid={uid}
-				otherUserId={otherUserId}
-				isTyping={isTyping}
-				setIsTyping={setIsTyping}
-			/>
+			{!settings ? (
+				<>
+					{/* header */}
+					<ChatHeader
+						uid={uid}
+						user={user}
+						conversation={data?.data}
+						otherUserId={otherUserId}
+						setOpenedConv={setOpenedConv}
+						setOtherUserId={setOtherUserId}
+						setSettings={setSettings}
+					/>
+					{/* main conv  */}
+					<ChatBody
+						conversation={data?.data}
+						conversationId={conversationId}
+						uid={uid}
+						otherUserId={otherUserId}
+						isTyping={isTyping}
+						setIsTyping={setIsTyping}
+					/>
 
-			{/* input to send msg */}
-			<ChatFooter
-				conversationId={conversationId}
-				conversation={data}
-				otherUserId={otherUserId}
-				uid={uid}
-				setIsTyping={setIsTyping}
-			/>
+					{/* input to send msg */}
+
+					{!isLoading && (
+						<ChatFooter
+							conversationId={conversationId}
+							isBlocked={data?.isBlocked}
+							otherUserId={otherUserId}
+							uid={uid}
+							setIsTyping={setIsTyping}
+						/>
+					)}
+				</>
+			) : (
+				<ChatSettings
+					conversation={data?.data}
+					otherUserId={otherUserId}
+					setSettings={setSettings}
+				/>
+			)}
 		</div>
 	);
 }

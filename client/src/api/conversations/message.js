@@ -70,6 +70,42 @@ export async function addReaction(
 	}
 }
 
+export async function deleteReaction(conversationId, senderId, messageId, uid) {
+	try {
+		const dataToSend = {
+			conversationId: conversationId,
+			senderId: senderId,
+		};
+		const response = await fetch(
+			`${process.env.API_URI}/api/messages/delete-react/${messageId}?userId=${uid}`,
+			{
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+				},
+				body: JSON.stringify(dataToSend),
+			}
+		);
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new Error(data?.message);
+		}
+
+		console.log("====================================");
+		console.log(data);
+		console.log("====================================");
+		// revalidateTag("conversations");
+
+		return data;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 export async function addToRead(messageId, uid) {
 	try {
 		const response = await fetch(
@@ -85,7 +121,7 @@ export async function addToRead(messageId, uid) {
 
 		const data = await response.json();
 
-		console.log("====================================");
+		console.log("================read================");
 		console.log(data);
 		console.log("====================================");
 		revalidateTag("conversations");

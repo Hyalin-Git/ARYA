@@ -1,0 +1,87 @@
+.container {
+	display: flex;
+	flex-direction: column;
+
+	padding: 10px;
+}
+
+.header {
+}
+
+.header svg {
+	width: 20px;
+	height: 20px;
+	color: var(--meteorite-color);
+	padding: 5px;
+	border-radius: 8px;
+	transition: 150ms all linear;
+}
+
+.header svg:hover {
+	background-color: white;
+	color: var(--lavender-color);
+	transition: 150ms all linear;
+	cursor: pointer;
+}
+
+.conversation {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+.conversation img {
+	border-radius: 50%;
+}
+
+.name {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.name span {
+	font-size: 0.8rem;
+}
+.name span:nth-child(1) {
+	font-weight: 500;
+	font-size: 1rem;
+}
+
+.name span:nth-child(2) {
+	color: var(--lavender-color);
+	font-weight: 600;
+}
+
+.actions {
+	margin-top: 20px;
+	border-radius: 8px;
+	background-color: white;
+	padding: 20px 10px 20px 10px;
+	box-shadow: -1px 1px 2px color-mix(in srgb, white, black 10%),
+		1px -1px 2px color-mix(in srgb, white, black 10%);
+}
+
+.actions ul {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.actions li {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.actions li svg {
+	width: 18px;
+	height: 18px;
+	color: var(--meteorite-color);
+}
+
+.actions li:last-child,
+.actions li:last-child svg {
+	color: red;
+}
