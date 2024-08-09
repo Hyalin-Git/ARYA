@@ -150,10 +150,7 @@ export default function ChatBody({
 	}, [data]);
 
 	return (
-		<div
-			className={styles.conversation}
-			id="conversation"
-			ref={conversationRef}>
+		<div className={styles.conversation} id="scroll" ref={conversationRef}>
 			{isLoading ? (
 				<div className={styles.loader}>
 					<FontAwesomeIcon icon={faSpinner} />

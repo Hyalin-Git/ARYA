@@ -5,11 +5,12 @@ import { AuthContext } from "@/context/auth";
 import ChatHeader from "./ChatHeader";
 import ChatBody from "./ChatBody";
 import ChatFooter from "./ChatFooter";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { getConversation } from "@/api/conversations/conversations";
 import { addToRead } from "@/api/conversations/message";
 import { getBlockedUsers } from "@/api/user/user";
 import ChatSettings from "./ChatSettings";
+import socket from "@/libs/socket";
 
 export default function Chat({
 	conversationId,
@@ -29,7 +30,7 @@ export default function Chat({
 		conversationId,
 		otherUserId
 	);
-	const { data, error, isLoading, mutate } = useSWR(
+	const { data, error, isLoading } = useSWR(
 		`/conversations/${conversationId}`,
 		getConversationWithId
 	);
@@ -38,6 +39,24 @@ export default function Chat({
 	useEffect(() => {
 		addToRead(latestMessage, uid);
 	}, [data]);
+
+	useEffect(() => {
+		socket.on("updated-conversation-name", () => {
+			mutate(`/conversations/${conversationId}`);
+		});
+
+		socket.on("blocked-user", () => {
+			mutate(`/conversations/${conversationId}`);
+		});
+		socket.on("unblocked-user", () => {
+			mutate(`/conversations/${conversationId}`);
+		});
+		return () => {
+			socket.off("updated-conversation-name");
+			socket.off("blocked-user");
+			socket.off("unblocked-user");
+		};
+	}, [socket]);
 
 	return (
 		<div className={styles.container}>
@@ -78,8 +97,11 @@ export default function Chat({
 			) : (
 				<ChatSettings
 					conversation={data?.data}
+					uid={uid}
 					otherUserId={otherUserId}
 					setSettings={setSettings}
+					setOpenedConv={setOpenedConv}
+					setOtherUserId={setOtherUserId}
 				/>
 			)}
 		</div>

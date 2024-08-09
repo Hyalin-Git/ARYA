@@ -1,14 +1,20 @@
 .container {
 	display: flex;
 	flex-direction: column;
-
-	padding: 10px;
 }
 
 .header {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	height: 50px;
+	padding: 5px;
 }
 
 .header svg {
+	position: relative;
+	left: -1px;
 	width: 20px;
 	height: 20px;
 	color: var(--meteorite-color);
@@ -26,13 +32,23 @@
 
 .conversation {
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
 	align-items: center;
 	flex-direction: column;
+	height: 140px;
+}
+
+.conversation input {
+	text-align: center;
 }
 
 .conversation img {
 	border-radius: 50%;
+}
+
+.form {
+	margin-top: -5px;
+	max-height: 50px;
 }
 
 .name {
@@ -54,11 +70,14 @@
 	font-weight: 600;
 }
 
+.actionsWrapper {
+	padding: 0 10px 0 10px;
+}
+
 .actions {
-	margin-top: 20px;
 	border-radius: 8px;
 	background-color: white;
-	padding: 20px 10px 20px 10px;
+	width: 100%;
 	box-shadow: -1px 1px 2px color-mix(in srgb, white, black 10%),
 		1px -1px 2px color-mix(in srgb, white, black 10%);
 }
@@ -66,13 +85,26 @@
 .actions ul {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
 }
-
+.actions li:first-child {
+	border-radius: 8px 8px 0 0;
+}
 .actions li {
 	display: flex;
 	align-items: center;
-	gap: 10px;
+	gap: 5px;
+	cursor: pointer;
+	transition: 150ms all linear;
+}
+.actions li :not(.underline) {
+	padding: 12px;
+}
+.actions li:hover {
+	background-color: #f1f1f1;
+	transition: 150ms all linear;
+}
+.actions .underline {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .actions li svg {
@@ -84,4 +116,27 @@
 .actions li:last-child,
 .actions li:last-child svg {
 	color: red;
+	border-bottom: inherit;
+	border-radius: 0 0 8px 8px;
+}
+
+.buttons {
+	margin-top: 5px;
+}
+.buttons p {
+	font-size: 0.7rem;
+	margin: 0;
+}
+.buttons button {
+	background-color: transparent;
+	background-image: inherit;
+	box-shadow: inherit;
+	font-size: 0.7rem;
+	padding: 0;
+	color: var(--meteorite-color);
+	margin: 0;
+}
+
+.buttons button:hover {
+	text-decoration: underline;
 }

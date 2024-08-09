@@ -44,6 +44,7 @@ exports.saveMessage = async (req, res, next) => {
 					{
 						$set: {
 							latestMessage: newMessage._id,
+							isDeletedFor: [],
 						},
 					},
 					{ new: true, setDefaultsOnInsert: true }

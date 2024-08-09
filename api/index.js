@@ -153,6 +153,32 @@ io.on("connection", (socket) => {
 			})
 			.catch((err) => console.log(err));
 	});
+	// BLOCK
+	socket.on("block-user", async (uid, otherUserId) => {
+		const senderId = await UserModel.findById({ _id: uid });
+		const receiverId = await UserModel.findById({ _id: otherUserId });
+
+		console.log("block");
+
+		io.to(receiverId.status.socketId)
+			.to(senderId.status.socketId)
+			.emit("blocked-user");
+	});
+
+	socket.on("unblock-user", async (uid, otherUserId) => {
+		const senderId = await UserModel.findById({ _id: uid });
+		const receiverId = await UserModel.findById({ _id: otherUserId });
+
+		io.to(receiverId.status.socketId)
+			.to(senderId.status.socketId)
+			.emit("unblocked-user");
+	});
+
+	// CONVERSATION
+	socket.on("update-conversation-name", (content) => {
+		io.emit("updated-conversation-name", content);
+	});
+	// PRIVATE MESSAGE
 	socket.on("typing", (boolean, conversationId) => {
 		socket.broadcast.emit("is-typing", boolean, conversationId);
 	});

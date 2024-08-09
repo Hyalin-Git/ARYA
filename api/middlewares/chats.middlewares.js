@@ -29,7 +29,7 @@ exports.canAccessConversation = async (req, res, next) => {
 				_id: req.params.id,
 				$and: [{ users: userId }, { users: otherUserId }],
 			})
-				.populate("users", "lastName firstName userName")
+				.populate("users", "lastName firstName userName picture status")
 				.exec()
 				.then((conversations) => {
 					if (!conversations) {

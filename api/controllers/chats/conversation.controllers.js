@@ -21,7 +21,7 @@ exports.accessOrCreateConversation = (req, res, next) => {
 			// Si aucune conv n'a été trouvé alors on l'a créé
 			if (!conversation[0]) {
 				const conversationData = new ConversationModel({
-					name: "default",
+					name: "",
 					users: [userId, otherUserId],
 				});
 				conversationData
@@ -108,7 +108,9 @@ exports.editConversation = (req, res, next) => {
 	const { userId, otherUserId } = req.query;
 	const { name } = req.body;
 
-	if (!userId || !otherUserId || !name) {
+	console.log(req.params.id);
+
+	if (!userId || !otherUserId) {
 		return res
 			.status(400)
 			.send({ error: true, message: "Paramètres manquants" });
@@ -125,7 +127,7 @@ exports.editConversation = (req, res, next) => {
 		{ _id: req.params.id, users: [userId, otherUserId] },
 		{
 			$set: {
-				name: req.body.name,
+				name: name,
 			},
 		},
 		{
@@ -174,4 +176,3 @@ exports.deleteConversation = (req, res, next) => {
 		})
 		.catch((err) => res.status(500).send(err));
 };
-

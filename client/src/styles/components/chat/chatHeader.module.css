@@ -41,7 +41,7 @@
 .names {
 	display: flex;
 	flex-direction: column;
-	max-width: 100px;
+	max-width: 120px;
 }
 
 .names span {

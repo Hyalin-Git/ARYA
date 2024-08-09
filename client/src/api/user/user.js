@@ -152,8 +152,40 @@ export async function blockUser(uid, idToBlock) {
 		if (!response.ok) {
 			throw new Error(data.message || "Failed to unblock user");
 		}
-		console.log(data);
 		revalidateTag("user");
+		return data;
+	} catch (err) {
+		console.log("block user error:", err);
+	}
+}
+
+export async function unblockUser(uid, idToUnblock) {
+	try {
+		const dataToSend = {
+			idToUnblock: idToUnblock,
+		};
+
+		const response = await fetch(
+			`${process.env.API_URI}/api/users/unblock/${uid}`,
+			{
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(dataToSend),
+			}
+		);
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new Error(data.message || "Failed to unblock user");
+		}
+
+		revalidateTag("blockedUsers");
+		return data;
 	} catch (err) {
 		console.log("block user error:", err);
 	}

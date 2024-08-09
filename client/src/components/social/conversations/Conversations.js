@@ -19,6 +19,7 @@ export default function Conversations({
 	const getOtherUser = conversation.users.find((user) => user._id !== uid);
 	const date = moment(conversation?.updatedAt).format("Do MMMM");
 	const year = moment(conversation?.updatedAt).format("YYYY");
+	const convName = conversation?.name;
 	const isAuthor = conversation?.latestMessage?.senderId._id === uid;
 	const hasMedia = conversation?.latestMessage?.media.length > 0;
 	const singleMedia = conversation?.latestMessage?.media.length === 1;
@@ -77,8 +78,16 @@ export default function Conversations({
 			</div>
 			<div className={styles.conversation}>
 				<div className={styles.names}>
-					<span>{getOtherUser?.firstName + " " + getOtherUser?.lastName}</span>
-					<span>{getOtherUser?.userName}</span>
+					{convName ? (
+						<span>{convName}</span>
+					) : (
+						<>
+							<span>
+								{getOtherUser?.firstName + " " + getOtherUser?.lastName}
+							</span>
+							<span>{getOtherUser?.userName}</span>
+						</>
+					)}
 				</div>
 				<div className={styles.latestMessage}>
 					<span>

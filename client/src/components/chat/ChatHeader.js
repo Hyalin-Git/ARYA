@@ -1,4 +1,5 @@
 import { blockUser, follow, unFollow } from "@/api/user/user";
+import socket from "@/libs/socket";
 import styles from "@/styles/components/chat/chatHeader.module.css";
 import {
 	faArrowLeft,
@@ -13,7 +14,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { mutate } from "swr";
 
 export default function ChatHeader({
 	uid,
@@ -26,6 +28,7 @@ export default function ChatHeader({
 }) {
 	const isFollowing = user?.following?.includes(otherUserId);
 	const [hasFollow, setHasFollow] = useState(isFollowing || false);
+	const convName = conversation?.name;
 	const getOtherUserInfo = conversation?.users?.find(
 		(user) => user._id === otherUserId
 	);
@@ -50,8 +53,6 @@ export default function ChatHeader({
 		setHasFollow(false);
 	}
 
-	console.log(isFollowing, "follow");
-
 	return (
 		<div className={styles.container}>
 			<FontAwesomeIcon
@@ -72,10 +73,16 @@ export default function ChatHeader({
 				icon={faCircle}
 			/>
 			<div className={styles.names}>
-				<span>
-					{getOtherUserInfo?.firstName + " " + getOtherUserInfo?.lastName}
-				</span>
-				<span>{getOtherUserInfo?.userName}</span>
+				{convName ? (
+					<span>{convName}</span>
+				) : (
+					<>
+						<span>
+							{getOtherUserInfo?.firstName + " " + getOtherUserInfo?.lastName}
+						</span>
+						<span>{getOtherUserInfo?.userName}</span>
+					</>
+				)}
 			</div>
 			<div className={styles.icons}>
 				{!hasFollow ? (

@@ -57,3 +57,24 @@ export async function getConversation(conversationId, otherUserId) {
 		console.log(err);
 	}
 }
+
+export async function deleteConversation(conversationId, uid, otherUserId) {
+	try {
+		const response = await fetch(
+			`${process.env.API_URI}/api/conversations/${conversationId}?userId=${uid}&otherUserId=${otherUserId}`,
+			{
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${cookies().get("session")?.value}`,
+				},
+			}
+		);
+
+		const data = await response.json();
+		revalidateTag("conversations");
+		return data;
+	} catch (err) {
+		console.log(err);
+	}
+}
